@@ -1,0 +1,38 @@
+{
+  "name": "coglite",
+  "version": "0.0.1",
+  "description": "Coglite Desktop",
+  "private": true,
+  "main": "dist/desktop/main.js",
+  "scripts": {
+    "start": "node fuse",
+    "clean": "rimraf dist .fusebox",
+    "app": "electron .",
+    "package": "cross-env NODE_ENV=production node fuse && electron-packager . Release --platform=darwin --arch=x64 --overwrite",
+    "release": "electron-packager . Release --platform=darwin --arch=x64 --overwrite"
+  },
+  "dependencies": {
+    "electron-devtools-installer": "^2.2.3",
+    "execa": "^0.9.0",
+    "fuse-box": "^3.1.3",
+    "glamor": "^2.20.40",
+    "glamorous": "^4.11.6",
+    "glamorous-grid": "^1.0.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "reflect-metadata": "^0.1.12",
+    "semantic-ui-css": "^2.3.0",
+    "styled-components": "^3.1.6",
+    "tslib": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/execa": "^0.8.1",
+    "@types/react": "^16.0.40",
+    "@types/react-dom": "^16.0.4",
+    "cross-env": "^5.1.3",
+    "electron": "^1.8.2",
+    "electron-packager": "^11.0.1",
+    "node-sass": "^4.7.2",
+    "typescript": "^2.7.2"
+  }
+}
