@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>TSEdit | Online TypeScript Editor and Notebook</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="language" content="en">
+    <link rel="icon" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
+    <link rel="stylesheet" href="/vs/editor/editor.main.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="/bundle.css" type="text/css" media="screen">
+  </head>
+  <body>
+    <div id="App"></div>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script>
+      process = {
+        env: {NODE_ENV: 'production'},
+        getuid: () => 0
+      }
+    </script>
+    <script src="/vs/loader.js"></script>
+    <script src="/vs/editor/editor.main.js"></script>
+    <script src="/bundle.js"></script>
+  </body>
+</html>

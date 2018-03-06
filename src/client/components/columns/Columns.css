@@ -1,0 +1,8 @@
+.Columns {
+  display: flex;
+}
+
+.Columns > .Column {
+  flex: 1;
+  position: relative;
+}

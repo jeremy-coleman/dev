@@ -1,0 +1,13 @@
+machine:
+  node:
+    version: 8.1.2
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - npm run deploy
+
+test:
+  pre:
+    - npm run build
