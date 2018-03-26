@@ -19,7 +19,7 @@
     "dev": "webpack --config webpack/webpack.dev.js && webpack-dev-server --config webpack/webpack.dev.js --env=dev --inline",
     "clean": "rimraf lib coverage dist",
     "test": "jest --no-cache",
-    "doc": "../../node_modules/.bin/typedoc --name 'JSON Forms Material Renderers' --mode file --excludeExternals --theme ../../typedoc-jsonforms --out docs src"
+    "doc": "typedoc --name 'JSON Forms Material Renderers' --mode file --excludeExternals --theme ../../typedoc-jsonforms --out docs src"
   },
   "private": true,
   "dependencies": {
