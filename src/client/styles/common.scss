@@ -1,0 +1,15 @@
+@import "fonts.scss";
+
+$bg: #eee;
+
+* {
+    font-family: "Ubuntu";
+}
+
+body {
+    background: $bg;
+}
+
+.test {
+    color: #fa0;
+}

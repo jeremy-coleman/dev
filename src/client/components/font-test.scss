@@ -1,0 +1,24 @@
+@import "$home/colors.scss";
+
+.light,
+.regular,
+.medium,
+.bold {
+    color: $colText;
+}
+
+.light {
+    font-weight: lighter;
+}
+
+.regular {
+    font-weight: normal;
+}
+
+.medium {
+    font-weight: bold;
+}
+
+.bold {
+    font-weight: bolder;
+}

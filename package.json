@@ -1,0 +1,45 @@
+{
+    "name": "desktop-app-boilerplate",
+    "author": {
+        "name": "M. Fatih Mar",
+        "email": "mfatihmar@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MFatihMAR/desktop-app-boilerplate.git"
+    },
+    "license": "MIT",
+    "main": "build/desktop/desktop.js",
+    "scripts": {
+        "start": "ts-node fuse",
+        "produce": "tslint --project tslint.json && ts-node fuse produce",
+        "package": ""
+    },
+    "devDependencies": {
+        "@types/electron-devtools-installer": "^2.0.3",
+        "@types/react": "16.3.14",
+        "@types/react-dom": "^16.0.5",
+        "@types/recharts": "1.0.19",
+        "antd": "3.5.2",
+        "devtron": "1.4.0",
+        "electron": "2.0.0",
+        "electron-devtools-installer": "2.2.4",
+        "fuse-box": "3.2.2",
+        "mobx": "4.2.1",
+        "mobx-react": "^5.1.2",
+        "node-sass": "^4.9.0",
+        "nodemon": "^1.17.4",
+        "react": "^16.3.2",
+        "react-dom": "^16.3.2",
+        "recharts": "1.0.0-beta.10",
+        "ts-node": "6.0.3",
+        "tslint": "5.10.0",
+        "typescript": "2.8.3",
+        "uglify-es": "3.3.9"
+    },
+    "dependencies": {
+        "@blueprintjs/core": "2.3.1",
+        "dotenv": "5.0.1",
+        "styled-components": "3.2.6"
+    }
+}
