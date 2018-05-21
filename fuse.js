@@ -1,5 +1,5 @@
-import { spawn } from 'child_process';
-import { CSSPlugin, EnvPlugin, FuseBox, QuantumPlugin, SassPlugin, Sparky } from 'fuse-box';
+const { spawn } = require('child_process');
+const { CSSPlugin, EnvPlugin, FuseBox, QuantumPlugin, SassPlugin, Sparky } = require('fuse-box');
 
 
 let isProduction = false;
@@ -10,20 +10,16 @@ let VENDOR_CSS = [
 ]
 
 Sparky.task("copy-html", () => Sparky
-    .src("src/client/index.html")
-    .dest("build/client/$name"));
+    .src("src/app/index.html")
+    .dest("build/app/$name"));
 
 Sparky.task("copy-external-css", () => Sparky
     .src(VENDOR_CSS)
-    .dest("build/client/assets/css/$name"));
+    .dest("build/app/assets/css/$name"));
 
-Sparky.task("copy-desktop-assets", () => Sparky
-    .src("**/*.ttf", { base: "src/desktop/assets" })
-    .dest("build/desktop/assets"));
+Sparky.task("copy-desktop-assets", () => Sparky.src("**/*.ttf", { base: "src/desktop/assets" }).dest("build/desktop/assets"));
 
-Sparky.task("copy-client-assets", () => Sparky
-    .src("**/*.ttf", { base: "src/client/assets" })
-    .dest("build/client/assets"));
+Sparky.task("copy-app-assets", () => Sparky.src("**/*.ttf", { base: "src/app/assets" }).dest("build/app/assets"));
 
 Sparky.task(
     "build:desktop",
@@ -32,13 +28,14 @@ Sparky.task(
         const fuse = FuseBox.init({
             homeDir: "src/desktop",
             output: "build/desktop/$name.js",
-            target: "server",
+            target: "server@esnext",
+            useTypescriptCompiler : true,
             cache: !isProduction,
             plugins: [
                 EnvPlugin({ NODE_ENV: isProduction ? "production" : "development" }),
                 isProduction && QuantumPlugin({
                     bakeApiIntoBundle: "desktop",
-                    target: "server",
+                    target: "server@esnext",
                     treeshake: true,
                     uglify: true,
                 }),
@@ -63,51 +60,52 @@ Sparky.task(
     });
 
 Sparky.task(
-    "build:client",
-    ["copy-html", "copy-external-css", "copy-client-assets"],
+    "build:app",
+    ["copy-html", "copy-external-css", "copy-app-assets"],
     () => {
         const fuse = FuseBox.init({
-            homeDir: "src/client",
-            output: "build/client/$name.js",
-            target: "electron",
+            homeDir: "src/app",
+            output: "build/app/$name.js",
+            target: "electron@esnext",
+            useTypescriptCompiler : true,
             cache: !isProduction,
             plugins: [
                 EnvPlugin({ NODE_ENV: isProduction ? "production" : "development" }),
                 isProduction && QuantumPlugin({
-                    bakeApiIntoBundle: "client",
-                    target: "electron",
+                    bakeApiIntoBundle: "app",
+                    target: "lectron@esnext",
                     treeshake: true,
                     uglify: true,
                 }),
             ],
         });
 
-        if (!isProduction) {
-            fuse.dev({port: 9696,httpServer: false,});
-        }
+        if (!isProduction) {fuse.dev({port: 9696,httpServer: false,})}
 
         const bundle = fuse
-            .bundle("client")
+            .bundle("app")
             .target("electron")
-            .instructions("> [client.tsx] + fuse-box-css");
+            .instructions("> [index.tsx] + fuse-box-css");
 
         if (!isProduction) {
             bundle
-            .plugin([SassPlugin({importer: true, macros: { "$home": "src/client/styles/" }}),CSSPlugin()])
+            .plugin([SassPlugin({importer: true}), CSSPlugin()])
+            .plugin(CSSPlugin())
             .watch()
             .hmr();
         }
 
         bundle.plugin([
-            SassPlugin({importer: true,macros: { "$home": "src/client/styles/" }}),
-            CSSPlugin({group: "styles.css", outFile: "build/client/styles.css"})]);
+            SassPlugin({importer: true,macros: { "$home": "src/app/styles/" }}),
+            CSSPlugin({group: "styles.css", outFile: "build/app/styles.css"})
+            ]);
 
         return fuse.run();
     });
 
 Sparky.task("clean:build", () => Sparky.src("build/*").clean("build/"));
 Sparky.task("clean:cache", () => Sparky.src(".fusebox/*").clean(".fusebox/"));
-Sparky.task("default", ["clean:build", "clean:cache", "build:client", "build:desktop"], () => { });
+Sparky.task("default", ["clean:build", "clean:cache", "build:app", "build:desktop"], () => { });
 
 Sparky.task("set-prod-env", () => isProduction = true);
 Sparky.task("build:production", ["set-prod-env", "default"], () => { });

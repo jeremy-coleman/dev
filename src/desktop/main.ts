@@ -14,7 +14,7 @@ function createWindow() {
             plugins: true
         }
 });
-    mainWindow.loadURL(`file:///${app.getAppPath()}/build/client/index.html`);
+    mainWindow.loadURL(`file:///${app.getAppPath()}/build/app/index.html`);
 
     mainWindow.on("close", () => {
         mainWindow = null;
