@@ -1,7 +1,13 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+import './css.config'
+import * as ReactDOM from 'react-dom'
+import * as React from 'react'
+import {CogliteAppRoot} from './App'
 
-import './css/base.css'
+import './styles/main.css'
 
-ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
+//import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+
+
+
+
+ReactDOM.render(<CogliteAppRoot />, document.getElementById("coglite-app-root"));

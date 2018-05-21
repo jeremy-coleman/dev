@@ -1,5 +1,5 @@
 const { spawn } = require('child_process');
-const { CSSPlugin, EnvPlugin, FuseBox, QuantumPlugin, SassPlugin, Sparky } = require('fuse-box');
+const { CSSResourcePlugin, CSSPlugin, EnvPlugin, FuseBox, QuantumPlugin, SassPlugin, Sparky } = require('fuse-box');
 
 
 let isProduction = false;
@@ -71,16 +71,17 @@ Sparky.task(
             cache: !isProduction,
             plugins: [
                 EnvPlugin({ NODE_ENV: isProduction ? "production" : "development" }),
+                [/node_modules.*\.css$/,SassPlugin(), CSSResourcePlugin({inline: true}),CSSPlugin()],
                 isProduction && QuantumPlugin({
                     bakeApiIntoBundle: "app",
-                    target: "lectron@esnext",
+                    target: "electron@esnext",
                     treeshake: true,
                     uglify: true,
                 }),
             ],
         });
 
-        if (!isProduction) {fuse.dev({port: 9696,httpServer: false,})}
+        if (!isProduction) {fuse.dev({port: 9696, httpServer: false,})}
 
         const bundle = fuse
             .bundle("app")
