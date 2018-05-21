@@ -3,6 +3,7 @@
         "module": "commonjs",
         "target": "esnext",
         "jsx": "react",
+        "outDir": "dist",
         "experimentalDecorators": true
     },
     "include": ["src"],

@@ -23,10 +23,11 @@ export const stores = {
 };
 
 
+
 @observer
 export class CogliteAppRoot extends React.Component<any, any, any> {
-  public render(): JSX.Element {
-  const nav = this.props as NavigationStore
+  render(){
+  const {navigation} = this.props
         return (
         <ThemeProvider theme={theme}>
           <Provider {...stores}>
