@@ -1,2 +1,2 @@
 #Coglite
-cool
+cool !
