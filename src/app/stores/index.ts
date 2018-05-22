@@ -1,10 +1,11 @@
-import preference from './Preference';
+import {Store} from './_Store';
 
-export { Preference } from './Preference';
 
-const stores = {
-  preference,
+const store = new Store()
 
-};
+export {store}
 
-export default stores;
+export type Store = Store
+
+
+//export {CogliteAppStore}

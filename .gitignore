@@ -1,4 +1,11 @@
 node_modules
-.fusebox
-build
-package
+dist
+.DS_Store
+Thumbs.db
+*.log
+
+/dist
+/temp
+/.wip
+
+yarn.lock
