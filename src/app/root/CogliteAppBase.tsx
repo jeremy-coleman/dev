@@ -41,7 +41,7 @@ class CogliteAppBase extends React.Component<any, any> {
           example project
         </Typography>
         <Button variant="raised" color="secondary" onClick={this.handleClick}>
-          Super Secret Passworddd
+          Super Secret Password
         </Button>
       </div>
     );

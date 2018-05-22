@@ -20,8 +20,9 @@ var isProd = process.env.NODE_ENV === 'production' ? true : false;
   var url = isProd ? prodPath : devPath;
 
 
-let createMainWindow = async () => {
-    
+//dont open devtools in this function or u'll get error spam on startup
+
+let createMainWindow = async () => {   
     mainWindow = new BrowserWindow({
         width: 960,
         height: 640,
@@ -34,8 +35,6 @@ let createMainWindow = async () => {
     });
 
     mainWindow.loadURL(url);
-
-    //mainWindow.webContents.openDevTools();
 
     mainWindow.webContents.on("context-menu", (e: any, props: any) => {
       Menu.buildFromTemplate([{
@@ -51,8 +50,7 @@ let createMainWindow = async () => {
         installExtension(REDUX_DEVTOOLS);
 
     mainWindow.on('closed', () => {mainWindow = null, process.kill(process.pid)});
-    //mainWindow.on("close", () => {mainWindow = null});
-
+    //mainWindow.on("close", () => {mainWindow = null}); not sure which is better to use here?
 
     return mainWindow
 

@@ -17,7 +17,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
         colors: true
         },
 }));
-    
+
 app.use(require("webpack-hot-middleware")(compiler));
 
 

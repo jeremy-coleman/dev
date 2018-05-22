@@ -3,7 +3,6 @@
     "target": "es2016",
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
     "moduleResolution": "node",
     "preserveConstEnums": true,
     "jsx": "react",
@@ -23,6 +22,6 @@
     "skipDefaultLibCheck": true,
     "lib": ["dom", "es2015", "es2016", "es2017", "esnext"]
   },
-  "include":["tasks/definitions", "src"],
-  "exclude": ["node_modules", ".wip"]
+  "include":["tools/definitions", "src"],
+  "exclude": ["node_modules", "dist"]
 }
