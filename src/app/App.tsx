@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import * as React from "react"
 import { Provider, observer } from 'mobx-react';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core'
-import {ThemeProvider} from 'theming'
+import {ThemeProvider} from 'emotion-theming'
 import {injectGlobal} from 'styled-components'
 //import {theme} from './theme';
 import { AppLayout } from './layout/AppLayout';

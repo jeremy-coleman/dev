@@ -10,7 +10,7 @@ require("reflect-metadata");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const core_1 = require("@material-ui/core");
-const theming_1 = require("theming");
+const emotion_theming_1 = require("emotion-theming");
 const styled_components_1 = require("styled-components");
 //import {theme} from './theme';
 const AppLayout_1 = require("./layout/AppLayout");
@@ -26,7 +26,7 @@ exports.stores = {
 let CogliteAppRoot = class CogliteAppRoot extends React.Component {
     render() {
         const { navigation } = this.props;
-        return (React.createElement(theming_1.ThemeProvider, { theme: theme },
+        return (React.createElement(emotion_theming_1.ThemeProvider, { theme: theme },
             React.createElement(mobx_react_1.Provider, Object.assign({}, exports.stores),
                 React.createElement(react_router_dom_1.Router, { history: exports.stores.navigation.history },
                     React.createElement("div", { style: { height: '100vh', width: '100vw' } },

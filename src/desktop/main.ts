@@ -1,6 +1,8 @@
 require('dotenv').config()
 import { app, BrowserWindow, Menu } from "electron";
 
+
+
 let mainWindow: BrowserWindow;
 
 function createWindow() {
