@@ -64,8 +64,9 @@ function Chips(props) {
   );
 }
 
+//@ts-ignore
 Chips.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Chips);
+export default withStyles(styles as any)(Chips);

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from '@material-ui/core/Card';
-import Collapse from '@material-ui/core/transitions/Collapse';
+import {Card,  CardHeader, CardMedia, CardContent, CardActions } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -38,7 +38,8 @@ const styles = theme => ({
   },
 });
 
-class RecipeReviewCard extends React.Component {
+
+class RecipeReviewCard extends React.Component<any, any> {
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -129,6 +130,7 @@ class RecipeReviewCard extends React.Component {
   }
 }
 
+//@ts-ignore
 RecipeReviewCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };

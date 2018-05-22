@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import GridList, { GridListTile } from '@material-ui/core/GridList';
+import { GridList,  GridListTile } from '@material-ui/core';
 import tileData from './tileData';
 
 const styles = theme => ({
@@ -55,8 +55,10 @@ function ImageGridList(props) {
   );
 }
 
+
+//@ts-ignore
 ImageGridList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ImageGridList);
+export default withStyles(styles as any)(ImageGridList);

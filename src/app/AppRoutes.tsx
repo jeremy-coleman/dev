@@ -1,14 +1,11 @@
 import * as React from 'react'
 import { Router, Route, Switch, withRouter} from 'react-router-dom'
-import { NotebookPage, DatasetsPage, ChartsPage, DashboardPage, CloudPage, SettingsPage, AboutPage, WorkflowGraph, 
-//WorkflowGraph 
-} from './pages'
-
-
-
 import { observer, inject } from 'mobx-react';
+
 import { NavigationStore } from './stores/NavigationStore';
 import { NotebookView } from './pages/notebook/View';
+import { NotebookPage, DatasetsPage, ChartsPage, DashboardPage, CloudPage, SettingsPage, AboutPage, WorkflowGraph} from './pages'
+
 
 interface INavProps {
   navigation: NavigationStore;

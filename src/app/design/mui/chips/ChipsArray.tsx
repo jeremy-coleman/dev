@@ -18,7 +18,7 @@ const styles = theme => ({
   },
 });
 
-class ChipsArray extends React.Component {
+class ChipsArray extends React.Component<any, any> {
   state = {
     chipData: [
       { key: 0, label: 'Angular' },
@@ -72,8 +72,9 @@ class ChipsArray extends React.Component {
   }
 }
 
+//@ts-ignore
 ChipsArray.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ChipsArray);
+export default withStyles(styles as any)(ChipsArray as any);

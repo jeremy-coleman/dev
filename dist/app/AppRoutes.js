@@ -8,9 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const react_router_dom_1 = require("react-router-dom");
-const pages_1 = require("./pages");
 const mobx_react_1 = require("mobx-react");
 const View_1 = require("./pages/notebook/View");
+const pages_1 = require("./pages");
 let AppRoutes = class AppRoutes extends React.Component {
     render() {
         const { navigation } = this.props;

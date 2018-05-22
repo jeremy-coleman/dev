@@ -1,7 +1,9 @@
+
+
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Card, { CardContent, CardMedia } from '@material-ui/core/Card';
+import {Card, CardContent, CardMedia } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
@@ -35,7 +37,7 @@ const styles = theme => ({
   },
 });
 
-function MediaControlCard(props) {
+function MediaControlCard(props): JSX.Element {
   const { classes, theme } = props;
 
   return (
@@ -70,9 +72,10 @@ function MediaControlCard(props) {
   );
 }
 
+//@ts-ignore
 MediaControlCard.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(MediaControlCard);
+export default withStyles(styles as any, { withTheme: true })(MediaControlCard);

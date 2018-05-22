@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import GridList, { GridListTile, GridListTileBar } from '@material-ui/core/GridList';
+import { GridList, GridListTile, GridListTileBar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import tileData from './tileData';
@@ -73,6 +73,7 @@ function SingleLineGridList(props) {
   );
 }
 
+//@ts-ignore
 SingleLineGridList.propTypes = {
   classes: PropTypes.object.isRequired,
 };

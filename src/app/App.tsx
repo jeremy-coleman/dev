@@ -23,7 +23,6 @@ export const stores = {
 };
 
 
-
 @observer
 export class CogliteAppRoot extends React.Component<any, any, any> {
   render(){
@@ -33,16 +32,15 @@ export class CogliteAppRoot extends React.Component<any, any, any> {
           <Provider {...stores}>
           <Router history={stores.navigation.history}>
           <div style={{height: '100vh', width: '100vw'}}>
-                <AppLayout>          
-                <AppRoutes/>
-                </AppLayout>
-            </div>
+              <AppLayout><AppRoutes/></AppLayout>
+          </div>
           </Router>
           </Provider>
           </ThemeProvider>
         );
     }
 }
+
 
 // body > font-size: ${theme.fontSizes[1]}px;
 

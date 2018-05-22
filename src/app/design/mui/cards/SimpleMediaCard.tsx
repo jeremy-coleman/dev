@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Card, { CardActions, CardContent, CardMedia } from '@material-ui/core/Card';
+import {Card,  CardActions, CardContent, CardMedia } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
@@ -46,6 +46,7 @@ function SimpleMediaCard(props) {
   );
 }
 
+//@ts-ignore
 SimpleMediaCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };

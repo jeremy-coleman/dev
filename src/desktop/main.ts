@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 
 let mainWindow: BrowserWindow;
 
@@ -14,7 +14,7 @@ function createWindow() {
             plugins: true
         }
 });
-    mainWindow.loadURL(`file:///${app.getAppPath()}/build/app/index.html`);
+    mainWindow.loadURL(`file:///${app.getAppPath()}/dist/app/index.html`);
 
     mainWindow.on("close", () => {
         mainWindow = null;
@@ -24,6 +24,15 @@ function createWindow() {
     installExtension(REACT_DEVELOPER_TOOLS);
     installExtension(MOBX_DEVTOOLS);
     installExtension(REDUX_DEVTOOLS);
+
+
+    mainWindow.webContents.on("context-menu", (e: any, props: any) => {
+      const { x, y } = props;
+      Menu.buildFromTemplate
+        ([{label: "Inspect element",click: () => {mainWindow.webContents.inspectElement(x, y)}}])
+        .popup(mainWindow as any);
+    });
+
 
     return mainWindow
 }
