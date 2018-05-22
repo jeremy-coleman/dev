@@ -74,4 +74,4 @@ export class AppFrame extends React.Component<NotebookProps, any> {
   }
 }
 
-export default injectStylesheet(layoutStyles, { withTheme: true })(AppFrame)
+export default injectStylesheet(layoutStyles)(AppFrame)

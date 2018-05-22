@@ -4,7 +4,8 @@
         "target": "esnext",
         "jsx": "react",
         "outDir": "dist",
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "allowJs": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "docs", "resources", "tools"]

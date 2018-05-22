@@ -9,17 +9,11 @@ let VENDOR_CSS = [
   "node_modules/antd/dist/antd.css"
 ]
 
-Sparky.task("copy-html", () => Sparky
-    .src("src/app/index.html")
-    .dest("build/app/$name"));
-
-Sparky.task("copy-external-css", () => Sparky
-    .src(VENDOR_CSS)
-    .dest("build/app/assets/css/$name"));
-
+Sparky.task("copy-html", () => Sparky.src("src/app/index.html").dest("dist/app/$name"));
+Sparky.task("copy-external-css", () => Sparky.src(VENDOR_CSS).dest("dist/app/assets/css/$name"));
 Sparky.task("copy-desktop-assets", () => Sparky.src("**/*.ttf", { base: "src/desktop/assets" }).dest("build/desktop/assets"));
-
 Sparky.task("copy-app-assets", () => Sparky.src("**/*.ttf", { base: "src/app/assets" }).dest("build/app/assets"));
+
 
 Sparky.task(
     "build:desktop",
@@ -27,7 +21,7 @@ Sparky.task(
     () => {
         const fuse = FuseBox.init({
             homeDir: "src/desktop",
-            output: "build/desktop/$name.js",
+            output: "dist/desktop/$name.js",
             target: "server@esnext",
             useTypescriptCompiler : true,
             cache: !isProduction,
@@ -65,7 +59,7 @@ Sparky.task(
     () => {
         const fuse = FuseBox.init({
             homeDir: "src/app",
-            output: "build/app/$name.js",
+            output: "dist/app/$name.js",
             target: "electron@esnext",
             useTypescriptCompiler : true,
             cache: !isProduction,
@@ -98,13 +92,13 @@ Sparky.task(
 
         bundle.plugin([
             SassPlugin({importer: true,macros: { "$home": "src/app/styles/" }}),
-            CSSPlugin({group: "styles.css", outFile: "build/app/styles.css"})
+            CSSPlugin({group: "styles.css", outFile: "dist/app/styles.css"})
             ]);
 
         return fuse.run();
     });
 
-Sparky.task("clean:build", () => Sparky.src("build/*").clean("build/"));
+Sparky.task("clean:dist", () => Sparky.src("build/*").clean("dist/"));
 Sparky.task("clean:cache", () => Sparky.src(".fusebox/*").clean(".fusebox/"));
 Sparky.task("default", ["clean:build", "clean:cache", "build:app", "build:desktop"], () => { });
 

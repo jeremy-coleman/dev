@@ -2,20 +2,22 @@ import 'reflect-metadata'
 import * as React from "react"
 import { Provider, observer } from 'mobx-react';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core'
-import {ThemeProvider} from 'emotion-theming'
-import {injectGlobal} from 'styled-components'
-//import {theme} from './theme';
+import {ThemeProvider as JssThemeProvider} from 'theming'
+import {ThemeProvider, injectGlobal} from 'styled-components'
+
 import { AppLayout } from './layout/AppLayout';
 import { AppRoutes } from './AppRoutes';
 import {NavigationStore} from './stores'
 import { Router, withRouter } from 'react-router-dom';
-import orange from '@material-ui/core/colors/orange';
+import {deepPurple} from '@material-ui/core/colors';
 import red from '@material-ui/core/colors/red';
 import { observable } from 'mobx';
 import { UiStore } from './stores/UiStore';
 
+import {styledTheme} from './theme';
+var themeConfig = {palette: {primary: deepPurple}}
+var theme = createMuiTheme(themeConfig);
 
-var theme = createMuiTheme()
 
 export const stores = {
   navigation: new NavigationStore(),
@@ -28,7 +30,8 @@ export class CogliteAppRoot extends React.Component<any, any, any> {
   render(){
   const {navigation} = this.props
         return (
-        <ThemeProvider theme={theme}>
+        <JssThemeProvider theme={theme}>
+        <ThemeProvider theme={styledTheme}>
           <Provider {...stores}>
           <Router history={stores.navigation.history}>
           <div style={{height: '100vh', width: '100vw'}}>
@@ -37,6 +40,7 @@ export class CogliteAppRoot extends React.Component<any, any, any> {
           </Router>
           </Provider>
           </ThemeProvider>
+          </JssThemeProvider>
         );
     }
 }

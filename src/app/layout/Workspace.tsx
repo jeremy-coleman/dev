@@ -17,7 +17,3 @@ export let MiddlePanel: React.SFC<any> = props =>
     <Container>
      <FillFlex>{props.children}</FillFlex>
     </Container>
-
-
-
-

@@ -44,4 +44,4 @@ class _NodeDrawer extends React.Component<NodeDrawerProps, any> {
   }
 }
 
-export let NodeDrawer = injectSheet(layoutStyles, { withTheme: true })(_NodeDrawer)
+export let NodeDrawer = injectSheet(layoutStyles)(_NodeDrawer)

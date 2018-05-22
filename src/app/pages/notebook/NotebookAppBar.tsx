@@ -101,4 +101,4 @@ class _NotebookAppBar extends React.Component<NotebookToolbarProps, any> {
   }
 }
 
-export let NotebookAppBar = injectSheet(layoutStyles, { withTheme: true })(_NotebookAppBar)
+export let NotebookAppBar = injectSheet(layoutStyles)(_NotebookAppBar)

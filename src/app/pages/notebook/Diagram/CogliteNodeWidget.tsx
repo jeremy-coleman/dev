@@ -6,6 +6,8 @@ import { BaseWidget, BaseWidgetProps, PortWidget } from "storm-react-diagrams"
 import { CogliteNodeModel } from "./CogliteNodeModel"
 import injectSheet from 'react-jss'
 
+
+
 export const styles = theme => ({
   cardBasic: {
     display: "flex",
@@ -127,4 +129,4 @@ export class CogliteNodeWidget extends BaseWidget<any, CogliteNodeWidgetState> {
   }
 }
 
-export default injectSheet(styles, { withTheme: true })(CogliteNodeWidget)
+export default injectSheet(styles)(CogliteNodeWidget)
