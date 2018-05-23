@@ -1,7 +1,8 @@
-import { ThemeStore } from './ThemeStore';
-import { NavigationStore } from './NavigationStore';
+import {NavigationStore} from './NavigationStore'
+import { UiStore } from './UiStore';
+
 
 export class Store {
-  theme = new ThemeStore()
-  nav = new NavigationStore()
+  navigation = new NavigationStore()
+  uiStore = new UiStore()
 }

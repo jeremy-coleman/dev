@@ -29,7 +29,7 @@ module: {
 resolve: { 
       extensions: [".ts", ".js", ".tsx", ".jsx", ".json", ".scss", ".css", ".html"],
       mainFields: ['browser','module','jsnext:main','main'],
-      //modules: [getRoot("src"), getRoot("node_modules")]
+      modules: [getRoot("src"), getRoot("node_modules")]
 },
     
 //devtool: "#source-map",

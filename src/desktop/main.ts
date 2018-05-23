@@ -14,8 +14,8 @@ var isProd = process.env.NODE_ENV === 'production' ? true : false;
 });
 
 
-  const devPath = format({pathname: '//localhost:8888/',protocol: 'http:',slashes: true});
-  const prodPath = format({pathname: resolve('dist/app/index.html'),protocol: 'file:',slashes: true });
+  const devPath = format({pathname: '//localhost:8888/',protocol: 'http:', slashes: true});
+  const prodPath = format({pathname: resolve('dist/app/index.html'), protocol: 'file:', slashes: true });
 
   var url = isProd ? prodPath : devPath;
 
@@ -30,6 +30,8 @@ let createMainWindow = async () => {
             webSecurity: false,
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
+            nodeIntegrationInWorker: true,
+            nodeIntegration: true,
             plugins: true
         }
     });
