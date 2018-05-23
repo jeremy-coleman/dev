@@ -5,8 +5,8 @@ import React from 'react';
     return (
       <div className='App'>
         <div className='App-header'>
-          <img src='img/logo.svg' alt='logo' className='App-logo' />
-          <h1>React Browserify Demo</h1>
+          <img src='assets/img/logo.svg' alt='logo' className='App-logo' />
+          <h1>React Browserify Demoo</h1>
         </div>
         <p className='App-intro'>
           To get started, edit <code>src/components/App.jsx</code> and save to reload.
