@@ -1,9 +1,15 @@
+import * as React from 'react'
 import { observer, inject } from 'mobx-react';
-import * as React from 'react';
-import { Route, RouteComponentProps, Switch, withRouter, HashRouter, Router } from 'react-router-dom';
-import styled from 'styled-jss';
-import { Toolbar, Button } from '@material-ui/core';
-import Menu from '@material-ui/icons/Menu'
+import styled from 'styled-jss'
+import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz } from '@material-ui/icons';
+//import {NavStore} from '../stores'
+//import { Link } from './NavIcon';
+import { Card, AppBar, Toolbar } from '@material-ui/core';
+import { Row } from '../../../design';
+import Link from '../../../components/Link';
+import when from 'when-switch';
+import { NavStore } from '../../../stores';
+
 import { DashboardPage, DatasetsPage, NotebookPage, ChartsPage } from './routes';
 
 
@@ -15,52 +21,51 @@ export const Drawer = styled('div')({
     right: 0
 })
 
-export const IconNavBar  = observer(props => (               
-            <Toolbar>
-                <Button>{<Menu/>}</Button>
-                <Button>{<Menu/>}</Button>
-                <Button>{<Menu/>}</Button>
-            </Toolbar >
-          
-        ))
+const WidgetIconBar = observer(() => (  
+            <Toolbar {...this.props}>
+              <ChartDrawerLink route='chartdrawer:charts'><SwapHoriz /></ChartDrawerLink>
+              <ChartDrawerLink route='chartdrawer:dashboard'><Dashboard /></ChartDrawerLink>
+              <ChartDrawerLink route='chartdrawer:datasets'><AccountBalanceWallet /></ChartDrawerLink>
+              <ChartDrawerLink route='chartdrawer:notebook'><SwapHoriz /></ChartDrawerLink>          
+            </Toolbar>
+  ))
 
 
-const _WorkDrawer = props => (
-<Drawer width={props.width}>
-<IconNavBar/>
-{<WorkDrawerRoutes/>}
-</Drawer>
+type LinkProps = {
+  route: string
+  nav?: NavStore
+};
+
+const ChartDrawerLink: React.SFC<LinkProps> = inject('nav')(observer((props: LinkProps) => (
+  <a href='#'
+    onClick={() => props.nav.goToChartDrawer(props.route)}>
+    {(props as React.Props<any>).children}
+  </a>
+)))
+
+
+
+interface ChartDrawerProps {
+  nav?: NavStore
+}
+
+const ChartDrawerRouter = inject('nav')(observer((props: ChartDrawerProps) => (
+  <Row>
+    {
+      when(props.nav.chartDrawerRoute)
+        .is('chartdrawer:charts', () => <ChartsPage />)
+        .is('chartdrawer:datasets', () => <DatasetsPage />)
+        .is('chartdrawer:notebook', () => <NotebookPage />)
+        .is('chartdrawer:dashboard', () => <DashboardPage />)
+        .else(() => <DashboardPage />)
+    }
+  </Row>
 )
+))
 
-export const WorkDrawer = observer(_WorkDrawer)
-
-
-type WorkDrawerRouteProps = any & RouteComponentProps<any, any>;
-
-
-
-@inject('navigation')
-@observer
-export class WorkDrawerRoutes extends React.Component<WorkDrawerRouteProps, any> {
- render() {
-const {navigation} = this.props
-  return(
-    <Router history={navigation.history}>
-    <Switch>
-          <Route path='/nbdrawer/dashboard' render={() => DashboardPage} />
-          <Route path='/nbdrawer/notebook' component={NotebookPage} />
-          <Route path='/nbdrawer/datasets' component={DatasetsPage} />
-          <Route path='/nbdrawer/charts' component={ChartsPage} />
-    </Switch>
-   </Router>
-  )}}
-
-
-
-
-
-//const LeftNav = withStyles(styles, {withTheme: true})(_LeftNav);
-//export {LeftNav as default, LeftNav}
-
-
-// add "label" if you want to use text ie: <NavIcon label="Portfolio" route="/" icon={<Dashboard />} />
+export const WorkDrawer: React.SFC<any> = observer(props => (
+<Drawer width={props.width}>
+<WidgetIconBar/>
+<ChartDrawerRouter/>
+</Drawer>
+))

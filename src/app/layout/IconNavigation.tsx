@@ -2,12 +2,48 @@ import * as React from 'react'
 import { observer, inject } from 'mobx-react';
 import styled from 'styled-jss'
 import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz } from '@material-ui/icons';
-import {NavigationStore} from '../stores'
-import { NavListIcon } from './NavIcon';
 import { Card } from '@material-ui/core';
+import { ListItem, ListItemIcon, ListItemText, MenuItem } from '@material-ui/core';
+import {NavStore} from '../stores/NavStore'
+import {withTheme} from 'theming'
 
 
-const VertFlexContainer = styled(Card)({
+type LinkProps = {
+  route: string
+  nav?: NavStore
+  classes?: any
+};
+
+
+const Link: React.SFC<LinkProps> = inject('nav')(observer((props: LinkProps) => (
+  <a href='#' {...props}
+    onClick={() => props.nav.goTo(props.route)}>
+    {(props as React.Props<any>).children}
+  </a>
+)))
+
+
+
+interface NavListIconProps {
+    route: string;
+    icon?: any;
+    label?: string;
+}
+
+function _NavListIcon({ icon, label, route }: NavListIconProps) {
+  return (
+    <ListItem button component={props => <Link {...props as any} route={route} />}>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={label} />
+    </ListItem>
+  )
+  }
+
+export const NavListIcon = withTheme(_NavListIcon);
+
+
+
+const LeftNavStylesContainer = styled(Card)({
     maxWidth: '64px',
     minHeight: '100%',
     flex: '1 1 auto',
@@ -15,29 +51,22 @@ const VertFlexContainer = styled(Card)({
     display: 'flex',
     flexDirection: 'column',
     alignmentBaseline: 'central',
-    marginBottom: '5px'
+    marginBottom: '5px',
+    overflow: 'hidden'
 })
 
-
-@inject('navigation')
-@observer
-export class IconNavBar extends React.Component<any, any> {
-    public render() {
-      const nav = this.props as NavigationStore
-        return (     
-            <VertFlexContainer {...this.props}>
-              <NavListIcon route="/" icon={<Dashboard />} />
-              <NavListIcon route="/pages/notebook" icon={<SwapHoriz />} />
-              <NavListIcon route="/pages/charts" icon={<SwapHoriz />} />
-              <NavListIcon route="/pages/datasets" icon={<AccountBalanceWallet />} />
-              <NavListIcon route="/pages/workflowgraph" icon={<SwapHoriz />} />
-              <NavListIcon route="/pages/cloud" icon={<Cloud />} />
-              <NavListIcon route="/pages/settings" icon={<Settings />} />
-              <NavListIcon route="/pages/about" icon={<HelpOutline />} />
-            </VertFlexContainer>
-        );
-    }
-}
+export const IconNavBar = withTheme(observer((props: any) => (  
+            <LeftNavStylesContainer {...props}>
+              <NavListIcon route="dashboard" icon={<Dashboard />}/>
+              <NavListIcon route="notebook" icon={<SwapHoriz />}/>
+              <NavListIcon route="charts" icon={<SwapHoriz />}/>
+              <NavListIcon route="datasets" icon={<AccountBalanceWallet />}/>
+              <NavListIcon route="workflow" icon={<SwapHoriz />}/>
+              <NavListIcon route="cloud" icon={<Cloud />}/>
+              <NavListIcon route="settings" icon={<Settings />}/>
+              <NavListIcon route="about" icon={<HelpOutline />}/>
+            </LeftNavStylesContainer>
+  )));
 
 /*
 const VertFlexContainer = styled.div`
@@ -50,14 +79,14 @@ const VertFlexContainer = styled.div`
 /*
  export const IconNavigation  = observer(({fill, vertical, large, size, props}: BlueprintNavIconProps) => (        
             <StyledButtonGroup large={true} fill={true} vertical={true}>
-                <BlueprintNavIcon icon={IconNames.DASHBOARD} size={35} large={true} route="/"/>
-                <BlueprintNavIcon icon={IconNames.CODE} size={35} large={true} route="/pages/notebook"/>
-                <BlueprintNavIcon icon={IconNames.CHART} size={35} large={true} route="/pages/charts"/>
-                <BlueprintNavIcon icon={IconNames.DATABASE} size={35} large={true}  route="/pages/datasets"/>
-                <BlueprintNavIcon icon={IconNames.GRAPH} size={35} large={true}  route="/pages/dashboard" />
-                <BlueprintNavIcon icon={IconNames.CLOUD} size={35} large={true}  route="/pages/cloud"/>
-                <BlueprintNavIcon icon={IconNames.COG} size={35} large={true}  route="/pages/settings"/>
-                <BlueprintNavIcon icon={IconNames.HELP} size={35} large={true}  route="/pages/about"/>
+                <BlueprintNavIcon>IconNames.DASHBOARD} size={35} large={true} route="/"/>
+                <BlueprintNavIcon>IconNames.CODE} size={35} large={true} route="notebook"/>
+                <BlueprintNavIcon>IconNames.CHART} size={35} large={true} route="charts"/>
+                <BlueprintNavIcon>IconNames.DATABASE} size={35} large={true}  route="datasets"/>
+                <BlueprintNavIcon>IconNames.GRAPH} size={35} large={true}  route="dashboard" />
+                <BlueprintNavIcon>IconNames.CLOUD} size={35} large={true}  route="cloud"/>
+                <BlueprintNavIcon>IconNames.COG} size={35} large={true}  route="settings"/>
+                <BlueprintNavIcon>IconNames.HELP} size={35} large={true}  route="about"/>
             </StyledButtonGroup >
   ))
   */

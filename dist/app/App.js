@@ -31,48 +31,23 @@ Module.prototype.require = function () {
 ___scope___.file("App.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const core_1 = require("@material-ui/core");
 const theming_1 = require("theming");
 const styled_components_1 = require("styled-components");
 const AppLayout_1 = require("./layout/AppLayout");
-const AppRoutes_1 = require("./AppRoutes");
+const Router_1 = require("./Router");
 const stores_1 = require("./stores");
-const react_router_dom_1 = require("react-router-dom");
-const colors_1 = require("@material-ui/core/colors");
-const UiStore_1 = require("./stores/UiStore");
-const theme_1 = require("./theme");
-var themeConfig = { palette: { primary: colors_1.deepPurple } };
-var theme = core_1.createMuiTheme(themeConfig);
-exports.stores = {
-    navigation: new stores_1.NavigationStore(),
-    uiStore: new UiStore_1.UiStore()
-};
-let CogliteAppRoot = class CogliteAppRoot extends React.Component {
-    render() {
-        const { navigation } = this.props;
-        return (React.createElement(theming_1.ThemeProvider, { theme: theme },
-            React.createElement(styled_components_1.ThemeProvider, { theme: theme_1.styledTheme },
-                React.createElement(mobx_react_1.Provider, Object.assign({}, exports.stores),
-                    React.createElement(react_router_dom_1.Router, { history: exports.stores.navigation.history },
-                        React.createElement("div", { style: { height: '100vh', width: '100vw' } },
-                            React.createElement(AppLayout_1.AppLayout, null,
-                                React.createElement(AppRoutes_1.AppRoutes, null))))))));
-    }
-};
-CogliteAppRoot = __decorate([
-    mobx_react_1.observer
-], CogliteAppRoot);
-exports.CogliteAppRoot = CogliteAppRoot;
+exports.CogliteAppRoot = mobx_react_1.observer((props) => {
+    const theme = stores_1.cogliteState.uiStore.muiTheme;
+    return (React.createElement(mobx_react_1.Provider, Object.assign({}, stores_1.cogliteState),
+        React.createElement(theming_1.ThemeProvider, { theme: theme },
+            React.createElement("div", { style: { height: '100vh', width: '100vw' } },
+                React.createElement(AppLayout_1.AppLayout, null,
+                    React.createElement(Router_1.default, null))))));
+});
 // body > font-size: ${theme.fontSizes[1]}px;
 styled_components_1.injectGlobal `
 * {
@@ -150,20 +125,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const react_router_dom_1 = require("react-router-dom");
 const mobx_react_1 = require("mobx-react");
 const mobx_1 = require("mobx");
-const styled_jss_1 = require("styled-jss");
 const design_1 = require("../design");
 const Footer_1 = require("./Footer");
-const WidgetToolbar_1 = require("./WidgetToolbar");
+const WidgetNavBar_1 = require("./WidgetNavBar");
 const IconNavigation_1 = require("./IconNavigation");
 const Workspace_1 = require("./Workspace");
-const MainWorkSpace = styled_jss_1.default('div')({
-    display: "flex",
-    height: "100%",
-    width: "100%",
-});
 let AppLayout = class AppLayout extends React.Component {
     constructor() {
         super(...arguments);
@@ -174,18 +142,16 @@ let AppLayout = class AppLayout extends React.Component {
         this.displayError();
     }
     render() {
-        const { navigation } = this.props;
         const { children } = this.props;
-        return (React.createElement(react_router_dom_1.Router, { history: navigation.history },
-            React.createElement(design_1.FillFlex, null,
-                React.createElement(design_1.Row, null,
-                    React.createElement(design_1.VerticalStretch, null,
-                        React.createElement(WidgetToolbar_1.WidgetToolbar, null),
+        return (React.createElement(design_1.FillFlex, null,
+            React.createElement(design_1.Row, null,
+                React.createElement(design_1.VerticalStretch, null,
+                    React.createElement(WidgetNavBar_1.WidgetNavBar, null),
+                    React.createElement(design_1.Row, null,
+                        React.createElement(IconNavigation_1.IconNavBar, null),
                         React.createElement(design_1.Row, null,
-                            React.createElement(IconNavigation_1.IconNavBar, null),
-                            React.createElement(design_1.Row, null,
-                                React.createElement(Workspace_1.MiddlePanel, null, this.hasError ? (React.createElement(ErrorDisplay, null)) : (children)))),
-                        React.createElement(Footer_1.Footer, null))))));
+                            React.createElement(Workspace_1.MiddlePanel, null, this.hasError ? (React.createElement(ErrorDisplay, null)) : (children)))),
+                    React.createElement(Footer_1.Footer, null)))));
     }
 };
 __decorate([
@@ -195,12 +161,12 @@ __decorate([
     mobx_1.action
 ], AppLayout.prototype, "displayError", void 0);
 AppLayout = __decorate([
-    mobx_react_1.inject('navigation'),
+    mobx_react_1.inject('nav'),
     mobx_react_1.observer
 ], AppLayout);
 exports.AppLayout = AppLayout;
-const ErrorDisplay = props => React.createElement("div", { style: { textAlign: 'center', paddingTop: 25, paddingBottom: 25 } },
-    React.createElement("h1", null, "An unknown error occurred"));
+const ErrorDisplay = mobx_react_1.observer(props => React.createElement("div", { style: { textAlign: 'center', paddingTop: 25, paddingBottom: 25 } },
+    React.createElement("h1", null, "An unknown error occurred")));
 
 });
 ___scope___.file("design/index.js", function(exports, require, module, __filename, __dirname){
@@ -257,6 +223,7 @@ ___scope___.file("layout/Footer.jsx", function(exports, require, module, __filen
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//import Typography from '@material-ui/core/Typography';
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const styled_jss_1 = require("styled-jss");
@@ -273,62 +240,36 @@ const FooterDimensions = styled_jss_1.default(core_1.AppBar)({
     left: 0,
     right: 0
 });
-const polished_1 = require("polished");
-exports.default = (theme) => {
-    return {
-        root: {
-            display: 'block',
-            position: 'relative',
-            backgroundColor: polished_1.rgba(theme.background.primary.level0, theme.alpha),
-            '&$exiting, &$exited': {
-                backgroundColor: 'transparent',
-                '& $separator': {
-                    width: 0,
-                },
-            },
-        },
-        separator: {
-            position: 'absolute',
-            top: 'auto',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'block',
-            width: '100%',
-            borderStyle: 'solid',
-            borderColor: theme.color.primary.dark,
-            borderWidth: '0 0 1px',
-            transition: `all ${theme.animTime}ms ease-in`,
-        },
-        children: {
-            display: 'block',
-        },
-        entering: {},
-        entered: {},
-        exiting: {},
-        exited: {},
-    };
-};
 exports.Footer = mobx_react_1.observer((P) => (React.createElement(FooterDimensions, null,
     React.createElement("span", null, copyrightString),
     React.createElement("div", { style: { flex: 'auto' } }),
     React.createElement("span", null, `Version: ${version || 'pre-release'}`))));
 
 });
-___scope___.file("layout/WidgetToolbar.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("layout/WidgetNavBar.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const core_1 = require("@material-ui/core");
 const mobx_react_1 = require("mobx-react");
 const styled_jss_1 = require("styled-jss");
-const design_1 = require("../design");
+const icons_1 = require("@material-ui/icons");
+const core_1 = require("@material-ui/core");
+const typestyle_1 = require("typestyle");
+const csx_1 = require("csx");
+const LinkStyle = typestyle_1.style({
+    color: 'white',
+    textDecoration: 'none',
+    transitionDuration: '0.3s',
+    padding: [0, 10, 0, 10],
+    $nest: {
+        '&:hover': {
+            color: '#6642C6',
+            transform: csx_1.scale3d(1.1, 1.1, 1.1)
+        }
+    }
+});
+const Link = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', className: LinkStyle, onClick: () => props.nav.goTo(props.route) }, props.children))));
 const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
     display: "flex",
     position: 'relative',
@@ -336,19 +277,6 @@ const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
     width: "100%",
     overflow: "hidden"
 });
-let WidgetToolbar = class WidgetToolbar extends React.Component {
-    render() {
-        return (React.createElement(ToolbarDimensions, null,
-            React.createElement(design_1.Row, null,
-                React.createElement(WidgetIcons, null))));
-    }
-};
-WidgetToolbar = __decorate([
-    mobx_react_1.observer
-], WidgetToolbar);
-exports.WidgetToolbar = WidgetToolbar;
-const icons_1 = require("@material-ui/icons");
-const NavIcon_1 = require("./NavIcon");
 const RowContainer = styled_jss_1.default('div')({
     height: '100%',
     flex: '1',
@@ -357,59 +285,45 @@ const RowContainer = styled_jss_1.default('div')({
     flexDirection: 'row',
     alignmentBaseline: 'central'
 });
-let WidgetIcons = class WidgetIcons extends React.Component {
-    render() {
-        const nav = this.props;
-        return (React.createElement(RowContainer, Object.assign({}, this.props),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/", icon: React.createElement(icons_1.Dashboard, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/notebook", icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/charts", icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/datasets", icon: React.createElement(icons_1.AccountBalanceWallet, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/workflowgraph", icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/cloud", icon: React.createElement(icons_1.Cloud, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/settings", icon: React.createElement(icons_1.Settings, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/about", icon: React.createElement(icons_1.HelpOutline, null) })));
-    }
-};
-WidgetIcons = __decorate([
-    mobx_react_1.inject('navigation'),
-    mobx_react_1.observer
-], WidgetIcons);
-exports.WidgetIcons = WidgetIcons;
-
-});
-___scope___.file("layout/NavIcon.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@material-ui/core");
-const React = require("react");
-const react_router_dom_1 = require("react-router-dom");
-function NavListIcon({ icon, label, route }) {
-    return (React.createElement(core_1.MenuItem, { button: true, component: props => React.createElement(react_router_dom_1.NavLink, Object.assign({}, props, { exact: true, to: route })) },
-        React.createElement(core_1.ListItemIcon, null, icon),
-        React.createElement(core_1.ListItemText, { primary: label })));
-}
-exports.NavListIcon = NavListIcon;
+exports.WidgetNavBar = mobx_react_1.observer((props) => (React.createElement(ToolbarDimensions, Object.assign({}, props),
+    React.createElement(RowContainer, Object.assign({}, this.props),
+        React.createElement(Link, { route: "dashboard" },
+            React.createElement(icons_1.Dashboard, null)),
+        React.createElement(Link, { route: "notebook" },
+            React.createElement(icons_1.SwapHoriz, null)),
+        React.createElement(Link, { route: "charts" },
+            React.createElement(icons_1.SwapHoriz, null)),
+        React.createElement(Link, { route: "datasets" },
+            React.createElement(icons_1.AccountBalanceWallet, null)),
+        React.createElement(Link, { route: "workflow" },
+            React.createElement(icons_1.SwapHoriz, null)),
+        React.createElement(Link, { route: "cloud" },
+            React.createElement(icons_1.Cloud, null)),
+        React.createElement(Link, { route: "settings" },
+            React.createElement(icons_1.Settings, null)),
+        React.createElement(Link, { route: "about" },
+            React.createElement(icons_1.HelpOutline, null))))));
 
 });
 ___scope___.file("layout/IconNavigation.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const styled_jss_1 = require("styled-jss");
 const icons_1 = require("@material-ui/icons");
-const NavIcon_1 = require("./NavIcon");
 const core_1 = require("@material-ui/core");
-const VertFlexContainer = styled_jss_1.default(core_1.Card)({
+const core_2 = require("@material-ui/core");
+const theming_1 = require("theming");
+const Link = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", Object.assign({ href: '#' }, props, { onClick: () => props.nav.goTo(props.route) }), props.children))));
+function _NavListIcon({ icon, label, route }) {
+    return (React.createElement(core_2.ListItem, { button: true, component: props => React.createElement(Link, Object.assign({}, props, { route: route })) },
+        React.createElement(core_2.ListItemIcon, null, icon),
+        React.createElement(core_2.ListItemText, { primary: label })));
+}
+exports.NavListIcon = theming_1.withTheme(_NavListIcon);
+const LeftNavStylesContainer = styled_jss_1.default(core_1.Card)({
     maxWidth: '64px',
     minHeight: '100%',
     flex: '1 1 auto',
@@ -417,27 +331,18 @@ const VertFlexContainer = styled_jss_1.default(core_1.Card)({
     display: 'flex',
     flexDirection: 'column',
     alignmentBaseline: 'central',
-    marginBottom: '5px'
+    marginBottom: '5px',
+    overflow: 'hidden'
 });
-let IconNavBar = class IconNavBar extends React.Component {
-    render() {
-        const nav = this.props;
-        return (React.createElement(VertFlexContainer, Object.assign({}, this.props),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/", icon: React.createElement(icons_1.Dashboard, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/notebook", icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/charts", icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/datasets", icon: React.createElement(icons_1.AccountBalanceWallet, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/workflowgraph", icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/cloud", icon: React.createElement(icons_1.Cloud, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/settings", icon: React.createElement(icons_1.Settings, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: "/pages/about", icon: React.createElement(icons_1.HelpOutline, null) })));
-    }
-};
-IconNavBar = __decorate([
-    mobx_react_1.inject('navigation'),
-    mobx_react_1.observer
-], IconNavBar);
-exports.IconNavBar = IconNavBar;
+exports.IconNavBar = theming_1.withTheme(mobx_react_1.observer((props) => (React.createElement(LeftNavStylesContainer, Object.assign({}, props),
+    React.createElement(exports.NavListIcon, { route: "dashboard", icon: React.createElement(icons_1.Dashboard, null) }),
+    React.createElement(exports.NavListIcon, { route: "notebook", icon: React.createElement(icons_1.SwapHoriz, null) }),
+    React.createElement(exports.NavListIcon, { route: "charts", icon: React.createElement(icons_1.SwapHoriz, null) }),
+    React.createElement(exports.NavListIcon, { route: "datasets", icon: React.createElement(icons_1.AccountBalanceWallet, null) }),
+    React.createElement(exports.NavListIcon, { route: "workflow", icon: React.createElement(icons_1.SwapHoriz, null) }),
+    React.createElement(exports.NavListIcon, { route: "cloud", icon: React.createElement(icons_1.Cloud, null) }),
+    React.createElement(exports.NavListIcon, { route: "settings", icon: React.createElement(icons_1.Settings, null) }),
+    React.createElement(exports.NavListIcon, { route: "about", icon: React.createElement(icons_1.HelpOutline, null) })))));
 /*
 const VertFlexContainer = styled.div`
   display: flex;
@@ -449,14 +354,14 @@ const VertFlexContainer = styled.div`
 /*
  export const IconNavigation  = observer(({fill, vertical, large, size, props}: BlueprintNavIconProps) => (
             <StyledButtonGroup large={true} fill={true} vertical={true}>
-                <BlueprintNavIcon icon={IconNames.DASHBOARD} size={35} large={true} route="/"/>
-                <BlueprintNavIcon icon={IconNames.CODE} size={35} large={true} route="/pages/notebook"/>
-                <BlueprintNavIcon icon={IconNames.CHART} size={35} large={true} route="/pages/charts"/>
-                <BlueprintNavIcon icon={IconNames.DATABASE} size={35} large={true}  route="/pages/datasets"/>
-                <BlueprintNavIcon icon={IconNames.GRAPH} size={35} large={true}  route="/pages/dashboard" />
-                <BlueprintNavIcon icon={IconNames.CLOUD} size={35} large={true}  route="/pages/cloud"/>
-                <BlueprintNavIcon icon={IconNames.COG} size={35} large={true}  route="/pages/settings"/>
-                <BlueprintNavIcon icon={IconNames.HELP} size={35} large={true}  route="/pages/about"/>
+                <BlueprintNavIcon>IconNames.DASHBOARD} size={35} large={true} route="/"/>
+                <BlueprintNavIcon>IconNames.CODE} size={35} large={true} route="notebook"/>
+                <BlueprintNavIcon>IconNames.CHART} size={35} large={true} route="charts"/>
+                <BlueprintNavIcon>IconNames.DATABASE} size={35} large={true}  route="datasets"/>
+                <BlueprintNavIcon>IconNames.GRAPH} size={35} large={true}  route="dashboard" />
+                <BlueprintNavIcon>IconNames.CLOUD} size={35} large={true}  route="cloud"/>
+                <BlueprintNavIcon>IconNames.COG} size={35} large={true}  route="settings"/>
+                <BlueprintNavIcon>IconNames.HELP} size={35} large={true}  route="about"/>
             </StyledButtonGroup >
   ))
   */
@@ -507,6 +412,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@material-ui/core");
 const React = require("react");
 const styled_jss_1 = require("styled-jss");
+const mobx_react_1 = require("mobx-react");
 const design_1 = require("../design");
 const Container = styled_jss_1.default(core_1.Card)({
     position: 'relative',
@@ -515,47 +421,32 @@ const Container = styled_jss_1.default(core_1.Card)({
     width: "100%",
     margin: '5px'
 });
-exports.MiddlePanel = props => React.createElement(Container, null,
-    React.createElement(design_1.FillFlex, null, props.children));
+exports.MiddlePanel = mobx_react_1.observer(props => React.createElement(Container, null,
+    React.createElement(design_1.FillFlex, null, props.children)));
 
 });
-___scope___.file("AppRoutes.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("Router.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const react_router_dom_1 = require("react-router-dom");
+const when_switch_1 = require("when-switch");
+const typestyle_1 = require("typestyle");
+const csstips_1 = require("csstips");
 const mobx_react_1 = require("mobx-react");
 const View_1 = require("./pages/notebook/View");
 const pages_1 = require("./pages");
-let AppRoutes = class AppRoutes extends React.Component {
-    render() {
-        const { navigation } = this.props;
-        return (React.createElement(react_router_dom_1.Router, { history: navigation.history },
-            React.createElement(react_router_dom_1.Switch, null,
-                React.createElement(react_router_dom_1.Route, { path: '/pages/dashboard', component: pages_1.DashboardPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/notebook', component: pages_1.NotebookPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/datasets', component: pages_1.DatasetsPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/charts', component: pages_1.ChartsPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/cloud', component: pages_1.CloudPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/settings', component: pages_1.SettingsPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/workflowgraph', component: View_1.NotebookView }),
-                React.createElement(react_router_dom_1.Route, { path: '/pages/about', component: pages_1.AboutPage }),
-                React.createElement(react_router_dom_1.Route, { path: '*', component: pages_1.DashboardPage }))));
-    }
-};
-AppRoutes = __decorate([
-    mobx_react_1.inject('navigation'),
-    mobx_react_1.observer
-], AppRoutes);
-exports.AppRoutes = AppRoutes;
-//export let AppRoutes = withRouter(_AppRoutes)
+const AppRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, when_switch_1.default(props.nav.route)
+    .is('notebook', () => React.createElement(View_1.NotebookView, null))
+    .is('datasets', () => React.createElement(pages_1.DatasetsPage, null))
+    .is('charts', () => React.createElement(pages_1.ChartsPage, null))
+    .is('dashboard', () => React.createElement(pages_1.DashboardPage, null))
+    .is('cloud', () => React.createElement(pages_1.CloudPage, null))
+    .is('settings', () => React.createElement(pages_1.SettingsPage, null))
+    .is('about', () => React.createElement(pages_1.AboutPage, null))
+    .is('workflow', () => React.createElement(pages_1.WorkflowGraph, null))
+    .else(() => React.createElement(pages_1.DashboardPage, null))))));
+exports.default = AppRouter;
 
 });
 ___scope___.file("pages/notebook/View.jsx", function(exports, require, module, __filename, __dirname){
@@ -563,18 +454,18 @@ ___scope___.file("pages/notebook/View.jsx", function(exports, require, module, _
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const NotebookFrame_1 = require("./NotebookFrame");
-const routes_1 = require("./routes");
+const layout_1 = require("./layout");
 const mobx_react_1 = require("mobx-react");
+const Canvas_1 = require("./Diagram/Canvas");
 exports.NotebookView = mobx_react_1.observer(props => {
     return (React.createElement(React.Fragment, null,
-        React.createElement(NotebookFrame_1.default, null,
-            React.createElement(routes_1.CogliteNotebookRoutes, null))));
+        React.createElement(layout_1.NotebookLayout, null,
+            React.createElement(Canvas_1.default, { num: "2", someProp: 100 }))));
 });
 
 });
-___scope___.file("pages/notebook/NotebookFrame.jsx", function(exports, require, module, __filename, __dirname){
-/* fuse:injection: */ var process = require("process");
+___scope___.file("pages/notebook/layout.jsx", function(exports, require, module, __filename, __dirname){
+
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -584,22 +475,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const Grid_1 = require("@material-ui/core/Grid");
-const classNames = require("classnames");
-const layout_styles_1 = require("./layout.styles");
 const mobx_react_1 = require("mobx-react");
-const react_jss_1 = require("react-jss");
 const mobx_1 = require("mobx");
 const NodeDrawer_1 = require("./Drawers/NodeDrawer");
-const NotebookAppBar_1 = require("./NotebookAppBar");
+const toolbar_1 = require("./toolbar");
 const Input_1 = require("./Nodes/Input");
 const Output_1 = require("./Nodes/Output");
-let AppFrame = class AppFrame extends React.Component {
+const design_1 = require("../../design");
+const Workspace_1 = require("../../layout/Workspace");
+let NotebookLayout = class NotebookLayout extends React.Component {
     constructor() {
         super(...arguments);
-        this.setTarget = event => {
-            this.currentClickTarget = event.target;
-        };
+        this.setTarget = event => { this.currentClickTarget = event.target; };
         this.handleThemeDialogClose = (selectedOption, action) => {
             const uiStore = this.props.uiStore;
             if (action === "ok") {
@@ -608,221 +495,47 @@ let AppFrame = class AppFrame extends React.Component {
             uiStore.themeDialogToggle.openDrawer(false);
         };
     }
-    renderDevTool() {
-        if (process.env.NODE_ENV !== "production") {
-            const DevTools = require("mobx-react-devtools").default;
-            return React.createElement(DevTools, null);
-        }
-        return null;
-    }
     render() {
-        const { classes } = this.props;
+        //const { classes } = this.props
         const { nodeDrawerToggle, nodeFormDrawerToggle, themeDialogToggle } = this.props.uiStore;
         const nodeDrawer = (React.createElement(NodeDrawer_1.NodeDrawer, null,
             React.createElement(Input_1.InputNode, null),
             React.createElement(Output_1.OutputNode, null)));
-        return (React.createElement(Grid_1.default, { container: true, className: classes.root },
-            React.createElement("div", { className: classes.root },
-                React.createElement("div", { className: classes.appFrame },
-                    React.createElement(NotebookAppBar_1.NotebookAppBar, null),
-                    React.createElement("main", { className: classNames(classes.content, {
-                            [classes.contentRightShift]: nodeDrawerToggle.open || nodeFormDrawerToggle.open,
-                        }) }, this.props.children),
-                    nodeDrawer))));
+        return (React.createElement(design_1.FillFlex, null,
+            React.createElement(design_1.Row, null,
+                React.createElement(design_1.VerticalStretch, null,
+                    React.createElement(toolbar_1.NotebookToolbar, null),
+                    React.createElement(design_1.Row, null,
+                        React.createElement(design_1.Row, null,
+                            React.createElement(Workspace_1.MiddlePanel, null, this.props.children)),
+                        nodeDrawer)))));
     }
 };
 __decorate([
     mobx_1.observable
-], AppFrame.prototype, "currentClickTarget", void 0);
+], NotebookLayout.prototype, "currentClickTarget", void 0);
 __decorate([
     mobx_1.action
-], AppFrame.prototype, "setTarget", void 0);
-AppFrame = __decorate([
+], NotebookLayout.prototype, "setTarget", void 0);
+NotebookLayout = __decorate([
     mobx_react_1.inject("uiStore"),
     mobx_react_1.observer
-], AppFrame);
-exports.AppFrame = AppFrame;
-exports.default = react_jss_1.default(layout_styles_1.layoutStyles)(AppFrame);
-
-});
-___scope___.file("pages/notebook/layout.styles.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const appMenuDrawerWidth = 240;
-const nodeDrawerWidth = 180;
-const nodeFormDrawerWidth = 150;
-exports.layoutStyles = theme => ({
-    root: {
-        width: "100%",
-        zIndex: 1,
-        overflow: "hidden",
-    },
-    appFrame: {
-        position: "relative",
-        display: "flex",
-        width: "100%",
-        height: "100%",
-    },
-    appBar: {
-        position: "absolute",
-        /* zIndex: theme.zIndex.drawer + 1, */
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    appBarLeftShift: {
-        marginLeft: appMenuDrawerWidth,
-        width: `calc(100% - ${appMenuDrawerWidth}px)`,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    appBarRightShift: {
-        width: (props) => {
-            let shiftWidth = 0;
-            if (props.isMenuDrawerOpen)
-                shiftWidth += appMenuDrawerWidth;
-            if (props.isNodeDrawerOpen)
-                shiftWidth += nodeDrawerWidth;
-            if (props.isNodeFormDrawerOpen)
-                shiftWidth += nodeFormDrawerWidth;
-            return `calc(100% - ${shiftWidth}px)`;
-        },
-        marginRight: (props) => {
-            let shiftWidth = 0;
-            if (props.isNodeDrawerOpen)
-                shiftWidth += nodeDrawerWidth;
-            if (props.isNodeFormDrawerOpen)
-                shiftWidth += nodeFormDrawerWidth;
-            return shiftWidth;
-        },
-        transition: theme.transitions.create(["margin", "width"], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    menuButton: {
-        marginLeft: 60,
-        marginRight: 36,
-    },
-    hide: {
-        display: "none",
-    },
-    drawerPaper: {
-        position: "relative",
-        height: "100%",
-        width: appMenuDrawerWidth,
-        overflow: "hidden",
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        width: 60,
-        overflow: "hidden",
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    // Make the items inside not wrap when transitioning:
-    drawerInner: { width: appMenuDrawerWidth },
-    drawerHeader: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 8px",
-        boxShadow: theme.shadows["4"],
-        ...theme.mixins.toolbar,
-    },
-    flex: {
-        flex: 1,
-    },
-    headerLogo: {
-        position: "relative",
-        padding: 0,
-        width: "120px",
-        height: "40px",
-    },
-    nodeDrawerPaper: {
-        position: "relative",
-        width: nodeDrawerWidth,
-    },
-    nodeDrawerPaperAnchorRight: {
-        left: "auto",
-        right: 0,
-    },
-    nodeDrawerHeader: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        padding: "0 8px",
-        ...theme.mixins.toolbar,
-    },
-    nodeFormDrawerPaper: {
-        position: "relative",
-        width: nodeFormDrawerWidth,
-    },
-    nodeFormDrawerPaperAnchorRight: {
-        left: "auto",
-        right: props => {
-            if (!props.isNodeDrawerOpen && props.isNodeFormDrawerOpen) {
-                return -nodeDrawerWidth;
-            }
-            else {
-                return 0;
-            }
-        },
-    },
-    nodeFormDrawerHeader: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        padding: "0 8px",
-        ...theme.mixins.toolbar,
-    },
-    content: {
-        width: "100%",
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-        padding: theme.spacing.unit * 2,
-        height: "calc(100% - 56px)",
-        marginTop: 56,
-        [theme.breakpoints.up("sm")]: {
-            height: "calc(100% - 64px)",
-            marginTop: 64,
-        },
-        transition: theme.transitions.create("margin", {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        marginRight: -(nodeDrawerWidth + nodeFormDrawerWidth),
-    },
-    contentRightShift: {
-        transition: theme.transitions.create("marginRight", {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginRight: (props) => {
-            let currentMargin;
-            if (props.isNodeDrawerOpen && props.isNodeFormDrawerOpen)
-                currentMargin = 0;
-            else if (props.isNodeDrawerOpen)
-                currentMargin = -nodeFormDrawerWidth;
-            else if (props.isNodeFormDrawerOpen)
-                currentMargin = -nodeDrawerWidth;
-            return currentMargin;
-        },
-    },
-    dialog: {
-        width: "80%",
-        maxHeight: 435,
-    },
-});
+], NotebookLayout);
+exports.NotebookLayout = NotebookLayout;
+/*
+      <Grid container>
+<div style={{width: "100%",overflow: "hidden"}}>
+  <div style={{position: "relative",display: "flex",width: "100%",height: "100%"}}>
+    <NotebookToolbar />
+    <main style={{width: "100%", flexGrow: 1}}>
+      {this.props.children}
+      {nodeDrawer}
+    </main>
+    
+  </div>
+</div>
+</Grid>
+*/ 
 
 });
 ___scope___.file("pages/notebook/Drawers/NodeDrawer.jsx", function(exports, require, module, __filename, __dirname){
@@ -837,35 +550,37 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const core_1 = require("@material-ui/core");
-const ArrowForward_1 = require("@material-ui/icons/ArrowForward");
 const mobx_react_1 = require("mobx-react");
-const layout_styles_1 = require("../layout.styles");
-const react_jss_1 = require("react-jss");
-let _NodeDrawer = class _NodeDrawer extends React.Component {
+const styled_jss_1 = require("styled-jss");
+const NodeDrawerDimensions = styled_jss_1.default(core_1.Card)({
+    maxWidth: '180px',
+    minHeight: '100%',
+    flex: '1 1 auto',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    alignmentBaseline: 'central',
+    marginBottom: '5px',
+});
+//position: "relative", width: nodeDrawerWidth, left: "auto", right: 0,
+let NodeDrawer = class NodeDrawer extends React.Component {
     render() {
-        const { classes } = this.props;
         const { nodeDrawerToggle } = this.props.uiStore;
-        const nodeDrawer = (React.createElement(core_1.Drawer, { variant: "persistent", anchor: "right", open: nodeDrawerToggle.open ? true : false, classes: {
-                paper: classes.nodeDrawerPaper,
-                paperAnchorRight: classes.nodeDrawerPaperAnchorRight,
-            } },
-            React.createElement("div", { className: classes.nodeDrawerHeader },
-                React.createElement(core_1.IconButton, { onClick: () => nodeDrawerToggle.openDrawer(false) },
-                    React.createElement(ArrowForward_1.default, null))),
-            React.createElement(core_1.Divider, null),
+        const nodeDrawer = (React.createElement(NodeDrawerDimensions, { open: nodeDrawerToggle.open ? true : false },
             React.createElement(core_1.List, null,
                 React.createElement("div", null, this.props.children))));
         return nodeDrawer;
     }
 };
-_NodeDrawer = __decorate([
+NodeDrawer = __decorate([
     mobx_react_1.inject("uiStore"),
     mobx_react_1.observer
-], _NodeDrawer);
-exports.NodeDrawer = react_jss_1.default(layout_styles_1.layoutStyles)(_NodeDrawer);
+], NodeDrawer);
+exports.NodeDrawer = NodeDrawer;
+//export let NodeDrawer = injectSheet(layoutStyles)(_NodeDrawer)
 
 });
-___scope___.file("pages/notebook/NotebookAppBar.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("pages/notebook/toolbar.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -875,7 +590,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const classNames = require("classnames");
 const AccountCircle_1 = require("@material-ui/icons/AccountCircle");
 const BorderRight_1 = require("@material-ui/icons/BorderRight");
 const FormatAlignRight_1 = require("@material-ui/icons/FormatAlignRight");
@@ -884,21 +598,24 @@ const core_1 = require("@material-ui/core");
 const mobx_1 = require("mobx");
 const mobx_react_1 = require("mobx-react");
 const React = require("react");
-const react_jss_1 = require("react-jss");
-const layout_styles_1 = require("./layout.styles");
-let _NotebookAppBar = class _NotebookAppBar extends React.Component {
+const styled_jss_1 = require("styled-jss");
+const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
+    display: "flex",
+    position: 'relative',
+    height: 50,
+    width: "100%",
+    overflow: "hidden"
+});
+let NotebookToolbar = class NotebookToolbar extends React.Component {
     constructor() {
         super(...arguments);
         this.setTarget = event => { this.currentClickTarget = event.target; };
     }
     render() {
-        const { classes } = this.props;
         const { menuDrawerToggle, nodeDrawerToggle, nodeFormDrawerToggle, themeDialogToggle, appBarSettingsMenuToggle, } = this.props.uiStore;
-        const _notebookAppBar = (React.createElement(core_1.AppBar, { className: classNames(classes.appBar, menuDrawerToggle.open && classes.appBarLeftShift, {
-                [classes.appBarRightShift]: nodeDrawerToggle.open || nodeFormDrawerToggle.open,
-            }) },
-            React.createElement(core_1.Toolbar, { disableGutters: !menuDrawerToggle.open },
-                React.createElement(core_1.IconButton, { color: "inherit", "aria-label": "open drawer", onClick: e => { menuDrawerToggle.openDrawer(true); }, className: classNames(classes.menuButton, menuDrawerToggle.open && classes.hide) },
+        const _notebookAppBar = (React.createElement(ToolbarDimensions, null,
+            React.createElement(core_1.Toolbar, null,
+                React.createElement(core_1.IconButton, { color: "inherit", "aria-label": "open drawer", onClick: e => { menuDrawerToggle.openDrawer(true); }, style: { marginLeft: 60, marginRight: 36 } },
                     React.createElement(Menu_1.default, null)),
                 React.createElement("div", null,
                     React.createElement(core_1.IconButton, { "aria-owns": "appbar-account-icon", "aria-haspopup": "true", onClick: e => {
@@ -910,9 +627,7 @@ let _NotebookAppBar = class _NotebookAppBar extends React.Component {
                         React.createElement(BorderRight_1.default, null)),
                     React.createElement(core_1.IconButton, { onClick: () => nodeDrawerToggle.openDrawer(true), color: "inherit" },
                         React.createElement(FormatAlignRight_1.default, null)),
-                    React.createElement(core_1.Menu, { anchorEl: this.currentClickTarget, id: "appbar-account-icon", "aria-label": "appbar-account-icon", anchorOrigin: { vertical: "top", horizontal: "right" }, transformOrigin: { vertical: "top", horizontal: "right" }, open: appBarSettingsMenuToggle.open, onClose: () => {
-                            appBarSettingsMenuToggle.openDrawer(false);
-                        } },
+                    React.createElement(core_1.Menu, { anchorEl: this.currentClickTarget, id: "appbar-account-icon", "aria-label": "appbar-account-icon", anchorOrigin: { vertical: "top", horizontal: "right" }, transformOrigin: { vertical: "top", horizontal: "right" }, open: appBarSettingsMenuToggle.open, onClose: () => { appBarSettingsMenuToggle.openDrawer(false); } },
                         React.createElement(core_1.MenuItem, { onClick: () => { appBarSettingsMenuToggle.openDrawer(false); } }, "Profile"),
                         React.createElement(core_1.MenuItem, { onClick: () => { themeDialogToggle.openDrawer(true), appBarSettingsMenuToggle.openDrawer(false); } }, "Theme Settings"))))));
         return _notebookAppBar;
@@ -920,15 +635,16 @@ let _NotebookAppBar = class _NotebookAppBar extends React.Component {
 };
 __decorate([
     mobx_1.observable
-], _NotebookAppBar.prototype, "currentClickTarget", void 0);
+], NotebookToolbar.prototype, "currentClickTarget", void 0);
 __decorate([
     mobx_1.action
-], _NotebookAppBar.prototype, "setTarget", void 0);
-_NotebookAppBar = __decorate([
+], NotebookToolbar.prototype, "setTarget", void 0);
+NotebookToolbar = __decorate([
     mobx_react_1.inject("uiStore"),
     mobx_react_1.observer
-], _NotebookAppBar);
-exports.NotebookAppBar = react_jss_1.default(layout_styles_1.layoutStyles)(_NotebookAppBar);
+], NotebookToolbar);
+exports.NotebookToolbar = NotebookToolbar;
+//export let NotebookToolbar = injectSheet(layoutStyles)(_NotebookAppBar)
 
 });
 ___scope___.file("pages/notebook/Nodes/Input.jsx", function(exports, require, module, __filename, __dirname){
@@ -947,10 +663,7 @@ const Input_1 = require("@material-ui/icons/Input");
 const mobx_react_1 = require("mobx-react");
 let InputNode = class InputNode extends React.Component {
     render() {
-        const { classes } = this.props;
-        const inputNode = (React.createElement(core_1.ListItem, { classes: classes, component: "div", draggable: true, onDragStart: event => {
-                event.dataTransfer.setData("storm-diagram-node", JSON.stringify({ type: "cogliteIn" }));
-            } },
+        const inputNode = (React.createElement(core_1.ListItem, { component: "div", draggable: true, onDragStart: event => { event.dataTransfer.setData("storm-diagram-node", JSON.stringify({ type: "cogliteIn" })); } },
             React.createElement(core_1.ListItemIcon, null,
                 React.createElement(Input_1.default, null)),
             React.createElement(core_1.ListItemText, { primary: "Input" })));
@@ -979,8 +692,7 @@ const LabelOutline_1 = require("@material-ui/icons/LabelOutline");
 const mobx_react_1 = require("mobx-react");
 let OutputNode = class OutputNode extends React.Component {
     render() {
-        const { classes } = this.props;
-        const outputNode = (React.createElement(core_1.ListItem, { classes: classes, component: "div", draggable: true, onDragStart: event => {
+        const outputNode = (React.createElement(core_1.ListItem, { component: "div", draggable: true, onDragStart: event => {
                 event.dataTransfer.setData("storm-diagram-node", JSON.stringify({ type: "cogliteOut" }));
             } },
             React.createElement(core_1.ListItemIcon, null,
@@ -993,18 +705,6 @@ OutputNode = __decorate([
     mobx_react_1.observer
 ], OutputNode);
 exports.OutputNode = OutputNode;
-
-});
-___scope___.file("pages/notebook/routes.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const react_router_dom_1 = require("react-router-dom");
-const Canvas_1 = require("./Diagram/Canvas");
-exports.CogliteNotebookRoutes = props => (React.createElement(react_router_dom_1.Switch, null,
-    React.createElement(react_router_dom_1.Route, { path: "/", render: () => React.createElement(Canvas_1.default, { num: "2", someProp: 100 }) }),
-    React.createElement(react_router_dom_1.Route, { path: "/second", render: () => React.createElement(Canvas_1.default, { num: "2", someProp: 100 }) })));
 
 });
 ___scope___.file("pages/notebook/Diagram/Canvas.jsx", function(exports, require, module, __filename, __dirname){
@@ -1374,15 +1074,20 @@ __export(require("./charts"));
 ___scope___.file("pages/charts/charts.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-exports.ChartsPage = () => React.createElement(exports.TogglableSidebarLayout, null);
+const mobx_react_1 = require("mobx-react");
+exports.ChartsPage = () => React.createElement(TogglableSidebarLayout, null);
 const react_splitter_layout_1 = require("react-splitter-layout");
 const design_1 = require("../../design");
 const drawer_1 = require("./drawer/drawer");
-const toolbar_1 = require("./drawer/toolbar");
-const react_router_dom_1 = require("react-router-dom");
-class _TogglableSidebarLayout extends React.Component {
+let TogglableSidebarLayout = class TogglableSidebarLayout extends React.Component {
     constructor(props) {
         super(props);
         this.toggleSidebar = this.toggleSidebar.bind(this);
@@ -1401,29 +1106,28 @@ class _TogglableSidebarLayout extends React.Component {
             this.state.sidebarVisible &&
                 React.createElement(design_1.FillParent, null,
                     React.createElement("h2", null, "2nd Pane"),
-                    React.createElement(toolbar_1.ChartDrawerToolbar, null),
-                    React.createElement(drawer_1.WorkDrawerRoutes, null))));
+                    React.createElement(drawer_1.WorkDrawer, null))));
     }
-}
-exports.TogglableSidebarLayout = react_router_dom_1.withRouter(_TogglableSidebarLayout);
+};
+TogglableSidebarLayout = __decorate([
+    mobx_react_1.observer
+], TogglableSidebarLayout);
+exports.TogglableSidebarLayout = TogglableSidebarLayout;
 
 });
 ___scope___.file("pages/charts/drawer/drawer.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mobx_react_1 = require("mobx-react");
 const React = require("react");
-const react_router_dom_1 = require("react-router-dom");
+const mobx_react_1 = require("mobx-react");
 const styled_jss_1 = require("styled-jss");
+const icons_1 = require("@material-ui/icons");
+//import {NavStore} from '../stores'
+//import { Link } from './NavIcon';
 const core_1 = require("@material-ui/core");
-const Menu_1 = require("@material-ui/icons/Menu");
+const design_1 = require("../../../design");
+const when_switch_1 = require("when-switch");
 const routes_1 = require("./routes");
 exports.Drawer = styled_jss_1.default('div')({
     width: props => { props.width || '360px'; },
@@ -1432,33 +1136,25 @@ exports.Drawer = styled_jss_1.default('div')({
     border: '3px solid black',
     right: 0
 });
-exports.IconNavBar = mobx_react_1.observer(props => (React.createElement(core_1.Toolbar, null,
-    React.createElement(core_1.Button, null, React.createElement(Menu_1.default, null)),
-    React.createElement(core_1.Button, null, React.createElement(Menu_1.default, null)),
-    React.createElement(core_1.Button, null, React.createElement(Menu_1.default, null)))));
-const _WorkDrawer = props => (React.createElement(exports.Drawer, { width: props.width },
-    React.createElement(exports.IconNavBar, null),
-    React.createElement(WorkDrawerRoutes, null)));
-exports.WorkDrawer = mobx_react_1.observer(_WorkDrawer);
-let WorkDrawerRoutes = class WorkDrawerRoutes extends React.Component {
-    render() {
-        const { navigation } = this.props;
-        return (React.createElement(react_router_dom_1.Router, { history: navigation.history },
-            React.createElement(react_router_dom_1.Switch, null,
-                React.createElement(react_router_dom_1.Route, { path: '/nbdrawer/dashboard', render: () => routes_1.DashboardPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/nbdrawer/notebook', component: routes_1.NotebookPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/nbdrawer/datasets', component: routes_1.DatasetsPage }),
-                React.createElement(react_router_dom_1.Route, { path: '/nbdrawer/charts', component: routes_1.ChartsPage }))));
-    }
-};
-WorkDrawerRoutes = __decorate([
-    mobx_react_1.inject('navigation'),
-    mobx_react_1.observer
-], WorkDrawerRoutes);
-exports.WorkDrawerRoutes = WorkDrawerRoutes;
-//const LeftNav = withStyles(styles, {withTheme: true})(_LeftNav);
-//export {LeftNav as default, LeftNav}
-// add "label" if you want to use text ie: <NavIcon label="Portfolio" route="/" icon={<Dashboard />} />
+const WidgetIconBar = mobx_react_1.observer(() => (React.createElement(core_1.Toolbar, Object.assign({}, this.props),
+    React.createElement(ChartDrawerLink, { route: 'chartdrawer:charts' },
+        React.createElement(icons_1.SwapHoriz, null)),
+    React.createElement(ChartDrawerLink, { route: 'chartdrawer:dashboard' },
+        React.createElement(icons_1.Dashboard, null)),
+    React.createElement(ChartDrawerLink, { route: 'chartdrawer:datasets' },
+        React.createElement(icons_1.AccountBalanceWallet, null)),
+    React.createElement(ChartDrawerLink, { route: 'chartdrawer:notebook' },
+        React.createElement(icons_1.SwapHoriz, null)))));
+const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', onClick: () => props.nav.goToChartDrawer(props.route) }, props.children))));
+const ChartDrawerRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(design_1.Row, null, when_switch_1.default(props.nav.chartDrawerRoute)
+    .is('chartdrawer:charts', () => React.createElement(routes_1.ChartsPage, null))
+    .is('chartdrawer:datasets', () => React.createElement(routes_1.DatasetsPage, null))
+    .is('chartdrawer:notebook', () => React.createElement(routes_1.NotebookPage, null))
+    .is('chartdrawer:dashboard', () => React.createElement(routes_1.DashboardPage, null))
+    .else(() => React.createElement(routes_1.DashboardPage, null))))));
+exports.WorkDrawer = mobx_react_1.observer(props => (React.createElement(exports.Drawer, { width: props.width },
+    React.createElement(WidgetIconBar, null),
+    React.createElement(ChartDrawerRouter, null))));
 
 });
 ___scope___.file("pages/charts/drawer/routes/index.js", function(exports, require, module, __filename, __dirname){
@@ -1521,64 +1217,6 @@ exports.CloudPage = mobx_react_1.observer(props => React.createElement("div", nu
     React.createElement("div", null, "Cloud")));
 
 });
-___scope___.file("pages/charts/drawer/toolbar.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const core_1 = require("@material-ui/core");
-const icons_1 = require("@material-ui/icons");
-const NavIcon_1 = require("../../../layout/NavIcon");
-const mobx_react_1 = require("mobx-react");
-const styled_jss_1 = require("styled-jss");
-const design_1 = require("../../../design");
-const ToolbarDimensions = styled_jss_1.default(core_1.Toolbar)({
-    display: "flex",
-    position: 'relative',
-    height: 50,
-    width: "100%",
-    overflow: "hidden"
-});
-let WidgetToolbar = class WidgetToolbar extends React.Component {
-    render() {
-        return (React.createElement(ToolbarDimensions, null,
-            React.createElement(design_1.Row, null,
-                React.createElement(ChartDrawerToolbar, null))));
-    }
-};
-WidgetToolbar = __decorate([
-    mobx_react_1.observer
-], WidgetToolbar);
-exports.WidgetToolbar = WidgetToolbar;
-const RowContainer = styled_jss_1.default('div')({
-    height: '100%',
-    flex: '1',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row',
-    alignmentBaseline: 'central'
-});
-let ChartDrawerToolbar = class ChartDrawerToolbar extends React.Component {
-    render() {
-        return (React.createElement(RowContainer, Object.assign({}, this.props),
-            React.createElement(NavIcon_1.NavListIcon, { route: '/nbdrawer/dashboard', icon: React.createElement(icons_1.Dashboard, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: '/nbdrawer/notebook', icon: React.createElement(icons_1.Cloud, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: '/nbdrawer/charts', icon: React.createElement(icons_1.SwapHoriz, null) }),
-            React.createElement(NavIcon_1.NavListIcon, { route: '/nbdrawer/datasets', icon: React.createElement(icons_1.AccountBalanceWallet, null) })));
-    }
-};
-ChartDrawerToolbar = __decorate([
-    mobx_react_1.observer
-], ChartDrawerToolbar);
-exports.ChartDrawerToolbar = ChartDrawerToolbar;
-
-});
 ___scope___.file("pages/cloud.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
@@ -1637,14 +1275,19 @@ exports.WorkflowGraph = mobx_react_1.observer(props => React.createElement("div"
 ___scope___.file("stores/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./NavigationStore"));
+const NavStore_1 = require("./NavStore");
+const UiStore_1 = require("./UiStore");
+class CogliteState {
+    constructor() {
+        this.uiStore = new UiStore_1.UiStore();
+        this.nav = new NavStore_1.NavStore();
+    }
+}
+exports.cogliteState = new CogliteState();
 
 });
-___scope___.file("stores/NavigationStore.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("stores/NavStore.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1655,60 +1298,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mobx_1 = require("mobx");
-const history_1 = require("history");
-class NavigationStore {
+class NavStore {
     constructor() {
-        this.location = window.location;
-        this.history = history_1.createHashHistory();
-        this.history.listen((location) => { console.log(location); });
+        this.goTo = (inputRoute) => this.route = inputRoute;
+        this.goToChartDrawer = (inputRoute) => this.chartDrawerRoute = inputRoute;
+        this.route = 'home';
     }
-    isActive(path) {
-        return location.pathname === path;
-    }
-    goTo(event, { name }) {
-        this.history.push(String(name));
-    }
-    push(location) {
-        this.history.push(location);
-    }
-    replace(location) {
-        this.history.replace(location);
-    }
-    go(n) {
-        this.history.go(n);
-    }
-    goBack() {
-        this.history.goBack();
-    }
-    goForward() {
-        this.history.goForward();
-    }
+    ;
 }
 __decorate([
     mobx_1.observable
-], NavigationStore.prototype, "location", void 0);
+], NavStore.prototype, "route", void 0);
+__decorate([
+    mobx_1.observable
+], NavStore.prototype, "chartDrawerRoute", void 0);
 __decorate([
     mobx_1.action.bound
-], NavigationStore.prototype, "isActive", null);
+], NavStore.prototype, "goTo", void 0);
 __decorate([
     mobx_1.action.bound
-], NavigationStore.prototype, "goTo", null);
-__decorate([
-    mobx_1.action
-], NavigationStore.prototype, "push", null);
-__decorate([
-    mobx_1.action
-], NavigationStore.prototype, "replace", null);
-__decorate([
-    mobx_1.action
-], NavigationStore.prototype, "go", null);
-__decorate([
-    mobx_1.action
-], NavigationStore.prototype, "goBack", null);
-__decorate([
-    mobx_1.action
-], NavigationStore.prototype, "goForward", null);
-exports.NavigationStore = NavigationStore;
+], NavStore.prototype, "goToChartDrawer", void 0);
+exports.NavStore = NavStore;
 /*
 import {observable, action} from 'mobx';
 import Navigation from './Navigation';
@@ -1774,9 +1384,7 @@ class TabValue {
     constructor() {
         this.tabValue = 0;
     }
-    setTab(event, tabValue) {
-        this.tabValue = tabValue;
-    }
+    setTab(event, tabValue) { this.tabValue = tabValue; }
 }
 __decorate([
     mobx_1.observable
@@ -1809,9 +1417,6 @@ class UiStore {
                 },
             },
         });
-    }
-    get muiThemeVariables() {
-        return palette_1.ThemeVariables[this.themeId];
     }
     updateTheme(themeId) {
         this.themeId = themeId;
@@ -1854,9 +1459,6 @@ __decorate([
     mobx_1.computed
 ], UiStore.prototype, "muiTheme", null);
 __decorate([
-    mobx_1.computed
-], UiStore.prototype, "muiThemeVariables", null);
-__decorate([
     mobx_1.action
 ], UiStore.prototype, "updateTheme", null);
 __decorate([
@@ -1894,112 +1496,6 @@ exports.palette = {
         secondary: "#607D8B",
         background: "#FFFFFF",
     },
-};
-exports.ThemeVariables = {
-    myriad: {
-        "--mdc-theme-primary": "#F44336",
-        "--mdc-theme-secondary": "#FFD740",
-        "--mdc-theme-background": " #FFFFFF",
-        "--mdc-theme-text-primary-on-primary": " white",
-        "--mdc-theme-text-secondary-on-primary": "rgba(255, 255, 255, 0.7)",
-        "--mdc-theme-text-hint-on-primary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-disabled-on-primary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-icon-on-primary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-primary-on-secondary": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-secondary": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-secondary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-secondary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-secondary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-background": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-background": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-light": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-light": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-dark": "white",
-        "--mdc-theme-text-secondary-on-dark": "rgba(255, 255, 255, 0.7)",
-        "--mdc-theme-text-hint-on-dark": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-disabled-on-dark": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-icon-on-dark": "rgba(255, 255, 255, 0.5)",
-    },
-    ranger: {
-        "--mdc-theme-primary": "#2196F3",
-        "--mdc-theme-secondary": "#FFE57F",
-        "--mdc-theme-background": "#FFFFFF",
-        "--mdc-theme-text-primary-on-primary": "white",
-        "--mdc-theme-text-secondary-on-primary": "rgba(255, 255, 255, 0.7)",
-        "--mdc-theme-text-hint-on-primary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-disabled-on-primary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-icon-on-primary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-primary-on-secondary": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-secondary": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-secondary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-secondary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-secondary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-background": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-background": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-light": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-light": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-dark": "white",
-        "--mdc-theme-text-secondary-on-dark": "rgba(255, 255, 255, 0.7)",
-        "--mdc-theme-text-hint-on-dark": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-disabled-on-dark": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-icon-on-dark": "rgba(255, 255, 255, 0.5)",
-    },
-    velocity: {
-        "--mdc-theme-primary": "#FFA000",
-        "--mdc-theme-secondary": "#607D8B",
-        "--mdc-theme-background": "#FFFFFF",
-        "--mdc-theme-text-primary-on-primary": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-primary": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-primary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-primary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-primary": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-secondary": "white",
-        "--mdc-theme-text-secondary-on-secondary": "rgba(255, 255, 255, 0.7)",
-        "--mdc-theme-text-hint-on-secondary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-disabled-on-secondary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-icon-on-secondary": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-primary-on-background": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-background": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-background": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-light": "rgba(0, 0, 0, 0.87)",
-        "--mdc-theme-text-secondary-on-light": "rgba(0, 0, 0, 0.54)",
-        "--mdc-theme-text-hint-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-disabled-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-icon-on-light": "rgba(0, 0, 0, 0.38)",
-        "--mdc-theme-text-primary-on-dark": "white",
-        "--mdc-theme-text-secondary-on-dark": "rgba(255, 255, 255, 0.7)",
-        "--mdc-theme-text-hint-on-dark": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-disabled-on-dark": "rgba(255, 255, 255, 0.5)",
-        "--mdc-theme-text-icon-on-dark": "rgba(255, 255, 255, 0.5)",
-    }
-};
-
-});
-___scope___.file("theme.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.styledTheme = {
-    main: '#26282A',
-    primary: '#E73C2F',
-    secondary: '#EBEDF0',
-    text: 'white',
-    fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72, 96],
-    space: [0, 4, 8, 16, 32, 64, 128, 256, 512]
 };
 
 });

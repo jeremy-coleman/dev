@@ -37,7 +37,7 @@ const getColor = color => {
   }
 };
 
-const Box = glamorous(View)((props => ({
+const Box = glamorous<any>(View)((props => ({
   flexDirection: props.layout === 'column' ? 'column' : 'row',
   padding: props.outer ? 4 : 0,
   height: props.fixed ? 20 : 'auto',

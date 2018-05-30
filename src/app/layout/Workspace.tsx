@@ -10,10 +10,11 @@ const Container = styled(Card)({
   flex: '1 1 auto',
   width: "100%",
   margin: '5px'
-})
+});
 
 
-export let MiddlePanel: React.SFC<any> = props =>
+export let MiddlePanel: React.SFC<any> = observer(props =>
     <Container>
      <FillFlex>{props.children}</FillFlex>
     </Container>
+)

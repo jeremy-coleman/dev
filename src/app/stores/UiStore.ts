@@ -1,4 +1,4 @@
-import { palette, ThemeVariables } from "../styles/palette"
+import { palette } from "../styles/palette"
 import { createMuiTheme } from "@material-ui/core/styles"
 import { observable, computed, action } from "mobx"
 
@@ -19,10 +19,7 @@ export class ToggleOpenValue {
 
 export class TabValue {
   @observable tabValue = 0
-  @action
-  setTab(event, tabValue) {
-    this.tabValue = tabValue
-  }
+  @action setTab(event, tabValue) {this.tabValue = tabValue}
 }
 
 class UiStore {
@@ -56,10 +53,7 @@ class UiStore {
     })
   }
 
-  @computed
-  get muiThemeVariables() {
-    return ThemeVariables[this.themeId]
-  }
+
 
   @action
   updateTheme(themeId) {

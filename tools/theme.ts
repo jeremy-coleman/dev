@@ -1,4 +1,6 @@
 
+
+
 export const styledTheme = {
   main: '#26282A',
   primary: '#E73C2F',

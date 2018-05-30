@@ -1,4 +1,4 @@
-import Typography from '@material-ui/core/Typography';
+//import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { Row } from '../design';
 import { observer } from 'mobx-react';
@@ -25,46 +25,6 @@ const FooterDimensions = styled(AppBar)({
   left: 0,
   right: 0
 })
-
-import { rgba } from 'polished';
-
-export default (theme) => {
-  return {
-    root: {
-      display: 'block',
-      position: 'relative',
-      backgroundColor: rgba(theme.background.primary.level0, theme.alpha),
-
-      '&$exiting, &$exited': {
-        backgroundColor: 'transparent',
-
-        '& $separator': {
-          width: 0,
-        },
-      },
-    },
-    separator: {
-      position: 'absolute',
-      top: 'auto',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      display: 'block',
-      width: '100%',
-      borderStyle: 'solid',
-      borderColor: theme.color.primary.dark,
-      borderWidth: '0 0 1px',
-      transition: `all ${theme.animTime}ms ease-in`,
-    },
-    children: {
-      display: 'block',
-    },
-
-    entering: {},
-    entered: {},
-    exiting: {},
-    exited: {},
-  };
-};
 
 export const Footer = observer((P: FooterProps) => (
   <FooterDimensions >

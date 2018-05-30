@@ -4,11 +4,6 @@ const nodeFormDrawerWidth = 150
 
 
 export const layoutStyles = theme => ({
-  root: {
-    width: "100%",
-    zIndex: 1,
-    overflow: "hidden",
-  },
   appFrame: {
     position: "relative",
     display: "flex",

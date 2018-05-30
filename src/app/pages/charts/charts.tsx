@@ -5,16 +5,15 @@ export let ChartsPage = () => <TogglableSidebarLayout/>
 
 import SplitterLayout from 'react-splitter-layout';
 import { FillParent, FillFlex } from '../../design';
-import { WorkDrawerRoutes } from './drawer/drawer';
-import { ChartDrawerToolbar } from './drawer/toolbar';
-import { withRouter, HashRouter } from 'react-router-dom';
+import { WorkDrawer } from './drawer/drawer';
 
 
 interface SBState {
     sidebarVisible: boolean
 }
 
-class _TogglableSidebarLayout extends React.Component<any, SBState> {
+@observer
+export class TogglableSidebarLayout extends React.Component<any, SBState> {
   
   constructor(props) {
     super(props);
@@ -39,8 +38,7 @@ class _TogglableSidebarLayout extends React.Component<any, SBState> {
         {this.state.sidebarVisible &&
           <FillParent>
             <h2>2nd Pane</h2>
-            <ChartDrawerToolbar/>
-            <WorkDrawerRoutes/>
+            <WorkDrawer/>
           </FillParent>
         }
       </SplitterLayout>
@@ -48,4 +46,3 @@ class _TogglableSidebarLayout extends React.Component<any, SBState> {
   }
 }
 
-export let TogglableSidebarLayout = withRouter(_TogglableSidebarLayout)

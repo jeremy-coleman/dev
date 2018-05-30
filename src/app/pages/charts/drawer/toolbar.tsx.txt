@@ -52,3 +52,4 @@ export class ChartDrawerToolbar extends React.Component<any, any> {
         );
     }
 }
+

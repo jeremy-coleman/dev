@@ -1,47 +1,48 @@
 import * as React from "react"
-import {IconButton,Divider ,List ,Drawer  }from "@material-ui/core"
+import {IconButton,Divider ,List ,Drawer, Card  }from "@material-ui/core"
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 import { observer, inject } from "mobx-react"
 import { UiStore } from "../../../stores/UiStore"
-import { layoutStyles } from "../layout.styles"
 
 import injectSheet from 'react-jss'
+import styled from 'styled-jss'
+
+
+const NodeDrawerDimensions = styled(Card)({
+    maxWidth: '180px',
+    minHeight: '100%',
+    flex: '1 1 auto',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    alignmentBaseline: 'central',
+    marginBottom: '5px',
+})
 
 interface NodeDrawerProps {
-  uiStore: UiStore
+  uiStore?: UiStore
   classes?: any
 }
 
 
+//position: "relative", width: nodeDrawerWidth, left: "auto", right: 0,
+
 @inject("uiStore")
 @observer
-class _NodeDrawer extends React.Component<NodeDrawerProps, any> {
+export class NodeDrawer extends React.Component<NodeDrawerProps, any> {
   render() {
-    const { classes } = this.props
     const { nodeDrawerToggle } = this.props.uiStore
     const nodeDrawer = (
-      <Drawer
-        variant="persistent"
-        anchor="right"
+      <NodeDrawerDimensions
         open={nodeDrawerToggle.open ? true : false}
-        classes={{
-          paper: classes.nodeDrawerPaper,
-          paperAnchorRight: classes.nodeDrawerPaperAnchorRight,
-        }}
       >
-        <div className={classes.nodeDrawerHeader}>
-          <IconButton onClick={() => nodeDrawerToggle.openDrawer(false)}>
-            <ArrowForwardIcon />
-          </IconButton>
-        </div>
-        <Divider />
         <List>
           <div>{this.props.children}</div>
         </List>
-      </Drawer>
+      </NodeDrawerDimensions>
     )
     return nodeDrawer
   }
 }
 
-export let NodeDrawer = injectSheet(layoutStyles)(_NodeDrawer)
+//export let NodeDrawer = injectSheet(layoutStyles)(_NodeDrawer)
