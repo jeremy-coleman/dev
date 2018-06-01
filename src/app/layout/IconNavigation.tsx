@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react';
 import styled from 'styled-jss'
-import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz } from '@material-ui/icons';
+import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz, DeviceHub, InsertChart, GridOn } from '@material-ui/icons';
 import { Card } from '@material-ui/core';
 import { ListItem, ListItemIcon, ListItemText, MenuItem } from '@material-ui/core';
 import {NavStore} from '../stores/NavStore'
@@ -58,10 +58,9 @@ const LeftNavStylesContainer = styled(Card)({
 export const IconNavBar = withTheme(observer((props: any) => (  
             <LeftNavStylesContainer {...props}>
               <NavListIcon route="dashboard" icon={<Dashboard />}/>
-              <NavListIcon route="notebook" icon={<SwapHoriz />}/>
-              <NavListIcon route="charts" icon={<SwapHoriz />}/>
-              <NavListIcon route="datasets" icon={<AccountBalanceWallet />}/>
-              <NavListIcon route="workflow" icon={<SwapHoriz />}/>
+              <NavListIcon route="notebook" icon={<DeviceHub />}/>
+              <NavListIcon route="charts" icon={<InsertChart />}/>
+              <NavListIcon route="datasets" icon={<GridOn />}/>
               <NavListIcon route="cloud" icon={<Cloud />}/>
               <NavListIcon route="settings" icon={<Settings />}/>
               <NavListIcon route="about" icon={<HelpOutline />}/>

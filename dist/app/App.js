@@ -145,13 +145,15 @@ let AppLayout = class AppLayout extends React.Component {
         const { children } = this.props;
         return (React.createElement(design_1.FillFlex, null,
             React.createElement(design_1.Row, null,
+                React.createElement("div", { style: { width: '1px' } }, "place holders, these can expand on both sides of the app without fucking anything up"),
                 React.createElement(design_1.VerticalStretch, null,
                     React.createElement(WidgetNavBar_1.WidgetNavBar, null),
                     React.createElement(design_1.Row, null,
                         React.createElement(IconNavigation_1.IconNavBar, null),
                         React.createElement(design_1.Row, null,
                             React.createElement(Workspace_1.MiddlePanel, null, this.hasError ? (React.createElement(ErrorDisplay, null)) : (children)))),
-                    React.createElement(Footer_1.Footer, null)))));
+                    React.createElement(Footer_1.Footer, null)),
+                React.createElement("div", { style: { width: '1px' } }, "same as above. set width to 100px or something to see"))));
     }
 };
 __decorate([
@@ -165,7 +167,7 @@ AppLayout = __decorate([
     mobx_react_1.observer
 ], AppLayout);
 exports.AppLayout = AppLayout;
-const ErrorDisplay = mobx_react_1.observer(props => React.createElement("div", { style: { textAlign: 'center', paddingTop: 25, paddingBottom: 25 } },
+const ErrorDisplay = mobx_react_1.observer((props) => React.createElement("div", { style: { textAlign: 'center', paddingTop: 25, paddingBottom: 25 } },
     React.createElement("h1", null, "An unknown error occurred")));
 
 });
@@ -290,13 +292,11 @@ exports.WidgetNavBar = mobx_react_1.observer((props) => (React.createElement(Too
         React.createElement(Link, { route: "dashboard" },
             React.createElement(icons_1.Dashboard, null)),
         React.createElement(Link, { route: "notebook" },
-            React.createElement(icons_1.SwapHoriz, null)),
+            React.createElement(icons_1.DeviceHub, null)),
         React.createElement(Link, { route: "charts" },
-            React.createElement(icons_1.SwapHoriz, null)),
+            React.createElement(icons_1.InsertChart, null)),
         React.createElement(Link, { route: "datasets" },
-            React.createElement(icons_1.AccountBalanceWallet, null)),
-        React.createElement(Link, { route: "workflow" },
-            React.createElement(icons_1.SwapHoriz, null)),
+            React.createElement(icons_1.GridOn, null)),
         React.createElement(Link, { route: "cloud" },
             React.createElement(icons_1.Cloud, null)),
         React.createElement(Link, { route: "settings" },
@@ -336,10 +336,9 @@ const LeftNavStylesContainer = styled_jss_1.default(core_1.Card)({
 });
 exports.IconNavBar = theming_1.withTheme(mobx_react_1.observer((props) => (React.createElement(LeftNavStylesContainer, Object.assign({}, props),
     React.createElement(exports.NavListIcon, { route: "dashboard", icon: React.createElement(icons_1.Dashboard, null) }),
-    React.createElement(exports.NavListIcon, { route: "notebook", icon: React.createElement(icons_1.SwapHoriz, null) }),
-    React.createElement(exports.NavListIcon, { route: "charts", icon: React.createElement(icons_1.SwapHoriz, null) }),
-    React.createElement(exports.NavListIcon, { route: "datasets", icon: React.createElement(icons_1.AccountBalanceWallet, null) }),
-    React.createElement(exports.NavListIcon, { route: "workflow", icon: React.createElement(icons_1.SwapHoriz, null) }),
+    React.createElement(exports.NavListIcon, { route: "notebook", icon: React.createElement(icons_1.DeviceHub, null) }),
+    React.createElement(exports.NavListIcon, { route: "charts", icon: React.createElement(icons_1.InsertChart, null) }),
+    React.createElement(exports.NavListIcon, { route: "datasets", icon: React.createElement(icons_1.GridOn, null) }),
     React.createElement(exports.NavListIcon, { route: "cloud", icon: React.createElement(icons_1.Cloud, null) }),
     React.createElement(exports.NavListIcon, { route: "settings", icon: React.createElement(icons_1.Settings, null) }),
     React.createElement(exports.NavListIcon, { route: "about", icon: React.createElement(icons_1.HelpOutline, null) })))));
@@ -421,8 +420,44 @@ const Container = styled_jss_1.default(core_1.Card)({
     width: "100%",
     margin: '5px'
 });
-exports.MiddlePanel = mobx_react_1.observer(props => React.createElement(Container, null,
+exports.MiddlePanel = mobx_react_1.observer((props) => React.createElement(Container, null,
     React.createElement(design_1.FillFlex, null, props.children)));
+//this works
+/*
+@observer
+export class MiddlePanel11 extends React.Component {
+    @observable showSubmenu: boolean = false
+    @action.bound toggleSidebar1 () {return this.showSubmenu = !this.showSubmenu}
+
+  render(){
+    const menuStyles = {width: this.showSubmenu ? 260 : 0};
+    return(
+
+    <Container>
+      <div style={menuStyles}>test</div>
+     <FillFlex>{this.props.children}</FillFlex>
+    </Container>
+)
+}
+}
+*/
+/*
+          <button onClick={this.toggleSidebar}>
+            {this.sidebarVisible && 'Hide Sidebar'}
+            {!this.sidebarVisible && 'Show Sidebar'}
+          </button>
+          */
+/*
+  render() {
+    const { showSubmenu } = this.state;
+    const menuStyles = {width: showSubmenu ? 260 : 0};
+    const contextStyle = {marginLeft: showSubmenu ? 324 : 80};
+
+    return (
+      <div>
+        <TopLevelNav showSubmenu={showSubmenu} onToggleMenu={this.handleToggleMenu} />
+        <DocSidebar style={menuStyles} />
+        */ 
 
 });
 ___scope___.file("Router.jsx", function(exports, require, module, __filename, __dirname){
@@ -434,22 +469,21 @@ const when_switch_1 = require("when-switch");
 const typestyle_1 = require("typestyle");
 const csstips_1 = require("csstips");
 const mobx_react_1 = require("mobx-react");
-const View_1 = require("./pages/notebook/View");
-const pages_1 = require("./pages");
+const View_1 = require("./modules/notebook/View");
+const modules_1 = require("./modules");
 const AppRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, when_switch_1.default(props.nav.route)
     .is('notebook', () => React.createElement(View_1.NotebookView, null))
-    .is('datasets', () => React.createElement(pages_1.DatasetsPage, null))
-    .is('charts', () => React.createElement(pages_1.ChartsPage, null))
-    .is('dashboard', () => React.createElement(pages_1.DashboardPage, null))
-    .is('cloud', () => React.createElement(pages_1.CloudPage, null))
-    .is('settings', () => React.createElement(pages_1.SettingsPage, null))
-    .is('about', () => React.createElement(pages_1.AboutPage, null))
-    .is('workflow', () => React.createElement(pages_1.WorkflowGraph, null))
-    .else(() => React.createElement(pages_1.DashboardPage, null))))));
+    .is('datasets', () => React.createElement(modules_1.DatasetsPage, null))
+    .is('charts', () => React.createElement(modules_1.ChartsPage, null))
+    .is('dashboard', () => React.createElement(modules_1.DashboardPage, null))
+    .is('cloud', () => React.createElement(modules_1.CloudPage, null))
+    .is('settings', () => React.createElement(modules_1.SettingsPage, null))
+    .is('about', () => React.createElement(modules_1.AboutPage, null))
+    .else(() => React.createElement(modules_1.DashboardPage, null))))));
 exports.default = AppRouter;
 
 });
-___scope___.file("pages/notebook/View.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/View.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -464,7 +498,7 @@ exports.NotebookView = mobx_react_1.observer(props => {
 });
 
 });
-___scope___.file("pages/notebook/layout.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/layout.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -482,7 +516,18 @@ const toolbar_1 = require("./toolbar");
 const Input_1 = require("./Nodes/Input");
 const Output_1 = require("./Nodes/Output");
 const design_1 = require("../../design");
-const Workspace_1 = require("../../layout/Workspace");
+//import { WidgetToolbar } from "../charts/drawer/toolbar";
+const core_1 = require("@material-ui/core");
+const styled_jss_1 = require("styled-jss");
+const Container = styled_jss_1.default(core_1.Card)({
+    position: 'relative',
+    display: "flex",
+    flex: '1 1 auto',
+    width: "100%",
+    margin: '5px'
+});
+let MiddlePanel = mobx_react_1.observer(props => React.createElement(Container, null,
+    React.createElement(design_1.FillFlex, null, props.children)));
 let NotebookLayout = class NotebookLayout extends React.Component {
     constructor() {
         super(...arguments);
@@ -507,7 +552,7 @@ let NotebookLayout = class NotebookLayout extends React.Component {
                     React.createElement(toolbar_1.NotebookToolbar, null),
                     React.createElement(design_1.Row, null,
                         React.createElement(design_1.Row, null,
-                            React.createElement(Workspace_1.MiddlePanel, null, this.props.children)),
+                            React.createElement(MiddlePanel, null, this.props.children)),
                         nodeDrawer)))));
     }
 };
@@ -538,7 +583,7 @@ exports.NotebookLayout = NotebookLayout;
 */ 
 
 });
-___scope___.file("pages/notebook/Drawers/NodeDrawer.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Drawers/NodeDrawer.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -580,7 +625,7 @@ exports.NodeDrawer = NodeDrawer;
 //export let NodeDrawer = injectSheet(layoutStyles)(_NodeDrawer)
 
 });
-___scope___.file("pages/notebook/toolbar.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/toolbar.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -647,7 +692,7 @@ exports.NotebookToolbar = NotebookToolbar;
 //export let NotebookToolbar = injectSheet(layoutStyles)(_NotebookAppBar)
 
 });
-___scope___.file("pages/notebook/Nodes/Input.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Nodes/Input.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -676,7 +721,7 @@ InputNode = __decorate([
 exports.InputNode = InputNode;
 
 });
-___scope___.file("pages/notebook/Nodes/Output.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Nodes/Output.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -707,7 +752,7 @@ OutputNode = __decorate([
 exports.OutputNode = OutputNode;
 
 });
-___scope___.file("pages/notebook/Diagram/Canvas.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/Canvas.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -787,7 +832,7 @@ class Canvas extends React.Component {
 exports.default = Canvas;
 
 });
-___scope___.file("pages/notebook/Diagram/CogliteLinkFactory.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/CogliteLinkFactory.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -805,7 +850,7 @@ class CogliteLinkFactory extends storm_react_diagrams_1.DefaultLinkFactory {
 exports.CogliteLinkFactory = CogliteLinkFactory;
 
 });
-___scope___.file("pages/notebook/Diagram/CogliteLinkModel.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/CogliteLinkModel.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -820,7 +865,7 @@ class CogliteLinkModel extends storm_react_diagrams_1.DefaultLinkModel {
 exports.CogliteLinkModel = CogliteLinkModel;
 
 });
-___scope___.file("pages/notebook/Diagram/CogliteNodeFactory.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/CogliteNodeFactory.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -842,7 +887,7 @@ class CogliteNodeFactory extends SRD.AbstractNodeFactory {
 exports.CogliteNodeFactory = CogliteNodeFactory;
 
 });
-___scope___.file("pages/notebook/Diagram/CogliteNodeModel.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/CogliteNodeModel.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -877,7 +922,7 @@ class CogliteNodeModel extends storm_react_diagrams_1.NodeModel {
 exports.CogliteNodeModel = CogliteNodeModel;
 
 });
-___scope___.file("pages/notebook/Diagram/CoglitePortModel.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/CoglitePortModel.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -912,7 +957,7 @@ class CoglitePortModel extends storm_react_diagrams_1.PortModel {
 exports.CoglitePortModel = CoglitePortModel;
 
 });
-___scope___.file("pages/notebook/Diagram/CogliteNodeWidget.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/CogliteNodeWidget.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1018,7 +1063,7 @@ exports.CogliteNodeWidget = CogliteNodeWidget;
 exports.default = react_jss_1.default(exports.styles)(CogliteNodeWidget);
 
 });
-___scope___.file("pages/notebook/Diagram/SimplePortFactory.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook/Diagram/SimplePortFactory.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1035,7 +1080,7 @@ class SimplePortFactory extends storm_react_diagrams_1.AbstractPortFactory {
 exports.SimplePortFactory = SimplePortFactory;
 
 });
-___scope___.file("pages/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
@@ -1049,10 +1094,9 @@ __export(require("./dashboard"));
 __export(require("./datasets"));
 __export(require("./notebook"));
 __export(require("./settings"));
-__export(require("./WorkflowGraph"));
 
 });
-___scope___.file("pages/about.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/about.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1061,7 +1105,7 @@ const mobx_react_1 = require("mobx-react");
 exports.AboutPage = mobx_react_1.observer(props => React.createElement("div", null, "About"));
 
 });
-___scope___.file("pages/charts/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
@@ -1071,7 +1115,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./charts"));
 
 });
-___scope___.file("pages/charts/charts.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/charts.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1083,39 +1127,90 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.ChartsPage = () => React.createElement(TogglableSidebarLayout, null);
+exports.ChartsPage = mobx_react_1.observer(() => React.createElement(TogglableSidebarLayout, null));
 const react_splitter_layout_1 = require("react-splitter-layout");
 const design_1 = require("../../design");
-const drawer_1 = require("./drawer/drawer");
+const drawer_1 = require("./drawer");
+const lib_1 = require("typestyle/lib");
+const csstips_1 = require("csstips");
+const mobx_1 = require("mobx");
 let TogglableSidebarLayout = class TogglableSidebarLayout extends React.Component {
-    constructor(props) {
-        super(props);
-        this.toggleSidebar = this.toggleSidebar.bind(this);
-        this.state = {
-            sidebarVisible: true
-        };
+    constructor() {
+        super(...arguments);
+        this.sidebarVisible = true;
     }
-    toggleSidebar() { this.setState({ sidebarVisible: !this.state.sidebarVisible }); }
+    toggleSidebar() { return this.sidebarVisible = !this.sidebarVisible; }
+    //toggleSidebar() {this.setState({ sidebarVisible: !this.sidebarVisible })}
     render() {
         return (React.createElement(react_splitter_layout_1.default, { percentage: true, secondaryInitialSize: 25, style: { height: '100%', position: 'relative', display: 'flex', flexDirection: 'row' } },
             React.createElement(design_1.FillParent, null,
                 React.createElement("h2", null, "1st Pane"),
                 React.createElement("button", { onClick: this.toggleSidebar },
-                    this.state.sidebarVisible && 'Hide Sidebar',
-                    !this.state.sidebarVisible && 'Show Sidebar')),
-            this.state.sidebarVisible &&
+                    this.sidebarVisible && 'Hide Sidebar',
+                    !this.sidebarVisible && 'Show Sidebar')),
+            this.sidebarVisible &&
                 React.createElement(design_1.FillParent, null,
-                    React.createElement("h2", null, "2nd Pane"),
-                    React.createElement(drawer_1.WorkDrawer, null))));
+                    React.createElement("div", { className: lib_1.style(csstips_1.flex, csstips_1.vertical) },
+                        React.createElement("h2", null, "2nd Pane"),
+                        React.createElement(drawer_1.WorkDrawer, null)))));
     }
 };
+__decorate([
+    mobx_1.observable
+], TogglableSidebarLayout.prototype, "sidebarVisible", void 0);
+__decorate([
+    mobx_1.action.bound
+], TogglableSidebarLayout.prototype, "toggleSidebar", null);
 TogglableSidebarLayout = __decorate([
     mobx_react_1.observer
 ], TogglableSidebarLayout);
 exports.TogglableSidebarLayout = TogglableSidebarLayout;
+//added fill parent remember to take it uot
+/*
+
+interface SBState {
+    sidebarVisible: boolean
+}
+
+@observer
+export class TogglableSidebarLayout extends React.Component<any, SBState> {
+  constructor(props, context?) {
+    super(props, context);
+    this.toggleSidebar = this.toggleSidebar.bind(this);
+    this.state = {
+      sidebarVisible: true
+    };
+  }
+
+  toggleSidebar() {this.setState({ sidebarVisible: !this.state.sidebarVisible })}
+
+  render() {
+    return (
+      <SplitterLayout percentage secondaryInitialSize={25} style={{height: '100%', position: 'relative', display: 'flex', flexDirection: 'row'}}>
+        <FillParent>
+          <h2>1st Pane</h2>
+          <button onClick={this.toggleSidebar}>
+            {this.state.sidebarVisible && 'Hide Sidebar'}
+            {!this.state.sidebarVisible && 'Show Sidebar'}
+          </button>
+        </FillParent>
+        {this.state.sidebarVisible &&
+          <FillParent>
+            <div className={style(flex, vertical)}>
+            <h2>2nd Pane</h2>
+            <WorkDrawer/>
+            </div>
+          </FillParent>
+        }
+      </SplitterLayout>
+    );
+  }
+}
+
+*/ 
 
 });
-___scope___.file("pages/charts/drawer/drawer.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/drawer.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1123,41 +1218,70 @@ const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const styled_jss_1 = require("styled-jss");
 const icons_1 = require("@material-ui/icons");
-//import {NavStore} from '../stores'
-//import { Link } from './NavIcon';
 const core_1 = require("@material-ui/core");
-const design_1 = require("../../../design");
 const when_switch_1 = require("when-switch");
-const routes_1 = require("./routes");
-exports.Drawer = styled_jss_1.default('div')({
-    width: props => { props.width || '360px'; },
+const theming_1 = require("theming");
+const tabs_1 = require("./tabs");
+const csstips_1 = require("csstips");
+const typestyle_1 = require("typestyle");
+const lib_1 = require("csx/lib");
+exports.Drawer = styled_jss_1.default(core_1.Card)({
     flexDirection: 'column',
     alignItems: 'central',
     border: '3px solid black',
+    minHeight: '100%',
     right: 0
 });
-const WidgetIconBar = mobx_react_1.observer(() => (React.createElement(core_1.Toolbar, Object.assign({}, this.props),
-    React.createElement(ChartDrawerLink, { route: 'chartdrawer:charts' },
-        React.createElement(icons_1.SwapHoriz, null)),
-    React.createElement(ChartDrawerLink, { route: 'chartdrawer:dashboard' },
-        React.createElement(icons_1.Dashboard, null)),
-    React.createElement(ChartDrawerLink, { route: 'chartdrawer:datasets' },
-        React.createElement(icons_1.AccountBalanceWallet, null)),
-    React.createElement(ChartDrawerLink, { route: 'chartdrawer:notebook' },
-        React.createElement(icons_1.SwapHoriz, null)))));
-const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', onClick: () => props.nav.goToChartDrawer(props.route) }, props.children))));
-const ChartDrawerRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(design_1.Row, null, when_switch_1.default(props.nav.chartDrawerRoute)
-    .is('chartdrawer:charts', () => React.createElement(routes_1.ChartsPage, null))
-    .is('chartdrawer:datasets', () => React.createElement(routes_1.DatasetsPage, null))
-    .is('chartdrawer:notebook', () => React.createElement(routes_1.NotebookPage, null))
-    .is('chartdrawer:dashboard', () => React.createElement(routes_1.DashboardPage, null))
-    .else(() => React.createElement(routes_1.DashboardPage, null))))));
-exports.WorkDrawer = mobx_react_1.observer(props => (React.createElement(exports.Drawer, { width: props.width },
+const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
+    display: "flex",
+    position: 'relative',
+    height: 50,
+    width: "100%",
+    overflow: "hidden"
+});
+const RowContainer = styled_jss_1.default('div')({
+    height: '100%',
+    flex: '1',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    alignmentBaseline: 'central'
+});
+const WidgetIconBar = theming_1.withTheme(mobx_react_1.observer((props) => (React.createElement(ToolbarDimensions, Object.assign({}, props),
+    React.createElement(RowContainer, Object.assign({}, this.props, { style: { alignItems: 'space-between' } }),
+        React.createElement(ChartDrawerLink, { route: 'chartdrawer:charts' },
+            React.createElement(icons_1.SwapHoriz, null)),
+        React.createElement(ChartDrawerLink, { route: 'chartdrawer:dashboard' },
+            React.createElement(icons_1.Dashboard, null)),
+        React.createElement(ChartDrawerLink, { route: 'chartdrawer:datasets' },
+            React.createElement(icons_1.AccountBalanceWallet, null)),
+        React.createElement(ChartDrawerLink, { route: 'chartdrawer:notebook' },
+            React.createElement(icons_1.SwapHoriz, null)))))));
+const LinkStyle = typestyle_1.style({
+    color: 'black',
+    textDecoration: 'none',
+    transitionDuration: '0.3s',
+    padding: [0, 10, 0, 10],
+    $nest: {
+        '&:hover': {
+            color: '#6642C6',
+            transform: lib_1.scale3d(1.1, 1.1, 1.1)
+        }
+    }
+});
+const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', className: LinkStyle, onClick: () => props.nav.goToChartDrawer(props.route) }, props.children))));
+const ChartDrawerRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", Object.assign({ className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, props), when_switch_1.default(props.nav.chartDrawerRoute)
+    .is('chartdrawer:charts', () => React.createElement(tabs_1.ChartsPage, null))
+    .is('chartdrawer:datasets', () => React.createElement(tabs_1.DatasetsPage, null))
+    .is('chartdrawer:notebook', () => React.createElement(tabs_1.NotebookPage, null))
+    .is('chartdrawer:dashboard', () => React.createElement(tabs_1.DashboardPage, null))
+    .else(() => React.createElement(tabs_1.DashboardPage, null))))));
+exports.WorkDrawer = mobx_react_1.observer(props => (React.createElement("div", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) },
     React.createElement(WidgetIconBar, null),
     React.createElement(ChartDrawerRouter, null))));
 
 });
-___scope___.file("pages/charts/drawer/routes/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/tabs/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
@@ -1171,43 +1295,62 @@ __export(require("./dashboard"));
 __export(require("./cloud"));
 
 });
-___scope___.file("pages/charts/drawer/routes/notebook.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/tabs/notebook.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-exports.NotebookPage = props => React.createElement("div", null,
+exports.NotebookPage = (props) => React.createElement("div", null,
     React.createElement("h2", null, "Notebook Page"));
 
 });
-___scope___.file("pages/charts/drawer/routes/datasets.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/tabs/datasets.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.DatasetsPage = mobx_react_1.observer(props => React.createElement("div", null, "datasets"));
+exports.DatasetsPage = mobx_react_1.observer((props) => React.createElement("div", null, "datasets"));
 
 });
-___scope___.file("pages/charts/drawer/routes/charts.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/tabs/charts.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.ChartsPage = mobx_react_1.observer(props => React.createElement("div", null, "Charts"));
+const theming_1 = require("theming");
+const styled_jss_1 = require("styled-jss");
+exports.ChartsPage = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null,
+    "Charts",
+    React.createElement(Button, null))));
+const Button = styled_jss_1.default('button')(({ margin, theme }) => ({
+    margin,
+    color: theme.palette.color,
+    backgroundColor: theme.palette.primary,
+}));
 
 });
-___scope___.file("pages/charts/drawer/routes/dashboard.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/tabs/dashboard.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.DashboardPage = mobx_react_1.observer(props => React.createElement("div", null, "Dashboard"));
+exports.DashboardPage = mobx_react_1.observer((props) => React.createElement("div", null, "Dashboard"));
 
 });
-___scope___.file("pages/charts/drawer/routes/cloud.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/charts/tabs/cloud.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+exports.CloudPage = mobx_react_1.observer((props) => React.createElement("div", null,
+    React.createElement("div", null, "Cloud")));
+
+});
+___scope___.file("modules/cloud.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1217,35 +1360,34 @@ exports.CloudPage = mobx_react_1.observer(props => React.createElement("div", nu
     React.createElement("div", null, "Cloud")));
 
 });
-___scope___.file("pages/cloud.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/dashboard.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.CloudPage = mobx_react_1.observer(props => React.createElement("div", null,
-    React.createElement("div", null, "Cloud")));
+exports.DashboardPage = mobx_react_1.observer(props => React.createElement("div", null,
+    React.createElement("p", null, "Dashboard"),
+    React.createElement("p", null, "Recent Projects"),
+    React.createElement("p", null, "Reports"),
+    React.createElement("p", null, "Feeds"),
+    React.createElement("p", null, "Breadcrumbs / Progress for most recent project")));
 
 });
-___scope___.file("pages/dashboard.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/datasets.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.DashboardPage = mobx_react_1.observer(props => React.createElement("div", null, "Dashboard"));
+exports.DatasetsPage = mobx_react_1.observer(props => React.createElement("div", null,
+    React.createElement("p", null, "datasets"),
+    React.createElement("p", null, "manage data here across projects"),
+    React.createElement("p", null, "add connections, manage global datasets, etc "),
+    React.createElement("p", null, "adding project datasets will happen within the notebook module")));
 
 });
-___scope___.file("pages/datasets.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const mobx_react_1 = require("mobx-react");
-exports.DatasetsPage = mobx_react_1.observer(props => React.createElement("div", null, "datasets"));
-
-});
-___scope___.file("pages/notebook.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/notebook.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1254,22 +1396,13 @@ exports.NotebookPage = props => React.createElement("div", null,
     React.createElement("h2", null, "Notebook Page"));
 
 });
-___scope___.file("pages/settings.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/settings.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 exports.SettingsPage = mobx_react_1.observer(props => React.createElement("div", null, "Settings"));
-
-});
-___scope___.file("pages/WorkflowGraph.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const mobx_react_1 = require("mobx-react");
-exports.WorkflowGraph = mobx_react_1.observer(props => React.createElement("div", null, "graph"));
 
 });
 ___scope___.file("stores/index.js", function(exports, require, module, __filename, __dirname){

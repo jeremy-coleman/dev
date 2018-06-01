@@ -10,8 +10,8 @@ import {NavStore} from './stores/NavStore'
 import { observer, inject } from 'mobx-react';
 
 
-import { NotebookView } from './pages/notebook/View';
-import { NotebookPage, DatasetsPage, ChartsPage, DashboardPage, CloudPage, SettingsPage, AboutPage, WorkflowGraph} from './pages'
+import { NotebookView } from './modules/notebook/View';
+import { NotebookPage, DatasetsPage, ChartsPage, DashboardPage, CloudPage, SettingsPage, AboutPage} from './modules'
 
 
 interface RouterProps {
@@ -29,7 +29,6 @@ const AppRouter = inject('nav')(observer((props: RouterProps) => (
         .is('cloud', () => <CloudPage />)
         .is('settings', () => <SettingsPage />)
         .is('about', () => <AboutPage />)
-        .is('workflow', () => <WorkflowGraph />)
         .else(() => <DashboardPage />)
     }
   </div>

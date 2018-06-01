@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react';
 import styled from 'styled-jss'
-import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz } from '@material-ui/icons';
+import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz, DeviceHub, InsertChart, DataUsage, GridOn } from '@material-ui/icons';
 import { Card, AppBar } from '@material-ui/core';
 import { Row } from '../design';
 import { style } from 'typestyle'
@@ -60,10 +60,9 @@ export const WidgetNavBar = observer((props: any) => (
   <ToolbarDimensions {...props}>
             <RowContainer {...this.props}>
               <Link route="dashboard"><Dashboard /></Link>
-              <Link route="notebook"><SwapHoriz /></Link>
-              <Link route="charts"><SwapHoriz /></Link>
-              <Link route="datasets"><AccountBalanceWallet /></Link>
-              <Link route="workflow"><SwapHoriz /></Link>
+              <Link route="notebook"><DeviceHub /></Link>
+              <Link route="charts"><InsertChart /></Link>
+              <Link route="datasets"><GridOn /></Link>
               <Link route="cloud"><Cloud /></Link>
               <Link route="settings"><Settings /></Link>
               <Link route="about"><HelpOutline /></Link>

@@ -5,4 +5,3 @@ export * from './dashboard';
 export * from './datasets';
 export * from './notebook';
 export * from './settings';
-export * from './WorkflowGraph';

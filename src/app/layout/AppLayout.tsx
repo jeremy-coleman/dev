@@ -33,7 +33,8 @@ export class AppLayout extends React.Component {
     const {children} = this.props
     return (
       <FillFlex>        
-        <Row>      
+        <Row>
+            <div style={{width: '1px'}}>place holders, these can expand on both sides of the app without fucking anything up</div> 
             <VerticalStretch>
             <WidgetNavBar/>
             <Row>  
@@ -46,13 +47,14 @@ export class AppLayout extends React.Component {
             </Row>      
             <Footer/>
             </VerticalStretch>
+            <div style={{width: '1px'}}>same as above. set width to 100px or something to see</div> 
         </Row>      
         </FillFlex>
   )
  }
 }
 
-const ErrorDisplay = observer(props => 
+const ErrorDisplay = observer((props) => 
     <div style={{ textAlign: 'center', paddingTop: 25, paddingBottom: 25 }}>
     <h1>An unknown error occurred</h1>
     </div>

@@ -10,8 +10,28 @@ import { NotebookToolbar } from "./toolbar"
 import { InputNode } from "./Nodes/Input"
 import { OutputNode } from "./Nodes/Output"
 import { FillFlex, Row, VerticalStretch } from "../../design";
-import { WidgetToolbar } from "../charts/drawer/toolbar";
-import { MiddlePanel } from "../../layout/Workspace";
+//import { WidgetToolbar } from "../charts/drawer/toolbar";
+
+
+
+import { Card } from '@material-ui/core';
+import styled from 'styled-jss';
+
+const Container = styled(Card)({
+  position: 'relative',
+  display: "flex",
+  flex: '1 1 auto',
+  width: "100%",
+  margin: '5px'
+});
+
+
+let MiddlePanel: React.SFC<any> = observer(props =>
+    <Container>
+     <FillFlex>{props.children}</FillFlex>
+    </Container>
+)
+
 
 
 interface NotebookProps {
