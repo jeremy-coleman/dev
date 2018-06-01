@@ -1,0 +1,26 @@
+{
+    "compilerOptions": { 
+        "importHelpers": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "preserveConstEnums": true,
+        "target": "es6",
+        "jsx": "react",
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "noImplicitThis": false,
+        "noEmitOnError": true,
+        "noImplicitReturns": false,
+        "noFallthroughCasesInSwitch": false,
+        "noUnusedLocals": false,
+        "outDir": "dist",
+        "removeComments": true,
+        "allowJs": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules","build","install", "docs", "public"],
+    "compileOnSave": false
+}

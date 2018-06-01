@@ -1,0 +1,5 @@
+@import "../index.css";
+
+.Header {
+  background: #607D8B !important; /* Override material-ui style */
+}

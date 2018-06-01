@@ -1,0 +1,27 @@
+import ProvidersIcon from 'mui-icons/cmdi/account-multiple'
+import ChartIcon from 'mui-icons/cmdi/chart-pie'
+import MarkerIcon from 'mui-icons/cmdi/map-marker'
+import * as React from 'react'
+import { Link, withRouter } from 'react-router-dom'
+
+
+const links: [string, React.ComponentClass][] = [
+  ['/service-areas', MarkerIcon],
+  ['/providers', ProvidersIcon],
+  ['/analytics', ChartIcon]
+]
+
+export let IconBar = withRouter(({ location: { pathname } }) =>
+  <ul className='IconBar'>
+    {links.map(([path, Icon]) =>
+      <li key={path}>
+      <Link className={pathname === path ? '-Active' : ''}
+            to={pathname === path ? '' : path}
+            >
+            
+       <Icon />
+      </Link>
+      </li>
+    )}
+  </ul>
+)
