@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import * as React from "react"
-import { Provider, observer } from 'mobx-react';
+import { Provider as MobxProvider, observer } from 'mobx-react';
 import { observable } from 'mobx';
 import {ThemeProvider as JssThemeProvider} from 'theming'
 
@@ -15,7 +15,7 @@ import {cogliteState, ICogliteState} from './stores'
 export const CogliteAppRoot = observer((props: ICogliteState) => {
   const theme = cogliteState.uiStore.muiTheme
     return(
-      <Provider {...cogliteState}>
+      <MobxProvider {...cogliteState}>
         <JssThemeProvider theme={theme}>
           <div style={{height: '100vh', width: '100vw'}}>
               <AppLayout>
@@ -23,7 +23,7 @@ export const CogliteAppRoot = observer((props: ICogliteState) => {
               </AppLayout>
           </div>
           </JssThemeProvider>
-      </Provider>
+      </MobxProvider>
   )
 })
 
@@ -81,17 +81,3 @@ textarea {
 document.addEventListener("dragover", event => event.preventDefault())
 document.addEventListener("drop", event => event.preventDefault())
 
-/*
-css.global("html, body, root", {
-  userSelect: "none",  // turn off text highlighting
-  cursor: "default",  // reset the cursor pointer
-  font: "caption",
-  WebkitFontSmoothing: "subpixel-antialiased",
-  textRendering: "optimizeLegibility",
-  height:  '100%',
-  margin:  '0px auto',
-  padding: '0px auto',
-  overflow: 'hidden'
-})
-
-*/
