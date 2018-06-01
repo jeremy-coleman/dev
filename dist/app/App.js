@@ -1324,11 +1324,10 @@ const styled_jss_1 = require("styled-jss");
 exports.ChartsPage = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null,
     "Charts",
     React.createElement(Button, null))));
-const Button = styled_jss_1.default('button')(({ margin, theme }) => ({
-    margin,
-    color: theme.palette.color,
-    backgroundColor: theme.palette.primary,
-}));
+const Button = theming_1.withTheme(styled_jss_1.default('button')(({ theme }) => ({
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+})));
 
 });
 ___scope___.file("modules/charts/tabs/dashboard.jsx", function(exports, require, module, __filename, __dirname){

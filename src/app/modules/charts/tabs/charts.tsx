@@ -12,8 +12,7 @@ export let ChartsPage = withTheme(observer((props) =>
 
 
 
-const Button = styled('button')(({margin, theme}) => ({
-  margin,
-  color: theme.palette.color,
-  backgroundColor: theme.palette.primary,
-}))
+const Button = withTheme(styled('button')(({theme}) => ({
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+})))
