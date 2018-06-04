@@ -14,4 +14,9 @@ export const palette = {
     secondary: "#607D8B",
     background: "#FFFFFF",
   },
+  blueprint: {
+    primary: "#607d8b",
+    secondary: "#3f51b5",
+    background: "#FFFFFF",
+  },
 }

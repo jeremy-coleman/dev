@@ -1,11 +1,29 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react';
 import styled from 'styled-jss'
-import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz, DeviceHub, InsertChart, GridOn } from '@material-ui/icons';
+//import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz, DeviceHub, InsertChart, GridOn } from '@material-ui/icons';
 import { Card } from '@material-ui/core';
 import { ListItem, ListItemIcon, ListItemText, MenuItem } from '@material-ui/core';
 import {NavStore} from '../stores/NavStore'
 import {withTheme} from 'theming'
+
+
+
+
+
+import AccountBalanceWallet from 'rmdi/lib/AccountBalanceWallet'
+import Cloud from 'rmdi/lib/Cloud'
+import Dashboard from 'rmdi/lib/Dashboard'
+import HelpOutline from 'rmdi/lib/HelpOutline'
+import Settings from 'rmdi/lib/Settings'
+import SwapHoriz from 'rmdi/lib/SwapHoriz'
+import DeviceHub from 'rmdi/lib/DeviceHub'
+import InsertChart from 'rmdi/lib/InsertChart'
+import GridOn  from 'rmdi/lib/GridOn'
+
+
+
+
 
 
 type LinkProps = {

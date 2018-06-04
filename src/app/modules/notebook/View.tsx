@@ -3,7 +3,7 @@ import {NotebookLayout} from "./layout"
 import { observer } from "mobx-react"
 import Canvas from "./Diagram/Canvas";
 
-export const NotebookView = observer(props => {
+export const NotebookView = observer((props: any) => {
   return (
     <React.Fragment>
       <NotebookLayout>

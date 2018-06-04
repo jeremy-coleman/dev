@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import injectSheet from 'react-jss';
 import styled from 'styled-jss';
 import { AppBar } from '@material-ui/core';
+import {withTheme} from 'theming'
 
 const version = '0.0.1';
 
@@ -16,7 +17,6 @@ type FooterProps = {
 }
 
 const FooterDimensions = styled(AppBar)({
-  border: "1px solid orange",
   display: "flex",
   flexDirection: 'row',
   width: "100%",
@@ -26,10 +26,10 @@ const FooterDimensions = styled(AppBar)({
   right: 0
 })
 
-export const Footer = observer((P: FooterProps) => (
+export const Footer = withTheme(observer((P: FooterProps) => (
   <FooterDimensions >
     <span>{copyrightString}</span>
     <div style={{flex: 'auto'}}></div>
     <span>{`Version: ${version || 'pre-release'}`}</span>
   </FooterDimensions>
-))
+)))

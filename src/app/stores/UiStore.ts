@@ -25,7 +25,7 @@ export class TabValue {
 class UiStore {
   @observable title = "Coglite"
 
-  @observable themeId = "myriad"
+  @observable themeId = "blueprint"
   @observable themeDialogToggle = new ToggleOpenValue()
 
   @observable menuDrawerToggle = new ToggleOpenValue()

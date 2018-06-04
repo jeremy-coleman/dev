@@ -44,7 +44,7 @@ export class CogliteLabApp extends React.Component {
         const {showHeader, ...calloutProps} = this.state;
 
         return (
-            <div className="antialiased h-screen flex">
+            <div style={{height: '100vh', display: 'flex'}}>
                     <VerticalStretch>
                     <nav className="pt-navbar">
                         <div className="pt-navbar-group pt-align-left">

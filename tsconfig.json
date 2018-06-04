@@ -1,12 +1,21 @@
 {
     "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {"~/*": ["src/*"]},
         "module": "commonjs",
         "target": "esnext",
         "jsx": "react",
         "outDir": "dist",
         "experimentalDecorators": true,
-        "allowJs": true
+        "emitDecoratorMetadata": true,
+        "importHelpers": true,
+        "allowJs": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "noEmitOnError": false,
+        "suppressImplicitAnyIndexErrors": true,
     },
     "include": ["src"],
-    "exclude": ["node_modules", "docs", "resources", "tools"]
+    "exclude": ["node_modules", "docs", "resources", "tools" ]
 }

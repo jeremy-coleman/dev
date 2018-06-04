@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import classnames from 'classnames';
+import * as classnames from 'classnames';
 import {Card,  CardHeader, CardMedia, CardContent, CardActions } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';

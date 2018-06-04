@@ -7,7 +7,10 @@ import { Row } from '../design';
 import { style } from 'typestyle'
 import { scale3d } from 'csx'
 import {NavStore} from '../stores/NavStore'
+import { FileCommandButtons } from './CommandBar';
+import { ElectronCommandBarMenu } from './ElectronMenuIcons';
 
+import {withTheme} from 'theming'
 
 type LinkProps = {
   route: string
@@ -38,7 +41,7 @@ const Link: React.SFC<LinkProps> = inject('nav')(observer((props: LinkProps) => 
 )))
 
 
-const ToolbarDimensions = styled(AppBar)({
+const ToolbarDimensions1 = styled(AppBar)({
   display: "flex",
   position: 'relative',
   height: 50,
@@ -56,7 +59,7 @@ const RowContainer = styled('div')({
 });
 
 
-export const WidgetNavBar = observer((props: any) => (
+export const WidgetNavBar1 = observer((props: any) => (
   <ToolbarDimensions {...props}>
             <RowContainer {...this.props}>
               <Link route="dashboard"><Dashboard /></Link>
@@ -69,3 +72,26 @@ export const WidgetNavBar = observer((props: any) => (
             </RowContainer>
     </ToolbarDimensions>
   ))
+
+
+
+
+const ToolbarDimensions = styled(AppBar)({
+    display: "flex",
+    position: 'relative',
+    height: '30px',
+    width: "100%",
+    overflow: "hidden"
+  });
+
+
+
+  export const WidgetNavBar = observer((props: any) => (
+    <ToolbarDimensions {...props}>
+              <RowContainer {...this.props}>
+            <FileCommandButtons/>
+            <ElectronCommandBarMenu/>
+              </RowContainer>
+      </ToolbarDimensions>
+    ))
+  
