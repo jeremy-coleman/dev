@@ -7,7 +7,7 @@ import {IconNames} from '@blueprintjs/icons'
 
 
 
-export const ChartDrawerToolbar  = () => (
+export const LabToolbar  = () => (
             <ButtonGroup large={true} fill={true}>
                 <Button icon={IconNames.CODE}  />
                 <Button icon={IconNames.GRAPH}/>

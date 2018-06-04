@@ -2,22 +2,13 @@ import {Callout, Intent} from '@blueprintjs/core';
 import {IconName} from '@blueprintjs/icons';
 import {Mosaic, MosaicWindow} from 'react-mosaic-component'
 
-import styled from 'styled-jss'
 import './styles/index.css'
 import './App.css';
 
 import * as React from 'react';
 import { FillParent, VerticalStretch } from '../../design';
-import { AppBar } from '@material-ui/core';
 
 
-const ToolbarDimensions = styled(AppBar)({
-    display: "flex",
-    position: 'relative',
-    height: 50,
-    width: "100%",
-    overflow: "hidden"
-  })
 
 export interface ICalloutExampleState {
     icon?: IconName;

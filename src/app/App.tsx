@@ -4,8 +4,9 @@ import { Provider as MobxProvider, observer } from 'mobx-react';
 import { observable } from 'mobx';
 import {ThemeProvider as JssThemeProvider} from 'theming'
 
+import {ThemeProvider, injectGlobal} from 'styled-components'
+import {theme} from './theme';
 
-import { injectGlobal} from 'styled-components'
 
 import { AppLayout } from './layout/AppLayout';
 import AppRouter from './Router';
@@ -13,15 +14,17 @@ import {cogliteState, ICogliteState} from './stores'
 
 
 export const CogliteAppRoot = observer((props: ICogliteState) => {
-  const theme = cogliteState.uiStore.muiTheme
+  const muiTheme = cogliteState.uiStore.muiTheme
     return(
       <MobxProvider {...cogliteState}>
-        <JssThemeProvider theme={theme}>
+        <JssThemeProvider theme={muiTheme}>
+        <ThemeProvider theme={theme}>
           <div style={{height: '100vh', width: '100vw'}}>
               <AppLayout>
                 <AppRouter/>
               </AppLayout>
           </div>
+          </ThemeProvider>
           </JssThemeProvider>
       </MobxProvider>
   )

@@ -1,60 +1,31 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react';
-import styled from 'styled-jss'
-import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz } from '@material-ui/icons';
-import { Card, AppBar, Toolbar } from '@material-ui/core';
 import { Row, FillParent } from '../../design';
 import when from 'when-switch';
 import { NavStore } from '../../stores/NavStore';
-
-import {withTheme} from 'theming'
-
 import { DashboardPage, DatasetsPage, NotebookPage, ChartsPage } from './tabs';
 import { flex, vertical } from 'csstips';
 import { style } from 'typestyle';
 import { scale3d } from 'csx/lib';
 
 
+import styled, { StyledFunction } from 'styled-components';
+import { ButtonGroup, Button, Classes, IButtonProps } from "@blueprintjs/core";
+import {IconNames} from '@blueprintjs/icons'
 
-
-export const Drawer = styled(Card)({
-    flexDirection: 'column',
-    alignItems: 'central',
-    border: '3px solid black',
-    minHeight: '100%',
-    right: 0
-})
-
-const ToolbarDimensions = styled(AppBar)({
-  display: "flex",
-  position: 'relative',
-  height: 50,
-  width: "100%",
-  overflow: "hidden"
-});
-
-const RowContainer = styled('div')({
-    height: '100%',
-    flex: '1',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row',
-    alignmentBaseline: 'central'
-});
+//import { BlueprintNavIcon } from '../../../design';
 
 
 
-const WidgetIconBar = withTheme(observer((props: any) => (  
-      <ToolbarDimensions {...props}>
-        <RowContainer {...this.props} style={{alignItems: 'space-between'}}>
-              <ChartDrawerLink route='chartdrawer:charts'><SwapHoriz /></ChartDrawerLink>
-              <ChartDrawerLink route='chartdrawer:dashboard'><Dashboard /></ChartDrawerLink>
-              <ChartDrawerLink route='chartdrawer:datasets'><AccountBalanceWallet /></ChartDrawerLink>
-              <ChartDrawerLink route='chartdrawer:notebook'><SwapHoriz /></ChartDrawerLink>          
-        </RowContainer>
-    </ToolbarDimensions>
-  )))
-
+export const ChartDrawerToolbar  = observer((props: any) => (
+            <ButtonGroup large={true} fill={true}>
+              <ChartDrawerLink icon={IconNames.CODE} route='chartdrawer:charts'/>
+              <ChartDrawerLink icon={IconNames.GRAPH} route='chartdrawer:dashboard'/>
+              <ChartDrawerLink icon={IconNames.SCATTER_PLOT} route='chartdrawer:datasets'/>
+              <ChartDrawerLink icon={IconNames.GRAPH} route='chartdrawer:notebook'/>
+            </ButtonGroup >
+          
+))
 
 
 const LinkStyle = style({
@@ -75,13 +46,21 @@ type LinkProps = {
   route: string
   nav?: NavStore
   classes?: any
+  className?: any
 };
 
-const ChartDrawerLink: React.SFC<LinkProps> = inject('nav')(observer((props: LinkProps) => (
+const ChartDrawerLinkWORK: React.SFC<LinkProps> = inject('nav')(observer((props: LinkProps) => (
   <a href='#' className={LinkStyle}
     onClick={() => props.nav.goToChartDrawer(props.route)}>
     {(props as React.Props<any>).children}
   </a>
+)))
+
+const ChartDrawerLink: React.SFC<LinkProps & IButtonProps> = inject('nav')(observer((props: LinkProps) => (
+  <Button {...props}
+    onClick={() => props.nav.goToChartDrawer(props.route)}>
+    {(props as React.Props<any>).children}
+  </Button>
 )))
 
 
@@ -105,11 +84,10 @@ const ChartDrawerRouter = inject('nav')(observer((props: ChartDrawerProps) => (
 )
 ))
 
-export const WorkDrawer: React.SFC<any> = observer(props => (
-    <div className={style(flex, vertical)}>
-    <WidgetIconBar/>
-    
+export const WorkDrawer: React.SFC<any> = observer((props: any) => (
+  <FillParent>
+    <ChartDrawerToolbar/>  
     <ChartDrawerRouter/>
-    </div>
+  </FillParent>
 ))
 

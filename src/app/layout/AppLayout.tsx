@@ -2,17 +2,15 @@ import * as React from 'react'
 import {observer, inject} from 'mobx-react'
 import { lighten } from 'polished';
 import {observable, action} from 'mobx'
-import styled from 'styled-jss';
-
-
 import { FillFlex, VerticalStretch, FillParent, Row } from '../design';
 
-import {Footer} from './Footer'
-import {WidgetNavBar} from './WidgetNavBar'
-import {  IconNavBar } from './IconNavigation';
+import {StatusFooter} from './Footer'
+
+import { IconNavBar } from './IconNavigation';
 
 import { NavStore } from '../stores/NavStore';
 import { MiddlePanel } from './Workspace';
+import { CommandBarPrimary } from './command-bar';
 
 
 interface INavProps {
@@ -34,9 +32,8 @@ export class AppLayout extends React.Component {
     return (
       <FillFlex>        
         <Row>
-            <div style={{width: '1px'}}>place holders, these can expand on both sides of the app without fucking anything up</div> 
             <VerticalStretch>
-            <WidgetNavBar/>
+            <CommandBarPrimary/>
             <Row>  
             <IconNavBar/>
             <Row>
@@ -45,7 +42,7 @@ export class AppLayout extends React.Component {
             </MiddlePanel>
             </Row>
             </Row>      
-            <Footer/>
+            <StatusFooter/>
             </VerticalStretch>
             <div style={{width: '1px'}}>same as above. set width to 100px or something to see</div> 
         </Row>      

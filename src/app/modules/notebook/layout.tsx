@@ -1,61 +1,47 @@
 import * as React from "react"
-import { UiStore } from "../../stores/UiStore"
-import Grid from "@material-ui/core/Grid"
-import * as classNames from "classnames"
 import { observer, inject } from "mobx-react"
-import injectStylesheet from "react-jss"
 import { observable, action } from "mobx"
 import { NodeDrawer } from "./Drawers/NodeDrawer"
 import { NotebookToolbar } from "./toolbar"
 import { InputNode } from "./Nodes/Input"
 import { OutputNode } from "./Nodes/Output"
 import { FillFlex, Row, VerticalStretch } from "../../design";
-//import { WidgetToolbar } from "../charts/drawer/toolbar";
+
+import styled from 'styled-components'
+
+import { ButtonGroup, Button } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
+import { lighten } from 'polished';
+
+export const MainWorkSpace = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: ${props => lighten(0.1, props.theme.main)};
+`;
 
 
-
-import { Card } from '@material-ui/core';
-import styled from 'styled-jss';
-
-const Container = styled(Card)({
-  position: 'relative',
-  display: "flex",
-  flex: '1 1 auto',
-  width: "100%",
-  margin: '5px'
-});
-
-
-let MiddlePanel: React.SFC<any> = observer(props =>
-    <Container>
-     <FillFlex>{props.children}</FillFlex>
-    </Container>
+export const WidgetToolbar  = () => (
+            <ButtonGroup large={true} fill={true}>
+                <Button icon={IconNames.CODE} />
+                <Button icon={IconNames.GRAPH} />
+                <Button icon={IconNames.SCATTER_PLOT} />
+                <Button icon={IconNames.GRAPH}/>
+            </ButtonGroup >
+          
 )
 
 
 
-interface NotebookProps {
-  uiStore?: UiStore,
-  classes?: any
-}
 
-
-@inject("uiStore")
 @observer
-export class NotebookLayout extends React.Component<NotebookProps, any> {
+export class NotebookLayout extends React.Component<any, any> {
   @observable currentClickTarget
 
   @action setTarget = event => {this.currentClickTarget = event.target}
 
-  handleThemeDialogClose = (selectedOption: string, action: string): void => {
-    const uiStore = this.props.uiStore
-    if (action === "ok") {uiStore.updateTheme(selectedOption)}
-    uiStore.themeDialogToggle.openDrawer(false)
-  }
 
   render() {
-    //const { classes } = this.props
-    const { nodeDrawerToggle, nodeFormDrawerToggle, themeDialogToggle } = this.props.uiStore as UiStore
 
     const nodeDrawer = (
       <NodeDrawer>
@@ -71,9 +57,9 @@ export class NotebookLayout extends React.Component<NotebookProps, any> {
             <NotebookToolbar/>
             <Row>     
             <Row>
-            <MiddlePanel>
+            <MainWorkSpace>
                 {this.props.children}
-            </MiddlePanel>
+            </MainWorkSpace>
             </Row>
             {nodeDrawer}
             </Row>
@@ -83,19 +69,3 @@ export class NotebookLayout extends React.Component<NotebookProps, any> {
     )
   }
 }
-
-
-        /*
-              <Grid container>
-        <div style={{width: "100%",overflow: "hidden"}}>
-          <div style={{position: "relative",display: "flex",width: "100%",height: "100%"}}>
-            <NotebookToolbar />
-            <main style={{width: "100%", flexGrow: 1}}>
-              {this.props.children}
-              {nodeDrawer}
-            </main>
-            
-          </div>
-        </div>
-      </Grid>
-      */

@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {"~/*": ["src/*"]},
         "module": "commonjs",
         "target": "esnext",
         "jsx": "react",
@@ -17,5 +15,5 @@
         "suppressImplicitAnyIndexErrors": true,
     },
     "include": ["src"],
-    "exclude": ["node_modules", "docs", "resources", "tools" ]
+    "exclude": ["node_modules", "docs", "resources", "tools", "wip"]
 }

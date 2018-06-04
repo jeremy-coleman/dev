@@ -37,16 +37,18 @@ const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const theming_1 = require("theming");
 const styled_components_1 = require("styled-components");
+const theme_1 = require("./theme");
 const AppLayout_1 = require("./layout/AppLayout");
 const Router_1 = require("./Router");
 const stores_1 = require("./stores");
 exports.CogliteAppRoot = mobx_react_1.observer((props) => {
-    const theme = stores_1.cogliteState.uiStore.muiTheme;
+    const muiTheme = stores_1.cogliteState.uiStore.muiTheme;
     return (React.createElement(mobx_react_1.Provider, Object.assign({}, stores_1.cogliteState),
-        React.createElement(theming_1.ThemeProvider, { theme: theme },
-            React.createElement("div", { style: { height: '100vh', width: '100vw' } },
-                React.createElement(AppLayout_1.AppLayout, null,
-                    React.createElement(Router_1.default, null))))));
+        React.createElement(theming_1.ThemeProvider, { theme: muiTheme },
+            React.createElement(styled_components_1.ThemeProvider, { theme: theme_1.theme },
+                React.createElement("div", { style: { height: '100vh', width: '100vw' } },
+                    React.createElement(AppLayout_1.AppLayout, null,
+                        React.createElement(Router_1.default, null)))))));
 });
 // body > font-size: ${theme.fontSizes[1]}px;
 styled_components_1.injectGlobal `
@@ -100,6 +102,20 @@ document.addEventListener("dragover", event => event.preventDefault());
 document.addEventListener("drop", event => event.preventDefault());
 
 });
+___scope___.file("theme.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.theme = {
+    main: "#607d8b",
+    primary: "#607d8b",
+    secondary: "#3f51b5",
+    text: 'white',
+    fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72, 96],
+    space: [0, 4, 8, 16, 32, 64, 128, 256, 512]
+};
+
+});
 ___scope___.file("layout/AppLayout.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
@@ -110,9 +126,9 @@ const mobx_react_1 = require("mobx-react");
 const mobx_1 = require("mobx");
 const design_1 = require("../design");
 const Footer_1 = require("./Footer");
-const WidgetNavBar_1 = require("./WidgetNavBar");
 const IconNavigation_1 = require("./IconNavigation");
 const Workspace_1 = require("./Workspace");
+const command_bar_1 = require("./command-bar");
 let AppLayout = class AppLayout extends React.Component {
     constructor() {
         super(...arguments);
@@ -126,14 +142,13 @@ let AppLayout = class AppLayout extends React.Component {
         const { children } = this.props;
         return (React.createElement(design_1.FillFlex, null,
             React.createElement(design_1.Row, null,
-                React.createElement("div", { style: { width: '1px' } }, "place holders, these can expand on both sides of the app without fucking anything up"),
                 React.createElement(design_1.VerticalStretch, null,
-                    React.createElement(WidgetNavBar_1.WidgetNavBar, null),
+                    React.createElement(command_bar_1.CommandBarPrimary, null),
                     React.createElement(design_1.Row, null,
                         React.createElement(IconNavigation_1.IconNavBar, null),
                         React.createElement(design_1.Row, null,
                             React.createElement(Workspace_1.MiddlePanel, null, this.hasError ? (React.createElement(ErrorDisplay, null)) : (children)))),
-                    React.createElement(Footer_1.Footer, null)),
+                    React.createElement(Footer_1.StatusFooter, null)),
                 React.createElement("div", { style: { width: '1px' } }, "same as above. set width to 100px or something to see"))));
     }
 };
@@ -167,38 +182,39 @@ ___scope___.file("design/dimensions.jsx", function(exports, require, module, __f
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const styled_jss_1 = require("styled-jss");
-exports.Wrapper = styled_jss_1.default('div')({
-    padding: 40,
-    background: '#f7df1e',
-    textAlign: 'center'
-});
-exports.FillFlex = styled_jss_1.default('div')({
-    display: 'flex',
-    flex: '1',
-    width: '100%',
-    height: '100%',
-});
-exports.Row = styled_jss_1.default('div')({
-    display: 'flex',
-    flex: '1 1 auto',
-    flexDirection: 'row',
-    justifyContent: 'stretch'
-});
-exports.VerticalStretch = styled_jss_1.default('div')({
-    display: "flex",
-    flex: "1 1 auto",
-    height: "100%",
-    flexDirection: "column",
-    justifyContent: "stretch"
-});
-exports.FillParent = styled_jss_1.default('div')({
-    position: 'relative',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-});
+const styled_components_1 = require("styled-components");
+exports.FillFlex = styled_components_1.default.div `
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+`;
+exports.HorizontalStretch = styled_components_1.default.div `
+  display: flex;
+  flex: auto;
+  flex-direction: row;
+  justify-content: stretch;
+`;
+exports.VerticalStretch = styled_components_1.default.div `
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  flex-direction: column;
+  justify-content: stretch;
+`;
+exports.FillParent = styled_components_1.default.div `
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+`;
+exports.Row = styled_components_1.default.div `
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  justify-content: stretch;
+`;
 exports.CssClassWrapper = ({ children, className }) => (React.createElement("span", Object.assign({}, { className }), children));
 
 });
@@ -206,456 +222,32 @@ ___scope___.file("layout/Footer.jsx", function(exports, require, module, __filen
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//import Typography from '@material-ui/core/Typography';
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const styled_jss_1 = require("styled-jss");
-const core_1 = require("@material-ui/core");
-const theming_1 = require("theming");
+const styled_components_1 = require("styled-components");
+const polished_1 = require("polished");
+const design_1 = require("../design");
 const version = '0.0.1';
 const copyrightString = '© Copyright Coglite 2018';
-const FooterDimensions = styled_jss_1.default(core_1.AppBar)({
-    display: "flex",
-    flexDirection: 'row',
-    width: "100%",
-    position: 'relative',
-    bottom: 0,
-    left: 0,
-    right: 0
-});
-exports.Footer = theming_1.withTheme(mobx_react_1.observer((P) => (React.createElement(FooterDimensions, null,
-    React.createElement("span", null, copyrightString),
-    React.createElement("div", { style: { flex: 'auto' } }),
-    React.createElement("span", null, `Version: ${version || 'pre-release'}`)))));
-
-});
-___scope___.file("layout/WidgetNavBar.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const mobx_react_1 = require("mobx-react");
-const styled_jss_1 = require("styled-jss");
-const icons_1 = require("@material-ui/icons");
-const core_1 = require("@material-ui/core");
-const typestyle_1 = require("typestyle");
-const csx_1 = require("csx");
-const CommandBar_1 = require("./CommandBar");
-const ElectronMenuIcons_1 = require("./ElectronMenuIcons");
-const LinkStyle = typestyle_1.style({
-    color: 'white',
-    textDecoration: 'none',
-    transitionDuration: '0.3s',
-    padding: [0, 10, 0, 10],
-    $nest: {
-        '&:hover': {
-            color: '#6642C6',
-            transform: csx_1.scale3d(1.1, 1.1, 1.1)
-        }
-    }
-});
-const Link = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', className: LinkStyle, onClick: () => props.nav.goTo(props.route) }, props.children))));
-const ToolbarDimensions1 = styled_jss_1.default(core_1.AppBar)({
-    display: "flex",
-    position: 'relative',
-    height: 50,
-    width: "100%",
-    overflow: "hidden"
-});
-const RowContainer = styled_jss_1.default('div')({
-    height: '100%',
-    flex: '1',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row',
-    alignmentBaseline: 'central'
-});
-exports.WidgetNavBar1 = mobx_react_1.observer((props) => (React.createElement(ToolbarDimensions, Object.assign({}, props),
-    React.createElement(RowContainer, Object.assign({}, this.props),
-        React.createElement(Link, { route: "dashboard" },
-            React.createElement(icons_1.Dashboard, null)),
-        React.createElement(Link, { route: "notebook" },
-            React.createElement(icons_1.DeviceHub, null)),
-        React.createElement(Link, { route: "charts" },
-            React.createElement(icons_1.InsertChart, null)),
-        React.createElement(Link, { route: "datasets" },
-            React.createElement(icons_1.GridOn, null)),
-        React.createElement(Link, { route: "cloud" },
-            React.createElement(icons_1.Cloud, null)),
-        React.createElement(Link, { route: "settings" },
-            React.createElement(icons_1.Settings, null)),
-        React.createElement(Link, { route: "about" },
-            React.createElement(icons_1.HelpOutline, null))))));
-const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
-    display: "flex",
-    position: 'relative',
-    height: '30px',
-    width: "100%",
-    overflow: "hidden"
-});
-exports.WidgetNavBar = mobx_react_1.observer((props) => (React.createElement(ToolbarDimensions, Object.assign({}, props),
-    React.createElement(RowContainer, Object.assign({}, this.props),
-        React.createElement(CommandBar_1.FileCommandButtons, null),
-        React.createElement(ElectronMenuIcons_1.ElectronCommandBarMenu, null)))));
-
-});
-___scope___.file("layout/CommandBar.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@blueprintjs/core");
-const React = require("react");
-const core_2 = require("@blueprintjs/core");
-exports.FileMenu = props => (React.createElement(core_2.Menu, { className: props.className },
-    React.createElement(core_2.MenuItem, Object.assign({ text: "New", icon: "document" }, props)),
-    React.createElement(core_2.MenuItem, Object.assign({ text: "Open", icon: "folder-shared" }, props)),
-    React.createElement(core_2.MenuItem, Object.assign({ text: "Close", icon: "add-to-folder" }, props)),
-    React.createElement(core_2.MenuDivider, null),
-    React.createElement(core_2.MenuItem, Object.assign({ text: "Save", icon: "floppy-disk" }, props)),
-    React.createElement(core_2.MenuItem, Object.assign({ text: "Save as...", icon: "floppy-disk" }, props)),
-    React.createElement(core_2.MenuDivider, null),
-    React.createElement(core_2.MenuItem, Object.assign({ text: "Exit", icon: "cross" }, props))));
-class FileCommandButtons extends React.PureComponent {
-    constructor() {
-        super(...arguments);
-        this.state = {
-            alignText: core_1.Alignment.CENTER,
-            intent: core_1.Intent.NONE,
-            large: false,
-            minimal: false,
-            vertical: false,
-        };
-    }
-    render() {
-        const { intent, ...bgProps } = this.state;
-        return (React.createElement(core_1.ButtonGroup, Object.assign({}, bgProps, { style: { minWidth: 120 } }),
-            this.renderButton("File", "document"),
-            this.renderButton("Edit", "edit"),
-            this.renderButton("View", "eye-open")));
-    }
-    renderButton(text, iconName) {
-        const { intent, vertical } = this.state;
-        const rightIconName = vertical ? "caret-right" : "caret-down";
-        const position = vertical ? core_1.Position.RIGHT_TOP : core_1.Position.BOTTOM_LEFT;
-        return (React.createElement(core_1.Popover, { content: React.createElement(exports.FileMenu, null), position: position },
-            React.createElement(core_1.Button, { intent: intent, rightIcon: rightIconName, icon: iconName, text: text })));
-    }
-}
-exports.FileCommandButtons = FileCommandButtons;
-
-});
-___scope___.file("layout/ElectronMenuIcons.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const Icons = require("../components/icons");
-const electron_1 = require("electron");
-const { Menu } = electron_1.remote;
-class ElectronCommandBarMenu extends React.Component {
-    showMenu() {
-        const settings = null;
-        const kernelActive = true;
-        const kernelInstalled = true;
-        const template = [
-            {
-                label: 'New Service',
-                click: () => { },
-                enabled: kernelInstalled
-            },
-            {
-                label: 'Execute Service',
-                type: 'submenu',
-                enabled: kernelActive,
-                submenu: [
-                    {
-                        label: 'Send System Event',
-                        type: 'submenu',
-                        enabled: true,
-                        submenu: [
-                            {
-                                label: 'TODO: send event to main process',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            },
-                            {
-                                label: 'TODO: send event to main process',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            },
-                            {
-                                label: 'TODO: send event to main process',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            },
-                            {
-                                label: 'TODO: send event to main process',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            },
-                            {
-                                label: 'infos and things',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            },
-                            {
-                                label: 'ping',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            },
-                            {
-                                label: 'delete Data',
-                                click: () => {
-                                    /*NodeJSMainProxy.ping();*/
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        label: 'Leave',
-                        click: () => { }
-                    }
-                ]
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'App Settings TODO: add back modal',
-                click: () => { }
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Zoom',
-                type: 'submenu',
-                enabled: true,
-                submenu: [
-                    {
-                        label: 'Zoom In',
-                        accelerator: 'CommandOrControl+=',
-                        click: () => { }
-                    },
-                    {
-                        label: 'Zoom Out',
-                        accelerator: 'CommandOrControl+-',
-                        click: () => { }
-                    },
-                    {
-                        label: 'Reset Zoom',
-                        accelerator: 'CommandOrControl+0',
-                        click: () => { }
-                    },
-                ]
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'About',
-                click: () => { }
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Legal',
-                click: () => window.open('https://google.com')
-            },
-            {
-                label: 'Privacy',
-                click: () => window.open('https://google.com')
-            },
-            {
-                label: 'Credits',
-                click: () => window.open('https://google.com')
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Report issues',
-                click: () => window.open('https://coglite.com')
-            },
-        ];
-        const menu = Menu.buildFromTemplate(template);
-        //@ts-ignore
-        menu.popup();
-    }
-    render() {
-        return (React.createElement("a", { className: 'undecorated-text', href: 'javascript:void(0)', title: 'Settings' },
-            React.createElement("div", { className: "addressbar-menu", dangerouslySetInnerHTML: { __html: Icons.hamburgerIcon('toolbar-button', 24) }, onClick: () => this.showMenu() })));
-    }
-}
-exports.ElectronCommandBarMenu = ElectronCommandBarMenu;
-
-});
-___scope___.file("components/icons/index.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./icons"), exports);
-
-});
-___scope___.file("components/icons/icons.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearCloseIcon = (className, size) => {
-    return `
-<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-      <g id="x-large">
-          <g id="refresh">
-              <polygon id="Shape" points="0 0 24 0 24 24 0 24"></polygon>
-              <g id="close" transform="translate(6.000000, 6.000000)" stroke="#FFFFFF" stroke-width="2">
-                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line"></path>
-                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line" transform="translate(6.143705, 6.143705) scale(-1, 1) translate(-6.143705, -6.143705) "></path>
-              </g>
-          </g>
-      </g>
-  </g>
-</svg>
-  `;
-};
-exports.hamburgerIcon = (className, size) => {
-    return `
-<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-      <g id="menu">
-          <g>
-              <rect id="Rectangle-2" x="0" y="0" width="24" height="24"></rect>
-              <path d="M10,6 C10,7.1045695 10.8954305,8 12,8 C13.1045695,8 14,7.1045695 14,6 C14,4.8954305 13.1045695,4 12,4 C10.8954305,4 10,4.8954305 10,6 Z M10,12 C10,13.1045695 10.8954305,14 12,14 C13.1045695,14 14,13.1045695 14,12 C14,10.8954305 13.1045695,10 12,10 C10.8954305,10 10,10.8954305 10,12 Z M10,18 C10,19.1045695 10.8954305,20 12,20 C13.1045695,20 14,19.1045695 14,18 C14,16.8954305 13.1045695,16 12,16 C10.8954305,16 10,16.8954305 10,18 Z" id="Combined-Shape" fill="#FFFFFF"></path>
-          </g>
-      </g>
-  </g>
-</svg>
-  `;
-};
-exports.reloadIcon = (className, size) => {
-    return `
-<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-      <g id="refresh">
-          <g id="Shape">
-              <polygon points="0 0 24 0 24 24 0 24"></polygon>
-              <path d="M11.500938,6 C7.91020633,6 5.01,8.90833016 5.01,12.4990618 C5.01,16.0897934 7.91020633,18.9981236 11.500938,18.9981236 C14.5311255,18.9981236 17.0576358,16.9265476 17.7806564,14.1238272 L16.0909004,14.1238272 C15.4247465,16.016679 13.6212569,17.3733581 11.500938,17.3733581 C8.81195115,17.3733581 6.62664162,15.1880486 6.62664162,12.4990618 C6.62664162,9.81007498 8.81195115,7.62476545 11.500938,7.62476545 C12.8494933,7.62476545 14.0518197,8.18530953 14.9291931,9.0708067 L12.3133207,11.6866791 L17.9999998,11.6866791 L17.9999998,6 L16.0909004,7.9090994 C14.9129454,6.73114445 13.2963038,6 11.500938,6 Z" fill="#FFFFFF"></path>
-          </g>
-      </g>
-  </g>
-</svg>
-  `;
-};
-exports.tempFrameworkIconEmbossed = (className, size) => {
-    return `
-<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 158 158" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-      <ellipse id="path-1" cx="40.3301887" cy="34.7878788" rx="4.66981132" ry="4.66666667"></ellipse>
-      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-2">
-          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
-          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-      </filter>
-      <polygon id="path-3" points="63.4092287 32.1588326 60.7075472 34.8586949 63.4092287 37.5585571 95.6259173 69.753551 101.02928 64.3538265 71.4220495 34.8586949 100.993095 5.39972451 95.5897317 0"></polygon>
-      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-4">
-          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
-          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-      </filter>
-      <polygon id="path-5" points="2.70168157 32.1588326 0 34.8586949 2.70168157 37.5585571 34.9183701 69.753551 40.3217333 64.3538265 10.7145024 34.8586949 40.2855477 5.39972451 34.8821846 0"></polygon>
-      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-6">
-          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
-          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-      </filter>
-      <ellipse id="path-7" cx="61.1320755" cy="34.7878788" rx="4.66981132" ry="4.66666667"></ellipse>
-      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-8">
-          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
-          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-      </filter>
-      <path d="M156,78 C156,34.9217895 121.07821,0 78,0 C34.9217895,0 0,34.9217895 0,78 C0,121.07821 34.9217895,156 78,156 C121.07821,156 156,121.07821 156,78 Z M8,78 C8,39.3400675 39.3400675,8 78,8 C116.659932,8 148,39.3400675 148,78 C148,116.659932 116.659932,148 78,148 C39.3400675,148 8,116.659932 8,78 Z" id="path-9"></path>
-      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-10">
-          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
-          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-      </filter>
-  </defs>
-  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-      <g id="empty_chat">
-          <g id="Group" transform="translate(1.000000, 1.000000)">
-              <g id="botty_mcbot" transform="translate(27.000000, 43.000000)">
-                  <g id="Group-19">
-                      <g id="Oval-4">
-                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-1"></use>
-                          <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
-                      </g>
-                      <g id="Path-2" transform="translate(80.868414, 34.876775) scale(-1, 1) translate(-80.868414, -34.876775) ">
-                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-3"></use>
-                          <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
-                      </g>
-                      <g id="Path-2">
-                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-5"></use>
-                          <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
-                      </g>
-                      <g id="Oval-4" transform="translate(61.132075, 34.787879) scale(-1, 1) translate(-61.132075, -34.787879) ">
-                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-7"></use>
-                          <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
-                      </g>
-                  </g>
-              </g>
-              <g id="Oval">
-                  <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-9"></use>
-                  <use fill="black" fill-opacity="1" filter="url(#filter-10)" xlink:href="#path-9"></use>
-              </g>
-          </g>
-      </g>
-  </g>
-</svg>
-  `;
-};
-exports.tempFrameworkIcon = (className, size) => {
-    return `
-<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 244 244" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g id="Layer_2" data-name="Layer 2">
-    <g id="Layer_1-2" data-name="Layer 1">
-       <path d="M122,15.25A106.75,106.75,0,1,1,15.25,122h0A106.87,106.87,0,0,1,122,15.25M122,0A122,122,0,1,0,244,122,122,122,0,0,0,122,0Z"/>
-       <circle cx="102.93" cy="122" r="11.43"/>
-       <circle cx="141.06" cy="122" r="11.43"/>
-       <path d="M93.73,188.39l-61-61a7.63,7.63,0,0,1,0-10.78l0,0,61-61,10.82,10.82L48.91,122l55.61,55.61Z"/>
-       <path d="M150.27,188.39l-10.82-10.82L195.09,122,139.48,66.39l10.82-10.82,61,61a7.62,7.62,0,0,1,0,10.78l0,0Z"/>
-    </g>
- </g>
-</svg>
-  `;
-};
-exports.removeIcon = (className, size) => {
-    return `
-<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g id="Page-1">
-      <g id="x-large">
-          <g id="refresh">
-              <g id="close" transform="translate(6.000000, 6.000000)" stroke-width="1">
-                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line"></path>
-                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line" transform="translate(6.143705, 6.143705) scale(-1, 1) translate(-6.143705, -6.143705) "></path>
-              </g>
-          </g>
-      </g>
-  </g>
-</svg>
-  `;
-};
+const FooterDimensions = styled_components_1.default.div `
+  border: 3px solid black;
+  display: flex;
+  max-height: 25px;
+  min-height: 25px;
+  width: 100%;
+  flex-direction: row;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: ${props => polished_1.lighten(0.1, props.theme.main)};
+  flex-wrap: none;
+`;
+exports.StatusFooter = mobx_react_1.observer(props => (React.createElement(FooterDimensions, null,
+    React.createElement(design_1.HorizontalStretch, null,
+        React.createElement("span", null, copyrightString),
+        React.createElement("div", { style: { flex: 'auto' } }),
+        React.createElement("span", null, `Version: ${version || 'pre-release'}`)))));
 
 });
 ___scope___.file("layout/IconNavigation.jsx", function(exports, require, module, __filename, __dirname){
@@ -664,44 +256,51 @@ ___scope___.file("layout/IconNavigation.jsx", function(exports, require, module,
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const styled_jss_1 = require("styled-jss");
-//import { AccountBalanceWallet, Cloud, Dashboard, HelpOutline, Settings, SwapHoriz, DeviceHub, InsertChart, GridOn } from '@material-ui/icons';
+const styled_components_1 = require("styled-components");
+//import { Card } from '@blueprintjs/core';
 const core_1 = require("@material-ui/core");
-const core_2 = require("@material-ui/core");
-const theming_1 = require("theming");
-const Cloud_1 = require("rmdi/lib/Cloud");
-const Dashboard_1 = require("rmdi/lib/Dashboard");
-const HelpOutline_1 = require("rmdi/lib/HelpOutline");
-const Settings_1 = require("rmdi/lib/Settings");
-const DeviceHub_1 = require("rmdi/lib/DeviceHub");
-const InsertChart_1 = require("rmdi/lib/InsertChart");
-const GridOn_1 = require("rmdi/lib/GridOn");
-const Link = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", Object.assign({ href: '#' }, props, { onClick: () => props.nav.goTo(props.route) }), props.children))));
-function _NavListIcon({ icon, label, route }) {
-    return (React.createElement(core_2.ListItem, { button: true, component: props => React.createElement(Link, Object.assign({}, props, { route: route })) },
-        React.createElement(core_2.ListItemIcon, null, icon),
-        React.createElement(core_2.ListItemText, { primary: label })));
+/*
+import AccountBalanceWallet from 'rmdi/lib/AccountBalanceWallet'
+import Cloud from 'rmdi/lib/Cloud'
+import Dashboard from 'rmdi/lib/Dashboard'
+import HelpOutline from 'rmdi/lib/HelpOutline'
+import Settings from 'rmdi/lib/Settings'
+import SwapHoriz from 'rmdi/lib/SwapHoriz'
+import DeviceHub from 'rmdi/lib/DeviceHub'
+import InsertChart from 'rmdi/lib/InsertChart'
+import GridOn  from 'rmdi/lib/GridOn'
+*/
+const Link_1 = require("../components/Link");
+const icons_1 = require("@blueprintjs/icons");
+const SidenavLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", Object.assign({ href: '#' }, props, { onClick: () => props.nav.goTo(props.route) }), props.children))));
+function NavListIcon({ icon, label, route }) {
+    return (React.createElement(core_1.ListItem, { button: true, component: props => React.createElement(SidenavLink, Object.assign({}, props, { route: route })) },
+        React.createElement(core_1.ListItemIcon, null, icon),
+        React.createElement(core_1.ListItemText, { primary: label })));
 }
-exports.NavListIcon = theming_1.withTheme(_NavListIcon);
-const LeftNavStylesContainer = styled_jss_1.default(core_1.Card)({
-    maxWidth: '64px',
-    minHeight: '100%',
-    flex: '1 1 auto',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    alignmentBaseline: 'central',
-    marginBottom: '5px',
-    overflow: 'hidden'
-});
-exports.IconNavBar = theming_1.withTheme(mobx_react_1.observer((props) => (React.createElement(LeftNavStylesContainer, Object.assign({}, props),
-    React.createElement(exports.NavListIcon, { route: "dashboard", icon: React.createElement(Dashboard_1.default, null) }),
-    React.createElement(exports.NavListIcon, { route: "notebook", icon: React.createElement(DeviceHub_1.default, null) }),
-    React.createElement(exports.NavListIcon, { route: "charts", icon: React.createElement(InsertChart_1.default, null) }),
-    React.createElement(exports.NavListIcon, { route: "datasets", icon: React.createElement(GridOn_1.default, null) }),
-    React.createElement(exports.NavListIcon, { route: "cloud", icon: React.createElement(Cloud_1.default, null) }),
-    React.createElement(exports.NavListIcon, { route: "settings", icon: React.createElement(Settings_1.default, null) }),
-    React.createElement(exports.NavListIcon, { route: "about", icon: React.createElement(HelpOutline_1.default, null) })))));
+//export const NavListIcon = withTheme(_NavListIcon);
+const LeftNavStylesContainer = styled_components_1.default.div `
+      max-width: 48px;
+      min-width: 48px;
+      width: 48px;
+      min-height: 100%;
+      flex: 1 1 auto;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      alignment-baseline: central;
+      overflow: hidden;
+      border: 3px solid white;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);
+      ;`;
+exports.IconNavBar = mobx_react_1.observer((props) => (React.createElement(LeftNavStylesContainer, null,
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.PROJECTS, large: true, route: "dashboard" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.GRAPH, large: true, route: "notebook" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.CHART, large: true, route: "charts" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.DATABASE, large: true, route: "datasets" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.CLOUD, large: true, route: "cloud" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.COG, large: true, route: "settings" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.HELP, large: true, route: "about" }))));
 /*
 const VertFlexContainer = styled.div`
   display: flex;
@@ -764,22 +363,45 @@ const LeftNavSC = styled.div`
 */ 
 
 });
+___scope___.file("components/Link.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const core_1 = require("@blueprintjs/core");
+exports.Link = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(core_1.Button, Object.assign({ minimal: true }, props, { onClick: () => props.nav.goTo(props.route) }), props.children))));
+/*
+const LinkStyle = style({
+  color: 'black',
+  textDecoration: 'none',
+  transitionDuration: '0.3s',
+  padding: [0, 10, 0, 10],
+  $nest: {
+    '&:hover': {
+      color: '#6642C6',
+      transform: scale3d(1.1, 1.1, 1.1)
+    }
+  }
+})
+*/
+
+});
 ___scope___.file("layout/Workspace.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@material-ui/core");
 const React = require("react");
-const styled_jss_1 = require("styled-jss");
+const styled_components_1 = require("styled-components");
 const mobx_react_1 = require("mobx-react");
 const design_1 = require("../design");
-const Container = styled_jss_1.default(core_1.Card)({
-    position: 'relative',
-    display: "flex",
-    flex: '1 1 auto',
-    width: "100%",
-    margin: '5px'
-});
+const Container = styled_components_1.default(core_1.Card) `
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  margin: 5px;`;
 exports.MiddlePanel = mobx_react_1.observer((props) => React.createElement(Container, null,
     React.createElement(design_1.FillFlex, null, props.children)));
 //this works
@@ -818,6 +440,229 @@ export class MiddlePanel11 extends React.Component {
         <TopLevelNav showSubmenu={showSubmenu} onToggleMenu={this.handleToggleMenu} />
         <DocSidebar style={menuStyles} />
         */ 
+
+});
+___scope___.file("layout/command-bar/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+tslib_1.__exportStar(require("./command-bar-primary"), exports);
+tslib_1.__exportStar(require("./FileCommandButtons"), exports);
+tslib_1.__exportStar(require("./Login"), exports);
+
+});
+___scope___.file("layout/command-bar/command-bar-primary.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const React = require("react");
+const core_1 = require("@blueprintjs/core");
+const mobx_react_1 = require("mobx-react");
+const styled_components_1 = require("styled-components");
+const Login_1 = require("./Login");
+const FileCommandButtons_1 = require("./FileCommandButtons");
+const design_1 = require("../../design");
+const NavHeader = styled_components_1.default(core_1.Navbar) `
+  background-color: ${props => props.theme.main} !important;
+  color: ${props => props.theme.text} !important;
+  overflow: hidden !important;
+  height: 30px;
+`;
+const Dimensions = styled_components_1.default.div `
+  border: 1px solid black;
+  display: flex;
+  max-height: 32px;
+  min-height: 32px;
+  width: 100%;
+  flex-direction: row;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: ${props => props.theme.main};
+  flex-wrap: none;
+  overflow: hidden !important;
+`;
+//background-color: ${props => lighten(0.1, props.theme.main)};
+let CommandBarPrimary = class CommandBarPrimary extends React.Component {
+    render() {
+        return (React.createElement(Dimensions, null,
+            React.createElement(design_1.HorizontalStretch, null,
+                React.createElement(FileCommandButtons_1.FileCommandButtons, null),
+                React.createElement(core_1.NavbarDivider, null),
+                React.createElement(Login_1.LoginView, null))));
+    }
+};
+CommandBarPrimary = tslib_1.__decorate([
+    mobx_react_1.observer
+], CommandBarPrimary);
+exports.CommandBarPrimary = CommandBarPrimary;
+
+});
+___scope___.file("layout/command-bar/Login/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+tslib_1.__exportStar(require("./LoginButton"), exports);
+tslib_1.__exportStar(require("./LoginButtonView"), exports);
+
+});
+___scope___.file("layout/command-bar/Login/LoginButton.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+// Material-ui
+const core_1 = require("@blueprintjs/core");
+const auth_1 = require("../../../stores/auth");
+exports.LoginView = mobx_react_1.observer(() => {
+    const displayName = auth_1.default.isLoggedIn ? auth_1.default.profile.username : "Login";
+    const login = () => { auth_1.default.isLoggedIn ? auth_1.default.logout() : auth_1.default.login({ whatever: true }); };
+    return (React.createElement(core_1.Button, { icon: 'person', text: displayName, onClick: () => login() }));
+});
+/*
+export const LoginMenuView = observer(() => {
+    const tooltip = auth.isLoggedIn ? auth.profile.username : "Login";
+    const loginLinkText = auth.isLoggedIn ? "Sign out" : "Sign In";
+    
+    const exampleMenu = (
+        <Menu>
+            <MenuItem text={loginLinkText} onClick={login} />
+        </Menu>
+    );
+    return (
+        <Popover content={exampleMenu} position={Position.RIGHT_BOTTOM}>
+            <Tooltip content={tooltip} position={Position.RIGHT}>
+                <Button icon='person' text={tooltip} />
+            </Tooltip>
+        </Popover>
+
+    );
+}
+);
+*/ 
+
+});
+___scope___.file("stores/auth/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Auth_1 = require("./Auth");
+const mobx_persist_1 = require("mobx-persist");
+const auth = new Auth_1.Auth();
+exports.default = auth;
+const hydrate = mobx_persist_1.create();
+hydrate("auth", auth);
+
+});
+___scope___.file("stores/auth/Auth.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const mobx_1 = require("mobx");
+const mobx_persist_1 = require("mobx-persist");
+class Auth {
+    constructor() {
+        this.isLoggedIn = false;
+        this.login = (_args) => {
+            this.isLoggedIn = true;
+            this.profile = { username: "user" };
+        };
+        this.logout = () => {
+            this.isLoggedIn = false;
+            this.profile = {};
+        };
+        this.profile = {};
+    }
+}
+Auth.persistenceKey = "coglite:auth";
+tslib_1.__decorate([
+    mobx_persist_1.persist, mobx_1.observable,
+    tslib_1.__metadata("design:type", Object)
+], Auth.prototype, "isLoggedIn", void 0);
+tslib_1.__decorate([
+    mobx_1.action,
+    tslib_1.__metadata("design:type", Object)
+], Auth.prototype, "login", void 0);
+tslib_1.__decorate([
+    mobx_1.action,
+    tslib_1.__metadata("design:type", Object)
+], Auth.prototype, "logout", void 0);
+tslib_1.__decorate([
+    mobx_1.observable,
+    tslib_1.__metadata("design:type", Object)
+], Auth.prototype, "profile", void 0);
+exports.Auth = Auth;
+
+});
+___scope___.file("layout/command-bar/Login/LoginButtonView.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const core_1 = require("@blueprintjs/core");
+const auth_1 = require("../../../stores/auth");
+const login = () => { auth_1.default.isLoggedIn ? auth_1.default.logout() : auth_1.default.login({ whatever: true }); };
+exports.LoginMenuView = mobx_react_1.observer(() => {
+    const tooltip = auth_1.default.isLoggedIn ? auth_1.default.profile.username : "Login";
+    const loginLinkText = auth_1.default.isLoggedIn ? "Sign out" : "Sign In";
+    const exampleMenu = (React.createElement(core_1.Menu, null,
+        React.createElement(core_1.MenuItem, { text: loginLinkText, onClick: login })));
+    return (React.createElement(core_1.Popover, { content: exampleMenu, position: core_1.Position.RIGHT_BOTTOM },
+        React.createElement(core_1.Tooltip, { content: tooltip, position: core_1.Position.RIGHT },
+            React.createElement(core_1.Button, { icon: 'person', text: tooltip }))));
+});
+
+});
+___scope___.file("layout/command-bar/FileCommandButtons.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@blueprintjs/core");
+const React = require("react");
+const core_2 = require("@blueprintjs/core");
+exports.FileMenu = props => (React.createElement(core_2.Menu, { className: props.className },
+    React.createElement(core_2.MenuItem, Object.assign({ text: "New", icon: "document" }, props)),
+    React.createElement(core_2.MenuItem, Object.assign({ text: "Open", icon: "folder-shared" }, props)),
+    React.createElement(core_2.MenuItem, Object.assign({ text: "Close", icon: "add-to-folder" }, props)),
+    React.createElement(core_2.MenuDivider, null),
+    React.createElement(core_2.MenuItem, Object.assign({ text: "Save", icon: "floppy-disk" }, props)),
+    React.createElement(core_2.MenuItem, Object.assign({ text: "Save as...", icon: "floppy-disk" }, props)),
+    React.createElement(core_2.MenuDivider, null),
+    React.createElement(core_2.MenuItem, Object.assign({ text: "Exit", icon: "cross" }, props))));
+class FileCommandButtons extends React.PureComponent {
+    constructor() {
+        super(...arguments);
+        this.state = {
+            alignText: core_1.Alignment.CENTER,
+            intent: core_1.Intent.NONE,
+            large: false,
+            minimal: true,
+            vertical: false,
+        };
+    }
+    render() {
+        const { intent, ...bgProps } = this.state;
+        return (React.createElement(core_1.ButtonGroup, Object.assign({}, bgProps, { style: { minWidth: 120 } }),
+            this.renderButton("File", "document"),
+            this.renderButton("Edit", "edit"),
+            this.renderButton("View", "eye-open")));
+    }
+    renderButton(text, iconName) {
+        const { intent, vertical } = this.state;
+        const rightIconName = vertical ? "caret-right" : "caret-down";
+        const position = vertical ? core_1.Position.RIGHT_TOP : core_1.Position.BOTTOM_LEFT;
+        return (React.createElement(core_1.Popover, { minimal: true, content: React.createElement(exports.FileMenu, null), position: position },
+            React.createElement(core_1.Button, { intent: intent, rightIcon: rightIconName, icon: iconName, text: text })));
+    }
+}
+exports.FileCommandButtons = FileCommandButtons;
 
 });
 ___scope___.file("Router.jsx", function(exports, require, module, __filename, __dirname){
@@ -871,33 +716,27 @@ const toolbar_1 = require("./toolbar");
 const Input_1 = require("./Nodes/Input");
 const Output_1 = require("./Nodes/Output");
 const design_1 = require("../../design");
-//import { WidgetToolbar } from "../charts/drawer/toolbar";
-const core_1 = require("@material-ui/core");
-const styled_jss_1 = require("styled-jss");
-const Container = styled_jss_1.default(core_1.Card)({
-    position: 'relative',
-    display: "flex",
-    flex: '1 1 auto',
-    width: "100%",
-    margin: '5px'
-});
-let MiddlePanel = mobx_react_1.observer(props => React.createElement(Container, null,
-    React.createElement(design_1.FillFlex, null, props.children)));
+const styled_components_1 = require("styled-components");
+const core_1 = require("@blueprintjs/core");
+const icons_1 = require("@blueprintjs/icons");
+const polished_1 = require("polished");
+exports.MainWorkSpace = styled_components_1.default.div `
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: ${props => polished_1.lighten(0.1, props.theme.main)};
+`;
+exports.WidgetToolbar = () => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.CODE }),
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }),
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.SCATTER_PLOT }),
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH })));
 let NotebookLayout = class NotebookLayout extends React.Component {
     constructor() {
         super(...arguments);
         this.setTarget = event => { this.currentClickTarget = event.target; };
-        this.handleThemeDialogClose = (selectedOption, action) => {
-            const uiStore = this.props.uiStore;
-            if (action === "ok") {
-                uiStore.updateTheme(selectedOption);
-            }
-            uiStore.themeDialogToggle.openDrawer(false);
-        };
     }
     render() {
-        //const { classes } = this.props
-        const { nodeDrawerToggle, nodeFormDrawerToggle, themeDialogToggle } = this.props.uiStore;
         const nodeDrawer = (React.createElement(NodeDrawer_1.NodeDrawer, null,
             React.createElement(Input_1.InputNode, null),
             React.createElement(Output_1.OutputNode, null)));
@@ -907,7 +746,7 @@ let NotebookLayout = class NotebookLayout extends React.Component {
                     React.createElement(toolbar_1.NotebookToolbar, null),
                     React.createElement(design_1.Row, null,
                         React.createElement(design_1.Row, null,
-                            React.createElement(MiddlePanel, null, this.props.children)),
+                            React.createElement(exports.MainWorkSpace, null, this.props.children)),
                         nodeDrawer)))));
     }
 };
@@ -920,24 +759,9 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Object)
 ], NotebookLayout.prototype, "setTarget", void 0);
 NotebookLayout = tslib_1.__decorate([
-    mobx_react_1.inject("uiStore"),
     mobx_react_1.observer
 ], NotebookLayout);
 exports.NotebookLayout = NotebookLayout;
-/*
-      <Grid container>
-<div style={{width: "100%",overflow: "hidden"}}>
-  <div style={{position: "relative",display: "flex",width: "100%",height: "100%"}}>
-    <NotebookToolbar />
-    <main style={{width: "100%", flexGrow: 1}}>
-      {this.props.children}
-      {nodeDrawer}
-    </main>
-    
-  </div>
-</div>
-</Grid>
-*/ 
 
 });
 ___scope___.file("modules/notebook/Drawers/NodeDrawer.jsx", function(exports, require, module, __filename, __dirname){
@@ -946,35 +770,32 @@ ___scope___.file("modules/notebook/Drawers/NodeDrawer.jsx", function(exports, re
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const React = require("react");
-const core_1 = require("@material-ui/core");
+const core_1 = require("@blueprintjs/core");
 const mobx_react_1 = require("mobx-react");
-const styled_jss_1 = require("styled-jss");
-const NodeDrawerDimensions = styled_jss_1.default(core_1.Card)({
-    maxWidth: '180px',
-    minHeight: '100%',
-    flex: '1 1 auto',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    alignmentBaseline: 'central',
-    marginBottom: '5px',
-});
-//position: "relative", width: nodeDrawerWidth, left: "auto", right: 0,
+const styled_components_1 = require("styled-components");
+const design_1 = require("../../../design");
+//import { UiStore } from "../../../stores/UiStore"
+const NodeDrawerDimensions = styled_components_1.default(core_1.Card) `
+    max-width: 180px;
+    min-height: 100%;
+    flex: 1 1 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    alignment-baseline: central;
+`;
 let NodeDrawer = class NodeDrawer extends React.Component {
     render() {
-        const { nodeDrawerToggle } = this.props.uiStore;
-        const nodeDrawer = (React.createElement(NodeDrawerDimensions, { open: nodeDrawerToggle.open ? true : false },
-            React.createElement(core_1.List, null,
+        const nodeDrawer = (React.createElement(NodeDrawerDimensions, { style: { width: '180px' } },
+            React.createElement(design_1.VerticalStretch, null,
                 React.createElement("div", null, this.props.children))));
         return nodeDrawer;
     }
 };
 NodeDrawer = tslib_1.__decorate([
-    mobx_react_1.inject("uiStore"),
     mobx_react_1.observer
 ], NodeDrawer);
 exports.NodeDrawer = NodeDrawer;
-//export let NodeDrawer = injectSheet(layoutStyles)(_NodeDrawer)
 
 });
 ___scope___.file("modules/notebook/toolbar.jsx", function(exports, require, module, __filename, __dirname){
@@ -999,15 +820,12 @@ ___scope___.file("modules/notebook/Nodes/Input.jsx", function(exports, require, 
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const React = require("react");
-const core_1 = require("@material-ui/core");
-const Input_1 = require("@material-ui/icons/Input");
 const mobx_react_1 = require("mobx-react");
+const core_1 = require("@blueprintjs/core");
 let InputNode = class InputNode extends React.Component {
     render() {
-        const inputNode = (React.createElement(core_1.ListItem, { component: "div", draggable: true, onDragStart: event => { event.dataTransfer.setData("storm-diagram-node", JSON.stringify({ type: "cogliteIn" })); } },
-            React.createElement(core_1.ListItemIcon, null,
-                React.createElement(Input_1.default, null)),
-            React.createElement(core_1.ListItemText, { primary: "Input" })));
+        const inputNode = (React.createElement("div", { draggable: true, onDragStart: event => { event.dataTransfer.setData("storm-diagram-node", JSON.stringify({ type: "cogliteIn" })); } },
+            React.createElement(core_1.Button, { icon: 'add', text: 'input' })));
         return inputNode;
     }
 };
@@ -1252,13 +1070,10 @@ ___scope___.file("modules/notebook/Diagram/CogliteNodeWidget.jsx", function(expo
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@material-ui/core");
-const Input_1 = require("@material-ui/icons/Input");
-const LabelOutline_1 = require("@material-ui/icons/LabelOutline");
+const core_1 = require("@blueprintjs/core");
 const React = require("react");
 const storm_react_diagrams_1 = require("storm-react-diagrams");
-const react_jss_1 = require("react-jss");
-exports.styles = theme => ({
+exports.widgetStyles = {
     cardBasic: {
         display: "flex",
         position: "relative",
@@ -1276,8 +1091,8 @@ exports.styles = theme => ({
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
-        paddingLeft: theme.spacing.unit,
-        backgroundColor: theme.palette.background.default,
+        paddingLeft: '10px',
+        backgroundColor: 'inherit',
     },
     playIcon: {
         height: 38,
@@ -1315,7 +1130,7 @@ exports.styles = theme => ({
         left: `calc(100% - 5px)`,
         bottom: `calc(100% / 4 - 1px)`,
     },
-});
+};
 //Patch for props resolution
 class CogliteNodeWidget extends storm_react_diagrams_1.BaseWidget {
     constructor(props) {
@@ -1326,32 +1141,30 @@ class CogliteNodeWidget extends storm_react_diagrams_1.BaseWidget {
         const { classes, theme, node } = this.props;
         //To be used in props with styles
         node.color = node.color || theme.palette.common.white;
-        return (React.createElement("div", { className: classes.cardBasic },
-            React.createElement(core_1.Card, { className: classes.details },
+        return (React.createElement("div", { style: exports.widgetStyles.cardBasic },
+            React.createElement(core_1.Card, { style: exports.widgetStyles.details },
                 React.createElement("div", null,
-                    React.createElement("div", { className: classes.controls },
-                        React.createElement(core_1.IconButton, { "aria-label": "Previous", className: classes.playIcon }, node.cogType === "cogliteIn" ? React.createElement(Input_1.default, null) : React.createElement(LabelOutline_1.default, null)),
-                        React.createElement(core_1.Typography, { variant: "subheading", className: classes.headerText }, node.cogType === "cogliteIn" ? `Input Node` : `Output Node`))),
-                React.createElement(core_1.Divider, null),
-                React.createElement("div", null,
-                    React.createElement(core_1.CardContent, { className: classes.content },
-                        React.createElement(core_1.Typography, { component: "p", className: classes.name }, node.name)))),
-            React.createElement("div", { className: classes.leftTop },
+                    React.createElement("div", { style: exports.widgetStyles.controls },
+                        React.createElement(core_1.Button, { "aria-label": "Previous", style: exports.widgetStyles.playIcon }, node.cogType === "cogliteIn" ? React.createElement(core_1.Icon, { icon: 'add' }) : React.createElement(core_1.Icon, { icon: 'label' })),
+                        React.createElement("span", { style: exports.widgetStyles.headerText }, node.cogType === "cogliteIn" ? `Input Node` : `Output Node`))),
+                React.createElement(core_1.MenuDivider, null),
+                React.createElement("div", { style: exports.widgetStyles.content },
+                    React.createElement("p", { style: exports.widgetStyles.name }, node.name))),
+            React.createElement("div", { style: exports.widgetStyles.leftTop },
                 React.createElement(storm_react_diagrams_1.PortWidget, { name: "leftTop", node: node })),
-            React.createElement("div", { className: classes.leftBottom },
+            React.createElement("div", { style: exports.widgetStyles.leftBottom },
                 React.createElement(storm_react_diagrams_1.PortWidget, { name: "leftBottom", node: node })),
-            React.createElement("div", { className: classes.rightTop },
+            React.createElement("div", { style: exports.widgetStyles.rightTop },
                 React.createElement(storm_react_diagrams_1.PortWidget, { name: "rightTop", node: node })),
-            React.createElement("div", { className: classes.rightBottom },
+            React.createElement("div", { style: exports.widgetStyles.rightBottom },
                 React.createElement(storm_react_diagrams_1.PortWidget, { name: "rightBottom", node: node }))));
     }
 }
 CogliteNodeWidget.defaultProps = {
-    node: null,
-    classes: {},
+    node: null
 };
 exports.CogliteNodeWidget = CogliteNodeWidget;
-exports.default = react_jss_1.default(exports.styles)(CogliteNodeWidget);
+exports.default = CogliteNodeWidget;
 
 });
 ___scope___.file("modules/notebook/Diagram/SimplePortFactory.js", function(exports, require, module, __filename, __dirname){
@@ -1557,47 +1370,20 @@ ___scope___.file("modules/charts/drawer.jsx", function(exports, require, module,
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const styled_jss_1 = require("styled-jss");
-const icons_1 = require("@material-ui/icons");
-const core_1 = require("@material-ui/core");
+const design_1 = require("../../design");
 const when_switch_1 = require("when-switch");
-const theming_1 = require("theming");
 const tabs_1 = require("./tabs");
 const csstips_1 = require("csstips");
 const typestyle_1 = require("typestyle");
 const lib_1 = require("csx/lib");
-exports.Drawer = styled_jss_1.default(core_1.Card)({
-    flexDirection: 'column',
-    alignItems: 'central',
-    border: '3px solid black',
-    minHeight: '100%',
-    right: 0
-});
-const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
-    display: "flex",
-    position: 'relative',
-    height: 50,
-    width: "100%",
-    overflow: "hidden"
-});
-const RowContainer = styled_jss_1.default('div')({
-    height: '100%',
-    flex: '1',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row',
-    alignmentBaseline: 'central'
-});
-const WidgetIconBar = theming_1.withTheme(mobx_react_1.observer((props) => (React.createElement(ToolbarDimensions, Object.assign({}, props),
-    React.createElement(RowContainer, Object.assign({}, this.props, { style: { alignItems: 'space-between' } }),
-        React.createElement(ChartDrawerLink, { route: 'chartdrawer:charts' },
-            React.createElement(icons_1.SwapHoriz, null)),
-        React.createElement(ChartDrawerLink, { route: 'chartdrawer:dashboard' },
-            React.createElement(icons_1.Dashboard, null)),
-        React.createElement(ChartDrawerLink, { route: 'chartdrawer:datasets' },
-            React.createElement(icons_1.AccountBalanceWallet, null)),
-        React.createElement(ChartDrawerLink, { route: 'chartdrawer:notebook' },
-            React.createElement(icons_1.SwapHoriz, null)))))));
+const core_1 = require("@blueprintjs/core");
+const icons_1 = require("@blueprintjs/icons");
+//import { BlueprintNavIcon } from '../../../design';
+exports.ChartDrawerToolbar = mobx_react_1.observer((props) => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.CODE, route: 'chartdrawer:charts' }),
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.GRAPH, route: 'chartdrawer:dashboard' }),
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.SCATTER_PLOT, route: 'chartdrawer:datasets' }),
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.GRAPH, route: 'chartdrawer:notebook' }))));
 const LinkStyle = typestyle_1.style({
     color: 'black',
     textDecoration: 'none',
@@ -1610,15 +1396,16 @@ const LinkStyle = typestyle_1.style({
         }
     }
 });
-const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', className: LinkStyle, onClick: () => props.nav.goToChartDrawer(props.route) }, props.children))));
+const ChartDrawerLinkWORK = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', className: LinkStyle, onClick: () => props.nav.goToChartDrawer(props.route) }, props.children))));
+const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(core_1.Button, Object.assign({}, props, { onClick: () => props.nav.goToChartDrawer(props.route) }), props.children))));
 const ChartDrawerRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", Object.assign({ className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, props), when_switch_1.default(props.nav.chartDrawerRoute)
     .is('chartdrawer:charts', () => React.createElement(tabs_1.ChartsPage, null))
     .is('chartdrawer:datasets', () => React.createElement(tabs_1.DatasetsPage, null))
     .is('chartdrawer:notebook', () => React.createElement(tabs_1.NotebookPage, null))
     .is('chartdrawer:dashboard', () => React.createElement(tabs_1.DashboardPage, null))
     .else(() => React.createElement(tabs_1.DashboardPage, null))))));
-exports.WorkDrawer = mobx_react_1.observer(props => (React.createElement("div", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) },
-    React.createElement(WidgetIconBar, null),
+exports.WorkDrawer = mobx_react_1.observer((props) => (React.createElement(design_1.FillParent, null,
+    React.createElement(exports.ChartDrawerToolbar, null),
     React.createElement(ChartDrawerRouter, null))));
 
 });
@@ -1760,7 +1547,7 @@ const App_1 = require("./App");
 const design_1 = require("../../design");
 const toolbar_1 = require("./toolbar");
 exports.SettingsPage = mobx_react_1.observer((props) => React.createElement(design_1.FillParent, null,
-    React.createElement(toolbar_1.ChartDrawerToolbar, null),
+    React.createElement(toolbar_1.LabToolbar, null),
     React.createElement(App_1.CogliteLabApp, null)));
 
 });
@@ -1769,19 +1556,10 @@ ___scope___.file("modules/lab/App.jsx", function(exports, require, module, __fil
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_mosaic_component_1 = require("react-mosaic-component");
-const styled_jss_1 = require("styled-jss");
 require("./styles/index.css");
 require("./App.css");
 const React = require("react");
 const design_1 = require("../../design");
-const core_1 = require("@material-ui/core");
-const ToolbarDimensions = styled_jss_1.default(core_1.AppBar)({
-    display: "flex",
-    position: 'relative',
-    height: 50,
-    width: "100%",
-    overflow: "hidden"
-});
 const ViewIdMosaic = react_mosaic_component_1.Mosaic.ofType();
 const ViewIdMosaicWindow = react_mosaic_component_1.MosaicWindow.ofType();
 const TITLE_MAP = {
@@ -1924,7 +1702,7 @@ const React = require("react");
 //import styled, { StyledFunction } from 'styled-components';
 const core_1 = require("@blueprintjs/core");
 const icons_1 = require("@blueprintjs/icons");
-exports.ChartDrawerToolbar = () => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
+exports.LabToolbar = () => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
     React.createElement(core_1.Button, { icon: icons_1.IconNames.CODE }),
     React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }),
     React.createElement(core_1.Button, { icon: icons_1.IconNames.SCATTER_PLOT }),

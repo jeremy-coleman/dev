@@ -1,6 +1,6 @@
 import { Card } from '@material-ui/core';
 import * as React from 'react';
-import styled from 'styled-jss';
+import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { FillFlex, FillParent, Row } from '../design';
 import { observable, action } from 'mobx';
@@ -11,13 +11,12 @@ import { style } from 'typestyle/lib';
 import { flex, vertical } from 'csstips';
 import { IconNavBar } from './IconNavigation';
 
-const Container = styled(Card)({
-  position: 'relative',
-  display: "flex",
-  flex: '1 1 auto',
-  width: "100%",
-  margin: '5px'
-});
+const Container = styled(Card)`
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  margin: 5px;`
 
 
 export let MiddlePanel: React.SFC<any> = observer((props) =>
