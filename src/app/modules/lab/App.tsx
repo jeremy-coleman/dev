@@ -74,7 +74,6 @@ export class CogliteLabApp extends React.Component {
 
                     <ViewIdMosaic
                             renderTile={(id, path) => (
-                                // tslint:disable-next-line jsx-no-lambda
                                 <ViewIdMosaicWindow path={path} createNode={() => 'new'} title={TITLE_MAP[id]}>
 
                                     {id === 'a' &&

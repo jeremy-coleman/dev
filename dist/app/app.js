@@ -6,26 +6,12 @@ ___scope___.file("index.jsx", function(exports, require, module, __filename, __d
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./css.config");
+//import './css.config'
 const ReactDOM = require("react-dom");
 const React = require("react");
 const App_1 = require("./App");
 require("./assets/scss/main.scss");
 ReactDOM.render(React.createElement(App_1.CogliteAppRoot, null), document.getElementById("coglite-app-root"));
-
-});
-___scope___.file("css.config.js", function(exports, require, module, __filename, __dirname){
-
-let Module = require('module');
-let _require = Module.prototype.require;
-Module.prototype.require = function () {
-    let name = arguments[0];
-    if (/\.css$/.test(name)) {
-        // no-op
-        return;
-    }
-    return _require.apply(this, arguments);
-};
 
 });
 ___scope___.file("App.jsx", function(exports, require, module, __filename, __dirname){
@@ -119,8 +105,16 @@ exports.theme = {
 ___scope___.file("layout/AppLayout.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const mobx_1 = require("mobx");
@@ -152,15 +146,15 @@ let AppLayout = class AppLayout extends React.Component {
                 React.createElement("div", { style: { width: '1px' } }, "same as above. set width to 100px or something to see"))));
     }
 };
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], AppLayout.prototype, "hasError", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], AppLayout.prototype, "displayError", void 0);
-AppLayout = tslib_1.__decorate([
+AppLayout = __decorate([
     mobx_react_1.inject('nav'),
     mobx_react_1.observer
 ], AppLayout);
@@ -172,9 +166,11 @@ const ErrorDisplay = mobx_react_1.observer((props) => React.createElement("div",
 ___scope___.file("design/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./dimensions"), exports);
+__export(require("./dimensions"));
 
 });
 ___scope___.file("design/dimensions.jsx", function(exports, require, module, __filename, __dirname){
@@ -257,28 +253,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const styled_components_1 = require("styled-components");
-//import { Card } from '@blueprintjs/core';
-const core_1 = require("@material-ui/core");
-/*
-import AccountBalanceWallet from 'rmdi/lib/AccountBalanceWallet'
-import Cloud from 'rmdi/lib/Cloud'
-import Dashboard from 'rmdi/lib/Dashboard'
-import HelpOutline from 'rmdi/lib/HelpOutline'
-import Settings from 'rmdi/lib/Settings'
-import SwapHoriz from 'rmdi/lib/SwapHoriz'
-import DeviceHub from 'rmdi/lib/DeviceHub'
-import InsertChart from 'rmdi/lib/InsertChart'
-import GridOn  from 'rmdi/lib/GridOn'
-*/
 const Link_1 = require("../components/Link");
 const icons_1 = require("@blueprintjs/icons");
-const SidenavLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", Object.assign({ href: '#' }, props, { onClick: () => props.nav.goTo(props.route) }), props.children))));
-function NavListIcon({ icon, label, route }) {
-    return (React.createElement(core_1.ListItem, { button: true, component: props => React.createElement(SidenavLink, Object.assign({}, props, { route: route })) },
-        React.createElement(core_1.ListItemIcon, null, icon),
-        React.createElement(core_1.ListItemText, { primary: label })));
-}
-//export const NavListIcon = withTheme(_NavListIcon);
 const LeftNavStylesContainer = styled_components_1.default.div `
       max-width: 48px;
       min-width: 48px;
@@ -301,66 +277,6 @@ exports.IconNavBar = mobx_react_1.observer((props) => (React.createElement(LeftN
     React.createElement(Link_1.Link, { icon: icons_1.IconNames.CLOUD, large: true, route: "cloud" }),
     React.createElement(Link_1.Link, { icon: icons_1.IconNames.COG, large: true, route: "settings" }),
     React.createElement(Link_1.Link, { icon: icons_1.IconNames.HELP, large: true, route: "about" }))));
-/*
-const VertFlexContainer = styled.div`
-  display: flex;
-  flex: auto;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-*/
-/*
- export const IconNavigation  = observer(({fill, vertical, large, size, props}: BlueprintNavIconProps) => (
-            <StyledButtonGroup large={true} fill={true} vertical={true}>
-                <BlueprintNavIcon>IconNames.DASHBOARD} size={35} large={true} route="/"/>
-                <BlueprintNavIcon>IconNames.CODE} size={35} large={true} route="notebook"/>
-                <BlueprintNavIcon>IconNames.CHART} size={35} large={true} route="charts"/>
-                <BlueprintNavIcon>IconNames.DATABASE} size={35} large={true}  route="datasets"/>
-                <BlueprintNavIcon>IconNames.GRAPH} size={35} large={true}  route="dashboard" />
-                <BlueprintNavIcon>IconNames.CLOUD} size={35} large={true}  route="cloud"/>
-                <BlueprintNavIcon>IconNames.COG} size={35} large={true}  route="settings"/>
-                <BlueprintNavIcon>IconNames.HELP} size={35} large={true}  route="about"/>
-            </StyledButtonGroup >
-  ))
-  */
-//import styled from 'styled-components'
-/*
-const Container = styled.div`
-  top: 0;
-  bottom: 0;
-  left: 0;
-  padding: 0px !important;
-  list-style: none;
-  background-color: ${props => props.theme.main} !important;
-  color: ${props => props.theme.text} !important;
-  width: 50px !important;
-  border-color: white;
-  border: 10px;
-`;
-
-const VertFlexContainer = styled(ButtonGroup)`
-  display: flex;
-  flex: auto;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-
-export const MenuIcon = styled(Button)`
-  background: ${props => props.theme.main} !important;
-  color: ${props => props.theme.text} !important;
-`;
-
-export const MenuIconDivider = styled(MenuDivider)`
-  width: 50px !important;
-`;
-
-const LeftNavSC = styled.div`
-    width: 64px;
-    flex-direction: column;
-    align-items: central;
-    border: 3px solid black;
-`
-*/ 
 
 });
 ___scope___.file("components/Link.jsx", function(exports, require, module, __filename, __dirname){
@@ -445,18 +361,25 @@ export class MiddlePanel11 extends React.Component {
 ___scope___.file("layout/command-bar/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./command-bar-primary"), exports);
-tslib_1.__exportStar(require("./FileCommandButtons"), exports);
-tslib_1.__exportStar(require("./Login"), exports);
+__export(require("./command-bar-primary"));
+__export(require("./FileCommandButtons"));
+__export(require("./Login"));
 
 });
 ___scope___.file("layout/command-bar/command-bar-primary.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const core_1 = require("@blueprintjs/core");
 const mobx_react_1 = require("mobx-react");
@@ -495,7 +418,7 @@ let CommandBarPrimary = class CommandBarPrimary extends React.Component {
                 React.createElement(Login_1.LoginView, null))));
     }
 };
-CommandBarPrimary = tslib_1.__decorate([
+CommandBarPrimary = __decorate([
     mobx_react_1.observer
 ], CommandBarPrimary);
 exports.CommandBarPrimary = CommandBarPrimary;
@@ -504,10 +427,12 @@ exports.CommandBarPrimary = CommandBarPrimary;
 ___scope___.file("layout/command-bar/Login/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./LoginButton"), exports);
-tslib_1.__exportStar(require("./LoginButtonView"), exports);
+__export(require("./LoginButton"));
+__export(require("./LoginButtonView"));
 
 });
 ___scope___.file("layout/command-bar/Login/LoginButton.jsx", function(exports, require, module, __filename, __dirname){
@@ -562,8 +487,16 @@ hydrate("auth", auth);
 ___scope___.file("stores/auth/Auth.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const mobx_1 = require("mobx");
 const mobx_persist_1 = require("mobx-persist");
 class Auth {
@@ -581,21 +514,21 @@ class Auth {
     }
 }
 Auth.persistenceKey = "coglite:auth";
-tslib_1.__decorate([
+__decorate([
     mobx_persist_1.persist, mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], Auth.prototype, "isLoggedIn", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], Auth.prototype, "login", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], Auth.prototype, "logout", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], Auth.prototype, "profile", void 0);
 exports.Auth = Auth;
 
@@ -623,6 +556,15 @@ exports.LoginMenuView = mobx_react_1.observer(() => {
 ___scope___.file("layout/command-bar/FileCommandButtons.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@blueprintjs/core");
 const React = require("react");
@@ -648,7 +590,7 @@ class FileCommandButtons extends React.PureComponent {
         };
     }
     render() {
-        const { intent, ...bgProps } = this.state;
+        const _a = this.state, { intent } = _a, bgProps = __rest(_a, ["intent"]);
         return (React.createElement(core_1.ButtonGroup, Object.assign({}, bgProps, { style: { minWidth: 120 } }),
             this.renderButton("File", "document"),
             this.renderButton("Edit", "edit"),
@@ -676,12 +618,13 @@ const csstips_1 = require("csstips");
 const mobx_react_1 = require("mobx-react");
 const View_1 = require("./modules/notebook/View");
 const modules_1 = require("./modules");
+const designer_screen_1 = require("./modules/workflow-designer/components/workflow-toolbar/designer-screen");
 const AppRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, when_switch_1.default(props.nav.route)
     .is('notebook', () => React.createElement(View_1.NotebookView, null))
     .is('datasets', () => React.createElement(modules_1.DatasetsPage, null))
     .is('charts', () => React.createElement(modules_1.ChartsPage, null))
     .is('dashboard', () => React.createElement(modules_1.DashboardPage, null))
-    .is('cloud', () => React.createElement(modules_1.CloudPage, null))
+    .is('cloud', () => React.createElement(designer_screen_1.DesignerApp, null))
     .is('settings', () => React.createElement(modules_1.SettingsPage, null))
     .is('about', () => React.createElement(modules_1.AboutPage, null))
     .else(() => React.createElement(modules_1.DashboardPage, null))))));
@@ -706,8 +649,16 @@ exports.NotebookView = mobx_react_1.observer((props) => {
 ___scope___.file("modules/notebook/layout.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const mobx_1 = require("mobx");
@@ -750,15 +701,15 @@ let NotebookLayout = class NotebookLayout extends React.Component {
                         nodeDrawer)))));
     }
 };
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], NotebookLayout.prototype, "currentClickTarget", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], NotebookLayout.prototype, "setTarget", void 0);
-NotebookLayout = tslib_1.__decorate([
+NotebookLayout = __decorate([
     mobx_react_1.observer
 ], NotebookLayout);
 exports.NotebookLayout = NotebookLayout;
@@ -767,8 +718,13 @@ exports.NotebookLayout = NotebookLayout;
 ___scope___.file("modules/notebook/Drawers/NodeDrawer.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const core_1 = require("@blueprintjs/core");
 const mobx_react_1 = require("mobx-react");
@@ -792,7 +748,7 @@ let NodeDrawer = class NodeDrawer extends React.Component {
         return nodeDrawer;
     }
 };
-NodeDrawer = tslib_1.__decorate([
+NodeDrawer = __decorate([
     mobx_react_1.observer
 ], NodeDrawer);
 exports.NodeDrawer = NodeDrawer;
@@ -817,8 +773,13 @@ exports.NotebookToolbar = () => (React.createElement(core_1.ButtonGroup, { large
 ___scope___.file("modules/notebook/Nodes/Input.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const core_1 = require("@blueprintjs/core");
@@ -829,7 +790,7 @@ let InputNode = class InputNode extends React.Component {
         return inputNode;
     }
 };
-InputNode = tslib_1.__decorate([
+InputNode = __decorate([
     mobx_react_1.observer
 ], InputNode);
 exports.InputNode = InputNode;
@@ -838,8 +799,13 @@ exports.InputNode = InputNode;
 ___scope___.file("modules/notebook/Nodes/Output.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const core_1 = require("@material-ui/core");
 const LabelOutline_1 = require("@material-ui/icons/LabelOutline");
@@ -855,7 +821,7 @@ let OutputNode = class OutputNode extends React.Component {
         return outputNode;
     }
 };
-OutputNode = tslib_1.__decorate([
+OutputNode = __decorate([
     mobx_react_1.observer
 ], OutputNode);
 exports.OutputNode = OutputNode;
@@ -1187,15 +1153,17 @@ exports.SimplePortFactory = SimplePortFactory;
 ___scope___.file("modules/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./about"), exports);
-tslib_1.__exportStar(require("./charts"), exports);
-tslib_1.__exportStar(require("./cloud"), exports);
-tslib_1.__exportStar(require("./dashboard"), exports);
-tslib_1.__exportStar(require("./datasets"), exports);
-tslib_1.__exportStar(require("./notebook"), exports);
-tslib_1.__exportStar(require("./lab"), exports);
+__export(require("./about"));
+__export(require("./charts"));
+__export(require("./cloud"));
+__export(require("./dashboard"));
+__export(require("./datasets"));
+__export(require("./notebook"));
+__export(require("./lab"));
 
 });
 ___scope___.file("modules/about.jsx", function(exports, require, module, __filename, __dirname){
@@ -1265,16 +1233,26 @@ exports.SettingsKeybindings = SettingsKeybindings;
 ___scope___.file("modules/charts/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./charts"), exports);
+__export(require("./charts"));
 
 });
 ___scope___.file("modules/charts/charts.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 exports.ChartsPage = mobx_react_1.observer(() => React.createElement(TogglableSidebarLayout, null));
@@ -1305,17 +1283,17 @@ let TogglableSidebarLayout = class TogglableSidebarLayout extends React.Componen
                         React.createElement(drawer_1.WorkDrawer, null)))));
     }
 };
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Boolean)
+    __metadata("design:type", Boolean)
 ], TogglableSidebarLayout.prototype, "sidebarVisible", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action.bound,
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", void 0)
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
 ], TogglableSidebarLayout.prototype, "toggleSidebar", null);
-TogglableSidebarLayout = tslib_1.__decorate([
+TogglableSidebarLayout = __decorate([
     mobx_react_1.observer
 ], TogglableSidebarLayout);
 exports.TogglableSidebarLayout = TogglableSidebarLayout;
@@ -1412,13 +1390,15 @@ exports.WorkDrawer = mobx_react_1.observer((props) => (React.createElement(desig
 ___scope___.file("modules/charts/tabs/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./notebook"), exports);
-tslib_1.__exportStar(require("./datasets"), exports);
-tslib_1.__exportStar(require("./charts"), exports);
-tslib_1.__exportStar(require("./dashboard"), exports);
-tslib_1.__exportStar(require("./cloud"), exports);
+__export(require("./notebook"));
+__export(require("./datasets"));
+__export(require("./charts"));
+__export(require("./dashboard"));
+__export(require("./cloud"));
 
 });
 ___scope___.file("modules/charts/tabs/notebook.jsx", function(exports, require, module, __filename, __dirname){
@@ -1478,9 +1458,11 @@ exports.CloudPage = mobx_react_1.observer((props) => React.createElement("div", 
 ___scope___.file("modules/cloud/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./cloud"), exports);
+__export(require("./cloud"));
 
 });
 ___scope___.file("modules/cloud/cloud.jsx", function(exports, require, module, __filename, __dirname){
@@ -1489,8 +1471,6120 @@ ___scope___.file("modules/cloud/cloud.jsx", function(exports, require, module, _
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
+const designer_screen_1 = require("../workflow-designer/components/workflow-toolbar/designer-screen");
 exports.CloudPage = mobx_react_1.observer((props) => React.createElement("div", null,
-    React.createElement("div", null, "Cloud")));
+    React.createElement(designer_screen_1.DesignerApp, null)));
+
+});
+___scope___.file("modules/workflow-designer/components/workflow-toolbar/designer-screen.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const fs = require("fs");
+const React = require("react");
+const ReactDOM = require("react-dom");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+let jss = require('react-jss/lib/jss').default, JssProvider = require('react-jss').JssProvider, ThemeProvider = require('react-jss').ThemeProvider, jssComposer = require('jss-compose').default, jssNested = require('jss-nested').default;
+require("../../style/less/website.less");
+require("codemirror/mode/yaml/yaml");
+const editor_bar_1 = require("./editor-bar");
+const designer_state_1 = require("./designer-state");
+const react_codemirror2_1 = require("react-codemirror2");
+const workflow_editor_1 = require("../workflow-editor");
+var electron = require('electron');
+var currentWindow = electron.remote.getCurrentWindow();
+jss.use(jssComposer());
+jss.use(jssNested());
+const styles = (theme) => ({
+    editorContainer: {},
+    editorBody: {
+        padding: '63px 0 0 0',
+    },
+    editor: {
+        composes: 'editor',
+        fontFamily: 'Courier New',
+        fontSize: '16px',
+        '& .CodeMirror': {
+            position: 'fixed',
+            top: '53px',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 'auto'
+        },
+        '& .CodeMirror-lines': {
+            paddingTop: '30px'
+        }
+    },
+    downloadSection: {
+        composes: 'links',
+        padding: '0 20px 0 0'
+    },
+    button: {
+        marginTop: '15px',
+        textAlign: 'center'
+    },
+    title: {
+        fontWeight: '700',
+        margin: '40px 0 10px 0'
+    },
+    errAlert: {
+        position: 'fixed',
+        top: '53px',
+        right: 0,
+        left: 0,
+        zIndex: 1,
+        background: '#ffae9c',
+        color: '#730f0f',
+        display: 'block',
+        textAlign: 'center',
+        padding: '3px',
+        borderBottom: '2px solid #ca1212',
+    }
+});
+let DesignerScreen = class DesignerScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.designerState = new designer_state_1.DesignerState();
+    }
+    componentDidMount() {
+        if (currentWindow.args) {
+            let args = currentWindow.args;
+            if (args.length && args.length > 1) {
+                try {
+                    if (fs.statSync(args[1]).isFile()) {
+                        this.designerState.openWorkflow(args[1]);
+                    }
+                }
+                catch (e) { }
+            }
+        }
+    }
+    componentWillUnmount() {
+        this.designerState.onDestroy();
+    }
+    setMode(yamlMode) {
+        this.designerState.setMode(yamlMode);
+    }
+    runDirtyFileCheck() {
+        if (this.designerState.dirty) {
+            let currentWindow = electron.remote.getCurrentWindow();
+            let response = electron.remote.dialog.showMessageBox(currentWindow, {
+                type: 'warning',
+                buttons: ['Yes', 'No'],
+                defaultId: 0,
+                cancelId: -1,
+                title: 'Workflow modified',
+                message: 'Do you want to save changes to the current workflow?'
+            });
+            if (response == -1) {
+                return false;
+            }
+            else if (response == 0) {
+                this.designerState.saveWorkflow();
+            }
+        }
+        return true;
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return React.createElement("div", { className: classes.editorContainer },
+            React.createElement(editor_bar_1.EditorBar, { uiState: this.designerState.uiState, modeChanged: yaml => this.setMode(yaml), openWorkflow: (workflow) => this.designerState.openWorkflow(workflow), newWorkflow: () => this.designerState.newWorkflow(), save: () => this.designerState.saveWorkflow(), dirty: this.designerState.dirty }),
+            this.designerState.uiState.yamlError &&
+                React.createElement("div", { className: classes.errAlert }, "An error occured while parsing the yaml content. Please review your workflow file."),
+            React.createElement("div", { className: classes.editorBody },
+                !this.designerState.uiState.yaml &&
+                    React.createElement(workflow_editor_1.WorkflowEditor, { state: this.designerState.editorState, workflow: this.designerState.editorState.workflow }),
+                this.designerState.uiState.yaml &&
+                    React.createElement(react_codemirror2_1.Controlled, { className: classes.editor, value: this.designerState.yaml, onBeforeChange: (_, __, yaml) => this.designerState.updateYaml(yaml, true), options: { lineNumbers: true, mode: 'yaml', theme: 'elegant', indentWithTabs: false, tabSize: 2 } })));
+    }
+};
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_a = typeof designer_state_1.DesignerState !== "undefined" && designer_state_1.DesignerState) === "function" && _a || Object)
+], DesignerScreen.prototype, "designerState", void 0);
+DesignerScreen = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], DesignerScreen);
+exports.DesignerScreen = DesignerScreen;
+;
+let DesignerApp = class DesignerApp extends React.Component {
+    constructor(props, context) {
+        super(props);
+    }
+    render() {
+        let theme = {};
+        return (React.createElement(JssProvider, { jss: jss },
+            React.createElement(ThemeProvider, { theme: theme },
+                React.createElement(DesignerScreen, null))));
+    }
+};
+DesignerApp = __decorate([
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object, Object])
+], DesignerApp);
+exports.DesignerApp = DesignerApp;
+function render() {
+    let theme = {};
+    ReactDOM.render(React.createElement(JssProvider, { jss: jss },
+        React.createElement(ThemeProvider, { theme: theme },
+            React.createElement(DesignerScreen, null))), document.getElementById('app'));
+}
+exports.render = render;
+//import 'purecss/build/pure.css';
+//import 'purecss/build/grids-responsive.css';
+//import 'codemirror/lib/codemirror.css';
+//import 'codemirror/theme/elegant.css';
+//import { CustomInputIO } from '@stackfoundation/workflow-designer/lib/models/custom-input';
+
+});
+___scope___.file("modules/workflow-designer/style/less/website.less", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/workflow-designer/style/less/website.less", "body {\n  background-color: transparent;\n  font-family: 'Lato', sans-serif;\n  text-rendering: optimizeLegibility;\n}\n.pure-g [class*=\"pure-u\"] {\n  font-family: 'Lato', sans-serif !important;\n}\n.links a,\n.links a:visited {\n  text-decoration: none;\n  font-weight: 700;\n  color: #4E73BD;\n}\n.links a:hover {\n  color: #34518b;\n}\ncode {\n  background-color: #F5EEF9;\n  color: #8824CA;\n  padding: 4px 2px;\n}\n.container {\n  margin-right: auto;\n  margin-left: auto;\n  padding-right: 15px;\n  padding-left: 15px;\n  width: 100%;\n  max-width: 80em;\n  overflow-x: hidden;\n}\n.image {\n  max-width: 100%;\n  padding: 0px 20px;\n  box-sizing: border-box;\n}\n.mobile-menu,\n.pure-menu-horizontal .pure-menu-list.mobile-menu {\n  display: block;\n}\n.mobile-menu .pure-menu-item,\n.pure-menu-horizontal .pure-menu-list.mobile-menu .pure-menu-item {\n  float: left;\n  width: 100%;\n}\n@media screen and (min-width: 48em) {\n  .mobile-menu,\n  .pure-menu-horizontal .pure-menu-list.mobile-menu {\n    display: inline-block;\n  }\n  .mobile-menu .pure-menu-item,\n  .pure-menu-horizontal .pure-menu-list.mobile-menu .pure-menu-item {\n    float: none;\n    width: auto;\n  }\n}\n")
+});
+___scope___.file("modules/workflow-designer/components/workflow-toolbar/editor-bar.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const path = require("path");
+const mobx_react_1 = require("mobx-react");
+const React = require("react");
+const mobx_1 = require("mobx");
+let injectSheet = require('react-jss').default;
+const New = require('react-icons/lib/fa/file-o');
+const Open = require('react-icons/lib/fa/folder-open-o');
+const Save = require('react-icons/lib/fa/floppy-o');
+const styles = (theme) => ({
+    editorBar: {
+        composes: 'pure-menu pure-menu-horizontal',
+        borderBottom: 'solid 1px #ddd',
+    },
+    editorBarInner: {
+        composes: 'pure-menu-heading',
+        fontWeight: '700',
+        width: '100%',
+        background: 'white'
+    },
+    projectMenu: {
+        composes: 'pure-menu-list'
+    },
+    workflowTabs: {
+        composes: 'pure-menu-list',
+        float: 'right',
+        marginRight: '2em'
+    },
+    menuItem: {
+        composes: 'pure-menu-item'
+    },
+    menuItemWithChildren: {
+        composes: 'pure-menu-item pure-menu-has-children pure-menu-allow-hover'
+    },
+    menuItemActive: {
+        composes: 'pure-menu-item pure-menu-selected'
+    },
+    menuLink: {
+        composes: 'pure-menu-link',
+        '&:focus': {
+            background: 'none'
+        }
+    },
+    menuNonLink: {
+        composes: 'pure-menu-link',
+        cursor: 'auto',
+        '&:hover': {
+            background: 'none'
+        },
+        '&:active': {
+            background: 'none'
+        }
+    }
+});
+let EditorBar = class EditorBar extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    save(e) {
+        if (this.props.save) {
+            this.props.save();
+        }
+        e.preventDefault();
+    }
+    blankNew(e) {
+        if (this.props.newWorkflow) {
+            this.props.newWorkflow();
+        }
+        e.preventDefault();
+    }
+    openNew(e) {
+        if (this.props.openWorkflow) {
+            this.props.openWorkflow();
+        }
+        e.preventDefault();
+    }
+    openExisting(workflow, e) {
+        if (this.props.openWorkflow) {
+            this.props.openWorkflow(path.join(this.props.uiState.projectPath, workflow + '.wflow'));
+        }
+        e.preventDefault();
+    }
+    get multipleWorkflows() {
+        return this.props.uiState && this.props.uiState.projectWorkflows && this.props.uiState.projectWorkflows.length > 1;
+    }
+    get existingWorkflow() {
+        return this.props.uiState && this.props.uiState.projectPath && this.props.uiState.projectPath.length > 0;
+    }
+    get yamlMode() {
+        return this.props.uiState && this.props.uiState.yaml;
+    }
+    setMode(e, yaml) {
+        if (this.props.modeChanged) {
+            this.props.modeChanged(yaml);
+        }
+        e.preventDefault();
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return React.createElement("div", { className: classes.editorBar },
+            React.createElement("div", { className: classes.editorBarInner },
+                React.createElement("ul", { className: classes.projectMenu },
+                    React.createElement("li", { className: classes.menuItem },
+                        React.createElement("a", { href: "#", className: classes.menuLink, onClick: e => this.blankNew(e) },
+                            React.createElement(New, null))),
+                    React.createElement("li", { className: classes.menuItem },
+                        React.createElement("a", { href: "#", className: classes.menuLink, onClick: e => this.openNew(e) },
+                            React.createElement(Open, null))),
+                    this.existingWorkflow && React.createElement("li", { className: classes.menuItem }, this.props.uiState &&
+                        React.createElement("span", { title: this.props.uiState.projectPath, className: classes.menuNonLink },
+                            this.props.uiState.projectName,
+                            " >\u00A0")),
+                    !this.existingWorkflow && React.createElement("li", { className: classes.menuItem }, this.props.uiState &&
+                        React.createElement("span", { title: this.props.uiState.projectPath, className: classes.menuNonLink },
+                            "New Workflow",
+                            this.props.dirty && React.createElement("span", null, "*"))),
+                    this.existingWorkflow && React.createElement("li", { className: this.multipleWorkflows ? classes.menuItemWithChildren : classes.menuItem },
+                        this.multipleWorkflows &&
+                            React.createElement("a", { href: "#", className: classes.menuLink },
+                                this.props.uiState.workflowName,
+                                this.existingWorkflow && this.props.dirty && React.createElement("span", null, "*")),
+                        !this.multipleWorkflows &&
+                            React.createElement("span", { title: this.props.uiState.projectPath, className: classes.menuNonLink },
+                                this.props.uiState.workflowName,
+                                this.existingWorkflow && this.props.dirty && React.createElement("span", null, "*")),
+                        this.multipleWorkflows &&
+                            React.createElement("ul", { className: "pure-menu-children" }, this.props.uiState.projectWorkflows.map((workflow, i) => React.createElement("li", { className: classes.menuItem, key: 'wflow-' + i },
+                                React.createElement("a", { href: "#", onClick: e => this.openExisting(workflow, e), className: classes.menuLink }, workflow))))),
+                    this.props.dirty &&
+                        React.createElement("li", { className: classes.menuItem },
+                            React.createElement("a", { href: "#", className: classes.menuLink, onClick: e => this.save(e) },
+                                React.createElement(Save, null)))),
+                React.createElement("ul", { className: classes.workflowTabs },
+                    React.createElement("li", { className: this.yamlMode ? classes.menuItem : classes.menuItemActive },
+                        React.createElement("a", { href: "#", onClick: e => this.setMode(e, false), className: classes.menuLink }, "Workflow")),
+                    React.createElement("li", { className: this.yamlMode ? classes.menuItemActive : classes.menuItem },
+                        React.createElement("a", { href: "#", onClick: e => this.setMode(e, true), className: classes.menuLink }, "YAML")))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).MouseEvent) === "function" && _a || Object, Boolean]),
+    __metadata("design:returntype", void 0)
+], EditorBar.prototype, "setMode", null);
+EditorBar = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], EditorBar);
+exports.EditorBar = EditorBar;
+
+});
+___scope___.file("modules/workflow-designer/components/workflow-toolbar/designer-state.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const fs = require("fs");
+const path = require("path");
+var electron = require('electron');
+const electron_1 = require("electron");
+var currentWindow = electron.remote.getCurrentWindow();
+const lodash_1 = require("lodash");
+const mobx_1 = require("mobx");
+const React = require("react");
+const workflow_loader_1 = require("../../workflow-loader");
+const step_code_editor_1 = require("./../step-code-editor");
+const state_1 = require("../../models/state");
+const workflow_1 = require("../../models/workflow");
+const workflow_service_1 = require("../../services/workflow_service");
+const scriptEditorFactory = (step, fieldName) => React.createElement(step_code_editor_1.StepCodeEditor, { step: step, fieldName: fieldName });
+const externalBrowserLinkFactory = (link, text) => React.createElement("a", { href: "#", onClick: _ => electron.shell.openExternal('https://stack.foundation/#!' + link) },
+    " ",
+    text,
+    " ");
+class UIState {
+    constructor() {
+        this.projectName = '';
+        this.projectPath = '';
+        this.projectWorkflows = [];
+        this.workflowName = '';
+        this.workflowPath = '';
+        this.yaml = false;
+        this.yamlError = false;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], UIState.prototype, "projectName", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], UIState.prototype, "projectPath", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], UIState.prototype, "projectWorkflows", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], UIState.prototype, "workflowName", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], UIState.prototype, "workflowPath", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], UIState.prototype, "yaml", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], UIState.prototype, "yamlError", void 0);
+exports.UIState = UIState;
+class DesignerState {
+    constructor() {
+        this.dirty = false;
+        this.originalYaml = '';
+        this.yamlMode = false;
+        this.yaml = '';
+        this.uiState = new UIState();
+        this.ipcEventCallbacks = {
+            new: () => this.newWorkflow(),
+            open: () => this.openWorkflow(),
+            save: () => this.saveWorkflow(),
+            saveAs: () => this.saveWorkflowAs(),
+        };
+        this.updateWorkflow = (yaml) => {
+            try {
+                let workflow = workflow_loader_1.loadWorkflow(yaml);
+                this.editorState.workflow = workflow_1.Workflow.apply(workflow);
+                this.editorState.selectInitialStep();
+                this.uiState.yamlError = false;
+                return true;
+            }
+            catch (e) {
+                this.uiState.yamlError = true;
+                return false;
+            }
+        };
+        this.saveWorkflowAs = (savePath) => {
+            if (!savePath) {
+                let path = electron.remote.dialog.showSaveDialog(currentWindow, {
+                    title: "Save workflow as",
+                    filters: [
+                        { name: 'Workflows', extensions: ['wflow'] }
+                    ]
+                });
+                if (!path || path.length === 0) {
+                    return false;
+                }
+                savePath = path;
+            }
+            if (this.uiState.yaml) {
+                fs.writeFileSync(savePath, this.yaml);
+                this.updateWorkflow(this.yaml);
+            }
+            else {
+                this.yaml = this.workflowToYaml();
+                fs.writeFileSync(savePath, this.yaml);
+            }
+            this.resetDirtyCheck();
+            this.updateUiState(savePath);
+            return true;
+        };
+        this.saveWorkflow = () => {
+            if (this.uiState.workflowPath && this.uiState.workflowPath.length > 0) {
+                return this.saveWorkflowAs(this.uiState.workflowPath);
+            }
+            return this.saveWorkflowAs();
+        };
+        this.openWorkflow = (workflowPath) => {
+            if (!this.runDirtyFileCheck()) {
+                return;
+            }
+            if (!workflowPath) {
+                let path = electron.remote.dialog.showOpenDialog(currentWindow, {
+                    title: "Open workflow",
+                    filters: [
+                        { name: 'Workflows', extensions: ['wflow'] }
+                    ]
+                });
+                if (!path || path.length === 0) {
+                    return;
+                }
+                workflowPath = path[0];
+            }
+            this.uiState.workflowPath = workflowPath;
+            let buffer = fs.readFileSync(workflowPath);
+            if (buffer) {
+                if (!this.updateWorkflow(buffer.toString())) {
+                    this.setMode(true);
+                }
+                this.updateYaml(buffer.toString());
+                this.editorState.catalog = this.catalog;
+                this.resetDirtyCheck();
+            }
+            this.updateUiState(workflowPath);
+        };
+        this.newWorkflow = () => {
+            if (!this.runDirtyFileCheck()) {
+                return;
+            }
+            this.editorState.workflow = new workflow_1.Workflow();
+            this.editorState.selectInitialStep();
+            this.yaml = this.workflowToYaml();
+            this.editorState.catalog = this.catalog;
+            this.resetDirtyCheck();
+            this.updateUiState();
+        };
+        let state = new state_1.EditorState();
+        new workflow_service_1.WorkflowService().getWorkflowImagesCatalog()
+            .then(response => {
+            this.catalog = response;
+            state.catalog = this.catalog;
+        });
+        state.workflow = new workflow_1.Workflow({});
+        state.ide = false;
+        state.allowCalls = true;
+        state.scriptEditorFactory = scriptEditorFactory;
+        state.sfLinkFactory = externalBrowserLinkFactory;
+        state.selectInitialStep();
+        this.editorState = state;
+        this.resetDirtyCheck();
+        electron_1.ipcRenderer.on('new', this.ipcEventCallbacks.new);
+        electron_1.ipcRenderer.on('open', this.ipcEventCallbacks.open);
+        electron_1.ipcRenderer.on('save', this.ipcEventCallbacks.save);
+        electron_1.ipcRenderer.on('saveAs', this.ipcEventCallbacks.saveAs);
+        let forceQuit = false;
+        window.onbeforeunload = (e) => {
+            if (!forceQuit && this.dirty) {
+                e.returnValue = false;
+                if (this.runDirtyFileCheck()) {
+                    forceQuit = true;
+                    setTimeout(() => {
+                        electron_1.remote.getCurrentWindow().close();
+                        electron_1.ipcRenderer.send('quit');
+                    }, 1);
+                }
+            }
+        };
+    }
+    onDestroy() {
+        if (this.dispose) {
+            this.dispose();
+        }
+        electron_1.ipcRenderer.removeListener('new', this.ipcEventCallbacks.new);
+        electron_1.ipcRenderer.removeListener('open', this.ipcEventCallbacks.open);
+        electron_1.ipcRenderer.removeListener('save', this.ipcEventCallbacks.save);
+        electron_1.ipcRenderer.removeListener('saveAs', this.ipcEventCallbacks.saveAs);
+    }
+    setDirty(dirty) {
+        // ipcRenderer.sendSync('file-dirty', dirty);
+        this.dirty = dirty;
+    }
+    quit() {
+        electron_1.ipcRenderer.send('quit');
+    }
+    resetDirtyCheck() {
+        if (this.dispose) {
+            this.dispose();
+        }
+        this.originalYaml = this.yaml;
+        this.setDirty(false);
+        this.dispose = mobx_1.autorun(() => {
+            if (!this.dirty) {
+                let objectDiff = this.workflowToYaml() !== this.originalYaml;
+                let codeDiff = this.yaml !== this.originalYaml;
+                if (this.uiState.yaml ? codeDiff : objectDiff) {
+                    this.setDirty(true);
+                    if (this.dispose) {
+                        this.dispose();
+                    }
+                }
+            }
+        });
+    }
+    workflowToYaml() {
+        let yaml = workflow_loader_1.saveWorkflow(this.editorState.workflow.toJS()).trim();
+        return yaml === "{}" ? '' : yaml;
+    }
+    updateYaml(yaml, updateWorkflow = false) {
+        this.yaml = yaml;
+        if (updateWorkflow) {
+            lodash_1.debounce(this.updateWorkflow, 500);
+        }
+    }
+    setMode(yamlMode) {
+        if (yamlMode === this.uiState.yaml) {
+            return;
+        }
+        if (yamlMode) {
+            this.yaml = this.workflowToYaml();
+        }
+        else {
+            if (!this.updateWorkflow(this.yaml)) {
+                return;
+            }
+        }
+        this.uiState.yaml = yamlMode;
+        this.editorState.catalog = this.catalog;
+    }
+    runDirtyFileCheck() {
+        if (this.dirty) {
+            let currentWindow = electron.remote.getCurrentWindow();
+            let response = electron.remote.dialog.showMessageBox(currentWindow, {
+                type: 'warning',
+                buttons: ['Yes', 'No', 'Cancel'],
+                noLink: true,
+                defaultId: 0,
+                cancelId: -1,
+                title: 'Workflow modified',
+                message: 'Do you want to save changes to the current workflow?'
+            });
+            if (response == -1 || response == 2) {
+                return false;
+            }
+            else if (response == 0) {
+                return this.saveWorkflow();
+            }
+        }
+        return true;
+    }
+    updateUiState(workflowPath) {
+        if (workflowPath) {
+            this.uiState.workflowPath = workflowPath;
+            this.uiState.workflowName = path.basename(workflowPath);
+            if (this.uiState.workflowName.endsWith('.wflow')) {
+                this.uiState.workflowName = this.uiState.workflowName.substring(0, this.uiState.workflowName.length - 6);
+            }
+            this.uiState.projectPath = path.dirname(workflowPath);
+            if (path.basename(this.uiState.projectPath) == 'workflows') {
+                this.uiState.projectWorkflows = this.listProjectWorkflows(this.uiState.projectPath);
+                this.uiState.projectName = path.basename(path.dirname(this.uiState.projectPath));
+            }
+        }
+        else {
+            this.uiState = new UIState();
+        }
+    }
+    listProjectWorkflows(projectDirectory) {
+        let children = fs.readdirSync(projectDirectory);
+        if (children && children.length > 0) {
+            children = children
+                .filter(workflow => workflow && workflow.endsWith('.wflow'))
+                .map(workflow => workflow.substring(0, workflow.length - 6));
+        }
+        return children;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], DesignerState.prototype, "dirty", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_a = typeof state_1.EditorState !== "undefined" && state_1.EditorState) === "function" && _a || Object)
+], DesignerState.prototype, "editorState", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], DesignerState.prototype, "yamlMode", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], DesignerState.prototype, "yaml", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", UIState)
+], DesignerState.prototype, "uiState", void 0);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Boolean]),
+    __metadata("design:returntype", void 0)
+], DesignerState.prototype, "setDirty", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], DesignerState.prototype, "resetDirtyCheck", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Object)
+], DesignerState.prototype, "updateWorkflow", void 0);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Boolean]),
+    __metadata("design:returntype", void 0)
+], DesignerState.prototype, "updateYaml", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Boolean]),
+    __metadata("design:returntype", void 0)
+], DesignerState.prototype, "setMode", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Object)
+], DesignerState.prototype, "openWorkflow", void 0);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], DesignerState.prototype, "updateUiState", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Object)
+], DesignerState.prototype, "newWorkflow", void 0);
+exports.DesignerState = DesignerState;
+//import { EditorState } from '@stackfoundation/workflow-designer/lib/models/state';
+//import { CatalogImage } from '@stackfoundation/workflow-designer/lib/models/catalog';
+//import { Workflow, WorkflowStepSimple } from '@stackfoundation/workflow-designer/lib/models/workflow';
+//import { WorkflowService } from '@stackfoundation/workflow-designer/lib/services/workflow_service';
+
+});
+___scope___.file("modules/workflow-designer/workflow-loader.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// import * as fs from 'fs';
+const mobx_1 = require("mobx");
+const jsYaml = require("js-yaml");
+function isEmptyArray(obj) {
+    if (Array.isArray(obj) && obj.length == 0) {
+        return true;
+    }
+    return false;
+}
+function condense(obj) {
+    let condensed = {};
+    for (var prop in obj) {
+        let value = obj[prop];
+        if (!(value === null || value === undefined || value === false || value === '' || isEmptyArray(value))) {
+            if (typeof (value) === 'object' && !Array.isArray(value)) {
+                value = condense(value);
+                if (Object.keys(value).length === 0) {
+                    condensed[prop] = value;
+                }
+            }
+            else if (Array.isArray(value) && value.length > 0) {
+                condensed[prop] = value.map(element => typeof (element) === 'object' ? condense(element) : element);
+            }
+            else {
+                condensed[prop] = value;
+            }
+        }
+    }
+    return condensed;
+}
+function saveWorkflow(workflow) {
+    return jsYaml.safeDump(condense(mobx_1.toJS(workflow)), { skipInvalid: true });
+}
+exports.saveWorkflow = saveWorkflow;
+function loadWorkflow(input) {
+    return jsYaml.safeLoad(input);
+}
+exports.loadWorkflow = loadWorkflow;
+
+});
+___scope___.file("modules/workflow-designer/components/step-code-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const react_codemirror2_1 = require("react-codemirror2");
+require("codemirror/mode/shell/shell");
+const styles = (theme) => ({
+    editor: {
+        fontFamily: 'Courier New',
+        fontSize: '16px'
+    }
+});
+let StepCodeEditor = class StepCodeEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    updateCode(newCode) {
+        this.props.step[this.props.fieldName] = newCode;
+    }
+    render() {
+        let classes = this.props.classes || {};
+        let script = this.props.step[this.props.fieldName];
+        return (React.createElement(react_codemirror2_1.Controlled, { className: classes.editor, value: script, onBeforeChange: (_, __, code) => this.updateCode(code), options: { lineNumbers: true, mode: 'shell', theme: 'pastel-on-dark' } }));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], StepCodeEditor.prototype, "updateCode", null);
+StepCodeEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], StepCodeEditor);
+exports.StepCodeEditor = StepCodeEditor;
+
+});
+___scope___.file("modules/workflow-designer/models/state.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b, _c, _d, _e;
+const mobx_1 = require("mobx");
+const workflow_1 = require("./workflow");
+const workflow_2 = require("../models/workflow");
+class EditorState {
+    setCatalog(catalog) {
+        this.catalog = catalog;
+    }
+    selectInitialStep() {
+        if (this.workflow && this.workflow.steps && this.workflow.steps.length > 0) {
+            this.selectStep(this.workflow.steps[0]);
+        }
+    }
+    selectStep(step) {
+        this.currentStep = step;
+    }
+    clearSelectedStep() {
+        this.currentStep = undefined;
+    }
+    deleteStep(step) {
+        this.workflow.deleteStep(step);
+        if (this.currentStep === step) {
+            this.selectInitialStep();
+        }
+    }
+    changeCurrentStepType(type) {
+        this.currentStep = this.workflow.changeStepType(this.currentStep, type);
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_a = typeof workflow_1.Workflow !== "undefined" && workflow_1.Workflow) === "function" && _a || Object)
+], EditorState.prototype, "workflow", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_b = typeof workflow_1.WorkflowStep !== "undefined" && workflow_1.WorkflowStep) === "function" && _b || Object)
+], EditorState.prototype, "currentStep", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], EditorState.prototype, "catalog", void 0);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], EditorState.prototype, "setCatalog", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EditorState.prototype, "selectInitialStep", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_c = typeof workflow_1.WorkflowStep !== "undefined" && workflow_1.WorkflowStep) === "function" && _c || Object]),
+    __metadata("design:returntype", void 0)
+], EditorState.prototype, "selectStep", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EditorState.prototype, "clearSelectedStep", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_d = typeof workflow_1.WorkflowStep !== "undefined" && workflow_1.WorkflowStep) === "function" && _d || Object]),
+    __metadata("design:returntype", void 0)
+], EditorState.prototype, "deleteStep", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_e = typeof workflow_2.StepType !== "undefined" && workflow_2.StepType) === "function" && _e || Object]),
+    __metadata("design:returntype", void 0)
+], EditorState.prototype, "changeCurrentStepType", null);
+exports.EditorState = EditorState;
+;
+//import {ImageSource} from './workflow';
+
+});
+___scope___.file("modules/workflow-designer/models/workflow.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b, _c, _d;
+const mobx_1 = require("mobx");
+const workflow_interfaces_1 = require("../workflow-interfaces");
+__export(require("../workflow-interfaces"));
+class Workflow {
+    constructor(workflow) {
+        this.steps = [];
+        this.workflowVariables = [];
+        this.transient = new WorkFlowTransientState();
+        this.ignoreFailure = false;
+        this.ignoreValidation = false;
+        this.ignoreMissing = false;
+        if (workflow) {
+            Object.assign(this, workflow);
+        }
+    }
+    changeStepType(step, newStepType) {
+        let simpleStepTypes = ['sequential', 'service', 'parallel'];
+        let newStep = undefined;
+        if (simpleStepTypes.indexOf(newStepType) > -1) {
+            newStep = new WorkflowStepSimple({ name: '' });
+        }
+        else if (newStepType === 'compound') {
+            newStep = new WorkflowStepCompound({ name: '' });
+        }
+        if (simpleStepTypes.indexOf(newStepType) > -1 && step.type !== 'compound') {
+            Object.assign(newStep, step, { type: newStepType });
+        }
+        if (newStep) {
+            newStep.name = step.name;
+            let stepPos = this.findStep(step);
+            if (stepPos) {
+                this.deleteStep(step, stepPos);
+                stepPos.parent.steps.splice(stepPos.index, 0, newStep);
+            }
+        }
+        return newStep;
+    }
+    deleteStep(step, stepPos, deleteChildren = false) {
+        stepPos = stepPos || this.findStep(step);
+        if (stepPos) {
+            stepPos.parent.steps.splice(stepPos.index, 1);
+            if (step.type === 'compound' && !deleteChildren) {
+                let steps = step.steps;
+                stepPos.parent.steps.splice(stepPos.index, 0, ...(steps.map(a => a)));
+            }
+        }
+    }
+    findStep(search, parent) {
+        parent = parent || this;
+        for (var index = 0; index < parent.steps.length; index++) {
+            if (this.test(index, search, parent)) {
+                return { parent, index };
+            }
+            else if (parent.steps[index] instanceof WorkflowStepCompound) {
+                let childStep = this.findStep(search, parent.steps[index]);
+                if (childStep) {
+                    return childStep;
+                }
+            }
+        }
+        return undefined;
+    }
+    get flattenedStepsSimple() {
+        return this.getFlattenedSteps(false);
+    }
+    get flattenedStepsAll() {
+        return this.getFlattenedSteps(false);
+    }
+    stepsBefore(step) {
+        if (step) {
+            let previousSteps = [];
+            let steps = this.flattenedStepsSimple;
+            for (let currentStep of steps) {
+                if (currentStep !== step) {
+                    previousSteps.push(currentStep);
+                }
+                else {
+                    break;
+                }
+            }
+            return previousSteps.map(currentStep => ({ label: currentStep.name, value: currentStep.name }));
+        }
+        return [];
+    }
+    getFlattenedSteps(includeCompoundSteps = false) {
+        return this.flattenSteps(this.steps, includeCompoundSteps);
+    }
+    moveStep(step, index, parent = this) {
+        let targetEnd = index < parent.steps.length && parent.steps[index];
+        this.deleteStep(step, null, true);
+        let targetIndex = targetEnd ? parent.steps.indexOf(targetEnd) : parent.steps.length;
+        parent.steps.splice(targetIndex, 0, step);
+    }
+    addStep() {
+        let steps = this.flattenedStepsAll, name = 'New step', nameCount = 1;
+        while (steps.find(step => step.name === name)) {
+            nameCount++;
+            name = 'New step (' + nameCount + ')';
+        }
+        this.steps.push(new WorkflowStepSimple({ name }));
+    }
+    flattenSteps(steps, includeCompoundSteps = false) {
+        let flatSteps = [];
+        for (var i = 0; i < steps.length; i++) {
+            var step = steps[i];
+            if (step.type === 'compound') {
+                if (includeCompoundSteps) {
+                    flatSteps.push(step);
+                }
+                flatSteps = flatSteps.concat(this.flattenSteps(step.steps));
+            }
+            else {
+                flatSteps.push(step);
+            }
+        }
+        return flatSteps;
+    }
+    test(index, test, parent) {
+        if (typeof test === 'string') {
+            return parent.steps[index].name === test;
+        }
+        else if (typeof test === 'function') {
+            return test(parent.steps[index]);
+        }
+        else {
+            return parent.steps[index] === test;
+        }
+    }
+    static apply(source) {
+        let out = Object.assign(new Workflow(), {
+            steps: (source.steps || []).map(step => {
+                if (step.type === 'compound')
+                    return WorkflowStepCompound.apply(step);
+                else
+                    return WorkflowStepSimple.apply(step);
+            })
+        });
+        tryApply(out, 'workflowVariables', () => out.workflowVariables = source.workflowVariables !== undefined ? cleanKeyValueEntryArray(source.workflowVariables) : [], () => out.workflowVariables = []);
+        tryApplyPrimitive(out, 'ignoreFailure', source, 'boolean');
+        tryApplyPrimitive(out, 'ignoreValidation', source, 'boolean');
+        tryApplyPrimitive(out, 'ignoreMissing', source, 'boolean');
+        return out;
+    }
+    toJS() {
+        let out = {
+            steps: this.steps.map(step => step.toJS())
+        };
+        if (this.workflowVariables.length) {
+            let arr = cleanKeyValueEntryArray(this.workflowVariables);
+            if (arr.length) {
+                out.workflowVariables = arr;
+            }
+        }
+        if (this.ignoreFailure !== undefined) {
+            out.ignoreFailure = this.ignoreFailure;
+        }
+        if (this.ignoreValidation !== undefined) {
+            out.ignoreValidation = this.ignoreValidation;
+        }
+        if (this.ignoreMissing !== undefined) {
+            out.ignoreMissing = this.ignoreMissing;
+        }
+        return out;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], Workflow.prototype, "steps", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], Workflow.prototype, "workflowVariables", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Object)
+], Workflow.prototype, "transient", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], Workflow.prototype, "ignoreFailure", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], Workflow.prototype, "ignoreValidation", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], Workflow.prototype, "ignoreMissing", void 0);
+__decorate([
+    mobx_1.computed,
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Workflow.prototype, "flattenedStepsSimple", null);
+__decorate([
+    mobx_1.computed,
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Workflow.prototype, "flattenedStepsAll", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Object]),
+    __metadata("design:returntype", void 0)
+], Workflow.prototype, "moveStep", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], Workflow.prototype, "addStep", null);
+exports.Workflow = Workflow;
+class TransientState {
+    constructor() {
+        this.parseError = [];
+        this.errorsDismissed = false;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], TransientState.prototype, "parseError", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], TransientState.prototype, "errorsDismissed", void 0);
+exports.TransientState = TransientState;
+//@ts-ignore 
+class WorkFlowTransientState extends TransientState {
+    constructor() {
+        super(...arguments);
+        this.parseError = [];
+        this.errorsDismissed = false;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkFlowTransientState.prototype, "parseError", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], WorkFlowTransientState.prototype, "errorsDismissed", void 0);
+exports.WorkFlowTransientState = WorkFlowTransientState;
+class WorkflowStepBase {
+    constructor(step) {
+        this.name = '';
+        this.transient = new TransientState();
+        this.name = step.name;
+        Object.assign(this, step);
+    }
+    static apply(source) {
+        return Object.assign(Object.create(WorkflowStepBase.prototype), source);
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepBase.prototype, "name", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", TransientState)
+], WorkflowStepBase.prototype, "transient", void 0);
+exports.WorkflowStepBase = WorkflowStepBase;
+class StepTransientState extends TransientState {
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], StepTransientState.prototype, "imageSourceTypeSelected", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_a = typeof workflow_interfaces_1.HealthType !== "undefined" && workflow_interfaces_1.HealthType) === "function" && _a || Object)
+], StepTransientState.prototype, "healthCheckType", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], StepTransientState.prototype, "action", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "healthConfigured", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "readinessConfigured", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_b = typeof workflow_interfaces_1.HealthType !== "undefined" && workflow_interfaces_1.HealthType) === "function" && _b || Object)
+], StepTransientState.prototype, "readinessCheckType", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "sourceOptions", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "failureOptions", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "environmentConfigured", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "volumesConfigured", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "portsConfigured", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], StepTransientState.prototype, "sourceType", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "explicitSourceIncludes", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "explicitSourceExcludes", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "explicitIncludeVariables", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], StepTransientState.prototype, "explicitExcludeVariables", void 0);
+exports.StepTransientState = StepTransientState;
+class Health {
+    constructor(health) {
+        this.type = 'http';
+        this.headers = [];
+        this.transient = new TransientState();
+        Object.assign(this, health);
+    }
+    static apply(source) {
+        let health = Object.assign(new Health({}));
+        tryApplyEnum(health, 'type', source, workflow_interfaces_1.HealthTypes, true, () => health.type = 'http');
+        if (health.type === 'script') {
+            tryApplyPrimitive(health, 'script', source, 'string');
+        }
+        else if (health.type === 'tcp') {
+            tryApplyPrimitive(health, 'port', source, 'string', false, (value) => typeof value === 'number' ? value.toString() : value);
+        }
+        else {
+            tryApplyPrimitive(health, 'port', source, 'string', false, (value) => typeof value === 'number' ? value.toString() : value);
+            tryApplyPrimitive(health, 'path', source, 'string');
+            tryApply(health, 'headers', () => health.headers = source.headers !== undefined ? cleanKeyValueEntryArray(source.headers) : [], () => health.headers = []);
+        }
+        tryApplyPrimitive(health, 'interval', source, 'number');
+        tryApplyPrimitive(health, 'timeout', source, 'number');
+        tryApplyPrimitive(health, 'retries', source, 'number');
+        tryApplyPrimitive(health, 'grace', source, 'number');
+        return health;
+    }
+    filled() {
+        let keys = Object.keys(this);
+        for (var i = 0; i < keys.length; i++) {
+            if (keys[i] !== 'transient') {
+                if (keys[i] === 'headers') {
+                    if (this[keys[i]] && this[keys[i]].length > 0) {
+                        return true;
+                    }
+                }
+                else if (keys[i] !== 'type' && this[keys[i]] !== undefined) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    toJS() {
+        if (!this.filled()) {
+            return undefined;
+        }
+        let out = fillObj(mobx_1.toJS(this));
+        Health.cleanupJSFields(out);
+        return out;
+    }
+    static cleanupJSFields(obj) {
+        if (obj.type === 'script') {
+            delete obj.port;
+            delete obj.path;
+            delete obj.headers;
+        }
+        else if (obj.type === 'tcp') {
+            delete obj.script;
+            delete obj.path;
+            delete obj.headers;
+        }
+        else if (obj.type === 'http' || obj.type === 'https') {
+            delete obj.script;
+            if (obj.headers && obj.headers.length === 0) {
+                delete obj.headers;
+            }
+            else {
+                obj.headers = cleanKeyValueEntryArray(obj.headers);
+            }
+        }
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_c = typeof workflow_interfaces_1.HealthType !== "undefined" && workflow_interfaces_1.HealthType) === "function" && _c || Object)
+], Health.prototype, "type", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], Health.prototype, "script", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], Health.prototype, "port", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], Health.prototype, "path", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], Health.prototype, "interval", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], Health.prototype, "timeout", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], Health.prototype, "retries", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], Health.prototype, "grace", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], Health.prototype, "headers", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", TransientState)
+], Health.prototype, "transient", void 0);
+exports.Health = Health;
+class Readiness extends Health {
+    constructor(readiness) {
+        super(readiness);
+        Object.assign(this, readiness);
+    }
+    static apply(source) {
+        let readiness = Object.assign(new Readiness({}), super.apply(source));
+        tryApplyPrimitive(readiness, 'skipCheck', source, 'boolean');
+        return readiness;
+    }
+    toJS() {
+        if (!this.filled()) {
+            return undefined;
+        }
+        let out = fillObj(mobx_1.toJS(this));
+        Health.cleanupJSFields(out);
+        return out;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], Readiness.prototype, "skipWait", void 0);
+exports.Readiness = Readiness;
+class WorkflowStepSimple extends WorkflowStepBase {
+    constructor(step) {
+        super(step);
+        this.type = 'sequential';
+        this.transient = new StepTransientState();
+        this.imageSource = 'image';
+        this.image = '';
+        this.dockerfile = '';
+        this.target = '';
+        this.generator = '';
+        this.script = '';
+        this.omitSource = false;
+        this.ignoreFailure = false;
+        this.ignoreValidation = false;
+        this.ignoreMissing = false;
+        this.sourceLocation = '';
+        this.health = new Health({});
+        this.readiness = new Readiness({});
+        this.environment = [];
+        this.ports = [];
+        this.volumes = [];
+        this.dockerignore = '';
+        this.sourceIncludes = [];
+        this.sourceExcludes = [];
+        this.includeVariables = [];
+        this.excludeVariables = [];
+        Object.assign(this, step);
+    }
+    static apply(source) {
+        let step = Object.assign(new WorkflowStepSimple(source));
+        tryApply(step, 'health', () => {
+            step.health = source.health !== undefined ? Health.apply(source.health) : new Health({});
+            if (step.health.transient.parseError.length) {
+                throw Error;
+            }
+        });
+        tryApply(step, 'readiness', () => {
+            step.readiness = source.readiness !== undefined ? Readiness.apply(source.readiness) : new Readiness({});
+            if (step.readiness.transient.parseError.length) {
+                throw Error;
+            }
+        });
+        tryApply(step, 'environment', () => step.environment = source.environment !== undefined ? cleanKeyValueEntryArray(source.environment) : [], () => { step.environment = []; });
+        tryApply(step, 'volumes', () => step.volumes = source.volumes !== undefined ? cleanVolumes(source.volumes) : [], () => step.volumes = []);
+        tryApply(step, 'ports', () => step.ports = source.ports !== undefined ? cleanPortEntryArray(source.ports) : [], () => { step.ports = []; });
+        tryApply(step, 'includeVariables', () => {
+            if (source.includeVariables !== undefined) {
+                if (!Array.isArray(source.includeVariables)) {
+                    step.includeVariables = [source.includeVariables];
+                }
+                else {
+                    step.includeVariables = source.includeVariables;
+                }
+            }
+            else {
+                step.includeVariables = ['*'];
+            }
+            step.transient.explicitIncludeVariables = source.includeVariables !== undefined;
+        }, () => step.includeVariables = ['*']);
+        tryApply(step, 'excludeVariables', () => {
+            if (source.excludeVariables !== undefined) {
+                if (!Array.isArray(source.excludeVariables)) {
+                    step.excludeVariables = [source.excludeVariables];
+                }
+                else {
+                    step.excludeVariables = source.excludeVariables;
+                }
+            }
+            else {
+                step.excludeVariables = [];
+            }
+            step.transient.explicitExcludeVariables = source.includeVariables !== undefined;
+        }, () => step.excludeVariables = []);
+        tryApplyPrimitive(step, 'name', source, 'string', false);
+        tryApplyEnum(step, 'type', source, workflow_interfaces_1.StepTypes, false);
+        tryApplyEnum(step, 'imageSource', source, workflow_interfaces_1.ImageSources);
+        tryApplyPrimitive(step, 'dockerignore', source, 'string');
+        tryApplyPrimitive(step, 'image', source, 'string');
+        tryApplyPrimitive(step, 'dockerfile', source, 'string');
+        tryApplyPrimitive(step, 'target', source, 'string');
+        tryApplyPrimitive(step, 'generator', source, 'string');
+        tryApplyPrimitive(step, 'script', source, 'string');
+        tryApplyPrimitive(step, 'omitSource', source, 'boolean');
+        tryApplyPrimitive(step, 'ignoreFailure', source, 'boolean');
+        tryApplyPrimitive(step, 'ignoreValidation', source, 'boolean');
+        tryApplyPrimitive(step, 'ignoreMissing', source, 'boolean');
+        tryApplyPrimitive(step, 'sourceLocation', source, 'string');
+        return step;
+    }
+    get action() {
+        if (this.transient && this.transient.action) {
+            return this.transient.action;
+        }
+        else if (this.dockerfile) {
+            return 'dockerfile';
+        }
+        else if (this.target) {
+            return 'call';
+        }
+        else if (this.generator) {
+            return 'generated';
+        }
+        return 'script';
+    }
+    toJS() {
+        let out = fillObj(mobx_1.toJS(this));
+        if (out.type === 'service') {
+            let health = this.health.toJS();
+            health ? out.health = health : delete out.health;
+            let readiness = this.readiness.toJS();
+            readiness ? out.readiness = readiness : delete out.readiness;
+        }
+        else {
+            delete out.health;
+            delete out.readiness;
+        }
+        if (out.type === 'sequential') {
+            delete out.type;
+        }
+        if (this.action !== 'script' && this.action !== 'generated') {
+            this.deleteScriptStepFields(out);
+        }
+        if (this.action !== 'script') {
+            delete out.script;
+        }
+        if (this.action !== 'dockerfile' && this.action !== 'generated') {
+            delete out.includeVariables;
+            delete out.excludeVariables;
+        }
+        else {
+            if (this.action !== 'generated') {
+                delete out.generator;
+            }
+            if (this.action !== 'dockerfile') {
+                delete out.dockerfile;
+            }
+            if (this.transient.explicitExcludeVariables) {
+                out.excludeVariables = this.excludeVariables || [];
+            }
+            if (this.transient.explicitIncludeVariables) {
+                out.includeVariables = this.includeVariables || [];
+            }
+        }
+        if (this.action !== 'call') {
+            delete out.target;
+        }
+        if (out.imageSource === 'image') {
+            delete out.imageSource;
+        }
+        if (out.environment && out.environment.length === 0) {
+            delete out.environment;
+        }
+        else if (out.environment) {
+            out.environment = cleanKeyValueEntryArray(out.environment);
+        }
+        if (out.ports && out.ports.length === 0) {
+            delete out.ports;
+        }
+        if (out.volumes && out.volumes.length === 0) {
+            delete out.volumes;
+        }
+        return out;
+    }
+    deleteScriptStepFields(step) {
+        delete step.environment;
+        delete step.generator;
+        delete step.health;
+        delete step.ignoreFailure;
+        delete step.ignoreMissing;
+        delete step.ignoreValidation;
+        delete step.image;
+        delete step.omitSource;
+        delete step.dockerignore;
+        delete step.ports;
+        delete step.readiness;
+        delete step.script;
+        delete step.sourceLocation;
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", StepTransientState)
+], WorkflowStepSimple.prototype, "transient", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_d = typeof workflow_interfaces_1.ImageSource !== "undefined" && workflow_interfaces_1.ImageSource) === "function" && _d || Object)
+], WorkflowStepSimple.prototype, "imageSource", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "image", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "dockerfile", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "target", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "generator", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "script", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], WorkflowStepSimple.prototype, "omitSource", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], WorkflowStepSimple.prototype, "ignoreFailure", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], WorkflowStepSimple.prototype, "ignoreValidation", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Boolean)
+], WorkflowStepSimple.prototype, "ignoreMissing", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "sourceLocation", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Health)
+], WorkflowStepSimple.prototype, "health", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Readiness)
+], WorkflowStepSimple.prototype, "readiness", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkflowStepSimple.prototype, "environment", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkflowStepSimple.prototype, "ports", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkflowStepSimple.prototype, "volumes", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], WorkflowStepSimple.prototype, "dockerignore", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkflowStepSimple.prototype, "sourceIncludes", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkflowStepSimple.prototype, "sourceExcludes", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Object)
+], WorkflowStepSimple.prototype, "includeVariables", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Object)
+], WorkflowStepSimple.prototype, "excludeVariables", void 0);
+exports.WorkflowStepSimple = WorkflowStepSimple;
+class WorkflowStepCompound extends WorkflowStepBase {
+    constructor(step) {
+        super(step);
+        this.type = 'compound';
+        this.steps = [];
+        Object.assign(this, step);
+    }
+    static apply(source) {
+        return Object.assign(new WorkflowStepCompound({}), source, {
+            type: 'compound',
+            steps: (source.steps || []).map(step => {
+                if (step.type === 'compound')
+                    return WorkflowStepCompound.apply(step);
+                else
+                    return WorkflowStepSimple.apply(step);
+            })
+        });
+    }
+    toJS() {
+        return {
+            name: this.name,
+            type: this.type,
+            steps: this.steps.map(step => step.toJS())
+        };
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Array)
+], WorkflowStepCompound.prototype, "steps", void 0);
+exports.WorkflowStepCompound = WorkflowStepCompound;
+function fillObj(source) {
+    let out = {}, keys = Object.keys(source);
+    for (var i = 0; i < keys.length; i++) {
+        if (typeof source[keys[i]] !== 'function' && keys[i] !== 'transient') {
+            out[keys[i]] = source[keys[i]];
+        }
+    }
+    return out;
+}
+function cleanKeyValueEntryArray(source) {
+    let out = [];
+    try {
+        if (!Array.isArray(source) && !mobx_1.isObservableArray(source)) {
+            throw Error;
+        }
+        for (var i = 0; i < source.length; i++) {
+            if (source[i].file) {
+                out.push({ file: source[i].file });
+            }
+            else {
+                out.push({ name: source[i].name, value: source[i].name });
+            }
+        }
+    }
+    catch (e) {
+        console.error(e);
+        throw "Structure error parsing KeyValueEntry";
+    }
+    return out;
+}
+function cleanPortEntryArray(source) {
+    let out = [];
+    try {
+        if (!Array.isArray(source) && !mobx_1.isObservableArray(source)) {
+            throw Error;
+        }
+        for (var i = 0; i < source.length; i++) {
+            out.push({
+                name: source[i].name || undefined,
+                internalPort: source[i].internalPort || undefined,
+                externalPort: source[i].externalPort || undefined,
+                containerPort: source[i].containerPort,
+                protocol: source[i].protocol || 'tcp'
+            });
+        }
+    }
+    catch (e) {
+        console.error(e);
+        throw "Structure error parsing PortEntry";
+    }
+    return out;
+}
+function cleanVolumes(source) {
+    let out = [];
+    try {
+        if (!Array.isArray(source) && !mobx_1.isObservableArray(source)) {
+            throw Error;
+        }
+        for (var i = 0; i < source.length; i++) {
+            out.push({ hostPath: source[i].hostPath, mountPath: source[i].mountPath });
+        }
+    }
+    catch (e) {
+        console.error(e);
+        throw "Structure error parsing Volumes";
+    }
+    return out;
+}
+function cleanPorts(source) {
+    let out = [];
+    try {
+        if (!Array.isArray(source) && !mobx_1.isObservableArray(source)) {
+            throw Error;
+        }
+        for (var i = 0; i < source.length; i++) {
+            if (source[i] !== undefined) {
+                if (typeof source[i] !== 'string') {
+                    throw "Structure error parsing ports";
+                }
+                out.push(source[i]);
+            }
+        }
+    }
+    catch (e) {
+        throw "Structure error parsing ports";
+    }
+    return out;
+}
+exports.cleanPorts = cleanPorts;
+function tryApply(obj, key, fn, catchFn) {
+    let success;
+    try {
+        success = fn();
+    }
+    catch (e) {
+        success = false;
+    }
+    if (success === false) {
+        obj.transient.parseError.push(key);
+        catchFn && catchFn();
+    }
+    return success;
+}
+function tryApplyPrimitive(obj, key, source, type, require = false, cast) {
+    return tryApply(obj, key, () => {
+        if (require || source[key] !== undefined) {
+            let value = source[key];
+            if (cast) {
+                value = cast(value);
+            }
+            if (typeof value === type) {
+                obj[key] = value;
+            }
+            else
+                throw "type error on field " + key;
+        }
+    });
+}
+function tryApplyEnum(obj, key, source, enumVals, require = false, catchFn) {
+    return tryApply(obj, key, () => {
+        if (require || source[key] !== undefined) {
+            if (enumVals.indexOf(source[key]) > -1) {
+                obj[key] = source[key];
+            }
+            else
+                throw Error;
+        }
+    }, catchFn);
+}
+;
+//import { keysOfIHealth,keysOfIReadiness,keysOfIWorkflowStepSimple} from '../workflow-interfaces';
+
+});
+___scope___.file("modules/workflow-designer/workflow-interfaces.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+//import { observable } from "mobx";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.imageSources = {
+    image: '',
+    step: ''
+};
+exports.ImageSources = Object.keys(exports.imageSources);
+exports.stepTypes = {
+    sequential: '',
+    parallel: '',
+    service: '',
+    compound: ''
+};
+exports.StepTypes = Object.keys(exports.stepTypes);
+exports.healthTypes = {
+    http: '',
+    https: '',
+    tcp: '',
+    script: ''
+};
+exports.HealthTypes = Object.keys(exports.healthTypes);
+function isStepType(x) {
+    return exports.stepTypes.hasOwnProperty(x);
+}
+exports.isStepType = isStepType;
+exports.keysOfIHealth = [
+    "type", "script", "port", "path",
+    "interval", "retries", "grace", "timeout", "headers"
+];
+exports.keysOfIReadiness = [
+    "type", "script", "port", "path", "skipCheck",
+    "interval", "retries", "grace", "timeout", "headers"
+];
+exports.keysOfIWorkflowStepSimple = [
+    "imageSource", "image", "target",
+    "generator", "script", "omitSource", "sourceLocation",
+    "ignoreFailure", "ignoreValidation", "ignoreMissing",
+    "includeVariables", "excludeVariables", "dockerignore",
+    "ignoreFailure", "health", "readiness", "environment",
+    "ports", "volumes", "dockerfile", "name", "type"
+];
+
+});
+___scope___.file("modules/workflow-designer/services/workflow_service.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class WorkflowService {
+    constructor() {
+        this._urlBase = 'https://s3-eu-west-1.amazonaws.com/dev.stack.foundation/catalog/';
+        this.catalogInfoHtmlStrings = {};
+    }
+    // constructor (private http: HttpService) {
+    // }
+    get urlBase() {
+        return this._urlBase;
+    }
+    // public catalogInfoHtml (key: string): Observable<string> {
+    //     if (this.catalogInfoHtmlStrings[key]) {
+    //         return Observable.of(this.catalogInfoHtmlStrings[key]);
+    //     }
+    //     return this.http.get(this._urlBase + key + '.md')
+    //         .map(response => {
+    //             // this.catalogInfoHtmlStrings[key] = (new Showdown.Converter()).makeHtml(response.text());
+    //             return this.catalogInfoHtmlStrings[key];
+    //         });
+    // }
+    getWorkflowImagesCatalog(refresh = false) {
+        if (this.catalogImages && !refresh) {
+            return Promise.resolve(this.catalogImages);
+        }
+        else {
+            return fetch(this._urlBase + 'catalog.json')
+                .then(response => response.json())
+                .then(catalog => {
+                this.catalogImages = catalog;
+                return this.catalogImages;
+            });
+        }
+    }
+    downloadYAML(workflow, filename = 'workflow.yaml') {
+        // let data = yaml.safeDump(workflow, {skipInvalid: true}),
+        //     blob = new Blob([data], {type: 'application/x-yaml'});
+        // if(this.windowService.window.navigator.msSaveOrOpenBlob) {
+        //     window.navigator.msSaveBlob(blob, filename);
+        // }
+        // else{
+        //     var elem = this.windowService.window.document.createElement('a');
+        //     elem.href = this.windowService.window.URL.createObjectURL(blob);
+        //     elem.download = filename;        
+        //     document.body.appendChild(elem);
+        //     elem.click();        
+        //     document.body.removeChild(elem);
+        // }
+    }
+}
+exports.WorkflowService = WorkflowService;
+
+});
+___scope___.file("modules/workflow-designer/components/workflow-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const AngleDown = require('react-icons/lib/fa/angle-down');
+const AngleUp = require('react-icons/lib/fa/angle-up');
+const ReactTooltip = require('react-tooltip');
+require("../util/translations");
+const translation_service_1 = require("../services/translation-service");
+const step_editor_1 = require("./step-editor/step-editor");
+const step_list_1 = require("./step-list");
+const variables_editor_1 = require("../components/step-editor/variables-editor");
+const failure_options_1 = require("../components/step-editor/failure-options");
+const variable_editor_1 = require("../components/step-editor/variable-editor");
+let injectSheet = require('react-jss').default;
+const style_1 = require("../style");
+const styles = (theme) => {
+    let list = style_1.listStyles(theme);
+    let section = style_1.sectionStyles(theme);
+    list.rootListTree.marginBottom = '0px';
+    list.listItem.fontSize = '1.2em';
+    list.listItem.paddingLeft = '0px';
+    list.listItem.fontWeight = 'bold';
+    list.listTitle.color = theme.ide ? undefined : '#666';
+    return Object.assign({
+        form: {
+            composes: theme.ide ? '' : 'pure-form',
+        },
+        editor: {
+            composes: `pure-g padded workflow-editor ${theme.ide ? 'base-ide-style' : 'base-web-style'}`,
+            [style_1.mediaQueries.md]: {
+                padding: theme.ide ? '' : '0px 15px',
+            },
+        },
+        tooltipWrapper: {
+            composes: 'pure-u-1',
+            position: 'absolute'
+        },
+        tooltip: {
+            composes: theme.ide ? 'ide-tooltip' : '',
+        },
+        listWrapper: {
+            composes: `pure-u-1 pure-u-md-1-4 ${theme.ide ? 'block' : ''}`,
+            padding: '10px',
+            position: 'relative',
+            margin: '10px 0px',
+            background: theme.ide ? undefined : '#eee',
+            [style_1.mediaQueries.md]: {
+                background: theme.ide ? undefined : 'transparent',
+                padding: '0px',
+                paddingRight: '10px',
+                margin: '0px',
+            },
+        },
+        listWrapperTopShadow: Object.assign({
+            [style_1.mediaQueries.md]: {
+                display: 'none',
+            },
+        }, style_1.shadows.top),
+        listWrapperBottomShadow: Object.assign({
+            [style_1.mediaQueries.md]: {
+                display: 'none',
+            },
+        }, style_1.shadows.bottom),
+        list: {
+            composes: theme.ide ? 'inset-panel padded' : '',
+            '&.closed': {
+                display: 'none',
+                [style_1.mediaQueries.md]: {
+                    display: 'block',
+                },
+            }
+        },
+        mainEditor: {
+            composes: `pure-u-1 pure-u-md-3-4 ${theme.ide ? 'block' : ''}`,
+            padding: '0px 10px',
+            [style_1.mediaQueries.md]: {
+                padding: '0px',
+            },
+        },
+        workflowVarsCount: theme.ide ? {
+            composes: 'badge badge-info',
+            marginRight: '5px',
+        } : {
+            marginRight: '5px',
+            padding: '0.375em 0.6em',
+            minWidth: '1.875em',
+            fontWeight: 'normal',
+            color: 'white',
+            borderRadius: '2em',
+            backgroundColor: style_1.themeColors.darkerGreen
+        },
+        listMobileHeader: {
+            textAlign: 'center',
+            '& > h3': {
+                marginTop: '10px',
+                marginBottom: '0px'
+            },
+            '& > hr': {
+                marginBottom: '0px'
+            },
+            [style_1.mediaQueries.md]: {
+                display: 'none',
+            }
+        },
+        listMobileSwitch: {
+            fontSize: '2em',
+            lineHeight: '0.5em',
+        }
+    }, list, section);
+};
+let WorkflowEditor = class WorkflowEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            section: 'workflow',
+            mobileMenuOpen: false
+        };
+    }
+    selectStep(step) {
+        this.setState({ section: 'step' });
+    }
+    componentWillMount() {
+        if (this.props.workflow.steps.length) {
+            this.props.state.selectInitialStep();
+            this.selectStep(this.props.workflow.steps[0]);
+        }
+        else {
+            this.selectSection('workflow');
+        }
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.workflow !== this.props.workflow) {
+            if (nextProps.workflow.steps.length) {
+                this.props.state.selectInitialStep();
+                this.selectStep(nextProps.workflow.steps[0]);
+            }
+            else {
+                this.selectSection('workflow');
+            }
+        }
+    }
+    selectSection(section) {
+        this.setState({ section });
+        this.props.state.clearSelectedStep();
+    }
+    get selectedItemDescription() {
+        //let out = '';
+        if (this.state.section === 'workflow') {
+            return translation_service_1.translate('TITLE_WORKFLOW_VARIABLES');
+        }
+        else {
+            return 'Step - ' + this.props.state.currentStep.name;
+        }
+    }
+    render() {
+        let classes = this.props.classes || {}, workflowVarCount = this.props.workflow ? this.props.workflow.workflowVariables.length : 0;
+        return (React.createElement("div", { className: classes.editor },
+            React.createElement("div", { className: classes.tooltipWrapper },
+                React.createElement(ReactTooltip, { id: "workflowEditor", effect: "solid", class: classes.tooltip, html: true })),
+            React.createElement("div", { className: classes.listWrapper },
+                React.createElement("div", { className: classes.listMobileHeader, onClick: () => this.setState({ mobileMenuOpen: !this.state.mobileMenuOpen }) },
+                    React.createElement("h3", null, this.selectedItemDescription),
+                    React.createElement("hr", null),
+                    React.createElement("span", { className: classes.listMobileSwitch }, this.state.mobileMenuOpen ? React.createElement(AngleUp, null) : React.createElement(AngleDown, null))),
+                React.createElement("div", { className: classes.listWrapperTopShadow }),
+                React.createElement("div", { className: classes.listWrapperBottomShadow }),
+                React.createElement("div", { className: [classes.list, this.state.mobileMenuOpen ? 'open' : 'closed'].join(' ') },
+                    React.createElement("ul", { className: classes.rootListTree },
+                        React.createElement("li", { className: [classes.listItem, this.state.section === 'workflow' ? classes.listItemSelected : ''].join(' '), onClick: e => this.selectSection('workflow') },
+                            React.createElement("span", null,
+                                React.createElement("span", null, translation_service_1.translate('TITLE_WORKFLOW'))))),
+                    React.createElement("h3", { className: [classes.listTitle, this.state.section === 'step' ? classes.listItemSelected : ''].join(' ') }, translation_service_1.translate('TITLE_STEPS')),
+                    React.createElement(step_list_1.StepList, { state: this.props.state, onStepSelect: step => this.selectStep(step) }),
+                    this.props.children)),
+            React.createElement("div", { className: classes.mainEditor },
+                this.state.section === 'step' &&
+                    React.createElement(step_editor_1.StepEditor, { state: this.props.state, ide: this.props.state.ide, scriptEditorFactory: this.props.state.scriptEditorFactory, sfLinkFactory: this.props.state.sfLinkFactory, catalog: this.props.state.catalog, workflow: this.props.workflow, step: this.props.state.currentStep }),
+                this.state.section === 'workflow' &&
+                    React.createElement("form", { className: classes.form },
+                        React.createElement("div", { className: [classes.section, workflowVarCount.toString()].join(' ') },
+                            React.createElement("div", { className: classes.sectionTitle }, translation_service_1.translate('TITLE_WORKFLOW_VARIABLES')),
+                            React.createElement("div", { className: classes.sectionBody },
+                                React.createElement(variables_editor_1.VariablesEditor, { variables: this.props.workflow ? this.props.workflow.workflowVariables : [], ide: this.props.state.ide, sourceEditorFactory: variable_editor_1.variableEditorFactory, sourceFactory: variable_editor_1.variableSourceFactory }))),
+                        React.createElement("div", { className: classes.section },
+                            React.createElement("div", { className: classes.sectionTitle }, translation_service_1.translate('TITLE_WORKFLOW_FAILURE')),
+                            React.createElement("div", { className: classes.sectionBody },
+                                React.createElement(failure_options_1.FailureOptions, { obj: this.props.workflow })))))));
+    }
+};
+WorkflowEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], WorkflowEditor);
+exports.WorkflowEditor = WorkflowEditor;
+//import 'purecss/build/pure.css';
+//import 'purecss/build/grids-responsive.css';
+//import 'react-select/dist/react-select.css';
+//import 'react-virtualized/styles.css';
+//import 'react-virtualized-select/styles.css';
+
+});
+___scope___.file("modules/workflow-designer/util/translations.js", function(exports, require, module, __filename, __dirname){
+
+window.translations = Object.assign(window.translations || {}, {
+    ADD_STEP: 'Add Step',
+    CONFIGURE: 'Add additional configuration',
+    CONFIGURE_HEALTH: 'Health check',
+    CONFIGURE_ENVIRONMENT: 'Environment variables',
+    CONFIGURE_FAILURE: 'Failure behavior',
+    CONFIGURE_SOURCE: 'Source availability',
+    CONFIGURE_VOLUMES: 'Volumes',
+    CONFIGURE_PORTS: 'Ports',
+    CONFIGURE_READINESS: 'Readiness check',
+    DELETE: 'Delete',
+    HELP_HEALTH_TEXT: 'Configure the check that determines whether the service started by this step is healthy',
+    HELP_HEALTH_LINK: 'Read more about health checks in the documentation',
+    HELP_ENVIRONMENT_TEXT: 'Environment variables that you want to be made available to the Docker container that is run for this step',
+    HELP_ENVIRONMENT_LINK: 'Read more about environment variables in the documentation',
+    HELP_FAILURE_TEXT: 'Configure what happens when a particular step fails',
+    HELP_FAILURE_LINK: 'Read more about failure behavior in the documentation',
+    HELP_SOURCE_TEXT: 'Change how your project source files are made available to the Docker container that is run for this step',
+    HELP_SOURCE_LINK: 'Read more about source availability in the documentation',
+    HELP_VOLUMES_TEXT: 'Volumes are paths relative to your project source folder that you want available in the Docker container for this step',
+    HELP_VOLUMES_LINK: 'Read more about volumes in the documentation',
+    HELP_PORTS_TEXT: 'Configure the ports on the Docker container for this step that should be exposed',
+    HELP_PORTS_LINK: 'Read more about exposing ports in the documentation',
+    HELP_READINESS_TEXT: 'Configure the check that determines whether the service started by this step is considered ready',
+    HELP_READINESS_LINK: 'Read more about readiness checks in the documentation',
+    INSTRUCTION_PORTS: 'Enter a valid port number ( format: [tcp|udp/]sourcePort[:targetContainerPort] )',
+    INSTRUCTION_INCLUDE_VARIABLES: 'Add variables to include in the workflow. "*" will include all.',
+    INSTRUCTION_EXCLUDE_VARIABLES: 'Add variables to exclude in the workflow. "*" will exclude all.',
+    INSTRUCTION_SOURCE_EXCLUDES: 'Add file glob patterns to exclude in the workflow. "*" will exclude all.',
+    INSTRUCTION_SOURCE_INCLUDES: 'Add file glob patterns to include in the workflow. "*" will include all.',
+    LABEL_CONTAINER_PORT: 'Container port',
+    LABEL_INTERNAL_PORT: 'Internal port',
+    LABEL_EXTERNAL_PORT: 'External port',
+    LABEL_PROTOCOL: 'Protocol',
+    LABEL_DOCKERFILE: 'Dockerfile',
+    LABEL_DOCKERIGNORE: 'dockerignore file',
+    LABEL_EXCLUDE_VARIABLES: 'Variables to exclude',
+    LABEL_FILE: 'File',
+    LABEL_GENERATOR: 'Generator',
+    LABEL_GRACE: 'Initial grace period (in seconds)',
+    LABEL_HOST_PATH: 'Host path',
+    LABEL_INCLUDE_VARIABLES: 'Variables to include',
+    LABEL_INTERVAL: 'Interval between checks (in seconds)',
+    LABEL_MOUNT_PATH: 'Mount path',
+    LABEL_NAME: 'Name',
+    LABEL_PATH: 'Path',
+    LABEL_PORT: 'Port',
+    LABEL_RETRIES: 'Number of retry attempts',
+    LABEL_SCRIPT: 'Script',
+    LABEL_SERVICE_NAME: 'Service Name',
+    LABEL_TIMEOUT: 'Timeout for check (in seconds)',
+    LABEL_VALUE: 'Value',
+    LABEL_VARIABLE_PROMPT: 'Add variable {}',
+    LABEL_SOURCE_EXCLUDES: 'File exclude patterns',
+    LABEL_SOURCE_INCLUDES: 'File include patterns',
+    LABEL_WORKFLOW: 'Workflow',
+    OPTION_HTTP: 'HTTP port readiness',
+    OPTION_HTTPS: 'HTTPS port readiness',
+    OPTION_IGNORE_FAILURE: 'If step fails, continue running rest of workflow',
+    OPTION_IGNORE_MISSING: 'Ignore missing variables when expanding variable placeholders',
+    OPTION_IGNORE_VALIDATION: 'Ignore any validation errors',
+    OPTION_OMIT_SOURCE: 'Do not mount the project source for this step',
+    OPTION_NOSOURCE: 'No source',
+    OPTION_DOCKERIGNORE: 'Use dockerignore',
+    OPTION_INCLUDEEXCLUDE: 'Set patterns',
+    OPTION_SKIP_WAIT: 'Skip waiting for this readiness check before starting following step',
+    OPTION_SCRIPT: 'Health check script',
+    OPTION_TCP: 'TCP port readiness',
+    PLACEHOLDER_IMAGE: 'Select image for step...',
+    PLACEHOLDER_PORTS: 'Add ports...',
+    PLACEHOLDER_VERSION: 'Select version...',
+    PLACEHOLDER_TYPE: 'Select step type...',
+    PLACEHOLDER_VARIABLES: 'Add variables...',
+    PLACEHOLDER_SOURCE_EXCLUDES: 'Add patterns...',
+    PLACEHOLDER_SOURCE_INCLUDES: 'Add patterns...',
+    RUN_CALL: 'Call another workflow',
+    RUN_GENERATED: 'Generate and run a workflow',
+    RUN_SCRIPT: 'Run a script',
+    RUN_DOCKERFILE: 'Use an existing Dockerfile',
+    SELECT_TEXT_CREATE_PORT: 'Create {} port {} mapped to target container port {}',
+    SOURCE_CATALOG: 'Use official Docker image',
+    SOURCE_MANUAL: 'Use custom Docker image',
+    SOURCE_STEP: 'Use final state of previous step as image',
+    TITLE_ENVIRONMENT: 'Environment variables',
+    TITLE_FAILURE: 'Behavior on step failure',
+    TITLE_SOURCE: 'Project source availability',
+    TITLE_VOLUMES: 'Volumes',
+    TITLE_PORTS: 'Exposed ports',
+    TITLE_READINESS: 'Readiness check',
+    TITLE_HEALTH: 'Health check',
+    TITLE_STEPS: 'Steps',
+    TITLE_WORKFLOW: 'Workflow',
+    TITLE_WORKFLOW_VARIABLES: 'Workflow Variables',
+    TITLE_WORKFLOW_FAILURE: 'General behavior on step failure',
+    STEP_HAS_ERRORS: 'This step had errors in the workflow definition in the following fields: {}.',
+    TYPE_DESCRIPTION_COMPOUND: 'Wait for all sub-steps to complete or be healthy',
+    TYPE_DESCRIPTION_SEQUENTIAL: 'Workflow will wait for the step to complete',
+    TYPE_DESCRIPTION_PARALLEL: 'Workflow will not wait for this step to complete',
+    TYPE_DESCRIPTION_SERVICE: 'Workflow will wait for this step to be healthy',
+    TYPE_NAME_COMPOUND: 'Compound Step',
+    TYPE_NAME_SEQUENTIAL: 'Sequential Step',
+    TYPE_NAME_PARALLEL: 'Parallel Step',
+    TYPE_NAME_SERVICE: 'Service Step'
+});
+
+});
+___scope___.file("modules/workflow-designer/services/translation-service.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function translate(_key, _args) {
+    let key, args = [];
+    if (typeof _key === 'string') {
+        key = _key;
+    }
+    else {
+        key = _key[0];
+        args = args.concat(_key.slice(1));
+    }
+    if (_args) {
+        if (Array.isArray(_args)) {
+            args = args.concat(_args);
+        }
+        else {
+            args.push(_args);
+        }
+    }
+    let translated = undefined;
+    if (window.translations) {
+        translated = window.translations[key];
+    }
+    if (translated === undefined) {
+        console.warn('No translation defined for "%s"', key);
+        translated = key;
+    }
+    else {
+        for (var i = 0; i < args.length; i++) {
+            let position = translated.indexOf('{}');
+            if (position < 0) {
+                break;
+            }
+            translated = translated.substring(0, position) + args[i] + translated.substring(position + 2);
+        }
+    }
+    return translated;
+}
+exports.translate = translate;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/step-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const step_type_select_1 = require("../step-type-select");
+const simple_step_editor_1 = require("./simple-step-editor");
+const centered_content_1 = require("../../util/centered-content");
+const react_1 = require("react");
+const validating_react_component_1 = require("../react-forms/validating-react-component");
+const style_1 = require("../../style");
+const translation_service_1 = require("../../services/translation-service");
+const error_panel_1 = require("../../components/error-panel");
+;
+const styles = (theme) => {
+    return {
+        form: {
+            composes: theme.ide ? '' : 'pure-form',
+        },
+        formInner: {
+            minWidth: '100%'
+        },
+        stepNameDiv: {
+            composes: 'pure-g pure-u-1 pure-u-lg-1-2 block-md',
+            position: 'relative',
+            [style_1.mediaQueries.lg]: {
+                marginBottom: '0px'
+            }
+        },
+        stepNameLabel: {
+            composes: 'pure-u-1-4 pure-u-md-1-6 pure-u-lg-1-3',
+            fontSize: theme.ide ? '2em' : '26px',
+            paddingRight: '10px',
+            height: '100%',
+            textAlign: 'right',
+            '& > label': {
+                height: '100%'
+            }
+        },
+        stepNameInputDiv: {
+            composes: 'pure-u-3-4 pure-u-md-5-6 pure-u-lg-2-3',
+            height: '100%'
+        },
+        stepNameInput: {
+            composes: 'pure-u-1 input-text native-key-bindings',
+            height: '100%',
+            margin: '0 !important',
+            fontSize: theme.ide ? '2em' : '26px',
+        },
+        stepTypeInputDiv: {
+            composes: 'pure-u-1 pure-u-lg-1-2 step-type-input',
+            [style_1.mediaQueries.lg]: {
+                paddingLeft: '10px'
+            }
+        }
+    };
+};
+let StepEditor = class StepEditor extends validating_react_component_1.FormReactComponent {
+    constructor(props) {
+        super(props);
+        this.onTypeChange = (type) => {
+            this.props.state.changeCurrentStepType(type);
+        };
+        this.nameField = this.createField('props.step.name', value => {
+            let errors = [], stepFoundPos = this.props.workflow.findStep(step => step.name === value);
+            if (!value || value.length === 0) {
+                errors.push('requiredField');
+            }
+            if (stepFoundPos && stepFoundPos.parent.steps[stepFoundPos.index] !== this.props.step) {
+                errors.push('nameConflict');
+            }
+            return errors;
+        });
+    }
+    dismissErrors() {
+        this.props.step.transient.errorsDismissed = true;
+    }
+    render() {
+        let classes = this.props.classes;
+        return (React.createElement("form", { className: classes.form },
+            React.createElement("fieldset", { className: classes.formInner },
+                this.props.step.transient.parseError.length > 0 && !this.props.step.transient.errorsDismissed &&
+                    React.createElement(error_panel_1.ErrorPanel, { message: translation_service_1.translate('STEP_HAS_ERRORS', this.props.step.transient.parseError.join(', ')), onClose: () => this.dismissErrors() }),
+                React.createElement("div", { className: "pure-g block" },
+                    React.createElement("div", { className: classes.stepNameDiv },
+                        React.createElement("div", { className: classes.stepNameLabel },
+                            React.createElement(centered_content_1.CenteredContent, null, "Step:")),
+                        React.createElement("div", { className: classes.stepNameInputDiv },
+                            React.createElement("input", { type: "text", className: classes.stepNameInput, name: "name", value: this.nameField.fieldVal || '', onChange: e => this.onNameChange(e) }))),
+                    React.createElement("div", { className: classes.stepTypeInputDiv },
+                        React.createElement(step_type_select_1.StepTypeSelect, { type: (this.props.step && this.props.step.type || 'sequential'), onChange: this.onTypeChange }))),
+                this.props.step && this.props.step.type === 'compound' ?
+                    null :
+                    (React.createElement(simple_step_editor_1.SimpleStepEditor, { sfLinkFactory: this.props.sfLinkFactory, scriptEditorFactory: this.props.scriptEditorFactory, workflow: this.props.workflow, ide: this.props.ide, allowCalls: this.props.state.allowCalls, catalog: this.props.catalog, step: this.props.step })))));
+    }
+    onNameChange(event) {
+        this.updateField(this.nameField, event.target.value);
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], StepEditor.prototype, "dismissErrors", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof react_1.ChangeEvent !== "undefined" && react_1.ChangeEvent) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], StepEditor.prototype, "onNameChange", null);
+StepEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], StepEditor);
+exports.StepEditor = StepEditor;
+//const CloseIcon = require('react-icons/lib/go/x');
+//import {WorkflowStepCompound} from '../../models/workflow';
+//import { setTimeout } from 'timers';
+//import { WorkflowService } from '../../services/workflow_service';
+
+});
+___scope___.file("modules/workflow-designer/components/step-type-select.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const react_virtualized_select_1 = require("react-virtualized-select");
+const translation_service_1 = require("../services/translation-service");
+const centered_content_1 = require("../util/centered-content");
+const workflow_1 = require("../models/workflow");
+let injectSheet = require('react-jss').default;
+const style_1 = require("../style");
+//import {themeColors } from '../style';
+const styles = (theme) => ({
+    select: {
+        composes: `${style_1.editorStyles.mediumSelect} native-key-bindings`,
+    },
+    title: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '20px',
+        fontWeight: 'bold',
+        lineHeight: '24px'
+    },
+    description: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '14px',
+        lineHeight: '16px'
+    },
+    option: {
+        cursor: 'pointer',
+        margin: 0,
+        padding: '0 20px'
+    },
+    selected: {
+        composes: 'selected',
+    },
+    focused: {
+        composes: 'focused',
+    }
+});
+const typeOptions = workflow_1.StepTypes.map(type => ({ value: type }));
+let StepTypeSelect = class StepTypeSelect extends React.Component {
+    constructor(props) {
+        super(props);
+        this.valueRenderer = (option) => {
+            let classes = this.props.classes || {};
+            return (React.createElement(centered_content_1.CenteredContent, { container: false },
+                React.createElement("div", { className: classes.title }, translation_service_1.translate('TYPE_NAME_' + option.value.toUpperCase())),
+                React.createElement("div", { className: classes.description }, translation_service_1.translate('TYPE_DESCRIPTION_' + option.value.toUpperCase()))));
+        };
+        this.optionRenderer = (options) => {
+            let option = options.option, classes = this.props.classes || {}, focused = options.focusedOption == option, selected = options.valueArray.indexOf(option) > -1;
+            return (React.createElement(centered_content_1.CenteredContent, { className: `${classes.option} ${focused ? classes.focused : ''} ${selected ? classes.selected : ''}`, key: options.key, onClick: () => options.selectValue(option), onMouseOver: () => options.focusOption(option), style: options.style },
+                React.createElement("div", { className: classes.title }, translation_service_1.translate('TYPE_NAME_' + option.value.toUpperCase())),
+                React.createElement("div", { className: classes.description }, translation_service_1.translate('TYPE_DESCRIPTION_' + option.value.toUpperCase()))));
+        };
+    }
+    placeholder() {
+        return (React.createElement(centered_content_1.CenteredContent, null, translation_service_1.translate('PLACEHOLDER_TYPE')));
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return (React.createElement(react_virtualized_select_1.default, { className: classes.select, clearable: false, options: typeOptions, optionRenderer: this.optionRenderer, searchable: false, optionHeight: 70, maxHeight: 400, placeholder: this.placeholder(), valueRenderer: this.valueRenderer, onChange: option => this.props.onChange(option.value), value: this.props.type }));
+    }
+};
+StepTypeSelect = __decorate([
+    injectSheet(styles),
+    __metadata("design:paramtypes", [Object])
+], StepTypeSelect);
+exports.StepTypeSelect = StepTypeSelect;
+
+});
+___scope___.file("modules/workflow-designer/util/centered-content.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+let injectSheet = require('react-jss').default;
+const styles = (theme) => ({
+    container: {
+        height: '100%',
+        '&:before': {
+            content: "''",
+            display: 'inline-block',
+            height: '100%',
+            verticalAlign: 'middle',
+        }
+    },
+    content: {
+        display: 'inline-block',
+        verticalAlign: 'middle'
+    }
+});
+let CenteredContent = class CenteredContent extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        let _a = this.props, { container, className, classes, sheet, theme } = _a, other = __rest(_a, ["container", "className", "classes", "sheet", "theme"]);
+        classes = classes || {};
+        if (container !== false) {
+            const containerClasses = classes.container;
+            return (React.createElement("div", Object.assign({ className: className ? className + ' ' + containerClasses : containerClasses }, other),
+                React.createElement("div", { className: classes.content }, this.props.children)));
+        }
+        else {
+            const contentClasses = classes.content;
+            return (React.createElement("div", Object.assign({ className: className ? className + ' ' + contentClasses : contentClasses }, other), this.props.children));
+        }
+    }
+};
+CenteredContent = __decorate([
+    injectSheet(styles),
+    __metadata("design:paramtypes", [Object])
+], CenteredContent);
+exports.CenteredContent = CenteredContent;
+
+});
+___scope___.file("modules/workflow-designer/style/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//import 'dragula/dist/dragula.css'
+require("./style.less");
+exports.themeColors = {
+    darkerGreen: '#33A626',
+    darkestGreen: '#23731A',
+    fadedGreen: '#95CC8F',
+    darkerRed: '#d13b2e',
+};
+exports.editorStyles = {
+    largeSelect: 'select-large',
+    mediumSelect: 'select-medium',
+    imageSelect: 'select-image',
+    normalSelect: 'select-normal'
+};
+var style_constants_1 = require("./style-constants");
+exports.mediaQueries = style_constants_1.mediaQueries;
+exports.noSelectStyle = style_constants_1.noSelectStyle;
+function sectionStyles(theme) {
+    return {
+        section: theme.ide ?
+            {
+                composes: 'inset-panel block'
+            } :
+            {
+                composes: 'pure-u-1',
+                marginBottom: '20px'
+            },
+        sectionTitle: theme.ide ?
+            {
+                composes: 'panel-heading',
+                position: 'relative'
+            } :
+            {
+                fontWeight: '700',
+                border: '1px solid #ddd',
+                borderBottom: 'none',
+                padding: '5px',
+                background: '#eee',
+                position: 'relative'
+            },
+        sectionTooltip: {
+            position: 'absolute',
+            right: '6px',
+            top: '3px',
+            display: 'block',
+        },
+        sectionTitleLarge: {
+            composes: '$sectionTitle',
+            fontSize: '2em',
+            fontWeight: 'bold',
+            padding: '10px',
+        },
+        sectionBody: theme.ide ?
+            { composes: 'panel-body padded' }
+            : {
+                border: '1px solid #ddd',
+                padding: '10px'
+            },
+        sectionBodyTight: theme.ide ?
+            { composes: 'panel-body' }
+            : {
+                composes: '$sectionBody',
+                padding: '0px'
+            },
+        sectionBodyBorderless: theme.ide ?
+            { composes: 'panel-body' }
+            : {
+                composes: '$sectionBody',
+                border: 'none'
+            }
+    };
+}
+exports.sectionStyles = sectionStyles;
+function listStyles(theme) {
+    return {
+        listTitle: {
+            composes: 'title',
+            fontSize: theme.ide ? undefined : '1.2em',
+            marginTop: '10px',
+        },
+        listTree: {
+            composes: theme.ide ? 'list-tree' : '',
+            padding: '0 0 0 8px',
+            marginLeft: theme.ide ? '0' : '6px',
+            borderLeft: theme.ide ? 'none' : 'solid 17px #ddd',
+        },
+        rootListTree: {
+            composes: '$listTree',
+            padding: '0px',
+            margin: '0',
+            marginBottom: '20px',
+            borderLeft: 'none'
+        },
+        listItem: theme.ide ?
+            {
+                composes: 'list-item step',
+                cursor: 'pointer',
+                position: 'relative',
+                listStyle: 'none',
+                paddingLeft: '10px'
+            } : {
+            composes: 'step',
+            listStyle: 'none',
+            lineHeight: '2em',
+            fontSize: '16px',
+            color: '#666',
+            fontWeight: 'normal',
+            cursor: 'pointer',
+            position: 'relative',
+            paddingLeft: '10px',
+            '& > span': {
+                lineHeight: '2em',
+                overflowX: 'hidden',
+                marginRight: '45px',
+                maxWidth: '100%',
+                whiteSpace: 'nowrap',
+                boxSizing: 'border-box',
+                display: 'block',
+            },
+            '&:hover': {
+                color: '#000',
+            }
+        },
+        listItemSelected: theme.ide ? {
+            composes: 'selected'
+        } : {
+            fontWeight: 'bold',
+            color: exports.themeColors.darkerGreen,
+            '&:hover': {
+                color: exports.themeColors.darkerGreen,
+            }
+        },
+        listItemSubList: {
+            composes: theme.ide ? 'list-nested-item' : '',
+            '& > $listTree': {
+                position: 'relative',
+                top: '-10px',
+                marginTop: '10px',
+                marginBottom: '-10px',
+                minHeight: '20px'
+            },
+        },
+    };
+}
+exports.listStyles = listStyles;
+function errorStyles(theme) {
+    return {
+        errorPanel: theme.ide ?
+            {
+                composes: 'pure-u-1 inset-panel padded background-error',
+                color: 'white',
+                fontWeight: 'bold'
+            } : {
+            composes: 'pure-u-1',
+            color: 'white',
+            fontWeight: 'bold',
+            background: exports.themeColors.darkerRed,
+            padding: '16px',
+            position: 'relative',
+            borderRadius: '5px',
+            boxSizing: 'border-box'
+        },
+        errorPanelClose: {
+            composes: theme.ide ? 'text-error' : '',
+            position: 'absolute',
+            right: '0.2em',
+            top: '0.2em',
+            fontSize: '2em',
+            lineHeight: '1em',
+            '&:hover': {
+                color: 'white',
+                cursor: 'pointer'
+            }
+        }
+    };
+}
+exports.errorStyles = errorStyles;
+exports.shadows = {
+    top: {
+        content: " ",
+        display: 'block',
+        position: 'absolute',
+        height: '20px',
+        left: '-10px',
+        right: '-10px',
+        top: '-20px',
+        boxShadow: '0px 5px 5px rgba(0,0,0,0.2)',
+    },
+    bottom: {
+        content: " ",
+        display: 'block',
+        position: 'absolute',
+        height: '20px',
+        left: '-10px',
+        right: '-10px',
+        bottom: '-20px',
+        boxShadow: '0px -5px 5px rgba(0,0,0,0.2)',
+    }
+};
+
+});
+___scope___.file("modules/workflow-designer/style/style.less", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/workflow-designer/style/style.less", ".workflow-editor.base-web-style [class*=\"pure-u\"],\n.workflow-editor.base-web-style [class=\"pure-g\"] {\n  font-family: 'Lato' !important;\n}\n.workflow-editor.base-web-style [class*=\"pure-u\"] input,\n.workflow-editor.base-web-style [class=\"pure-g\"] input {\n  box-shadow: none;\n  border-radius: 0;\n}\n.workflow-editor.base-web-style [class*=\"pure-u\"] input.code,\n.workflow-editor.base-web-style [class=\"pure-g\"] input.code {\n  font-family: 'Courier New' !important;\n}\n.workflow-editor.base-ide-style {\n  position: relative;\n  height: 100%;\n  overflow-y: auto;\n}\n@media screen and (min-width: 64em) {\n  .workflow-editor.base-ide-style {\n    overflow-y: hidden;\n  }\n}\n@media screen and (min-width: 64em) {\n  .workflow-editor.base-ide-style > div {\n    height: 100%;\n    overflow-y: auto;\n  }\n}\n.workflow-editor.base-ide-style fieldset {\n  padding: 0;\n  margin: 0;\n  border: 0;\n  min-width: 0;\n}\n.workflow-editor.base-ide-style label {\n  margin-bottom: 0;\n}\n.select-medium .Select-control {\n  height: 70px;\n}\n.select-medium .Select-control .Select-value:before {\n  content: '';\n  display: inline-block;\n  height: 100%;\n  vertical-align: middle;\n  margin-right: -0.25em;\n}\n.select-medium .Select-control .Select-input input {\n  border: none;\n  box-shadow: none;\n}\n.select-medium .Select-menu-outer {\n  max-height: 400px;\n  z-index: 5;\n}\n.select-medium .Select-menu-outer .Select-menu {\n  max-height: 398px;\n}\n.select-normal .Select-control .Select-input input {\n  border: none;\n  box-shadow: none;\n  margin: 0;\n}\n.select-large .Select-control {\n  height: 100px;\n}\n.select-large .Select-control .Select-value:before {\n  content: '';\n  display: inline-block;\n  height: 100%;\n  vertical-align: middle;\n  margin-right: -0.25em;\n}\n.select-large .Select-control .Select-input input {\n  border: none;\n  box-shadow: none;\n}\n.select-large .Select-menu-outer {\n  max-height: 400px;\n  z-index: 5;\n}\n.select-large .Select-menu-outer .Select-menu {\n  max-height: 398px;\n}\n.block:not(:last-child) {\n  margin-bottom: 10px;\n}\n.block-force {\n  margin-bottom: 10px;\n}\n@media screen and (max-width: 47.99em) {\n  .block-sm:not(:last-child) {\n    margin-bottom: 10px;\n  }\n}\n.block-md {\n  margin-bottom: 10px;\n}\n@media screen and (min-width: 64em) {\n  .block-md {\n    margin-bottom: 0px;\n  }\n}\n@media screen and (max-width: 63.99em) {\n  .not-block-md {\n    margin-bottom: 0px;\n  }\n  .not-block-md:not(:last-child) {\n    margin-bottom: 0px;\n  }\n}\n.pure-g > div,\n.pure-g > label {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.pure-form label {\n  margin: 0px;\n}\n.tooltip a,\n.tooltip a:hover,\n.tooltip a:active,\n.tooltip a:visited {\n  color: #ddd;\n  text-decoration: none;\n  font-weight: 700;\n}\n.tooltip a:hover,\n.tooltip a:hover:hover,\n.tooltip a:active:hover,\n.tooltip a:visited:hover,\n.tooltip a:active,\n.tooltip a:hover:active,\n.tooltip a:active:active,\n.tooltip a:visited:active {\n  color: #fff;\n}\n")
+});
+___scope___.file("modules/workflow-designer/style/style-constants.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mediaQueries = {
+    sm: '@media screen and (min-width: 35.5em)',
+    md: '@media screen and (min-width: 48em)',
+    lg: '@media screen and (min-width: 64em)',
+    xl: '@media screen and (min-width: 80em)',
+    uptoMd: '@media screen and (max-width: 48em)',
+    uptoSm: '@media screen and (max-width: 35.5em)'
+};
+exports.mediaWidths = {
+    sm: '35.5em',
+    md: '48em',
+    lg: '64em',
+    xl: '80em',
+};
+exports.noSelectStyle = {
+    '-webkit-touch-callout': 'none',
+    '-webkit-user-select': 'none',
+    '-khtml-user-select': 'none',
+    '-moz-user-select': 'none',
+    '-ms-user-select': 'none',
+    'user-select': 'none',
+};
+exports.themeColors = {
+    darkerGreen: '#33A626',
+    darkestGreen: '#23731A',
+    fadedGreen: '#95CC8F'
+};
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/simple-step-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const workflow_1 = require("../../models/workflow");
+const options_1 = require("../options");
+const translation_service_1 = require("../../services/translation-service");
+const script_step_editor_1 = require("./script-step-editor");
+const dockerfile_step_editor_1 = require("./dockerfile-step-editor");
+const ext_workflow_step_editor_1 = require("./ext-workflow-step-editor");
+let injectSheet = require('react-jss').default;
+const styles = (theme) => {
+    return {
+        labelContainer: {
+            composes: 'pure-u-1-4 pure-u-md-1-6',
+            textAlign: 'right'
+        },
+        label: {
+            paddingRight: '5px'
+        }
+    };
+};
+let SimpleStepEditor = class SimpleStepEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    get action() {
+        if (this.props.step) {
+            return this.props.step.action;
+        }
+        return 'script';
+    }
+    setAction(action) {
+        if (!this.props.step.transient) {
+            this.props.step.transient = new workflow_1.StepTransientState();
+        }
+        this.props.step.transient.action = action;
+    }
+    actionOption(action) {
+        return {
+            value: action,
+            display: (React.createElement("span", null, translation_service_1.translate('RUN_' + action.toUpperCase())))
+        };
+    }
+    options() {
+        return this.props.allowCalls ?
+            [
+                this.actionOption('script'),
+                this.actionOption('call'),
+                this.actionOption('generated'),
+                this.actionOption('dockerfile')
+            ] :
+            [
+                this.actionOption('script'),
+                this.actionOption('dockerfile')
+            ];
+    }
+    selectedEditor() {
+        if (this.action == 'script') {
+            return (React.createElement(script_step_editor_1.ScriptStepEditor, { scriptEditorFactory: this.props.scriptEditorFactory, sfLinkFactory: this.props.sfLinkFactory, scriptField: 'script', workflow: this.props.workflow, ide: this.props.ide, catalog: this.props.catalog, step: this.props.step }));
+        }
+        else if (this.action == 'generated') {
+            return (React.createElement(script_step_editor_1.ScriptStepEditor, { scriptEditorFactory: this.props.scriptEditorFactory, sfLinkFactory: this.props.sfLinkFactory, includeWorkflowVariables: true, scriptField: 'generator', workflow: this.props.workflow, ide: this.props.ide, catalog: this.props.catalog, step: this.props.step }));
+        }
+        else if (this.action == 'dockerfile') {
+            return (React.createElement(dockerfile_step_editor_1.DockerfileStepEditor, { step: this.props.step }));
+        }
+        else if (this.action == 'call') {
+            return (React.createElement(ext_workflow_step_editor_1.ExtWorkflowStepEditor, { step: this.props.step }));
+        }
+        else
+            return console.log('incomplete coniditional chain in simple-stepeditor.tsx');
+    }
+    render() {
+        //let classes = this.props.classes || {};
+        return (React.createElement("div", null,
+            React.createElement(options_1.Options, { ide: this.props.ide, fill: true, options: this.options(), onChange: a => this.setAction(a.value), selected: this.action }),
+            this.selectedEditor()));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof workflow_1.ActionType !== "undefined" && workflow_1.ActionType) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], SimpleStepEditor.prototype, "setAction", null);
+SimpleStepEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], SimpleStepEditor);
+exports.SimpleStepEditor = SimpleStepEditor;
+//import { EditorState } from '../../models/state';
+//import { editorStyles, themeColors } from '../../style';
+//import { CenteredContent } from '../../util/centered-content';
+
+});
+___scope___.file("modules/workflow-designer/components/options.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const style_1 = require("../style");
+const activeOption = {
+    fontWeight: 'bold',
+    color: style_1.themeColors.fadedGreen,
+    borderBottom: 'solid 3px ' + style_1.themeColors.fadedGreen,
+    background: 'none'
+};
+const activeSelectedOption = {
+    fontWeight: 'bold',
+    color: style_1.themeColors.darkerGreen,
+    borderBottom: 'solid 3px ' + style_1.themeColors.darkerGreen,
+    background: 'none'
+};
+const styles = (theme) => {
+    let out;
+    if (theme.ide) {
+        out = {
+            optionsList: {
+                composes: 'btn-group'
+            },
+            option: {
+                composes: 'btn'
+            },
+            selected: {
+                composes: 'btn selected'
+            },
+            fullWidth: {
+                width: '100%'
+            },
+        };
+    }
+    else {
+        out = {
+            optionsList: {
+                composes: 'pure-menu-list select-list'
+            },
+            fullWidth: {
+                width: '100%'
+            },
+            option: {
+                composes: 'pure-menu-link',
+                color: '#aaa',
+                fontWeight: 'bold',
+                borderBottom: 'solid 3px transparent',
+                'a&': {
+                    color: '#aaa',
+                },
+                '&:hover': activeOption,
+                '&:focus': {
+                    background: 'none',
+                    color: '#aaa',
+                    fontWeight: 'bold'
+                }
+            },
+            selected: {
+                composes: 'pure-menu-link',
+                borderBottom: 'solid 3px ' + style_1.themeColors.darkerGreen,
+                color: style_1.themeColors.darkerGreen,
+                fontWeight: 'bold',
+                'a&': {
+                    color: style_1.themeColors.darkerGreen
+                },
+                '&:hover': activeSelectedOption,
+                '&:focus': activeSelectedOption
+            }
+        };
+    }
+    Object.assign(out, {
+        'options-1': optionStyle(1),
+        'options-2': optionStyle(2),
+        'options-3': optionStyle(3),
+        'options-4': optionStyle(4),
+        'options-5': optionStyle(5),
+        'options-6': optionStyle(6),
+    });
+    return out;
+};
+function optionStyle(optionNumber) {
+    return {
+        width: '100%',
+        textAlign: 'center',
+        float: 'left',
+        [style_1.mediaQueries.md]: {
+            width: (100 / optionNumber).toPrecision(5) + '%',
+        }
+    };
+}
+let Options = class Options extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    optionClass(option) {
+        let classes = this.props.classes || {};
+        return this.props.selected === option.value ? classes.selected : classes.option;
+    }
+    setSelected(e, option) {
+        if (this.props.onChange) {
+            this.props.onChange(option);
+        }
+        e.preventDefault();
+    }
+    option(option, key) {
+        let optionCount = this.props.options.length, classes = this.props.classes;
+        return this.props.ide ?
+            (React.createElement("button", { key: key, className: [this.optionClass(option), classes['options-' + optionCount]].join(' '), onClick: e => this.setSelected(e, option) }, option.display)) :
+            (React.createElement("li", { key: key, className: ['pure-menu-item', classes['options-' + optionCount]].join(' '), onClick: e => this.setSelected(e, option) },
+                React.createElement("a", { href: "#", className: this.optionClass(option) }, option.display)));
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return this.props.ide ?
+            (React.createElement("div", { className: `block ${this.props.className || ''}` },
+                React.createElement("div", { className: [classes.optionsList, this.props.fill ? classes.fullWidth : ''].join(' ') }, this.props.options && this.props.options.map((o, i) => this.option(o, i))))) :
+            (React.createElement("div", { className: `block pure-menu pure-menu-horizontal ${this.props.className || ''}` },
+                React.createElement("ul", { className: [classes.optionsList, this.props.fill ? classes.fullWidth : ''].join(' ') }, this.props.options && this.props.options.map((o, i) => this.option(o, i)))));
+    }
+};
+Options = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], Options);
+exports.Options = Options;
+//import { computed } from 'mobx';
+//import { editorStyles } from '../style';
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/script-step-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const step_workflow_variables_1 = require("../../components/step-editor/step-workflow-variables");
+const translation_service_1 = require("../../services/translation-service");
+const advanced_options_1 = require("./advanced-options");
+const image_field_1 = require("../image-field/image-field");
+let injectSheet = require('react-jss').default;
+const style_1 = require("../../style");
+const styles = (theme) => {
+    let section = style_1.sectionStyles(theme);
+    return Object.assign({
+        select: {
+            composes: `${style_1.editorStyles.largeSelect}`
+        },
+        title: {
+            composes: theme.ide ? 'text-color' : '',
+            padding: 0,
+            margin: 0,
+            fontSize: '20px',
+            fontWeight: 'bold',
+            lineHeight: '24px'
+        },
+        description: {
+            composes: theme.ide ? 'text-color' : '',
+            padding: 0,
+            margin: 0,
+            fontSize: '14px',
+            lineHeight: '16px'
+        },
+        option: {
+            cursor: 'pointer',
+            margin: 0,
+            padding: '0 20px'
+        },
+        selected: {
+            composes: 'selected',
+        },
+        focused: {
+            composes: 'focused',
+        }
+    }, section);
+};
+let ScriptStepEditor = class ScriptStepEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        const classes = this.props.classes || {};
+        return this.props.step ?
+            React.createElement("div", { className: "pure-g" },
+                React.createElement("div", { className: "pure-u-1" },
+                    React.createElement(image_field_1.ImageField, { catalog: this.props.catalog, ide: this.props.ide, workflow: this.props.workflow, step: this.props.step })),
+                this.props.includeWorkflowVariables &&
+                    React.createElement("div", { className: "pure-u-1" },
+                        React.createElement(step_workflow_variables_1.StepWorkflowVariables, { step: this.props.step })),
+                React.createElement(advanced_options_1.AdvancedOptions, { ide: this.props.ide, step: this.props.step, sfLinkFactory: this.props.sfLinkFactory }),
+                React.createElement("div", { className: "pure-u-1" },
+                    React.createElement("div", { className: classes.section },
+                        React.createElement("div", { className: classes.sectionTitle },
+                            translation_service_1.translate('LABEL_' + this.props.scriptField.toUpperCase()),
+                            ":"),
+                        React.createElement("div", { className: [classes.sectionBodyTight, classes.sectionBodyBorderless].join(' ') }, this.props.scriptEditorFactory(this.props.step, this.props.scriptField)))))
+            : null;
+    }
+};
+ScriptStepEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], ScriptStepEditor);
+exports.ScriptStepEditor = ScriptStepEditor;
+//import * as ReactDOM from 'react-dom';
+// import { AceEditor } from '../ace-editor';
+//import { WorkflowStep } from '../../models/workflow';
+// import 'brace/theme/monokai';
+// import 'brace/mode/sh';
+//import VirtualizedSelect, { VirtualizedOptionRenderOptions } from 'react-virtualized-select';
+//import { autorun } from "mobx";
+//import { Option } from "react-select";
+//import { CenteredContent } from "../../util/centered-content";
+// const atom = require('atom');
+//import { themeColors } from '../../style';
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/step-workflow-variables.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const style_1 = require("../../style");
+const translation_service_1 = require("../../services/translation-service");
+const react_select_1 = require("react-select");
+const centered_content_1 = require("../../util/centered-content");
+const jssStyles = (theme) => {
+    let section = style_1.sectionStyles(theme);
+    return Object.assign({
+        label: {
+            composes: 'pure-u-1-4 text-right',
+            paddingRight: '5px'
+        },
+        selectInput: {
+            composes: theme.ide ? 'text-color' : ''
+        },
+        inputsDiv: {
+            '& .Select-arrow-zone': {
+                display: 'none'
+            }
+        }
+    }, section);
+};
+let StepWorkflowVariables = class StepWorkflowVariables extends React.Component {
+    constructor(props) {
+        super(props);
+        this.promptTextCreator = (label) => {
+            return translation_service_1.translate('LABEL_VARIABLE_PROMPT', label);
+        };
+        this.props.step.includeVariables = this.props.step.includeVariables || [];
+        this.props.step.excludeVariables = this.props.step.excludeVariables || [];
+    }
+    get includeVariables() {
+        return this.props.step.includeVariables;
+    }
+    get excludeVariables() {
+        return this.props.step.excludeVariables;
+    }
+    add(variables, arrayName) {
+        if (variables) {
+            let newVars = [];
+            for (let i = 0; i < variables.length; i++) {
+                newVars.push(variables[i].value);
+            }
+            this.props.step[arrayName] = newVars;
+            if (arrayName === 'includeVariables') {
+                this.props.step.transient.explicitIncludeVariables = true;
+            }
+            else {
+                this.props.step.transient.explicitExcludeVariables = true;
+            }
+        }
+    }
+    shouldKeyDownEventCreateNewOption(arg) {
+        return arg.keyCode === 32 || arg.keyCode === 9 || arg.keyCode === 13 || arg.keyCode === 188;
+    }
+    render() {
+        let classes = this.props.classes || {};
+        let includeVariablesArray = [];
+        let excludeVariablesArray = [];
+        this.includeVariables.forEach(variable => includeVariablesArray.push({ label: variable, value: variable }));
+        this.excludeVariables.forEach(variable => excludeVariablesArray.push({ label: variable, value: variable }));
+        return (React.createElement("div", { className: [classes.section, classes.inputsDiv].join(' ') },
+            React.createElement("div", { className: classes.sectionTitle }, translation_service_1.translate('TITLE_WORKFLOW_VARIABLES')),
+            React.createElement("div", { className: classes.sectionBody },
+                React.createElement("div", { className: "pure-g block" },
+                    React.createElement("label", { className: this.props.classes.label },
+                        React.createElement(centered_content_1.CenteredContent, null,
+                            React.createElement("span", null,
+                                translation_service_1.translate('LABEL_INCLUDE_VARIABLES'),
+                                ":"))),
+                    React.createElement("div", { className: "pure-u-3-4" },
+                        React.createElement(react_select_1.Creatable, { className: `${style_1.editorStyles.normalSelect} native-key-bindings`, inputProps: { className: this.props.classes.selectInput }, shouldKeyDownEventCreateNewOption: this.shouldKeyDownEventCreateNewOption, multi: true, clearable: true, placeholder: translation_service_1.translate('PLACEHOLDER_VARIABLES'), noResultsText: translation_service_1.translate('INSTRUCTION_INCLUDE_VARIABLES'), promptTextCreator: this.promptTextCreator, value: includeVariablesArray, onChange: p => this.add(p, 'includeVariables') }))),
+                React.createElement("div", { className: "pure-g block" },
+                    React.createElement("label", { className: this.props.classes.label },
+                        React.createElement(centered_content_1.CenteredContent, null,
+                            React.createElement("span", null,
+                                translation_service_1.translate('LABEL_EXCLUDE_VARIABLES'),
+                                ":"))),
+                    React.createElement("div", { className: "pure-u-3-4" },
+                        React.createElement(react_select_1.Creatable, { className: `${style_1.editorStyles.normalSelect} native-key-bindings`, inputProps: { className: this.props.classes.selectInput }, shouldKeyDownEventCreateNewOption: this.shouldKeyDownEventCreateNewOption, multi: true, clearable: true, placeholder: translation_service_1.translate('PLACEHOLDER_VARIABLES'), noResultsText: translation_service_1.translate('INSTRUCTION_EXCLUDE_VARIABLES'), promptTextCreator: this.promptTextCreator, value: excludeVariablesArray, onChange: p => this.add(p, 'excludeVariables') }))))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof react_select_1.Option !== "undefined" && react_select_1.Option) === "function" && _a || Object, String]),
+    __metadata("design:returntype", void 0)
+], StepWorkflowVariables.prototype, "add", null);
+StepWorkflowVariables = __decorate([
+    injectSheet(jssStyles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], StepWorkflowVariables);
+exports.StepWorkflowVariables = StepWorkflowVariables;
+//const Text = require('react-icons/lib/fa/font');
+//const File = require('react-icons/lib/fa/file-text-o');
+//const Remove = require('react-icons/lib/fa/times-circle');
+//import { Options } from '../options';
+//import { observable, computed } from 'mobx';
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/advanced-options.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const source_options_1 = require("./source-options");
+const failure_options_1 = require("./failure-options");
+const variables_editor_1 = require("./variables-editor");
+const volume_options_1 = require("./volume-options");
+const health_options_1 = require("./health-options");
+const drop_down_menu_1 = require("../drop-down-menu");
+const translation_service_1 = require("../../services/translation-service");
+const style_1 = require("../../style");
+const tooltip_1 = require("../../components/tooltip");
+const variable_editor_1 = require("../../components/step-editor/variable-editor");
+const port_editor_1 = require("../../components/step-editor/port-editor");
+const styles = (theme) => {
+    let section = style_1.sectionStyles(theme);
+    return Object.assign({
+        advanced: {
+            composes: 'pure-u-1 block',
+            marginTop: '16px'
+        },
+        link: {
+            color: '#4E73BD',
+            fontWeight: '700',
+            textDecoration: 'none',
+            '&:hover': {
+                color: '#34518b',
+                textDecoration: 'none'
+            },
+            '&:visited': {
+                textDecoration: 'none'
+            }
+        }
+    }, section);
+};
+let AdvancedOptions = class AdvancedOptions extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    setup(props) {
+        props.step.transient.healthConfigured = props.step.health.filled();
+    }
+    componentWillMount() {
+        this.setup(this.props);
+    }
+    componentWillReceiveProps(newProps) {
+        this.setup(newProps);
+    }
+    get transient() {
+        return this.props.step.transient;
+    }
+    get healthConfigured() {
+        if (this.transient.healthConfigured) {
+            return true;
+        }
+        if (this.props.step.health) {
+            return this.props.step.health.filled();
+        }
+        return false;
+    }
+    get readinessConfigured() {
+        if (this.transient.readinessConfigured) {
+            return true;
+        }
+        if (this.props.step.readiness) {
+            return this.props.step.readiness.filled();
+        }
+        return false;
+    }
+    get environmentConfigured() {
+        if (this.transient.environmentConfigured) {
+            return true;
+        }
+        return this.props.step.environment && this.props.step.environment.length > 0;
+    }
+    get volumesConfigured() {
+        if (this.transient.volumesConfigured) {
+            return true;
+        }
+        return this.props.step.volumes && this.props.step.volumes.length > 0;
+    }
+    get portsConfigured() {
+        if (this.transient.portsConfigured) {
+            return true;
+        }
+        return this.props.step.ports && this.props.step.ports.length > 0;
+    }
+    get sourceOptions() {
+        if (this.transient.sourceOptions) {
+            return true;
+        }
+        return this.props.step.omitSource ||
+            (this.props.step.sourceLocation && this.props.step.sourceLocation.length > 0 &&
+                this.props.step.sourceLocation !== '/app');
+    }
+    get failureOptions() {
+        if (this.transient.failureOptions) {
+            return true;
+        }
+        return this.props.step.ignoreFailure || this.props.step.ignoreMissing || this.props.step.ignoreValidation;
+    }
+    section(title, body, helpMessage) {
+        const classes = this.props.classes || {};
+        return (React.createElement("div", { className: classes.section },
+            React.createElement("div", { className: classes.sectionTitle },
+                title,
+                helpMessage && React.createElement(tooltip_1.InfoTooltip, { className: classes.sectionTooltip }, helpMessage)),
+            React.createElement("div", { className: classes.sectionBody }, body)));
+    }
+    runAction(action) {
+        action();
+    }
+    button(label, handler) {
+        return {
+            display: React.createElement("span", null, label),
+            onClick: () => this.runAction(handler)
+        };
+    }
+    get additionalAdvancedOptionsAvailable() {
+        return !this.sourceOptions ||
+            !this.failureOptions ||
+            !this.healthConfigured ||
+            !this.readinessConfigured ||
+            !this.environmentConfigured ||
+            !this.volumesConfigured ||
+            !this.portsConfigured;
+    }
+    generateOptionItems() {
+        let items = [];
+        if (this.props.step.type === 'service') {
+            if (!this.healthConfigured) {
+                items.push(this.button(translation_service_1.translate('CONFIGURE_HEALTH'), () => this.transient.healthConfigured = true));
+            }
+            if (!this.readinessConfigured) {
+                items.push(this.button(translation_service_1.translate('CONFIGURE_READINESS'), () => this.transient.readinessConfigured = true));
+            }
+        }
+        if (!this.environmentConfigured) {
+            items.push(this.button(translation_service_1.translate('CONFIGURE_ENVIRONMENT'), () => this.transient.environmentConfigured = true));
+        }
+        if (!this.portsConfigured) {
+            items.push(this.button(translation_service_1.translate('CONFIGURE_PORTS'), () => this.transient.portsConfigured = true));
+        }
+        if (!this.volumesConfigured) {
+            items.push(this.button(translation_service_1.translate('CONFIGURE_VOLUMES'), () => this.transient.volumesConfigured = true));
+        }
+        if (!this.sourceOptions) {
+            items.push(this.button(translation_service_1.translate('CONFIGURE_SOURCE'), () => this.transient.sourceOptions = true));
+        }
+        if (!this.failureOptions) {
+            items.push(this.button(translation_service_1.translate('CONFIGURE_FAILURE'), () => this.transient.failureOptions = true));
+        }
+        return items;
+    }
+    render() {
+        let step = this.props.step;
+        const classes = this.props.classes || {};
+        let items = this.generateOptionItems();
+        return (React.createElement("div", { className: classes.advanced },
+            step.type === 'service' && this.healthConfigured &&
+                this.section(translation_service_1.translate('TITLE_HEALTH'), React.createElement(health_options_1.HealthOptions, { step: step, ide: this.props.ide }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_HEALTH_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#health", translation_service_1.translate('HELP_HEALTH_LINK')))),
+            step.type === 'service' && this.readinessConfigured &&
+                this.section(translation_service_1.translate('TITLE_READINESS'), React.createElement(health_options_1.HealthOptions, { typeField: "readinessCheckType", field: "readiness", step: step, ide: this.props.ide }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_READINESS_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#readiness", translation_service_1.translate('HELP_READINESS_LINK')))),
+            this.sourceOptions &&
+                this.section(translation_service_1.translate('TITLE_SOURCE'), React.createElement(source_options_1.SourceOptions, { step: step, ide: this.props.ide }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_SOURCE_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#source", translation_service_1.translate('HELP_SOURCE_LINK')))),
+            this.failureOptions &&
+                this.section(translation_service_1.translate('TITLE_FAILURE'), React.createElement(failure_options_1.FailureOptions, { obj: step }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_FAILURE_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#failure", translation_service_1.translate('HELP_FAILURE_LINK')))),
+            this.environmentConfigured &&
+                this.section(translation_service_1.translate('TITLE_ENVIRONMENT'), React.createElement(variables_editor_1.VariablesEditor, { variables: step.environment, ide: this.props.ide, sourceEditorFactory: variable_editor_1.variableEditorFactory, sourceFactory: variable_editor_1.variableSourceFactory }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_ENVIRONMENT_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#environment", translation_service_1.translate('HELP_ENVIRONMENT_LINK')))),
+            this.volumesConfigured &&
+                this.section(translation_service_1.translate('TITLE_VOLUMES'), React.createElement(volume_options_1.VolumeOptions, { step: step, ide: this.props.ide }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_VOLUMES_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#volumes", translation_service_1.translate('HELP_VOLUMES_LINK')))),
+            this.portsConfigured &&
+                this.section(translation_service_1.translate('TITLE_PORTS'), React.createElement(variables_editor_1.VariablesEditor, { variables: step.ports, onlyPairs: true, ide: this.props.ide, sourceEditorFactory: port_editor_1.portEditorFactory, sourceFactory: port_editor_1.portEntrySourceFactory }), React.createElement("div", null,
+                    translation_service_1.translate('HELP_PORTS_TEXT'),
+                    React.createElement("br", null),
+                    React.createElement("br", null),
+                    this.props.sfLinkFactory("/docs/workflows#ports", translation_service_1.translate('HELP_PORTS_LINK')))),
+            items.length > 0 &&
+                React.createElement(drop_down_menu_1.DropDownMenu, { ide: this.props.ide, label: translation_service_1.translate('CONFIGURE'), items: items })));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AdvancedOptions.prototype, "setup", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Function]),
+    __metadata("design:returntype", void 0)
+], AdvancedOptions.prototype, "runAction", null);
+AdvancedOptions = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], AdvancedOptions);
+exports.AdvancedOptions = AdvancedOptions;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/source-options.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b, _c;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const translation_service_1 = require("../../services/translation-service");
+const centered_content_1 = require("../../util/centered-content");
+const options_1 = require("../options");
+const react_select_1 = require("react-select");
+const style_1 = require("../../style");
+const styles = (theme) => ({
+    label: {
+        composes: 'input-label pure-u-1 pure-u-md-1-4 text-right',
+        paddingRight: '5px'
+    },
+    textCenter: {
+        textAlign: 'center'
+    }
+});
+let SourceOptions = class SourceOptions extends React.Component {
+    constructor(props) {
+        super(props);
+        this.promptTextCreator = (label) => {
+            return translation_service_1.translate('LABEL_VARIABLE_PROMPT', label);
+        };
+    }
+    get sourceOmitted() {
+        return this.props.step.omitSource === true;
+    }
+    get sourceTypes() {
+        return [
+            {
+                value: 'noSource',
+                display: (React.createElement("span", null, translation_service_1.translate('OPTION_NOSOURCE')))
+            },
+            {
+                value: 'dockerignore',
+                display: (React.createElement("span", null, translation_service_1.translate('OPTION_DOCKERIGNORE')))
+            },
+            {
+                value: 'includeExclude',
+                display: (React.createElement("span", null, translation_service_1.translate('OPTION_INCLUDEEXCLUDE')))
+            },
+        ];
+    }
+    omitSource(e) {
+        this.props.step.omitSource = e.currentTarget.checked;
+    }
+    updateDockerignore(e) {
+        this.props.step.dockerignore = e.target.value;
+    }
+    setSourceType(type) {
+        this.props.step.transient.sourceType = type;
+    }
+    get currentSourceType() {
+        if (this.props.step.transient.sourceType) {
+            return this.props.step.transient.sourceType;
+        }
+        if (this.sourceOmitted) {
+            return 'noSource';
+        }
+        return ((this.props.step.sourceIncludes || []).length || (this.props.step.sourceExcludes || []).length) ?
+            'includeExclude' : 'dockerignore';
+    }
+    shouldKeyDownEventCreateNewOption(arg) {
+        return arg.keyCode === 32 || arg.keyCode === 9 || arg.keyCode === 13 || arg.keyCode === 188;
+    }
+    setSources(variables, arrayName) {
+        if (variables) {
+            let newVars = [];
+            for (let i = 0; i < variables.length; i++) {
+                newVars.push(variables[i].value);
+            }
+            this.props.step[arrayName] = newVars;
+            if (arrayName === 'sourceIncludes') {
+                this.props.step.transient.explicitSourceIncludes = true;
+            }
+            else {
+                this.props.step.transient.explicitSourceExcludes = true;
+            }
+        }
+    }
+    render() {
+        let classes = this.props.classes || {};
+        let sourceIncludesArray = [];
+        let sourceExcludesArray = [];
+        this.props.step.sourceIncludes.forEach(sourceLine => sourceIncludesArray.push({ label: sourceLine, value: sourceLine }));
+        this.props.step.sourceExcludes.forEach(sourceLine => sourceExcludesArray.push({ label: sourceLine, value: sourceLine }));
+        return (React.createElement("div", null, !this.sourceOmitted && (React.createElement("div", null,
+            React.createElement("div", { className: "pure-u-1 block" },
+                React.createElement(options_1.Options, { ide: this.props.ide, fill: true, options: this.sourceTypes, onChange: a => this.setSourceType(a.value), selected: this.currentSourceType })),
+            this.currentSourceType === 'noSource' &&
+                React.createElement("div", { className: "pure-g block" },
+                    React.createElement("div", { className: "pure-u-1" },
+                        React.createElement("div", { className: classes.textCenter }, translation_service_1.translate('OPTION_OMIT_SOURCE')))),
+            this.currentSourceType === 'dockerignore' &&
+                React.createElement("div", { className: "pure-g" },
+                    React.createElement("label", { className: classes.label },
+                        React.createElement(centered_content_1.CenteredContent, null,
+                            React.createElement("span", null,
+                                translation_service_1.translate('LABEL_DOCKERIGNORE'),
+                                ":"))),
+                    React.createElement("div", { className: "pure-u-1 pure-u-md-3-4" },
+                        React.createElement("input", { className: 'pure-input-1 code input-text native-key-bindings', type: "text", value: this.props.step.dockerignore || '', onChange: e => this.updateDockerignore(e) }))),
+            this.currentSourceType === 'includeExclude' &&
+                React.createElement("div", null,
+                    React.createElement("div", { className: "pure-g block" },
+                        React.createElement("label", { className: this.props.classes.label },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", null,
+                                    translation_service_1.translate('LABEL_SOURCE_INCLUDES'),
+                                    ":"))),
+                        React.createElement("div", { className: "pure-u-3-4" },
+                            React.createElement(react_select_1.Creatable, { className: `${style_1.editorStyles.normalSelect} native-key-bindings`, inputProps: { className: this.props.classes.selectInput }, shouldKeyDownEventCreateNewOption: this.shouldKeyDownEventCreateNewOption, multi: true, clearable: true, placeholder: translation_service_1.translate('PLACEHOLDER_SOURCE_INCLUDES'), noResultsText: translation_service_1.translate('INSTRUCTION_SOURCE_INCLUDES'), promptTextCreator: this.promptTextCreator, value: sourceIncludesArray, onChange: p => this.setSources(p, 'sourceIncludes') }))),
+                    React.createElement("div", { className: "pure-g block" },
+                        React.createElement("label", { className: this.props.classes.label },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", null,
+                                    translation_service_1.translate('LABEL_SOURCE_EXCLUDES'),
+                                    ":"))),
+                        React.createElement("div", { className: "pure-u-3-4" },
+                            React.createElement(react_select_1.Creatable, { className: `${style_1.editorStyles.normalSelect} native-key-bindings`, inputProps: { className: this.props.classes.selectInput }, shouldKeyDownEventCreateNewOption: this.shouldKeyDownEventCreateNewOption, multi: true, clearable: true, placeholder: translation_service_1.translate('PLACEHOLDER_SOURCE_EXCLUDES'), noResultsText: translation_service_1.translate('INSTRUCTION_SOURCE_EXCLUDES'), promptTextCreator: this.promptTextCreator, value: sourceExcludesArray, onChange: p => this.setSources(p, 'sourceExcludes') }))))))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], SourceOptions.prototype, "omitSource", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _b || Object]),
+    __metadata("design:returntype", void 0)
+], SourceOptions.prototype, "updateDockerignore", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SourceOptions.prototype, "setSourceType", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_c = typeof react_select_1.Option !== "undefined" && react_select_1.Option) === "function" && _c || Object, String]),
+    __metadata("design:returntype", void 0)
+], SourceOptions.prototype, "setSources", null);
+SourceOptions = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], SourceOptions);
+exports.SourceOptions = SourceOptions;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/failure-options.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b, _c;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+//import { WorkflowStepSimple } from '../../models/workflow';
+const translation_service_1 = require("../../services/translation-service");
+const styles = (theme) => ({});
+let FailureOptions = class FailureOptions extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    get failureIgnored() {
+        return this.props.obj.ignoreFailure === true;
+    }
+    get missingIgnored() {
+        return this.props.obj.ignoreMissing === true;
+    }
+    get validationIgnored() {
+        return this.props.obj.ignoreValidation === true;
+    }
+    ignoreFailure(e) {
+        this.props.obj.ignoreFailure = e.currentTarget.checked;
+    }
+    ignoreMissing(e) {
+        this.props.obj.ignoreMissing = e.currentTarget.checked;
+    }
+    ignoreValidation(e) {
+        this.props.obj.ignoreValidation = e.currentTarget.checked;
+    }
+    render() {
+        //let classes = this.props.classes || {}
+        return (React.createElement("div", null,
+            React.createElement("div", { className: "pure-u-1 block" },
+                React.createElement("label", { className: "input-label" },
+                    React.createElement("input", { className: "input-checkbox", type: "checkbox", checked: this.failureIgnored, onChange: e => this.ignoreFailure(e) }),
+                    ' ',
+                    translation_service_1.translate('OPTION_IGNORE_FAILURE'))),
+            React.createElement("div", { className: "pure-u-1 block" },
+                React.createElement("label", { className: "input-label" },
+                    React.createElement("input", { className: "input-checkbox", type: "checkbox", checked: this.missingIgnored, onChange: e => this.ignoreMissing(e) }),
+                    ' ',
+                    translation_service_1.translate('OPTION_IGNORE_MISSING'))),
+            React.createElement("div", { className: "pure-u-1" },
+                React.createElement("label", { className: "input-label" },
+                    React.createElement("input", { className: "input-checkbox", type: "checkbox", checked: this.validationIgnored, onChange: e => this.ignoreValidation(e) }),
+                    ' ',
+                    translation_service_1.translate('OPTION_IGNORE_VALIDATION')))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], FailureOptions.prototype, "ignoreFailure", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _b || Object]),
+    __metadata("design:returntype", void 0)
+], FailureOptions.prototype, "ignoreMissing", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_c = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _c || Object]),
+    __metadata("design:returntype", void 0)
+], FailureOptions.prototype, "ignoreValidation", null);
+FailureOptions = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], FailureOptions);
+exports.FailureOptions = FailureOptions;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/variables-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const Text = require('react-icons/lib/fa/font');
+const File = require('react-icons/lib/fa/file-text-o');
+const Remove = require('react-icons/lib/fa/times-circle');
+const options_1 = require("../options");
+const workflow_1 = require("../../models/workflow");
+const style_1 = require("../../style");
+let injectSheet = require('react-jss').default;
+const jssStyles = (theme) => ({
+    fieldBlock: {
+        composes: 'pure-g block-force base-border-color component-padding-bottom',
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        borderBottomColor: theme.ide ? undefined : '#ddd',
+        paddingBottom: '10px',
+        '&:last-child': {
+            borderBottom: 'none',
+            paddingBottom: '0px'
+        },
+    },
+    editorDiv: {
+        composes: 'pure-u-1 pure-u-lg-5-6'
+    },
+    optionSettings: {
+        composes: 'pure-u-1 pure-u-lg-1-6',
+        textAlign: 'right',
+        paddingLeft: '0px',
+        [style_1.mediaQueries.lg]: {
+            paddingLeft: '10px'
+        }
+    },
+    options: {
+        '& > .btn-group': {
+            width: '100%',
+            '& > button': {
+                width: '50%'
+            }
+        }
+    },
+    deleteButton: {
+        composes: theme.ide ? 'btn btn-error btn-block' : 'pure-button danger',
+        width: '100%',
+        display: 'block',
+        '& > svg': {
+            position: 'relative',
+            display: 'inline-block',
+            top: '-0.10em'
+        }
+    }
+});
+class EditorState {
+    constructor(variables, source, committed, sourceType) {
+        this.variables = variables;
+        this.source = source;
+        this.committed = committed;
+        this.sourceType = sourceType;
+    }
+    commitIfNecessary() {
+        if (!this.committed) {
+            this.variables.push(this.source);
+            this.committed = true;
+        }
+    }
+}
+exports.EditorState = EditorState;
+let VariablesEditor = class VariablesEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    componentWillMount() {
+        this.setState({ sourceType: 'pair' });
+    }
+    get variables() {
+        return this.props.variables;
+    }
+    sourceTypeEditor() {
+        return React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1-4 pure-u-lg-0" }),
+            React.createElement("div", { className: "pure-u-3-4 pure-u-lg-1" },
+                React.createElement(options_1.Options, { selected: this.state && this.state.sourceType, ide: this.props.ide, className: this.props.classes.options, onChange: a => this.setSourceType(a.value), options: this.sourceTypes() })));
+    }
+    remove(e, source) {
+        this.variables.splice(this.variables.indexOf(source), 1);
+        e.preventDefault();
+    }
+    sourceEditor(source, key, committed) {
+        let editor = this.props.sourceEditorFactory(source, new EditorState(this.variables, source, committed, this.state.sourceType));
+        return (React.createElement("div", { className: this.props.classes.fieldBlock, key: key },
+            React.createElement("div", { className: this.props.classes.editorDiv }, editor),
+            React.createElement("div", { className: this.props.classes.optionSettings },
+                committed && this.deleteButton(source),
+                !committed && !this.props.onlyPairs && this.sourceTypeEditor())));
+    }
+    deleteButton(source) {
+        return React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1-4 pure-u-lg-0" }),
+            React.createElement("div", { className: "pure-u-3-4 pure-u-lg-1" },
+                React.createElement("button", { className: this.props.classes.deleteButton, onClick: e => this.remove(e, source) },
+                    React.createElement(Remove, null),
+                    " Remove")));
+    }
+    sourceEditors() {
+        let editors = [];
+        if (this.variables) {
+            for (let i = 0; i <= this.variables.length; i++) {
+                let source = undefined;
+                let committed = false;
+                if (i < this.variables.length) {
+                    source = this.variables[i];
+                    committed = true;
+                }
+                else {
+                    source = this.props.sourceFactory();
+                }
+                editors.push(this.sourceEditor(source, i, committed));
+            }
+        }
+        else {
+            editors.push(this.sourceEditor(this.props.sourceFactory(), 0, false));
+        }
+        return editors;
+    }
+    sourceTypes() {
+        return [
+            {
+                display: (React.createElement(Text, null)),
+                value: 'pair'
+            },
+            {
+                display: (React.createElement(File, null)),
+                value: 'file'
+            }
+        ];
+    }
+    setSourceType(source) {
+        this.setState({ sourceType: source });
+    }
+    render() {
+        return (React.createElement("div", null, this.sourceEditors()));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).MouseEvent) === "function" && _a || Object, typeof (_b = typeof workflow_1.KeyValueEntry !== "undefined" && workflow_1.KeyValueEntry) === "function" && _b || Object]),
+    __metadata("design:returntype", void 0)
+], VariablesEditor.prototype, "remove", null);
+VariablesEditor = __decorate([
+    injectSheet(jssStyles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], VariablesEditor);
+exports.VariablesEditor = VariablesEditor;
+//import { WorkflowStepSimple } from '../../models/workflow';
+//import { translate } from '../../services/translation-service';
+//import { VariableEditor } from './variable-editor';
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/volume-options.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const Remove = require('react-icons/lib/fa/times-circle');
+const workflow_1 = require("../../models/workflow");
+const volume_editor_1 = require("./volume-editor");
+const style_1 = require("../../style");
+let injectSheet = require('react-jss').default;
+const jssStyles = (theme) => {
+    return {
+        fieldBlock: {
+            composes: 'pure-g block-force base-border-color component-padding-bottom',
+            borderBottomWidth: theme.ide ? '1px' : '0px',
+            borderBottomStyle: 'solid',
+            '&:last-child': {
+                borderBottom: 'none',
+                paddingBottom: '0px'
+            },
+            [style_1.mediaQueries.lg]: {
+                borderBottom: 'none',
+                paddingBottom: '0px'
+            }
+        },
+        optionSettings: {
+            composes: 'pure-u-1 pure-u-lg-1-6',
+            textAlign: 'right',
+            paddingLeft: '0px',
+            [style_1.mediaQueries.lg]: {
+                paddingLeft: '10px'
+            }
+        },
+        deleteButton: {
+            composes: theme.ide ? 'btn btn-error btn-block' : 'pure-button danger',
+            width: '100%',
+            display: 'block',
+            '& > svg': {
+                position: 'relative',
+                display: 'inline-block',
+                top: '-0.10em'
+            }
+        },
+        editorDiv: {
+            composes: 'pure-u-1 pure-u-lg-5-6'
+        }
+    };
+};
+class EditorState {
+    constructor(step, volume, committed) {
+        this.step = step;
+        this.volume = volume;
+        this.committed = committed;
+    }
+    commitIfNecessary() {
+        if (!this.committed) {
+            if (!this.step.volumes) {
+                this.step.volumes = [];
+            }
+            this.step.volumes.push(this.volume);
+            this.committed = true;
+        }
+    }
+}
+class EditorVolume {
+    constructor() {
+        this.mountPath = '';
+        this.hostPath = '';
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], EditorVolume.prototype, "mountPath", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], EditorVolume.prototype, "hostPath", void 0);
+let VolumeOptions = class VolumeOptions extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    get volumes() {
+        return this.props.step.volumes;
+    }
+    remove(volume) {
+        this.volumes.splice(this.volumes.indexOf(volume), 1);
+    }
+    volumeEditor(volume, key, committed) {
+        let state = new EditorState(this.props.step, volume, committed), classes = this.props.classes, editor = (React.createElement(volume_editor_1.VolumeEditor, { volume: volume, onChange: () => state.commitIfNecessary() }));
+        return (React.createElement("div", { className: classes.fieldBlock, key: key },
+            React.createElement("div", { className: classes.editorDiv }, editor),
+            React.createElement("div", { className: classes.optionSettings }, committed && this.deleteButton(volume))));
+    }
+    deleteButton(volume) {
+        return React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1-4 pure-u-lg-0" }),
+            React.createElement("div", { className: "pure-u-3-4 pure-u-lg-1" },
+                React.createElement("button", { className: this.props.classes.deleteButton, onClick: e => this.remove(volume) },
+                    React.createElement(Remove, null),
+                    " Remove")));
+    }
+    sourceEditors() {
+        let editors = [];
+        if (this.volumes) {
+            for (let i = 0; i <= this.volumes.length; i++) {
+                let volume = undefined;
+                let committed = false;
+                if (i < this.volumes.length) {
+                    volume = this.volumes[i];
+                    committed = true;
+                }
+                else {
+                    volume = new EditorVolume();
+                }
+                editors.push(this.volumeEditor(volume, i, committed));
+            }
+        }
+        else {
+            editors.push(this.volumeEditor(new EditorVolume(), 0, false));
+        }
+        return editors;
+    }
+    render() {
+        //let classes = this.props.classes || {}
+        return (React.createElement("div", null, this.sourceEditors()));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof workflow_1.Volume !== "undefined" && workflow_1.Volume) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], VolumeOptions.prototype, "remove", null);
+VolumeOptions = __decorate([
+    injectSheet(jssStyles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], VolumeOptions);
+exports.VolumeOptions = VolumeOptions;
+//import { Options } from '../options';
+//import { translate } from '../../services/translation-service';
+//const Text = require('react-icons/lib/fa/font');
+//const File = require('react-icons/lib/fa/file-text-o');
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/volume-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+let injectSheet = require('react-jss').default;
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const styles = (theme) => ({
+    mountPath: {
+        composes: 'pure-u-1-6',
+        textAlign: 'right'
+    },
+    hostPath: {
+        composes: 'pure-u-1-6',
+        textAlign: 'right'
+    },
+    label: {
+        paddingRight: '5px'
+    },
+    input: {
+        composes: 'pure-input-1 code input-text native-key-bindings'
+    }
+});
+let VolumeEditor = class VolumeEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    notifyChange() {
+        if (this.props.onChange) {
+            this.props.onChange();
+        }
+    }
+    setMountPath(name) {
+        this.props.volume.mountPath = name;
+        this.notifyChange();
+    }
+    setHostPath(value) {
+        this.props.volume.hostPath = value;
+        this.notifyChange();
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("label", { className: classes.mountPath },
+                React.createElement(centered_content_1.CenteredContent, null,
+                    React.createElement("span", { className: classes.label },
+                        translation_service_1.translate('LABEL_MOUNT_PATH'),
+                        ":"))),
+            React.createElement("div", { className: "pure-u-1-3" },
+                React.createElement("input", { className: classes.input, type: "text", value: this.props.volume.mountPath, onChange: e => this.setMountPath(e.target.value) })),
+            React.createElement("label", { className: classes.hostPath },
+                React.createElement(centered_content_1.CenteredContent, null,
+                    React.createElement("span", { className: classes.label },
+                        translation_service_1.translate('LABEL_HOST_PATH'),
+                        ":"))),
+            React.createElement("div", { className: "pure-u-1-3" },
+                React.createElement("input", { className: classes.input, type: "text", value: this.props.volume.hostPath, onChange: e => this.setHostPath(e.target.value) }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], VolumeEditor.prototype, "setMountPath", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], VolumeEditor.prototype, "setHostPath", null);
+VolumeEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], VolumeEditor);
+exports.VolumeEditor = VolumeEditor;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/health-options.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b;
+const React = require("react");
+let injectSheet = require('react-jss').default;
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+//import { observable, computed } from 'mobx';
+//const Text = require('react-icons/lib/fa/font');
+//const File = require('react-icons/lib/fa/file-text-o');
+//const Remove = require('react-icons/lib/fa/times-circle');
+//import { editorStyles } from '../../style';
+//import { Creatable, Option, OptionValues } from 'react-select';
+const options_1 = require("../options");
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const workflow_1 = require("../../models/workflow");
+const variables_editor_1 = require("../../components/step-editor/variables-editor");
+const variable_editor_1 = require("../../components/step-editor/variable-editor");
+const styles = (theme) => ({
+    labelContainer: {
+        textAlign: 'right'
+    },
+    smallLabelContainer: {
+        composes: '$labelContainer pure-u-1-6'
+    },
+    largeLabelContainer: {
+        composes: '$labelContainer pure-u-5-6'
+    },
+    healthNumberPropDiv: {
+        composes: 'pure-u-1 pure-u-lg-1-2 block'
+    },
+    healthNumberPropFieldDiv: {
+        composes: 'pure-u-1-6'
+    },
+    healthNumberPropField: {
+        composes: 'pure-input-1 input-text native-key-bindings'
+    },
+    headersTitle: {
+        composes: theme.ide ? 'tab-border' : '',
+        marginTop: '0px',
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        paddingBottom: '5px',
+        fontSize: '1em'
+    },
+    label: {
+        paddingRight: '5px'
+    }
+});
+let HealthOptions = class HealthOptions extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    get typeField() {
+        let field = this.props.typeField || 'healthCheckType';
+        return this.props.step.transient[field];
+    }
+    get healthField() {
+        let field = this.props.field || 'health';
+        if (this.props.step[field].skipWait !== undefined) {
+            return this.props.step[field];
+        }
+        else {
+            return this.props.step[field];
+        }
+    }
+    get isReadiness() {
+        return this.healthField.skipWait !== undefined;
+    }
+    get currentHealthCheckType() {
+        if (this.props.step) {
+            if (this.typeField) {
+                return this.typeField;
+            }
+            else if (this.healthField && this.healthField.type) {
+                return this.healthField.type;
+            }
+        }
+        return 'script';
+    }
+    setHealthCheckType(checkType) {
+        let field = this.props.typeField || 'healthCheckType';
+        this.props.step.transient[field] = checkType;
+    }
+    healthCheckTypes() {
+        return workflow_1.HealthTypes.map(type => ({
+            value: type,
+            display: (React.createElement("span", null, translation_service_1.translate('OPTION_' + type.toUpperCase())))
+        }));
+    }
+    scriptTypeEditor() {
+        let classes = this.props.classes || {};
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("label", { className: classes.smallLabelContainer },
+                React.createElement(centered_content_1.CenteredContent, null,
+                    React.createElement("span", { className: classes.label },
+                        translation_service_1.translate('LABEL_SCRIPT'),
+                        ":"))),
+            React.createElement("div", { className: "pure-u-5-6" },
+                React.createElement("input", { className: "pure-input-1 input-text native-key-bindings", type: "text", value: this.healthField.script || "", onChange: e => this.setHealthCheckProperty(() => this.healthField.script = e.target.value) }))));
+    }
+    requestTypeEditor(checkType) {
+        let classes = this.props.classes || {};
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("label", { className: classes.smallLabelContainer },
+                React.createElement(centered_content_1.CenteredContent, null,
+                    React.createElement("span", { className: classes.label },
+                        translation_service_1.translate('LABEL_PORT'),
+                        ":"))),
+            React.createElement("div", { className: checkType === "tcp" ? "pure-u-5-6" : "pure-u-1-3" },
+                React.createElement("input", { className: "pure-input-1 input-text native-key-bindings", type: "text", value: this.healthField.port || "", onChange: e => this.setHealthCheckProperty(() => this.healthField.port = e.target.value) })),
+            checkType !== "tcp" &&
+                (React.createElement("label", { className: classes.smallLabelContainer },
+                    React.createElement(centered_content_1.CenteredContent, null,
+                        React.createElement("span", { className: classes.label },
+                            translation_service_1.translate('LABEL_PATH'),
+                            ":")))),
+            checkType !== "tcp" &&
+                (React.createElement("div", { className: "pure-u-1-3" },
+                    React.createElement("input", { className: "pure-input-1 input-text native-key-bindings", type: "text", value: this.healthField.path, onChange: e => this.setHealthCheckProperty(() => this.healthField.path = e.target.value) })))));
+    }
+    selectedEditor() {
+        //let classes = this.props.classes || {};
+        let type = this.currentHealthCheckType;
+        return (React.createElement("div", { className: "pure-u-1 block" }, type && (type === 'script' ? this.scriptTypeEditor() : this.requestTypeEditor(type))));
+    }
+    setHealthCheckProperty(setter) {
+        setter();
+    }
+    toggleSkipWait(e) {
+        this.healthField.skipWait = e.currentTarget.checked;
+    }
+    get skipWait() {
+        return this.healthField.skipWait === true;
+    }
+    healthCheckNumberProperty(property) {
+        let classes = this.props.classes || {};
+        //@ts-ignore
+        let onNumberChange = (property, e) => {
+            this.setHealthCheckProperty(() => {
+                let value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                    //@ts-ignore
+                    let stringVal = value;
+                    this.healthField[property] = value;
+                }
+            });
+        };
+        return (React.createElement("div", { className: classes.healthNumberPropDiv },
+            React.createElement("div", { className: "pure-g" },
+                React.createElement("label", { className: classes.largeLabelContainer },
+                    React.createElement(centered_content_1.CenteredContent, null,
+                        React.createElement("span", { className: classes.label },
+                            translation_service_1.translate('LABEL_' + property.toUpperCase()),
+                            ":"))),
+                React.createElement("div", { className: classes.healthNumberPropFieldDiv },
+                    React.createElement("input", { type: "text", className: classes.healthNumberPropField, value: this.healthField[property] || "", onChange: e => this.setHealthCheckProperty(() => this.healthField[property] = parseInt(e.target.value)) })))));
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1 block" },
+                React.createElement(options_1.Options, { ide: this.props.ide, fill: true, options: this.healthCheckTypes(), onChange: a => this.setHealthCheckType(a.value), selected: this.currentHealthCheckType })),
+            this.isReadiness &&
+                (React.createElement("div", { className: "pure-u-1 block" },
+                    React.createElement("label", { className: "input-label" },
+                        React.createElement("input", { className: "input-checkbox", type: "checkbox", checked: this.skipWait, onChange: e => this.toggleSkipWait(e) }),
+                        ' ',
+                        translation_service_1.translate('OPTION_SKIP_WAIT')))),
+            this.selectedEditor(),
+            this.healthCheckNumberProperty('interval'),
+            this.healthCheckNumberProperty('retries'),
+            this.healthCheckNumberProperty('timeout'),
+            this.healthCheckNumberProperty('grace'),
+            (this.currentHealthCheckType === 'http' || this.currentHealthCheckType === 'https') &&
+                React.createElement("div", { className: "pure-u-1 block" },
+                    React.createElement("h3", { className: classes.headersTitle }, "Headers"),
+                    React.createElement(variables_editor_1.VariablesEditor, { variables: this.healthField.headers, ide: this.props.ide, onlyPairs: true, sourceEditorFactory: variable_editor_1.variableEditorFactory, sourceFactory: variable_editor_1.variableSourceFactory }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof workflow_1.HealthType !== "undefined" && workflow_1.HealthType) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], HealthOptions.prototype, "setHealthCheckType", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Function]),
+    __metadata("design:returntype", void 0)
+], HealthOptions.prototype, "setHealthCheckProperty", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _b || Object]),
+    __metadata("design:returntype", void 0)
+], HealthOptions.prototype, "toggleSkipWait", null);
+HealthOptions = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], HealthOptions);
+exports.HealthOptions = HealthOptions;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/variable-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+let injectSheet = require('react-jss').default;
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const styles = (theme) => ({
+    labelContainer: {
+        composes: 'pure-u-1-4',
+        textAlign: 'right'
+    },
+    fieldContainer: {
+        composes: 'pure-u-3-4'
+    },
+    doubleLabelContainer: {
+        composes: 'pure-u-1-4 pure-u-lg-1-8',
+        textAlign: 'right'
+    },
+    doubleFieldContainer: {
+        composes: 'pure-u-3-4 pure-u-lg-7-8'
+    },
+    label: {
+        paddingRight: '5px'
+    },
+    input: {
+        composes: `code pure-input-1 input-text native-key-bindings`
+    }
+});
+class VariableSource {
+    constructor() {
+        this.file = '';
+        this.name = '';
+        this.value = '';
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], VariableSource.prototype, "file", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], VariableSource.prototype, "name", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], VariableSource.prototype, "value", void 0);
+exports.VariableSource = VariableSource;
+function variableSourceFactory() {
+    return new VariableSource();
+}
+exports.variableSourceFactory = variableSourceFactory;
+function variableEditorFactory(source, state) {
+    return React.createElement(VariableEditor, { source: source, sourceType: state.committed ? (source.file ? 'file' : 'pair') : state.sourceType, onChange: () => state.commitIfNecessary() });
+}
+exports.variableEditorFactory = variableEditorFactory;
+let VariableEditor = class VariableEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    notifyChange() {
+        if (this.props.onChange) {
+            this.props.onChange();
+        }
+    }
+    setFile(file) {
+        this.props.source.file = file;
+        this.notifyChange();
+    }
+    setName(name) {
+        this.props.source.name = name;
+        this.notifyChange();
+    }
+    setValue(value) {
+        this.props.source.value = value;
+        this.notifyChange();
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return this.props.sourceType === 'pair' ?
+            (React.createElement("div", { className: "pure-g" },
+                React.createElement("div", { className: "pure-u-1 pure-u-lg-1-2 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.labelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_NAME'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.fieldContainer },
+                            React.createElement("input", { className: classes.input, type: "text", value: this.props.source.name, onChange: e => this.setName(e.target.value) })))),
+                React.createElement("div", { className: "pure-u-1 pure-u-lg-1-2 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.labelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_VALUE'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.fieldContainer },
+                            React.createElement("input", { className: classes.input, type: "text", value: this.props.source.value, onChange: e => this.setValue(e.target.value) })))))) :
+            (this.props.sourceType === 'file' &&
+                React.createElement("div", { className: "pure-g block-md" },
+                    React.createElement("label", { className: classes.doubleLabelContainer },
+                        React.createElement(centered_content_1.CenteredContent, null,
+                            React.createElement("span", { className: classes.label },
+                                translation_service_1.translate('LABEL_FILE'),
+                                ":"))),
+                    React.createElement("div", { className: classes.doubleFieldContainer },
+                        React.createElement("input", { className: classes.input, type: "text", value: this.props.source.file, onChange: e => this.setFile(e.target.value) }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], VariableEditor.prototype, "setFile", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], VariableEditor.prototype, "setName", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], VariableEditor.prototype, "setValue", null);
+VariableEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], VariableEditor);
+exports.VariableEditor = VariableEditor;
+
+});
+___scope___.file("modules/workflow-designer/components/drop-down-menu.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+//import { computed } from 'mobx';
+//import { editorStyles, themeColors } from '../style';
+const hoverItem = {
+    color: '#000',
+    background: 'none',
+    fontWeight: '700'
+};
+const hoverLabel = {
+    color: '#000',
+    background: 'none'
+};
+const styles = (theme) => {
+    if (theme.ide) {
+        return {
+            container: {
+                composes: 'block padded'
+            },
+            menu: {
+                composes: 'btn-group'
+            },
+            button: {
+                composes: 'btn'
+            }
+        };
+    }
+    else {
+        return {
+            container: {
+                composes: 'pure-menu pure-menu-horizontal',
+                display: 'inline-block',
+                width: 'auto'
+            },
+            menuLabelContainer: {
+                composes: 'pure-menu pure-menu-horizontal'
+            },
+            menuLabel: {
+                composes: 'pure-menu-item pure-menu-has-children pure-menu-allow-hover',
+                background: 'none',
+                color: '#aaa',
+                fontWeight: 'bold',
+                '&:hover': hoverLabel,
+                '&:focus': hoverLabel
+            },
+            labelLink: {
+                composes: theme.ide ? "" : "pure-button",
+                textDecoration: 'none',
+                'a&': { color: '#444' },
+                '&:hover': theme.ide ? Object.assign({ cursor: "pointer" }, hoverLabel) : {},
+                '&:focus': hoverLabel
+            },
+            menuContainer: {
+                composes: 'pure-menu-children',
+                padding: '5px',
+                border: 'solid 1px #ccc',
+                zIndex: '10',
+                minWidth: '100%',
+                boxSizing: 'border-box',
+            },
+            item: {
+                composes: 'pure-menu-link',
+                padding: '10px 15px',
+                fontWeight: '500',
+                borderBottom: 'solid 3px transparent',
+                'a&': { color: '#444' },
+                '&:hover': hoverItem,
+                '&:focus': {
+                    background: 'none',
+                    color: '#444',
+                    fontWeight: '700'
+                }
+            }
+        };
+    }
+};
+let DropDownMenu = class DropDownMenu extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    handleClick(e, item) {
+        if (item.onClick) {
+            item.onClick();
+        }
+        e.preventDefault();
+    }
+    item(item, key) {
+        let classes = this.props.classes || {};
+        return this.props.ide ?
+            (React.createElement("button", { key: key, className: classes.button, onClick: e => this.handleClick(e, item) }, item.display)) :
+            (React.createElement("li", { key: key, className: "pure-menu-item", onClick: e => this.handleClick(e, item) },
+                React.createElement("a", { href: "#", className: classes.item }, item.display)));
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return this.props.ide ?
+            (React.createElement("div", null,
+                React.createElement("h3", null,
+                    this.props.label,
+                    ":"),
+                React.createElement("div", { className: "block" },
+                    React.createElement("div", { className: "btn-group" }, this.props.items && this.props.items.map((b, i) => this.item(b, i)))))) :
+            (React.createElement("div", { className: classes.menuLabelContainer },
+                React.createElement("li", { className: classes.menuLabel },
+                    React.createElement("a", { className: classes.labelLink },
+                        this.props.label,
+                        " ",
+                        React.createElement("span", { className: "Select-arrow" })),
+                    React.createElement("ul", { className: classes.menuContainer }, this.props.items && this.props.items.map((b, i) => this.item(b, i))))));
+    }
+};
+DropDownMenu = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], DropDownMenu);
+exports.DropDownMenu = DropDownMenu;
+
+});
+___scope___.file("modules/workflow-designer/components/tooltip.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const InfoCircle = require('react-icons/lib/fa/info-circle');
+const ReactTooltip = require('react-tooltip');
+let injectSheet = require('react-jss').default;
+var tooltipCount = 0;
+const styles = (theme) => ({
+    solid: {
+        composes: 'tooltip',
+        pointerEvents: 'auto !important',
+        '&:hover': {
+            visibility: 'visible !important',
+            opacity: '1 !important'
+        }
+    }
+});
+let InfoTooltip = class InfoTooltip extends React.Component {
+    constructor(props) {
+        super(props);
+        this.tooltipId = 'InfoTooltip-' + tooltipCount++;
+    }
+    componentWillUpdate() {
+        ReactTooltip.rebuild();
+    }
+    componentWillMount() {
+        ReactTooltip.rebuild();
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return React.createElement("span", { "data-tip": "", "data-for": this.tooltipId, "data-delay-hide": 300, "data-effect": 'solid', "data-class": classes.solid, className: this.props.className || '' },
+            React.createElement(InfoCircle, null),
+            React.createElement(ReactTooltip, { id: this.tooltipId }, this.props.children));
+    }
+};
+InfoTooltip = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], InfoTooltip);
+exports.InfoTooltip = InfoTooltip;
+//import { computed } from 'mobx';
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/port-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+let injectSheet = require('react-jss').default;
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const react_select_1 = require("react-select");
+const styles = (theme) => ({
+    labelContainer: {
+        composes: 'pure-u-1-3',
+        textAlign: 'right'
+    },
+    fieldContainer: {
+        composes: 'pure-u-2-3'
+    },
+    doubleLabelContainer: {
+        composes: 'pure-u-1-3 pure-u-lg-1-6',
+        textAlign: 'right'
+    },
+    doubleFieldContainer: {
+        composes: 'pure-u-2-3 pure-u-lg-5-6'
+    },
+    label: {
+        paddingRight: '5px'
+    },
+    input: {
+        composes: `code pure-input-1 input-text native-key-bindings`
+    }
+});
+class PortEntrySource {
+    constructor() {
+        this.name = '';
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], PortEntrySource.prototype, "name", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], PortEntrySource.prototype, "containerPort", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], PortEntrySource.prototype, "internalPort", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Number)
+], PortEntrySource.prototype, "externalPort", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], PortEntrySource.prototype, "protocol", void 0);
+exports.PortEntrySource = PortEntrySource;
+function portEntrySourceFactory() {
+    return new PortEntrySource();
+}
+exports.portEntrySourceFactory = portEntrySourceFactory;
+function portEditorFactory(source, state) {
+    return React.createElement(PortEditor, { source: source, onChange: () => state.commitIfNecessary() });
+}
+exports.portEditorFactory = portEditorFactory;
+let PortEditor = class PortEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    notifyChange() {
+        if (this.props.onChange) {
+            this.props.onChange();
+        }
+    }
+    setName(name) {
+        this.props.source.name = name;
+        this.notifyChange();
+    }
+    setContainerPort(value) {
+        if (this.props.source.containerPort !== value) {
+            this.props.source.containerPort = value;
+            this.notifyChange();
+        }
+    }
+    setInternalPort(value) {
+        if (this.props.source.internalPort !== value) {
+            this.props.source.internalPort = value;
+            this.notifyChange();
+        }
+    }
+    setExternalPort(value) {
+        if (this.props.source.externalPort !== value) {
+            this.props.source.externalPort = value;
+            this.notifyChange();
+        }
+    }
+    setProtocol(value) {
+        this.props.source.protocol = value;
+        this.notifyChange();
+    }
+    render() {
+        let classes = this.props.classes || {};
+        let portProtocols = [{ label: 'tcp', value: 'tcp' }, { label: 'udp', value: 'udp' }];
+        return React.createElement("div", null,
+            React.createElement("div", { className: "pure-g block not-block-md" },
+                React.createElement("div", { className: "pure-u-1 pure-u-lg-1-2 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.labelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_CONTAINER_PORT'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.fieldContainer },
+                            React.createElement("input", { className: classes.input, type: "text", value: this.props.source.containerPort || '', onChange: e => this.setContainerPort(parseInt(e.target.value)) })))),
+                React.createElement("div", { className: "pure-u-1 pure-u-lg-1-2 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.labelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_INTERNAL_PORT'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.fieldContainer },
+                            React.createElement("input", { className: classes.input, type: "text", value: this.props.source.internalPort || '', onChange: e => this.setInternalPort(parseInt(e.target.value)) }))))),
+            React.createElement("div", { className: "pure-g block not-block-md" },
+                React.createElement("div", { className: "pure-u-1 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.doubleLabelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_NAME'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.doubleFieldContainer },
+                            React.createElement("input", { className: classes.input, type: "text", value: this.props.source.name || '', onChange: e => this.setName(e.target.value) }))))),
+            React.createElement("div", { className: "pure-g" },
+                React.createElement("div", { className: "pure-u-1 pure-u-lg-1-2 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.labelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_EXTERNAL_PORT'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.fieldContainer },
+                            React.createElement("input", { className: classes.input, type: "text", value: this.props.source.externalPort || '', onChange: e => this.setExternalPort(parseInt(e.target.value)) })))),
+                React.createElement("div", { className: "pure-u-1 pure-u-lg-1-2 block-md" },
+                    React.createElement("div", { className: "pure-g" },
+                        React.createElement("label", { className: classes.labelContainer },
+                            React.createElement(centered_content_1.CenteredContent, null,
+                                React.createElement("span", { className: classes.label },
+                                    translation_service_1.translate('LABEL_PROTOCOL'),
+                                    ":"))),
+                        React.createElement("div", { className: classes.fieldContainer },
+                            React.createElement(react_select_1.default, { className: classes.tagSelect, clearable: false, searchable: false, options: portProtocols, onChange: option => this.setProtocol(option.value), value: this.props.source.protocol || 'tcp' }))))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PortEditor.prototype, "setName", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], PortEditor.prototype, "setContainerPort", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], PortEditor.prototype, "setInternalPort", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], PortEditor.prototype, "setExternalPort", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], PortEditor.prototype, "setProtocol", null);
+PortEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], PortEditor);
+exports.PortEditor = PortEditor;
+
+});
+___scope___.file("modules/workflow-designer/components/image-field/image-field.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const translation_service_1 = require("../../services/translation-service");
+const workflow_1 = require("../../models/workflow");
+const options_1 = require("../options");
+const catalog_image_field_1 = require("./catalog-image-field");
+const manual_image_field_1 = require("./manual-image-field");
+const step_image_field_1 = require("./step-image-field");
+let injectSheet = require('react-jss').default;
+const styles = (theme) => ({
+    editor: {
+        marginTop: '8px'
+    }
+});
+let ImageField = class ImageField extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    get imageSource() {
+        if (this.props.step.imageSource == 'step') {
+            return this.props.step.imageSource;
+        }
+        let isCatalogImage = this.props.step.transient.imageSourceTypeSelected === undefined ?
+            this.isImageInCatalog() : this.props.step.transient.imageSourceTypeSelected === 'catalog';
+        return isCatalogImage ? 'catalog' : 'manual';
+    }
+    setImageSource(source) {
+        this.props.step.transient.imageSourceTypeSelected = source;
+        this.props.step.imageSource = source === 'step' ? 'step' : 'image';
+    }
+    imageSourceOption(source) {
+        return {
+            value: source,
+            display: (React.createElement("span", null, translation_service_1.translate('SOURCE_' + source.toUpperCase())))
+        };
+    }
+    options() {
+        let options = [
+            this.imageSourceOption('catalog'),
+            this.imageSourceOption('manual')
+        ];
+        if (this.props.workflow.stepsBefore(this.props.step).length > 0) {
+            options.push(this.imageSourceOption('step'));
+        }
+        return options;
+    }
+    isImageInCatalog() {
+        let catalog = this.props.catalog || [], image = catalog_image_field_1.parseImage(this.props.step.image);
+        let catalogImage = catalog.find(catEntry => catEntry.name === image.image);
+        if (catalogImage) {
+            let tag = catalogImage.tags.find(tag => tag === image.tag);
+            if (tag) {
+                return true;
+            }
+        }
+        return false;
+    }
+    selectedEditor() {
+        switch (this.imageSource) {
+            case 'step':
+                return (React.createElement(step_image_field_1.StepImageField, { step: this.props.step, workflow: this.props.workflow }));
+            case 'manual':
+                return (React.createElement(manual_image_field_1.ManualImageField, { step: this.props.step }));
+            default:
+                return (React.createElement(catalog_image_field_1.CatalogImageField, { catalog: this.props.catalog, step: this.props.step, workflow: this.props.workflow }));
+        }
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return (React.createElement("div", null,
+            React.createElement(options_1.Options, { ide: this.props.ide, fill: true, options: this.options(), onChange: a => this.setImageSource(a.value), selected: this.imageSource }),
+            React.createElement("div", { className: classes.editor }, this.selectedEditor())));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof workflow_1.UXImageSourceType !== "undefined" && workflow_1.UXImageSourceType) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], ImageField.prototype, "setImageSource", null);
+ImageField = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], ImageField);
+exports.ImageField = ImageField;
+//import { EditorState } from '../../models/state';
+//import { editorStyles, themeColors } from '../../style';
+//import { ImageSource } from '../../models/workflow';
+
+});
+___scope___.file("modules/workflow-designer/components/image-field/catalog-image-field.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const react_virtualized_select_1 = require("react-virtualized-select");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const translation_service_1 = require("../../services/translation-service");
+const style_1 = require("../../style");
+const catalog_select_1 = require("./catalog-select");
+const centered_content_1 = require("../../util/centered-content");
+const jssStyles = (theme) => ({
+    editor: {
+        composes: 'pure-u-g'
+    },
+    title: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '20px',
+        fontWeight: 'bold',
+        lineHeight: '24px'
+    },
+    placeholder: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '16px',
+        lineHeight: '24px'
+    },
+    catalogSelectDiv: {
+        composes: 'pure-u-1 pure-u-lg-3-4 block-md'
+    },
+    catalogSelect: {
+        composes: style_1.editorStyles.largeSelect,
+        [style_1.mediaQueries.lg]: {
+            '& .Select-control': {
+                'border-right': 'none',
+                'border-top-right-radius': '0',
+                'border-bottom-right-radius': '0',
+            }
+        }
+    },
+    tagSelectDiv: {
+        composes: 'pure-u-1 pure-u-lg-1-4'
+    },
+    tagSelect: {
+        composes: style_1.editorStyles.largeSelect + ' VirtualizedSelect',
+        '& > .Select-control': {
+            height: '40px',
+            textAlign: 'center'
+        },
+        [style_1.mediaQueries.lg]: {
+            '& > .Select-control': {
+                height: '100px',
+                textAlign: 'inherit',
+                'border-top-left-radius': '0',
+                'border-bottom-left-radius': '0',
+            }
+        }
+    }
+});
+function parseImage(imageString) {
+    let tagSeparator = imageString.lastIndexOf(':');
+    return {
+        image: tagSeparator > 0 ? imageString.substring(0, tagSeparator) : imageString,
+        tag: tagSeparator > 0 ? imageString.substring(tagSeparator + 1) : ''
+    };
+}
+exports.parseImage = parseImage;
+let CatalogImageField = class CatalogImageField extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onImageChange = (image) => {
+            this.props.step.image = image.name;
+        };
+        this.onTagChange = (tag) => {
+            let image = this.props.step.image;
+            if (image) {
+                image = parseImage(image).image;
+                if (!tag || tag === '') {
+                    tag = 'latest';
+                }
+                this.props.step.image = image + ':' + tag;
+            }
+        };
+        this.valueRenderer = (option) => {
+            return (React.createElement(centered_content_1.CenteredContent, { container: false },
+                React.createElement("div", { className: this.props.classes.title }, option.value)));
+        };
+    }
+    get tags() {
+        let currentStep = this.props.step;
+        if (currentStep && currentStep.image && this.props.catalog) {
+            let currentImage = parseImage(currentStep.image).image;
+            let image = this.props.catalog.find(image => image.name === currentImage);
+            if (image) {
+                return image.tags.map(tag => ({ label: tag, value: tag }));
+            }
+        }
+        return [];
+    }
+    get image() {
+        if (this.props.step && this.props.step.image) {
+            let image = this.props.step.image;
+            return parseImage(image).image;
+        }
+        return '';
+    }
+    get tag() {
+        if (this.props.step && this.props.step.image) {
+            let image = this.props.step.image;
+            let tag = 'latest';
+            let tagSeparator = image.lastIndexOf(':');
+            if (tagSeparator > 0) {
+                tag = image.substring(tagSeparator + 1);
+            }
+            return tag;
+        }
+        return '';
+    }
+    placeholder() {
+        return (React.createElement(centered_content_1.CenteredContent, null,
+            React.createElement("div", { className: this.props.classes.placeholder }, translation_service_1.translate('PLACEHOLDER_VERSION'))));
+    }
+    render() {
+        let classes = this.props.classes || {};
+        return (React.createElement("div", { className: classes.editor },
+            React.createElement("div", { className: classes.catalogSelectDiv },
+                React.createElement(catalog_select_1.CatalogSelect, { className: classes.catalogSelect, catalog: this.props.catalog, value: this.image, onChange: this.onImageChange })),
+            React.createElement("div", { className: classes.tagSelectDiv },
+                React.createElement(react_virtualized_select_1.default, { className: classes.tagSelect, clearable: false, valueRenderer: this.valueRenderer, searchable: false, options: this.tags, optionHeight: 40, placeholder: this.placeholder(), maxHeight: 400, onChange: option => this.onTagChange(option.value), value: this.tag }))));
+    }
+};
+__decorate([
+    mobx_1.computed,
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], CatalogImageField.prototype, "tags", null);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Object)
+], CatalogImageField.prototype, "onImageChange", void 0);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Object)
+], CatalogImageField.prototype, "onTagChange", void 0);
+CatalogImageField = __decorate([
+    injectSheet(jssStyles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], CatalogImageField);
+exports.CatalogImageField = CatalogImageField;
+
+});
+___scope___.file("modules/workflow-designer/components/image-field/catalog-select.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const react_virtualized_select_1 = require("react-virtualized-select");
+let injectSheet = require('react-jss').default;
+const translation_service_1 = require("../../services/translation-service");
+const style_1 = require("../../style");
+const centered_content_1 = require("../../util/centered-content");
+//import { themeColors } from '../../style';
+//import { EditorState } from '../../models/state';
+//import { WorkflowStepSimple } from '../../models/workflow';
+const jssStyles = (theme) => ({
+    select: {
+        composes: `${style_1.editorStyles.largeSelect} ${style_1.editorStyles.imageSelect}`,
+        '& .Select-control .Select-value': {
+            paddingLeft: '160px'
+        },
+        '& .Select-menu-outer $option': {
+            paddingLeft: '160px'
+        },
+    },
+    title: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '20px',
+        fontWeight: 'bold',
+        lineHeight: '24px'
+    },
+    placeholder: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '16px',
+        lineHeight: '24px'
+    },
+    description: {
+        composes: theme.ide ? 'text-color' : '',
+        paddingRight: '20px',
+        margin: 0,
+        fontSize: '14px',
+        lineHeight: '16px',
+        whiteSpace: 'normal'
+    },
+    logo: {
+        position: 'absolute',
+        top: '10px',
+        bottom: '10px',
+        left: '20px',
+        width: '120px',
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: '50%',
+        backgroundColor: 'white',
+        border: '3px solid white',
+    },
+    option: {
+        cursor: 'pointer',
+        margin: 0,
+        padding: '0 20px',
+    },
+    selected: {
+        composes: 'selected',
+    },
+    focused: {
+        composes: 'focused',
+    }
+});
+const catalogBase = 'https://s3-eu-west-1.amazonaws.com/dev.stack.foundation/catalog/';
+class ImageOption {
+    constructor(option) {
+        Object.assign(this, option);
+    }
+}
+let CatalogSelect = class CatalogSelect extends React.Component {
+    constructor(props) {
+        super(props);
+        this.valueRenderer = (option) => {
+            const classes = this.props.classes || {};
+            return (React.createElement(centered_content_1.CenteredContent, { container: false },
+                React.createElement("div", { className: classes.title }, option.image.title),
+                React.createElement("div", { className: classes.description }, option.image.description),
+                React.createElement("div", { className: classes.logo, style: { backgroundImage: 'url(' + catalogBase + option.image.name + '.png)' } })));
+        };
+        this.optionRenderer = (options) => {
+            let option = options.option;
+            const classes = this.props.classes || {}, focused = options.focusedOption == option, selected = options.valueArray.indexOf(option) > -1;
+            return (React.createElement(centered_content_1.CenteredContent, { className: `${classes.option} ${focused ? classes.focused : ''} ${selected ? classes.selected : ''}`, key: options.key, onClick: () => options.selectValue(option), onMouseOver: () => options.focusOption(option), style: options.style },
+                React.createElement("div", { className: classes.title }, option.image.title),
+                React.createElement("div", { className: classes.description }, option.image.description),
+                React.createElement("div", { className: classes.logo, style: { backgroundImage: 'url(' + catalogBase + option.image.name + '.png)' } })));
+        };
+    }
+    get options() {
+        return this.props.catalog ?
+            this.props.catalog
+                .sort((a, b) => a.title.localeCompare(b.title))
+                .map(image => new ImageOption({ image: image, value: image.name })) :
+            [];
+    }
+    get selectedOption() {
+        return this.options.find(el => el.image.name === this.props.value);
+    }
+    placeholder() {
+        return (React.createElement(centered_content_1.CenteredContent, null,
+            React.createElement("div", { className: this.props.classes.placeholder }, translation_service_1.translate('PLACEHOLDER_IMAGE'))));
+    }
+    render() {
+        const classes = this.props.classes || {};
+        return (React.createElement(react_virtualized_select_1.default, { className: `native-key-bindings ${classes.select} ${this.props.className || ''}`, options: this.options, optionRenderer: this.optionRenderer, searchable: false, optionHeight: 100, placeholder: this.placeholder(), maxHeight: 400, clearable: false, valueRenderer: this.valueRenderer, onChange: option => this.props.onChange(option.image), value: this.selectedOption }));
+    }
+};
+__decorate([
+    mobx_1.computed,
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], CatalogSelect.prototype, "options", null);
+__decorate([
+    mobx_1.computed,
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], CatalogSelect.prototype, "selectedOption", null);
+CatalogSelect = __decorate([
+    injectSheet(jssStyles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], CatalogSelect);
+exports.CatalogSelect = CatalogSelect;
+
+});
+___scope___.file("modules/workflow-designer/components/image-field/manual-image-field.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let ManualImageField = class ManualImageField extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    onImageChange(event) {
+        this.props.step.image = event.target.value;
+    }
+    render() {
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1 native-key-bindings" },
+                React.createElement("input", { type: "text", className: "pure-input-1 input-text native-key-bindings", name: "image", value: this.props.step.image || '', onChange: e => this.onImageChange(e) }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], ManualImageField.prototype, "onImageChange", null);
+ManualImageField = __decorate([
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], ManualImageField);
+exports.ManualImageField = ManualImageField;
+//import { Workflow } from "../../models/workflow";
+//import { EditorState } from '../../models/state';
+
+});
+___scope___.file("modules/workflow-designer/components/image-field/step-image-field.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const react_virtualized_select_1 = require("react-virtualized-select");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+let injectSheet = require('react-jss').default;
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const jssStyles = (theme) => ({
+    title: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '20px',
+        fontWeight: 'bold',
+        lineHeight: '24px'
+    },
+    placeholder: {
+        composes: theme.ide ? 'text-color' : '',
+        padding: 0,
+        margin: 0,
+        fontSize: '16px',
+        lineHeight: '24px'
+    },
+});
+let StepImageField = class StepImageField extends React.Component {
+    constructor(props) {
+        super(props);
+        this.valueRenderer = (option) => {
+            return (React.createElement(centered_content_1.CenteredContent, null,
+                React.createElement("div", { className: this.props.classes.title }, option.label)));
+        };
+    }
+    onImageChange(image) {
+        this.props.step.image = image;
+    }
+    placeholder() {
+        return (React.createElement(centered_content_1.CenteredContent, null,
+            React.createElement("div", { className: this.props.classes.placeholder }, translation_service_1.translate('PLACEHOLDER_IMAGE'))));
+    }
+    render() {
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1" },
+                React.createElement(react_virtualized_select_1.default, { className: "native-key-bindings", clearable: false, searchable: false, placeholder: this.placeholder(), valueRenderer: this.valueRenderer, options: this.props.workflow.stepsBefore(this.props.step), maxHeight: 400, onChange: option => this.onImageChange(option.value), value: this.props.step.image || '' }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], StepImageField.prototype, "onImageChange", null);
+StepImageField = __decorate([
+    injectSheet(jssStyles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], StepImageField);
+exports.StepImageField = StepImageField;
+//import { computed } from 'mobx';
+//import { editorStyles } from '../../style';
+//import { EditorState } from '../../models/state';
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/dockerfile-step-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const mobx_react_1 = require("mobx-react");
+const mobx_1 = require("mobx");
+//import { EditorState } from '../../models/state';
+//import {  Workflow } from "../../models/workflow";
+let injectSheet = require('react-jss').default;
+const styles = (theme) => ({
+    label: {
+        composes: 'pure-u-1-6 text-right',
+        paddingRight: '5px'
+    }
+});
+let DockerfileStepEditor = class DockerfileStepEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    onDockerfileChange(event) {
+        this.props.step.dockerfile = event.target.value;
+    }
+    render() {
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: this.props.classes.label },
+                React.createElement(centered_content_1.CenteredContent, null,
+                    React.createElement("span", null,
+                        translation_service_1.translate('LABEL_DOCKERFILE'),
+                        ":"))),
+            React.createElement("div", { className: "pure-u-5-6" },
+                React.createElement("input", { type: "text", className: "pure-input-1 input-text native-key-bindings", name: "image", value: this.props.step.dockerfile || '', onChange: e => this.onDockerfileChange(e) }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], DockerfileStepEditor.prototype, "onDockerfileChange", null);
+DockerfileStepEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], DockerfileStepEditor);
+exports.DockerfileStepEditor = DockerfileStepEditor;
+
+});
+___scope___.file("modules/workflow-designer/components/step-editor/ext-workflow-step-editor.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+const React = require("react");
+const centered_content_1 = require("../../util/centered-content");
+const translation_service_1 = require("../../services/translation-service");
+const mobx_react_1 = require("mobx-react");
+const mobx_1 = require("mobx");
+const step_workflow_variables_1 = require("../../components/step-editor/step-workflow-variables");
+//import { EditorState } from '../../models/state';
+//import {  Workflow } from "../../models/workflow";
+let injectSheet = require('react-jss').default;
+const styles = (theme) => ({
+    label: {
+        composes: 'pure-u-1-6 text-right',
+        paddingRight: '5px'
+    }
+});
+;
+let ExtWorkflowStepEditor = class ExtWorkflowStepEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    onWorkflowChange(event) {
+        this.props.step.target = event.target.value;
+    }
+    render() {
+        return (React.createElement("div", { className: "pure-g" },
+            React.createElement("div", { className: "pure-u-1 block" },
+                React.createElement("div", { className: this.props.classes.label },
+                    React.createElement(centered_content_1.CenteredContent, null,
+                        React.createElement("span", null,
+                            translation_service_1.translate('LABEL_WORKFLOW'),
+                            ":"))),
+                React.createElement("div", { className: "pure-u-5-6" },
+                    React.createElement("input", { type: "text", className: "pure-input-1 input-text native-key-bindings", name: "image", value: this.props.step.target || '', onChange: e => this.onWorkflowChange(e) }))),
+            React.createElement("div", { className: "pure-u-1" },
+                React.createElement(step_workflow_variables_1.StepWorkflowVariables, { step: this.props.step }))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = (typeof React !== "undefined" && React).ChangeEvent) === "function" && _a || Object]),
+    __metadata("design:returntype", void 0)
+], ExtWorkflowStepEditor.prototype, "onWorkflowChange", null);
+ExtWorkflowStepEditor = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], ExtWorkflowStepEditor);
+exports.ExtWorkflowStepEditor = ExtWorkflowStepEditor;
+
+});
+___scope___.file("modules/workflow-designer/components/react-forms/validating-react-component.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b;
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const field_1 = require("./field");
+const mobx_2 = require("mobx");
+let FormReactComponent = class FormReactComponent extends React.Component {
+    constructor(p, s) {
+        super(p, s);
+        this._fields = [];
+        let componentWillReact = this.componentWillReact;
+        this.componentWillReact = () => {
+            this.refreshFields();
+            componentWillReact.apply(this);
+        };
+    }
+    componentWillReact() { }
+    refreshFields() {
+        for (var i = 0; i < this._fields.length; i++) {
+            this.refreshField(this._fields[i]);
+        }
+    }
+    refreshField(field, force = false) {
+        let newVal = getProp(this, field.originalRef);
+        if (force || newVal !== field.originalVal) {
+            field.originalVal = field.fieldVal = newVal;
+        }
+        field.validate();
+    }
+    get fields() {
+        return this._fields;
+    }
+    createField(originalRef, validatorFn) {
+        let field = new field_1.Field(originalRef, validatorFn);
+        this._fields.push(field);
+        this.refreshField(field, true);
+        return field;
+    }
+    updateField(field, newVal) {
+        field.updateValue(newVal);
+        if (field.valid) {
+            setProp(field.fieldVal, this, field.originalRef);
+            field.originalVal = field.fieldVal;
+        }
+    }
+};
+__decorate([
+    mobx_2.observable,
+    __metadata("design:type", Array)
+], FormReactComponent.prototype, "_fields", void 0);
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], FormReactComponent.prototype, "refreshFields", null);
+FormReactComponent = __decorate([
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [typeof (_a = typeof P !== "undefined" && P) === "function" && _a || Object, typeof (_b = typeof S !== "undefined" && S) === "function" && _b || Object])
+], FormReactComponent);
+exports.FormReactComponent = FormReactComponent;
+function getProp(parent, accessor) {
+    let accessorParts = accessor.split('.');
+    for (var i = 0; i < accessorParts.length; i++) {
+        if (!parent) {
+            return undefined;
+        }
+        parent = parent[accessorParts[i]];
+    }
+    return parent;
+}
+function setProp(value, parent, accessor) {
+    let accessorParts = accessor.split('.');
+    for (var i = 0; i < accessorParts.length - 1; i++) {
+        if (!parent) {
+            return undefined;
+        }
+        parent = parent[accessorParts[i]];
+    }
+    parent[accessorParts[accessorParts.length - 1]] = value;
+}
+
+});
+___scope___.file("modules/workflow-designer/components/react-forms/field.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a, _b;
+const mobx_1 = require("mobx");
+class Field {
+    constructor(originalRef, validator) {
+        this._errors = [];
+        this.originalRef = originalRef;
+        this._validator = validator;
+        this._errors = [];
+    }
+    get valid() {
+        return this._errors && this._errors.length === 0;
+    }
+    get errors() {
+        return this._errors;
+    }
+    updateValue(value) {
+        this.fieldVal = value;
+        this.validate();
+    }
+    validate() {
+        if (this._validator) {
+            this._errors = this._validator(this.fieldVal) || [];
+        }
+    }
+}
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], Field.prototype, "originalRef", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_a = typeof T !== "undefined" && T) === "function" && _a || Object)
+], Field.prototype, "originalVal", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", typeof (_b = typeof T !== "undefined" && T) === "function" && _b || Object)
+], Field.prototype, "fieldVal", void 0);
+exports.Field = Field;
+
+});
+___scope___.file("modules/workflow-designer/components/error-panel.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const CloseIcon = require('react-icons/lib/go/x');
+let injectSheet = require('react-jss').default;
+const style_1 = require("../style");
+const styles = (theme) => {
+    return style_1.errorStyles(theme);
+};
+let ErrorPanel = class ErrorPanel extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        let classes = this.props.classes;
+        return React.createElement("div", { className: "block" },
+            React.createElement("div", { className: classes.errorPanel },
+                this.props.message,
+                React.createElement("div", { onClick: () => this.props.onClose && this.props.onClose(), className: classes.errorPanelClose },
+                    React.createElement(CloseIcon, null))));
+    }
+};
+ErrorPanel = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], ErrorPanel);
+exports.ErrorPanel = ErrorPanel;
+// import { computed } from 'mobx';
+//import { editorStyles, themeColors } from '../style';
+//import { translate } from '../services/translation-service';
+
+});
+___scope___.file("modules/workflow-designer/components/step-list.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_1 = require("mobx");
+const mobx_react_1 = require("mobx-react");
+const Plus = require('react-icons/lib/go/plus');
+const Bars = require('react-icons/lib/fa/bars');
+const Trash = require('react-icons/lib/fa/trash');
+const AlertIcon = require('react-icons/lib/go/alert');
+const workflow_1 = require("../models/workflow");
+const translation_service_1 = require("../services/translation-service");
+let injectSheet = require('react-jss').default;
+const style_1 = require("../style");
+const stepListClass = 'step-list';
+const styles = (theme) => {
+    let list = style_1.listStyles(theme), addButton = {
+        composes: theme.ide ? 'btn' : 'pure-button success',
+        display: 'block',
+        position: 'relative',
+        backgroundColor: theme.ide ? undefined : '#f5f5f5',
+        '& > div': {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0
+        },
+        [style_1.mediaQueries.md]: {
+            marginRight: theme.ide ? '0px' : '20px',
+        },
+        '& svg': {
+            position: 'relative',
+            top: '-0.15em',
+        },
+    }, deleteButton = Object.assign({}, addButton, {
+        composes: theme.ide ? 'btn btn-error' : 'pure-button danger',
+    });
+    list.listItemSelected['& $stepError'] = {
+        color: list.listItemSelected.color
+    };
+    let styles = {
+        addButton,
+        deleteButton,
+        deleteStepDeleting: {
+            composes: theme.ide ? '' : 'pure-button-hover',
+        },
+        stepPrefix: {
+            fontWeight: 'bold'
+        },
+        hidden: {
+            display: 'none'
+        },
+        handle: Object.assign({
+            position: 'absolute !important',
+            top: '0px',
+            right: theme.ide ? '0px' : '25px',
+            cursor: 'move',
+        }, style_1.noSelectStyle),
+        handleIcon: {
+            composes: theme.ide ? 'icon icon-grabber' : '',
+        },
+        handleDragger: {
+            composes: 'dragula-handle',
+            position: 'absolute',
+            top: '0',
+            bottom: '0',
+            left: '0',
+            right: '0',
+        },
+        stepError: {
+            composes: theme.ide ? 'text-color-error' : '',
+            color: theme.ide ? undefined : style_1.themeColors.darkerRed,
+            marginRight: '5px'
+        }
+    };
+    return Object.assign(list, styles);
+};
+let StepList = class StepList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dragging: false,
+            deleting: false
+        };
+        this.addStep = () => {
+            this.props.state.workflow.addStep();
+        };
+        this.onDragEnd = (el) => {
+            this.setState({ dragging: false, deleting: false });
+        };
+        this.onDrop = (el, target, source, sibling) => {
+            if (!this.state.deleting) {
+                this.drake.cancel(true);
+                let siblingStep = sibling && sibling.relatedStep, parentStep = target.parentStep;
+                let targetIndex = siblingStep ? this.props.state.workflow.findStep(siblingStep, parentStep).index : parentStep.steps.length;
+                this.props.state.workflow.moveStep(el.relatedStep, targetIndex, parentStep);
+            }
+            else {
+                this.drake.cancel(true);
+            }
+        };
+        this.onDrag = (el, source) => {
+            if (source.classList.contains(stepListClass)) {
+                this.setState({ dragging: true });
+            }
+        };
+        this.onCancel = (el, container, source) => {
+            if (this.state.deleting) {
+                this.props.state.deleteStep(el.relatedStep);
+            }
+        };
+        this.setStep = (el, parent, step) => {
+            if (el) {
+                if (parent) { }
+                el.relatedStep = step;
+            }
+        };
+    }
+    get currentStep() {
+        return this.props.state.currentStep;
+    }
+    get workflow() {
+        return this.props.state.workflow;
+    }
+    selectStep(step, event) {
+        this.props.state.selectStep(step);
+        this.props.onStepSelect && this.props.onStepSelect(step);
+        event.stopPropagation();
+    }
+    stepPrefix(parentList, index) {
+        if (index === 0) {
+            return '';
+        }
+        else if (parentList[index - 1].type === "sequential") {
+            let step = parentList[index - 1];
+            if (step.type === 'sequential') {
+                return 'Then';
+            }
+            else if (step.type === 'parallel') {
+                return 'And';
+            }
+            else if (step.type === 'service') {
+                return 'After ready';
+            }
+        }
+        else if (parentList[index - 1].type === 'compound') {
+            let compoundStep = parentList[index - 1];
+            if (compoundStep.steps.length > 0) {
+                return this.stepPrefix(compoundStep.steps, compoundStep.steps.length);
+            }
+            else {
+                return this.stepPrefix(parentList, index - 1);
+            }
+        }
+        return '';
+    }
+    /*
+        componentDidMount() {
+            let container = ReactDOM.findDOMNode(this),
+                list = container.querySelectorAll('.' + stepListClass),
+                classes = this.props.classes;
+            this.drake = Dragula(Array.prototype.slice.call(list), {
+                mirrorContainer: container,
+                accepts: (el: Element, target: Element, source: Element, sibling: Element) => {
+                    if (target === this.deleteDiv) {
+                        this.setState({deleting: true});
+                        return false;
+                    }
+                    else {
+                        this.setState({deleting: false});
+                    }
+    
+                    let parent = target.parentElement;
+                    while (parent !== null) {
+                        if (parent === el) {
+                            return false;
+                        }
+                        parent = parent.parentElement;
+                    }
+    
+                    return true;
+                },
+                moves: (el: Element, target: Element, handle: Element) => {
+                    return handle.classList.contains('dragula-handle');
+                },
+                isContainer: (el: Element) => {
+                    return el.classList.contains(stepListClass);
+                }
+        
+            });
+    
+            this.drake.on('drag', this.onDrag);
+            this.drake.on('dragend', this.onDragEnd);
+            this.drake.on('cancel', this.onCancel);
+            this.drake.on('drop', this.onDrop);
+        }
+    */
+    componentWillUnmount() {
+        //this.props.drake.destroy();
+    }
+    stepClasses(step) {
+        let classes = this.props.classes || {};
+        try {
+            return classes.listItem +
+                (this.currentStep === step ? ' ' + classes.listItemSelected : '') +
+                (step.type == 'compound' ? ' ' + classes.listItemSubList : '');
+        }
+        catch (e) {
+            throw (e);
+        }
+    }
+    stepTitle(parentList, step, key) {
+        let classes = this.props.classes || {}, prefix = this.stepPrefix(parentList, key);
+        return (React.createElement("span", null,
+            step.transient.parseError.length > 0 && !step.transient.errorsDismissed && React.createElement(AlertIcon, { className: classes.stepError }),
+            prefix.length > 0 && React.createElement("span", { className: classes.stepPrefix },
+                this.stepPrefix(parentList, key),
+                "\u00A0"),
+            step.name && step.name.length > 0 ? step.name : '(Unnamed step)'));
+    }
+    StepHandle() {
+        return React.createElement("div", { className: this.props.classes.handle },
+            React.createElement("div", { className: this.props.classes.handleDragger }),
+            this.props.state.ide ? React.createElement("span", { className: this.props.classes.handleIcon }) : React.createElement(Bars, { className: this.props.classes.handleIcon }));
+    }
+    subSteps(parent) {
+        let classes = this.props.classes || {};
+        let rootList = parent instanceof workflow_1.Workflow;
+        if (parent instanceof workflow_1.WorkflowStepCompound || parent instanceof workflow_1.Workflow) {
+            return (React.createElement("ul", { className: `${stepListClass} ${rootList ? classes.rootListTree : classes.listTree}`, ref: el => el && (el.parentStep = parent) }, parent.steps.map((step, i) => (React.createElement("li", { className: this.stepClasses(step), key: 'step-' + i + '-' + step.name, ref: el => this.setStep(el, parent, step), onClick: e => this.selectStep(step, e) },
+                this.stepTitle(parent.steps, step, i),
+                this.StepHandle(),
+                step instanceof workflow_1.WorkflowStepCompound && this.subSteps(step))))));
+        }
+        return null;
+    }
+    render() {
+        const classes = this.props.classes || {};
+        return (React.createElement("div", null,
+            this.subSteps(this.props.state.workflow),
+            React.createElement("div", { ref: (div) => { this.deleteDiv = div; }, onClick: this.addStep, className: [
+                    stepListClass,
+                    (this.state.dragging ? classes.deleteButton : classes.addButton),
+                    (this.state.deleting ? classes.deleteStepDeleting : '')
+                ].join(' ') },
+                this.state.dragging ?
+                    React.createElement("span", null,
+                        React.createElement(Trash, null),
+                        translation_service_1.translate('DELETE'),
+                        "...") :
+                    React.createElement("span", null,
+                        React.createElement(Plus, null),
+                        " ",
+                        translation_service_1.translate('ADD_STEP'),
+                        "..."),
+                React.createElement("div", null))));
+    }
+};
+__decorate([
+    mobx_1.action,
+    __metadata("design:type", Object)
+], StepList.prototype, "addStep", void 0);
+StepList = __decorate([
+    injectSheet(styles),
+    mobx_react_1.observer,
+    __metadata("design:paramtypes", [Object])
+], StepList);
+exports.StepList = StepList;
+//import * as ReactDOM from 'react-dom';
+//import { observable, computed } from 'mobx';
 
 });
 ___scope___.file("modules/dashboard.jsx", function(exports, require, module, __filename, __dirname){
@@ -1532,9 +7626,11 @@ exports.NotebookPage = props => React.createElement("div", null,
 ___scope___.file("modules/lab/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./lab"), exports);
+__export(require("./lab"));
 
 });
 ___scope___.file("modules/lab/lab.jsx", function(exports, require, module, __filename, __dirname){
@@ -1554,6 +7650,15 @@ exports.SettingsPage = mobx_react_1.observer((props) => React.createElement(desi
 ___scope___.file("modules/lab/App.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_mosaic_component_1 = require("react-mosaic-component");
 require("./styles/index.css");
@@ -1574,7 +7679,7 @@ class CogliteLabApp extends React.Component {
         this.state = { showHeader: true };
     }
     render() {
-        const { showHeader, ...calloutProps } = this.state;
+        const _a = this.state, { showHeader } = _a, calloutProps = __rest(_a, ["showHeader"]);
         return (React.createElement("div", { style: { height: '100vh', display: 'flex' } },
             React.createElement(design_1.VerticalStretch, null,
                 React.createElement("nav", { className: "pt-navbar" },
@@ -1727,8 +7832,16 @@ exports.cogliteState = new CogliteState();
 ___scope___.file("stores/NavStore.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const mobx_1 = require("mobx");
 class NavStore {
     constructor() {
@@ -1738,21 +7851,21 @@ class NavStore {
     }
     ;
 }
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", String)
+    __metadata("design:type", String)
 ], NavStore.prototype, "route", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", String)
+    __metadata("design:type", String)
 ], NavStore.prototype, "chartDrawerRoute", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action.bound,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], NavStore.prototype, "goTo", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action.bound,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], NavStore.prototype, "goToChartDrawer", void 0);
 exports.NavStore = NavStore;
 /*
@@ -1785,8 +7898,16 @@ export default new Counter();
 ___scope___.file("stores/UiStore.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 var _a;
 const palette_1 = require("../styles/palette");
 const styles_1 = require("@material-ui/core/styles");
@@ -1802,17 +7923,17 @@ class ToggleOpenValue {
         };
     }
 }
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], ToggleOpenValue.prototype, "open", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], ToggleOpenValue.prototype, "openDrawer", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], ToggleOpenValue.prototype, "closeDrawer", void 0);
 exports.ToggleOpenValue = ToggleOpenValue;
 class TabValue {
@@ -1821,15 +7942,15 @@ class TabValue {
     }
     setTab(event, tabValue) { this.tabValue = tabValue; }
 }
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], TabValue.prototype, "tabValue", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object, Object]),
-    tslib_1.__metadata("design:returntype", void 0)
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
 ], TabValue.prototype, "setTab", null);
 exports.TabValue = TabValue;
 class UiStore {
@@ -1867,72 +7988,72 @@ class UiStore {
         this.isThemeDialogOpen = false;
     }
 }
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "title", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "themeId", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "themeDialogToggle", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "menuDrawerToggle", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "nodeDrawerToggle", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "nodeFormDrawerToggle", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "appBarSettingsMenuToggle", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "appTabs", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "isThemeDialogOpen", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.computed,
-    tslib_1.__metadata("design:type", Object),
-    tslib_1.__metadata("design:paramtypes", [])
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
 ], UiStore.prototype, "muiTheme", null);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", void 0)
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
 ], UiStore.prototype, "updateTheme", null);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", void 0)
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
 ], UiStore.prototype, "openThemeDialog", null);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
-    tslib_1.__metadata("design:returntype", void 0)
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
 ], UiStore.prototype, "closeThemeDialog", null);
-tslib_1.__decorate([
+__decorate([
     mobx_1.observable,
-    tslib_1.__metadata("design:type", typeof (_a = typeof Error !== "undefined" && Error) === "function" && _a || Object)
+    __metadata("design:type", typeof (_a = typeof Error !== "undefined" && Error) === "function" && _a || Object)
 ], UiStore.prototype, "uiError", void 0);
-tslib_1.__decorate([
+__decorate([
     mobx_1.action,
-    tslib_1.__metadata("design:type", Object)
+    __metadata("design:type", Object)
 ], UiStore.prototype, "onError", void 0);
 exports.UiStore = UiStore;
 

@@ -2,3 +2,5 @@ node_modules
 .fusebox
 build
 package
+dist
+out

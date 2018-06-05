@@ -1,19 +1,18 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "esnext",
-        "jsx": "react",
-        "outDir": "dist",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "importHelpers": true,
-        "allowJs": true,
-        "skipDefaultLibCheck": true,
-        "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "noEmitOnError": false,
-        "suppressImplicitAnyIndexErrors": true,
+      "target": "es2015",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "jsx": "react",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "allowSyntheticDefaultImports": false,
+      "noUnusedLocals": true,
+      "strictNullChecks": false,
+      "noImplicitReturns": true,
+      "outDir": "dist"
     },
     "include": ["src"],
-    "exclude": ["node_modules", "docs", "resources", "tools", "wip"]
-}
+    "exclude": ["node_modules"]
+  }
+  

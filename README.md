@@ -1,1 +1,2 @@
 #devstuff
+        "resolveJsonModule": true,

@@ -12,6 +12,7 @@ function createWindow() {
             webSecurity: false,
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
+            nodeIntegrationInWorker: true,
             plugins: true
         }
 });
