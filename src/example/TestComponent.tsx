@@ -17,7 +17,7 @@ import {
 //const TestObject = new AngularWidget<TestComponent, TestModule>(TestComponent, TestModule);
 
 interface IProps{
-  name: string
+  color?: string
 }
 
 export class TestJSX extends React.Component<IProps, any> {
@@ -28,7 +28,7 @@ export class TestJSX extends React.Component<IProps, any> {
 
     this.TestObject.componentReady.promise.then(() => {
      this.TestObject.ngZone.run(() => {
-       this.TestObject.componentInstance.color = this.props.name
+       this.TestObject.componentInstance.color = this.props.color
         //console.log(this.componentInstance)
       });
     });

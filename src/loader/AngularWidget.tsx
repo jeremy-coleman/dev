@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
@@ -5,7 +6,7 @@ import 'zone.js/dist/zone';
 import { ApplicationRef, ComponentFactoryResolver, ComponentRef, Injector, NgModuleRef, NgZone, Type } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { PromiseDelegate } from './PromiseDelegate';
-//import { Widget } from '@phosphor/widgets';
+
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom'
