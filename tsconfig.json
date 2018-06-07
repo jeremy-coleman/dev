@@ -10,14 +10,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es5",
-    "outDir": "./lib",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "outDir": "dist",
+    "lib": ["es2017","dom"],
   },
-  "include": ["src/*"]
+  "include": ["src"],
+  "exclude":["node_modules"]
 }
