@@ -1,4 +1,4 @@
-export * from './interfaces/index'
+export * from './interfaces'
 
 export {EventEmitter} from './EventEmitter'
 export {ViewModelLocator} from './ViewModelLocator'

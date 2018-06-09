@@ -1,12 +1,12 @@
 require('dotenv').config()
 import { app, BrowserWindow, Menu } from "electron";
-//import * as path from 'path';
+
 import {format} from 'url';
 import { resolve } from 'app-root-path';
 
 let mainWindow: BrowserWindow;
 
-var isProd = process.env.NODE_ENV === 'production' ? true : false;
+
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
@@ -14,13 +14,12 @@ var isProd = process.env.NODE_ENV === 'production' ? true : false;
 });
 
 
-  const devPath = format({pathname: '//localhost:8881/',protocol: 'http:', slashes: true});
   const prodPath = format({pathname: resolve('dist/index.html'), protocol: 'file:', slashes: true });
 
-  var url = isProd ? prodPath : devPath;
 
 
-//dont open devtools in this function or u'll get error spam on startup
+
+//dont call open devtools inside this function or u'll get error spam on startup
 let createMainWindow = async () => {   
     mainWindow = new BrowserWindow({
         width: 960,
@@ -30,7 +29,6 @@ let createMainWindow = async () => {
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
             nodeIntegrationInWorker: true,
-            nodeIntegration: true,
             plugins: true
         }
     });
@@ -51,13 +49,16 @@ let createMainWindow = async () => {
         installExtension(REDUX_DEVTOOLS);
 
     mainWindow.on('closed', () => {mainWindow = null, process.kill(process.pid)});
-    //mainWindow.on("close", () => {mainWindow = null}); not sure which is better to use here?
-    return mainWindow
+    //mainWindow.on("close", () => {mainWindow = null}); closed vs close hmm
 
+
+return mainWindow
 };
 
 
-app.on("ready", async () => {createMainWindow()});
+app.on("ready", async () => {
+    createMainWindow()
+});
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
@@ -70,3 +71,9 @@ app.on("activate", () => {
         createMainWindow();
     }
 });
+
+
+  //import * as path from 'path';
+  //var isProd = process.env.NODE_ENV === 'production' ? true : false;
+  //const devPath = format({pathname: '//localhost:8881/',protocol: 'http:', slashes: true});
+  //var url = isProd ? prodPath : devPath;

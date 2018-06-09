@@ -1,4 +1,4 @@
-import {IViewModel} from './interfaces/index'
+import {IViewModel} from './interfaces'
 
 /**
  * Creates a decorator that just acts as "tag".

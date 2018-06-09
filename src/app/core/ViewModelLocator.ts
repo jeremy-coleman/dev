@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import {IViewModel, IViewModelResolver} from './interfaces/index'
+import {IViewModel, IViewModelResolver} from './interfaces'
 
 export interface IViewModelLocatorProps{
     resolver: IViewModelResolver

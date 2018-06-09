@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import {observer} from 'mobx-react'
-import {IView, IViewProps, IComponentProps, IViewModel, IComponentDefinition, IComponentState, ILinkDisposer} from './interfaces/index'
+import {IView, IViewProps, IComponentProps, IViewModel, IComponentDefinition, IComponentState, ILinkDisposer} from './interfaces'
 import {createLink} from './createLink'
 import {createModel} from './createModel'
 import {disposeModel} from './disposeModel'

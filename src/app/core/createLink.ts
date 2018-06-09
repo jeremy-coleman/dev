@@ -1,5 +1,5 @@
 import {runInAction} from 'mobx'
-import {IComponentState, ILinkDisposer, IComponentDefinition} from './interfaces/index'
+import {IComponentState, ILinkDisposer, IComponentDefinition} from './interfaces'
 import {EventEmitter} from './EventEmitter'
 import {getInputs, getOutputs} from './decorators'
 
