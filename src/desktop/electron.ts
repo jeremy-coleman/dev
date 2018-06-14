@@ -28,7 +28,7 @@ let createMainWindow = async () => {
 
 
 		mainWindow.loadURL(url.format({
-			pathname: path.join(__dirname, 'index.html'),
+			pathname: path.join(app.getAppPath(), 'dist/index.html'),
 			protocol: 'file:',
 			slashes: true
 		}));
@@ -46,9 +46,9 @@ let createMainWindow = async () => {
 
 
 	const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS, MOBX_DEVTOOLS } = require('electron-devtools-installer');
-			installExtension(REACT_DEVELOPER_TOOLS);
-			installExtension(MOBX_DEVTOOLS);
-			installExtension(REDUX_DEVTOOLS);
+			//installExtension(REACT_DEVELOPER_TOOLS);
+		//	installExtension(MOBX_DEVTOOLS);
+		//	installExtension(REDUX_DEVTOOLS);
 
 
 return mainWindow
@@ -56,7 +56,7 @@ return mainWindow
 }
 
 app.on("ready", async () => {
-	createMainWindow()
+await createMainWindow()
 });
 
 
@@ -66,8 +66,11 @@ app.on('window-all-closed', function() {
 	}
 });
 
+/*
 app.on('activate', function() {
 	if (mainWindow === null) {
 		createMainWindow();
 	}
+
 });
+*/
