@@ -3,15 +3,86 @@ FuseBox.target = "electron";
 Object.assign(global.process.env, {"NODE_ENV":"development"})
 FuseBox.pkg("default", {}, function(___scope___){
 ___scope___.file("index.jsx", function(exports, require, module, __filename, __dirname){
-
+/* fuse:injection: */ var process = require("process");
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //import './css.config'
+//export = 0;
+//import './assets/scss/main.scss'
 const ReactDOM = require("react-dom");
 const React = require("react");
 const App_1 = require("./App");
-require("./assets/scss/main.scss");
-ReactDOM.render(React.createElement(App_1.CogliteAppRoot, null), document.getElementById("coglite-app-root"));
+const icons_1 = require("@uifabric/icons");
+//import { Fabric } from "office-ui-fabric-react/lib/Fabric";
+icons_1.initializeIcons();
+require("./base.css");
+const electron_1 = require("electron");
+electron_1.webFrame.setZoomLevel(1);
+electron_1.webFrame.setZoomFactor(1);
+electron_1.webFrame.registerURLSchemeAsPrivileged('coglite');
+//import { navigate } from './common/hyperlinkHandler';
+process.on('uncaughtException', (error) => { console.error('[err-client]', error.message, error.stack); });
+window.onerror = (message, filename, lineno, colno, error) => { console.error('[err-client]', message, filename, lineno, colno, error); return true; }; // prevent default handler
+/*
+const interceptClickEvent = (e: Event) => {
+    let target: any = e.target;
+    while (target) {
+        if (target.href) {
+            e.preventDefault();
+            navigate(target.href);
+            return;
+        }
+        target = target.parentNode;
+    }
+}
+
+document.addEventListener('click', interceptClickEvent);
+
+window.open = (url: string): any => navigate(url); // Monkey patch
+*/
+window.onload = function () {
+    ReactDOM.render(React.createElement(App_1.CogliteAppRoot, null), document.getElementById("coglite-app-root"));
+};
+/*
+// Right-click context menu for edit boxes
+const remote = require('electron').remote;
+
+const Menu = remote.Menu;
+
+const ContextMenuRW = Menu.buildFromTemplate([
+    {label: 'Undo',role: 'undo',},
+    {label: 'Redo', role: 'redo',},
+    {type:  'separator',},
+    {label: 'Cut',role: 'cut',},
+    {label: 'Copy', role: 'copy',},
+    {label: 'Paste',role: 'paste',}
+]);
+
+const ContextMenuRO = Menu.buildFromTemplate([
+    {label: 'Undo',role: 'undo',enabled: false},
+    {label: 'Redo',role: 'redo',enabled: false},
+    {type: 'separator',},
+    {label: 'Cut',role: 'cut',enabled: false},
+    {label: 'Copy',role: 'copy',enabled: false},
+    {label: 'Paste',role: 'paste', enabled: false}
+]);
+
+
+
+document.body.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    let node: any = e.target;
+    while (node) { if (node.nodeName.match(/^(input|textarea)$/i) || node.isContentEditable)
+      //@ts-ignore
+                    {   if (node.readOnly) {ContextMenuRO.popup(remote.getCurrentWindow());}
+                    //@ts-ignore
+                        else {ContextMenuRW.popup(remote.getCurrentWindow());}
+                        break;
+                    }   return node = node.parentNode; }
+});
+
+*/ 
 
 });
 ___scope___.file("App.jsx", function(exports, require, module, __filename, __dirname){
@@ -23,18 +94,16 @@ const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const theming_1 = require("theming");
 const styled_components_1 = require("styled-components");
-const theme_1 = require("./theme");
-const AppLayout_1 = require("./layout/AppLayout");
+const AppLayout_1 = require("./modules/layout/AppLayout");
 const Router_1 = require("./Router");
 const stores_1 = require("./stores");
 exports.CogliteAppRoot = mobx_react_1.observer((props) => {
     const muiTheme = stores_1.cogliteState.uiStore.muiTheme;
     return (React.createElement(mobx_react_1.Provider, Object.assign({}, stores_1.cogliteState),
         React.createElement(theming_1.ThemeProvider, { theme: muiTheme },
-            React.createElement(styled_components_1.ThemeProvider, { theme: theme_1.theme },
-                React.createElement("div", { style: { height: '100vh', width: '100vw' } },
-                    React.createElement(AppLayout_1.AppLayout, null,
-                        React.createElement(Router_1.default, null)))))));
+            React.createElement("div", { style: { height: '100vh', width: '100vw' } },
+                React.createElement(AppLayout_1.AppLayout, null,
+                    React.createElement(Router_1.default, null))))));
 });
 // body > font-size: ${theme.fontSizes[1]}px;
 styled_components_1.injectGlobal `
@@ -88,21 +157,7 @@ document.addEventListener("dragover", event => event.preventDefault());
 document.addEventListener("drop", event => event.preventDefault());
 
 });
-___scope___.file("theme.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.theme = {
-    main: "#607d8b",
-    primary: "#607d8b",
-    secondary: "#3f51b5",
-    text: 'white',
-    fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72, 96],
-    space: [0, 4, 8, 16, 32, 64, 128, 256, 512]
-};
-
-});
-___scope___.file("layout/AppLayout.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/AppLayout.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -118,9 +173,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const mobx_1 = require("mobx");
-const design_1 = require("../design");
+const design_1 = require("../../design");
 const Footer_1 = require("./Footer");
 const IconNavigation_1 = require("./IconNavigation");
+//import { NavStore } from '../stores/NavStore';
 const Workspace_1 = require("./Workspace");
 const command_bar_1 = require("./command-bar");
 let AppLayout = class AppLayout extends React.Component {
@@ -178,54 +234,121 @@ ___scope___.file("design/dimensions.jsx", function(exports, require, module, __f
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const styled_components_1 = require("styled-components");
-exports.FillFlex = styled_components_1.default.div `
+const styled_jss_1 = require("styled-jss");
+exports.Wrapper = styled_jss_1.default('div')({
+    padding: 40,
+    background: '#f7df1e',
+    textAlign: 'center'
+});
+exports.FillFlex = styled_jss_1.default('div')({
+    display: 'flex',
+    flex: '1',
+    width: '100%',
+    height: '100%',
+});
+exports.Row = styled_jss_1.default('div')({
+    display: 'flex',
+    flex: '1 1 auto',
+    flexDirection: 'row',
+    justifyContent: 'stretch'
+});
+exports.HorizontalStretch = styled_jss_1.default('div')({
+    display: "flex",
+    flex: "auto",
+    flexDirection: "row",
+    justifyContent: "stretch",
+});
+exports.VerticalStretch = styled_jss_1.default('div')({
+    display: "flex",
+    flex: "1 1 auto",
+    height: "100%",
+    flexDirection: "column",
+    justifyContent: "stretch"
+});
+exports.FillParent = styled_jss_1.default('div')({
+    position: 'relative',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+});
+exports.CssClassWrapper = ({ children, className }) => (React.createElement("span", Object.assign({}, { className }), children));
+/*
+import styled from 'styled-components';
+
+export const FillFlex =  styled.div`
   display: flex;
   flex: 1;
   width: 100%;
   height: 100%;
 `;
-exports.HorizontalStretch = styled_components_1.default.div `
+
+export const HorizontalStretch = styled.div`
   display: flex;
   flex: auto;
   flex-direction: row;
   justify-content: stretch;
 `;
-exports.VerticalStretch = styled_components_1.default.div `
+
+export const VerticalStretch = styled.div`
   display: flex;
   flex: 1 1 auto;
   height: 100%;
   flex-direction: column;
   justify-content: stretch;
 `;
-exports.FillParent = styled_components_1.default.div `
+
+export const FillParent = styled.div`
     position: relative;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
 `;
-exports.Row = styled_components_1.default.div `
+
+export const Row = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: row;
   justify-content: stretch;
-`;
-exports.CssClassWrapper = ({ children, className }) => (React.createElement("span", Object.assign({}, { className }), children));
+`
+*/ 
 
 });
-___scope___.file("layout/Footer.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/Footer.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const styled_components_1 = require("styled-components");
-const polished_1 = require("polished");
-const design_1 = require("../design");
+const design_1 = require("../../design");
 const version = '0.0.1';
 const copyrightString = '© Copyright Coglite 2018';
-const FooterDimensions = styled_components_1.default.div `
+const theming_1 = require("theming");
+const styled_jss_1 = require("styled-jss");
+const FooterDimensions = theming_1.withTheme(styled_jss_1.default('div')(({ theme }) => ({
+    border: "3px solid black",
+    display: "flex",
+    maxHeight: 25,
+    minHeight: 25,
+    width: "100%",
+    flexDirection: "row",
+    position: "relative",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexWrap: "none",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+})));
+exports.StatusFooter = mobx_react_1.observer(props => (React.createElement(FooterDimensions, null,
+    React.createElement(design_1.HorizontalStretch, null,
+        React.createElement("span", null, copyrightString),
+        React.createElement("div", { style: { flex: 'auto' } }),
+        React.createElement("span", null, `Version: ${version || 'pre-release'}`)))));
+/*
+
+const FooterDimensions1 = styled.div`
   border: 3px solid black;
   display: flex;
   max-height: 25px;
@@ -236,26 +359,53 @@ const FooterDimensions = styled_components_1.default.div `
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: ${props => polished_1.lighten(0.1, props.theme.main)};
+  background-color: ${props => lighten(0.1, props.theme.main)};
   flex-wrap: none;
 `;
-exports.StatusFooter = mobx_react_1.observer(props => (React.createElement(FooterDimensions, null,
-    React.createElement(design_1.HorizontalStretch, null,
-        React.createElement("span", null, copyrightString),
-        React.createElement("div", { style: { flex: 'auto' } }),
-        React.createElement("span", null, `Version: ${version || 'pre-release'}`)))));
+*/ 
 
 });
-___scope___.file("layout/IconNavigation.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/IconNavigation.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const styled_components_1 = require("styled-components");
-const Link_1 = require("../components/Link");
 const icons_1 = require("@blueprintjs/icons");
-const LeftNavStylesContainer = styled_components_1.default.div `
+const theming_1 = require("theming");
+const styled_jss_1 = require("styled-jss");
+const Link_1 = require("../../components/Link");
+const LeftNavStylesContainer = theming_1.withTheme(styled_jss_1.default('div')(({ theme, props }) => ({
+    maxWidth: 48,
+    minWidth: 48,
+    width: 48,
+    minHeight: "100%",
+    flex: "1 1 auto",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    alignmentBaseline: "central",
+    overflow: "hidden",
+    border: "3px solid white",
+    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08)",
+    backgroundColor: 'white'
+})));
+/*
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  fill: theme.palette.primary.contrastText,
+  */
+exports.IconNavBar = theming_1.withTheme(mobx_react_1.observer((props) => (React.createElement(LeftNavStylesContainer, Object.assign({}, props),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.PROJECTS, large: true, route: "dashboard" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.GRAPH, large: true, route: "notebook" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.CHART, large: true, route: "charts" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.DATABASE, large: true, route: "datasets" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.CLOUD, large: true, route: "cloud" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.APPLICATIONS, large: true, route: "catalog" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.COG, large: true, route: "settings" }),
+    React.createElement(Link_1.Link, { icon: icons_1.IconNames.HELP, large: true, route: "about" })))));
+/*
+  const LeftNavStylesContainer = styled.div`
       max-width: 48px;
       min-width: 48px;
       width: 48px;
@@ -268,15 +418,8 @@ const LeftNavStylesContainer = styled_components_1.default.div `
       overflow: hidden;
       border: 3px solid white;
       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);
-      ;`;
-exports.IconNavBar = mobx_react_1.observer((props) => (React.createElement(LeftNavStylesContainer, null,
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.PROJECTS, large: true, route: "dashboard" }),
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.GRAPH, large: true, route: "notebook" }),
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.CHART, large: true, route: "charts" }),
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.DATABASE, large: true, route: "datasets" }),
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.CLOUD, large: true, route: "cloud" }),
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.COG, large: true, route: "settings" }),
-    React.createElement(Link_1.Link, { icon: icons_1.IconNames.HELP, large: true, route: "about" }))));
+      ;`
+*/ 
 
 });
 ___scope___.file("components/Link.jsx", function(exports, require, module, __filename, __dirname){
@@ -303,21 +446,23 @@ const LinkStyle = style({
 */
 
 });
-___scope___.file("layout/Workspace.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/Workspace.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@material-ui/core");
 const React = require("react");
-const styled_components_1 = require("styled-components");
+const styled_jss_1 = require("styled-jss");
 const mobx_react_1 = require("mobx-react");
-const design_1 = require("../design");
-const Container = styled_components_1.default(core_1.Card) `
-  position: relative;
-  display: flex;
-  flex: 1 1 auto;
-  width: 100%;
-  margin: 5px;`;
+const design_1 = require("../../design");
+//idk why but shit overflows like crazy without using a card
+const Container = styled_jss_1.default(core_1.Card)({
+    position: "relative",
+    display: "flex",
+    flex: "1 1 auto",
+    width: "100%",
+    margin: 5,
+});
 exports.MiddlePanel = mobx_react_1.observer((props) => React.createElement(Container, null,
     React.createElement(design_1.FillFlex, null, props.children)));
 //this works
@@ -358,7 +503,7 @@ export class MiddlePanel11 extends React.Component {
         */ 
 
 });
-___scope___.file("layout/command-bar/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/command-bar/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
@@ -370,7 +515,7 @@ __export(require("./FileCommandButtons"));
 __export(require("./Login"));
 
 });
-___scope___.file("layout/command-bar/command-bar-primary.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/command-bar/command-bar-primary.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -383,17 +528,46 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const core_1 = require("@blueprintjs/core");
 const mobx_react_1 = require("mobx-react");
-const styled_components_1 = require("styled-components");
+//import styled from 'styled-components'
 const Login_1 = require("./Login");
 const FileCommandButtons_1 = require("./FileCommandButtons");
-const design_1 = require("../../design");
-const NavHeader = styled_components_1.default(core_1.Navbar) `
-  background-color: ${props => props.theme.main} !important;
-  color: ${props => props.theme.text} !important;
-  overflow: hidden !important;
-  height: 30px;
-`;
-const Dimensions = styled_components_1.default.div `
+const design_1 = require("../../../design");
+const theming_1 = require("theming");
+const styled_jss_1 = require("styled-jss");
+const addressBarMenu_1 = require("../addressBar/addressBarMenu");
+const Dimensions = theming_1.withTheme(styled_jss_1.default('div')(({ theme }) => ({
+    border: "1px solid black",
+    display: "flex",
+    maxHeight: 32,
+    minHeight: 32,
+    width: "100%",
+    flexDirection: "row",
+    position: "relative",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexWrap: "none",
+    overflow: "hidden !important",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+})));
+//background-color: ${props => lighten(0.1, props.theme.main)};
+let CommandBarPrimary = class CommandBarPrimary extends React.Component {
+    render() {
+        return (React.createElement(Dimensions, null,
+            React.createElement(design_1.HorizontalStretch, null,
+                React.createElement(FileCommandButtons_1.FileCommandButtons, null),
+                React.createElement(core_1.NavbarDivider, null),
+                React.createElement(Login_1.LoginView, null),
+                React.createElement(addressBarMenu_1.AddressBarMenu, null))));
+    }
+};
+CommandBarPrimary = __decorate([
+    mobx_react_1.observer
+], CommandBarPrimary);
+exports.CommandBarPrimary = CommandBarPrimary;
+/*
+const Dimensions1 = styled.div`
   border: 1px solid black;
   display: flex;
   max-height: 32px;
@@ -408,23 +582,10 @@ const Dimensions = styled_components_1.default.div `
   flex-wrap: none;
   overflow: hidden !important;
 `;
-//background-color: ${props => lighten(0.1, props.theme.main)};
-let CommandBarPrimary = class CommandBarPrimary extends React.Component {
-    render() {
-        return (React.createElement(Dimensions, null,
-            React.createElement(design_1.HorizontalStretch, null,
-                React.createElement(FileCommandButtons_1.FileCommandButtons, null),
-                React.createElement(core_1.NavbarDivider, null),
-                React.createElement(Login_1.LoginView, null))));
-    }
-};
-CommandBarPrimary = __decorate([
-    mobx_react_1.observer
-], CommandBarPrimary);
-exports.CommandBarPrimary = CommandBarPrimary;
+*/ 
 
 });
-___scope___.file("layout/command-bar/Login/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/command-bar/Login/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
@@ -435,7 +596,7 @@ __export(require("./LoginButton"));
 __export(require("./LoginButtonView"));
 
 });
-___scope___.file("layout/command-bar/Login/LoginButton.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/command-bar/Login/LoginButton.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -443,7 +604,7 @@ const React = require("react");
 const mobx_react_1 = require("mobx-react");
 // Material-ui
 const core_1 = require("@blueprintjs/core");
-const auth_1 = require("../../../stores/auth");
+const auth_1 = require("../../../../stores/auth");
 exports.LoginView = mobx_react_1.observer(() => {
     const displayName = auth_1.default.isLoggedIn ? auth_1.default.profile.username : "Login";
     const login = () => { auth_1.default.isLoggedIn ? auth_1.default.logout() : auth_1.default.login({ whatever: true }); };
@@ -533,14 +694,15 @@ __decorate([
 exports.Auth = Auth;
 
 });
-___scope___.file("layout/command-bar/Login/LoginButtonView.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/command-bar/Login/LoginButtonView.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const core_1 = require("@blueprintjs/core");
-const auth_1 = require("../../../stores/auth");
+const auth_1 = require("../../../../stores/auth");
+//this isnt used just example atm
 const login = () => { auth_1.default.isLoggedIn ? auth_1.default.logout() : auth_1.default.login({ whatever: true }); };
 exports.LoginMenuView = mobx_react_1.observer(() => {
     const tooltip = auth_1.default.isLoggedIn ? auth_1.default.profile.username : "Login";
@@ -553,7 +715,7 @@ exports.LoginMenuView = mobx_react_1.observer(() => {
 });
 
 });
-___scope___.file("layout/command-bar/FileCommandButtons.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/layout/command-bar/FileCommandButtons.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __rest = (this && this.__rest) || function (s, e) {
@@ -607,6 +769,321 @@ class FileCommandButtons extends React.PureComponent {
 exports.FileCommandButtons = FileCommandButtons;
 
 });
+___scope___.file("modules/layout/addressBar/addressBarMenu.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const Icons = require("../../../components/icons");
+const electron_1 = require("electron");
+const { Menu } = electron_1.remote;
+class AddressBarMenu extends React.Component {
+    showMenu() {
+        const kernelActive = true;
+        const kernelInstalled = true;
+        const template = [
+            {
+                label: 'New Service',
+                click: () => { },
+                enabled: kernelInstalled
+            },
+            {
+                label: 'Execute Service',
+                type: 'submenu',
+                enabled: kernelActive,
+                submenu: [
+                    {
+                        label: 'Send System Event',
+                        type: 'submenu',
+                        enabled: true,
+                        submenu: [
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'infos and things',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'ping',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'delete Data',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        type: 'separator'
+                    },
+                    {
+                        label: 'Leave',
+                        click: () => { }
+                    }
+                ]
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'App Settings TODO: add back modal',
+                click: () => { }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Zoom',
+                type: 'submenu',
+                enabled: true,
+                submenu: [
+                    {
+                        label: 'Zoom In',
+                        accelerator: 'CommandOrControl+=',
+                        click: () => { }
+                    },
+                    {
+                        label: 'Zoom Out',
+                        accelerator: 'CommandOrControl+-',
+                        click: () => { }
+                    },
+                    {
+                        label: 'Reset Zoom',
+                        accelerator: 'CommandOrControl+0',
+                        click: () => { }
+                    },
+                ]
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'About',
+                click: () => { }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Legal',
+                click: () => window.open('https://google.com')
+            },
+            {
+                label: 'Privacy',
+                click: () => window.open('https://google.com')
+            },
+            {
+                label: 'Credits',
+                click: () => window.open('https://google.com')
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Report issues',
+                click: () => window.open('https://coglite.com')
+            },
+        ];
+        const menu = Menu.buildFromTemplate(template);
+        //@ts-ignore
+        menu.popup();
+    }
+    render() {
+        return (React.createElement("a", { className: 'undecorated-text', href: 'javascript:void(0)', title: 'Settings' },
+            React.createElement("div", { className: "addressbar-menu", dangerouslySetInnerHTML: { __html: Icons.hamburgerIcon('toolbar-button', 24) }, onClick: () => this.showMenu() })));
+    }
+}
+exports.AddressBarMenu = AddressBarMenu;
+
+});
+___scope___.file("components/icons/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./icons"));
+
+});
+___scope___.file("components/icons/icons.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.clearCloseIcon = (className, size) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g id="x-large">
+          <g id="refresh">
+              <polygon id="Shape" points="0 0 24 0 24 24 0 24"></polygon>
+              <g id="close" transform="translate(6.000000, 6.000000)" stroke="#FFFFFF" stroke-width="2">
+                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line"></path>
+                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line" transform="translate(6.143705, 6.143705) scale(-1, 1) translate(-6.143705, -6.143705) "></path>
+              </g>
+          </g>
+      </g>
+  </g>
+</svg>
+  `;
+};
+exports.hamburgerIcon = (className, size) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g id="menu">
+          <g>
+              <rect id="Rectangle-2" x="0" y="0" width="24" height="24"></rect>
+              <path d="M10,6 C10,7.1045695 10.8954305,8 12,8 C13.1045695,8 14,7.1045695 14,6 C14,4.8954305 13.1045695,4 12,4 C10.8954305,4 10,4.8954305 10,6 Z M10,12 C10,13.1045695 10.8954305,14 12,14 C13.1045695,14 14,13.1045695 14,12 C14,10.8954305 13.1045695,10 12,10 C10.8954305,10 10,10.8954305 10,12 Z M10,18 C10,19.1045695 10.8954305,20 12,20 C13.1045695,20 14,19.1045695 14,18 C14,16.8954305 13.1045695,16 12,16 C10.8954305,16 10,16.8954305 10,18 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+          </g>
+      </g>
+  </g>
+</svg>
+  `;
+};
+exports.reloadIcon = (className, size) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g id="refresh">
+          <g id="Shape">
+              <polygon points="0 0 24 0 24 24 0 24"></polygon>
+              <path d="M11.500938,6 C7.91020633,6 5.01,8.90833016 5.01,12.4990618 C5.01,16.0897934 7.91020633,18.9981236 11.500938,18.9981236 C14.5311255,18.9981236 17.0576358,16.9265476 17.7806564,14.1238272 L16.0909004,14.1238272 C15.4247465,16.016679 13.6212569,17.3733581 11.500938,17.3733581 C8.81195115,17.3733581 6.62664162,15.1880486 6.62664162,12.4990618 C6.62664162,9.81007498 8.81195115,7.62476545 11.500938,7.62476545 C12.8494933,7.62476545 14.0518197,8.18530953 14.9291931,9.0708067 L12.3133207,11.6866791 L17.9999998,11.6866791 L17.9999998,6 L16.0909004,7.9090994 C14.9129454,6.73114445 13.2963038,6 11.500938,6 Z" fill="#FFFFFF"></path>
+          </g>
+      </g>
+  </g>
+</svg>
+  `;
+};
+exports.tempFrameworkIconEmbossed = (className, size) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 158 158" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+      <ellipse id="path-1" cx="40.3301887" cy="34.7878788" rx="4.66981132" ry="4.66666667"></ellipse>
+      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-2">
+          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+      </filter>
+      <polygon id="path-3" points="63.4092287 32.1588326 60.7075472 34.8586949 63.4092287 37.5585571 95.6259173 69.753551 101.02928 64.3538265 71.4220495 34.8586949 100.993095 5.39972451 95.5897317 0"></polygon>
+      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-4">
+          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+      </filter>
+      <polygon id="path-5" points="2.70168157 32.1588326 0 34.8586949 2.70168157 37.5585571 34.9183701 69.753551 40.3217333 64.3538265 10.7145024 34.8586949 40.2855477 5.39972451 34.8821846 0"></polygon>
+      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-6">
+          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+      </filter>
+      <ellipse id="path-7" cx="61.1320755" cy="34.7878788" rx="4.66981132" ry="4.66666667"></ellipse>
+      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-8">
+          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+      </filter>
+      <path d="M156,78 C156,34.9217895 121.07821,0 78,0 C34.9217895,0 0,34.9217895 0,78 C0,121.07821 34.9217895,156 78,156 C121.07821,156 156,121.07821 156,78 Z M8,78 C8,39.3400675 39.3400675,8 78,8 C116.659932,8 148,39.3400675 148,78 C148,116.659932 116.659932,148 78,148 C39.3400675,148 8,116.659932 8,78 Z" id="path-9"></path>
+      <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-10">
+          <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+          <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+          <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.09 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+      </filter>
+  </defs>
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g id="empty_chat">
+          <g id="Group" transform="translate(1.000000, 1.000000)">
+              <g id="botty_mcbot" transform="translate(27.000000, 43.000000)">
+                  <g id="Group-19">
+                      <g id="Oval-4">
+                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-1"></use>
+                          <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                      </g>
+                      <g id="Path-2" transform="translate(80.868414, 34.876775) scale(-1, 1) translate(-80.868414, -34.876775) ">
+                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-3"></use>
+                          <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                      </g>
+                      <g id="Path-2">
+                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-5"></use>
+                          <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                      </g>
+                      <g id="Oval-4" transform="translate(61.132075, 34.787879) scale(-1, 1) translate(-61.132075, -34.787879) ">
+                          <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-7"></use>
+                          <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
+                      </g>
+                  </g>
+              </g>
+              <g id="Oval">
+                  <use fill-opacity="0.548403533" fill="#E3E5E7" fill-rule="evenodd" xlink:href="#path-9"></use>
+                  <use fill="black" fill-opacity="1" filter="url(#filter-10)" xlink:href="#path-9"></use>
+              </g>
+          </g>
+      </g>
+  </g>
+</svg>
+  `;
+};
+exports.tempFrameworkIcon = (className, size) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 244 244" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g id="Layer_2" data-name="Layer 2">
+    <g id="Layer_1-2" data-name="Layer 1">
+       <path d="M122,15.25A106.75,106.75,0,1,1,15.25,122h0A106.87,106.87,0,0,1,122,15.25M122,0A122,122,0,1,0,244,122,122,122,0,0,0,122,0Z"/>
+       <circle cx="102.93" cy="122" r="11.43"/>
+       <circle cx="141.06" cy="122" r="11.43"/>
+       <path d="M93.73,188.39l-61-61a7.63,7.63,0,0,1,0-10.78l0,0,61-61,10.82,10.82L48.91,122l55.61,55.61Z"/>
+       <path d="M150.27,188.39l-10.82-10.82L195.09,122,139.48,66.39l10.82-10.82,61,61a7.62,7.62,0,0,1,0,10.78l0,0Z"/>
+    </g>
+ </g>
+</svg>
+  `;
+};
+exports.removeIcon = (className, size) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Page-1">
+      <g id="x-large">
+          <g id="refresh">
+              <g id="close" transform="translate(6.000000, 6.000000)" stroke-width="1">
+                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line"></path>
+                  <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line" transform="translate(6.143705, 6.143705) scale(-1, 1) translate(-6.143705, -6.143705) "></path>
+              </g>
+          </g>
+      </g>
+  </g>
+</svg>
+  `;
+};
+
+});
 ___scope___.file("Router.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
@@ -619,12 +1096,14 @@ const mobx_react_1 = require("mobx-react");
 const View_1 = require("./modules/notebook/View");
 const modules_1 = require("./modules");
 const designer_screen_1 = require("./modules/workflow-designer/components/workflow-toolbar/designer-screen");
+const App_1 = require("./modules/som-designer/App");
 const AppRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, when_switch_1.default(props.nav.route)
     .is('notebook', () => React.createElement(View_1.NotebookView, null))
     .is('datasets', () => React.createElement(modules_1.DatasetsPage, null))
-    .is('charts', () => React.createElement(modules_1.ChartsPage, null))
+    .is('charts', () => React.createElement(App_1.SOMDesigner, null))
     .is('dashboard', () => React.createElement(modules_1.DashboardPage, null))
     .is('cloud', () => React.createElement(designer_screen_1.DesignerApp, null))
+    .is('catalog', () => React.createElement(modules_1.CatalogModule, null))
     .is('settings', () => React.createElement(modules_1.SettingsPage, null))
     .is('about', () => React.createElement(modules_1.AboutPage, null))
     .else(() => React.createElement(modules_1.DashboardPage, null))))));
@@ -667,21 +1146,15 @@ const toolbar_1 = require("./toolbar");
 const Input_1 = require("./Nodes/Input");
 const Output_1 = require("./Nodes/Output");
 const design_1 = require("../../design");
-const styled_components_1 = require("styled-components");
-const core_1 = require("@blueprintjs/core");
-const icons_1 = require("@blueprintjs/icons");
-const polished_1 = require("polished");
-exports.MainWorkSpace = styled_components_1.default.div `
-  display: flex;
-  height: 100%;
-  width: 100%;
-  background-color: ${props => polished_1.lighten(0.1, props.theme.main)};
-`;
-exports.WidgetToolbar = () => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.CODE }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.SCATTER_PLOT }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH })));
+require("./scss/main.scss");
+const theming_1 = require("theming");
+const styled_jss_1 = require("styled-jss");
+const MainWorkSpace = theming_1.withTheme(styled_jss_1.default('div')(({ theme }) => ({
+    display: "flex",
+    height: "100%",
+    width: "100%",
+    backgroundColor: theme.palette.primary.main,
+})));
 let NotebookLayout = class NotebookLayout extends React.Component {
     constructor() {
         super(...arguments);
@@ -694,10 +1167,10 @@ let NotebookLayout = class NotebookLayout extends React.Component {
         return (React.createElement(design_1.FillFlex, null,
             React.createElement(design_1.Row, null,
                 React.createElement(design_1.VerticalStretch, null,
-                    React.createElement(toolbar_1.NotebookToolbar, null),
+                    React.createElement(toolbar_1.NotebookWidgetBar, null),
                     React.createElement(design_1.Row, null,
                         React.createElement(design_1.Row, null,
-                            React.createElement(exports.MainWorkSpace, null, this.props.children)),
+                            React.createElement(MainWorkSpace, null, this.props.children)),
                         nodeDrawer)))));
     }
 };
@@ -713,6 +1186,16 @@ NotebookLayout = __decorate([
     mobx_react_1.observer
 ], NotebookLayout);
 exports.NotebookLayout = NotebookLayout;
+/*
+import styled from 'styled-components'
+
+export const MainWorkSpace = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: ${props => lighten(0.1, props.theme.main)};
+`;
+*/ 
 
 });
 ___scope___.file("modules/notebook/Drawers/NodeDrawer.jsx", function(exports, require, module, __filename, __dirname){
@@ -728,18 +1211,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const core_1 = require("@blueprintjs/core");
 const mobx_react_1 = require("mobx-react");
-const styled_components_1 = require("styled-components");
+const styled_jss_1 = require("styled-jss");
 const design_1 = require("../../../design");
-//import { UiStore } from "../../../stores/UiStore"
-const NodeDrawerDimensions = styled_components_1.default(core_1.Card) `
-    max-width: 180px;
-    min-height: 100%;
-    flex: 1 1 auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    alignment-baseline: central;
-`;
+const NodeDrawerDimensions = styled_jss_1.default(core_1.Card)({
+    maxWidth: 180,
+    minHeight: "100%",
+    flex: "1 1 auto",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    alignmentBaseline: "central"
+});
 let NodeDrawer = class NodeDrawer extends React.Component {
     render() {
         const nodeDrawer = (React.createElement(NodeDrawerDimensions, { style: { width: '180px' } },
@@ -752,6 +1234,17 @@ NodeDrawer = __decorate([
     mobx_react_1.observer
 ], NodeDrawer);
 exports.NodeDrawer = NodeDrawer;
+/*
+const NodeDrawerDimensions = styled(Card)`
+    max-width: 180px;
+    min-height: 100%;
+    flex: 1 1 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    alignment-baseline: central;
+`
+*/ 
 
 });
 ___scope___.file("modules/notebook/toolbar.jsx", function(exports, require, module, __filename, __dirname){
@@ -759,15 +1252,14 @@ ___scope___.file("modules/notebook/toolbar.jsx", function(exports, require, modu
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-//import {observer, inject} from 'mobx-react'
-//import styled, { StyledFunction } from 'styled-components';
 const core_1 = require("@blueprintjs/core");
 const icons_1 = require("@blueprintjs/icons");
-exports.NotebookToolbar = () => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
+const mobx_react_1 = require("mobx-react");
+exports.NotebookWidgetBar = mobx_react_1.observer((props) => (React.createElement(core_1.ButtonGroup, Object.assign({ large: true, fill: true }, props),
     React.createElement(core_1.Button, { icon: icons_1.IconNames.CODE }),
     React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }),
     React.createElement(core_1.Button, { icon: icons_1.IconNames.SCATTER_PLOT }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH })));
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }))));
 
 });
 ___scope___.file("modules/notebook/Nodes/Input.jsx", function(exports, require, module, __filename, __dirname){
@@ -826,6 +1318,11 @@ OutputNode = __decorate([
 ], OutputNode);
 exports.OutputNode = OutputNode;
 
+});
+___scope___.file("modules/notebook/scss/main.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/notebook/scss/main.scss", ".srd-diagram {\n  position: relative;\n  flex-grow: 1;\n  display: flex;\n  cursor: move;\n  overflow: hidden; }\n  .srd-diagram__selector {\n    position: absolute;\n    background-color: rgba(0, 192, 255, 0.2);\n    border: solid 2px #00c0ff; }\n\n.srd-link-layer {\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  transform-origin: 0 0;\n  overflow: visible !important;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0; }\n\n.srd-node-layer {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  pointer-events: none;\n  transform-origin: 0 0;\n  width: 100%;\n  height: 100%; }\n\n.srd-node {\n  position: absolute;\n  -webkit-touch-callout: none;\n  /* iOS Safari */\n  -webkit-user-select: none;\n  /* Chrome/Safari/Opera */\n  user-select: none;\n  cursor: move;\n  pointer-events: all; }\n  .srd-node--selected > * {\n    border-color: #00c0ff !important; }\n\n.srd-port {\n  width: 15px;\n  height: 15px;\n  background: rgba(128, 128, 128, 0.1); }\n  .srd-port:hover, .srd-port.selected {\n    background: #c0ff00; }\n\n.srd-default-node {\n  background-color: #1e1e1e;\n  border-radius: 5px;\n  font-family: sans-serif;\n  color: white;\n  border: solid 2px black;\n  overflow: visible;\n  font-size: 11px; }\n  .srd-default-node__title {\n    background: rgba(0, 0, 0, 0.3);\n    display: flex;\n    white-space: nowrap; }\n    .srd-default-node__title > * {\n      align-self: center; }\n    .srd-default-node__title .fa {\n      padding: 5px;\n      opacity: 0.2;\n      cursor: pointer; }\n      .srd-default-node__title .fa:hover {\n        opacity: 1.0; }\n  .srd-default-node__name {\n    flex-grow: 1;\n    padding: 5px 5px; }\n  .srd-default-node__ports {\n    display: flex;\n    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)); }\n  .srd-default-node__in, .srd-default-node__out {\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column; }\n\n.srd-default-port {\n  display: flex;\n  margin-top: 1px; }\n  .srd-default-port > * {\n    align-self: center; }\n  .srd-default-port__name {\n    padding: 0 5px; }\n  .srd-default-port--out {\n    justify-content: flex-end; }\n    .srd-default-port--out .srd-default-port__name {\n      justify-content: flex-end;\n      text-align: right; }\n\n.srd-default-label {\n  background: rgba(70, 70, 70, 0.8);\n  border: 1px solid #333;\n  border-radius: 4px;\n  color: #fff;\n  display: inline-block;\n  font-size: smaller;\n  padding: 5px; }\n\n@keyframes dash {\n  from {\n    stroke-dashoffset: 24; }\n  to {\n    stroke-dashoffset: 0; } }\n\n.srd-default-link path {\n  fill: none;\n  pointer-events: all; }\n\n.srd-default-link--path-selected {\n  stroke: #00c0ff !important;\n  stroke-dasharray: 10,2;\n  animation: dash 1s linear infinite; }\n\n.srd-default-link__label {\n  pointer-events: none; }\n  .srd-default-link__label > div {\n    display: inline-block;\n    position: absolute; }\n\n.srd-default-link__point {\n  fill: rgba(0, 0, 0, 0.5); }\n\n.srd-default-link--point-selected {\n  fill: #00c0ff; }\n\n.srd-coglite-canvas {\n  height: 100%;\n  min-height: 600px;\n  background-color: #F7F7F7 !important;\n  background-image: linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 0.1) 25%, rgba(0, 0, 0, 0.1) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.1) 75%, rgba(0, 0, 0, 0.1) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 0.1) 25%, rgba(0, 0, 0, 0.1) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.1) 75%, rgba(0, 0, 0, 0.1) 76%, transparent 77%, transparent);\n  background-size: 50px 50px; }\n  .srd-coglite-canvas .pointui {\n    fill: rgba(255, 255, 255, 0.5); }\n\n.diagram-layer {\n  position: relative;\n  height: 100%;\n  flex: 1; }\n\n/*# sourceMappingURL=main.scss.map */")
 });
 ___scope___.file("modules/notebook/Diagram/Canvas.jsx", function(exports, require, module, __filename, __dirname){
 
@@ -1158,8 +1655,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./about"));
-__export(require("./charts"));
-__export(require("./cloud"));
+__export(require("./catalog"));
 __export(require("./dashboard"));
 __export(require("./datasets"));
 __export(require("./notebook"));
@@ -1230,17 +1726,17 @@ class SettingsKeybindings extends React.Component {
 exports.SettingsKeybindings = SettingsKeybindings;
 
 });
-___scope___.file("modules/charts/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/catalog/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./charts"));
+__export(require("./catalog"));
 
 });
-___scope___.file("modules/charts/charts.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/catalog/catalog.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1249,100 +1745,382 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.ChartsPage = mobx_react_1.observer(() => React.createElement(TogglableSidebarLayout, null));
-const react_splitter_layout_1 = require("react-splitter-layout");
-const design_1 = require("../../design");
-const drawer_1 = require("./drawer");
-const lib_1 = require("typestyle/lib");
-const csstips_1 = require("csstips");
-const mobx_1 = require("mobx");
-let TogglableSidebarLayout = class TogglableSidebarLayout extends React.Component {
-    constructor() {
-        super(...arguments);
-        this.sidebarVisible = true;
-    }
-    toggleSidebar() { return this.sidebarVisible = !this.sidebarVisible; }
-    //toggleSidebar() {this.setState({ sidebarVisible: !this.sidebarVisible })}
+const mainView_1 = require("./mainView");
+require("./css/resizer.css");
+require("./css/application.css");
+require("./css/messages.css");
+let CatalogModule = class CatalogModule extends React.Component {
     render() {
-        return (React.createElement(react_splitter_layout_1.default, { percentage: true, secondaryInitialSize: 25, style: { height: '100%', position: 'relative', display: 'flex', flexDirection: 'row' } },
-            React.createElement(design_1.FillParent, null,
-                React.createElement("h2", null, "1st Pane"),
-                React.createElement("button", { onClick: this.toggleSidebar },
-                    this.sidebarVisible && 'Hide Sidebar',
-                    !this.sidebarVisible && 'Show Sidebar')),
-            this.sidebarVisible &&
-                React.createElement(design_1.FillParent, null,
-                    React.createElement("div", { className: lib_1.style(csstips_1.flex, csstips_1.vertical) },
-                        React.createElement("h2", null, "2nd Pane"),
-                        React.createElement(drawer_1.WorkDrawer, null)))));
+        return (React.createElement(mainView_1.MainView, null));
     }
 };
-__decorate([
-    mobx_1.observable,
-    __metadata("design:type", Boolean)
-], TogglableSidebarLayout.prototype, "sidebarVisible", void 0);
-__decorate([
-    mobx_1.action.bound,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], TogglableSidebarLayout.prototype, "toggleSidebar", null);
-TogglableSidebarLayout = __decorate([
+CatalogModule = __decorate([
     mobx_react_1.observer
-], TogglableSidebarLayout);
-exports.TogglableSidebarLayout = TogglableSidebarLayout;
-//added fill parent remember to take it uot
-/*
-
-interface SBState {
-    sidebarVisible: boolean
-}
-
-@observer
-export class TogglableSidebarLayout extends React.Component<any, SBState> {
-  constructor(props, context?) {
-    super(props, context);
-    this.toggleSidebar = this.toggleSidebar.bind(this);
-    this.state = {
-      sidebarVisible: true
-    };
-  }
-
-  toggleSidebar() {this.setState({ sidebarVisible: !this.state.sidebarVisible })}
-
-  render() {
-    return (
-      <SplitterLayout percentage secondaryInitialSize={25} style={{height: '100%', position: 'relative', display: 'flex', flexDirection: 'row'}}>
-        <FillParent>
-          <h2>1st Pane</h2>
-          <button onClick={this.toggleSidebar}>
-            {this.state.sidebarVisible && 'Hide Sidebar'}
-            {!this.state.sidebarVisible && 'Show Sidebar'}
-          </button>
-        </FillParent>
-        {this.state.sidebarVisible &&
-          <FillParent>
-            <div className={style(flex, vertical)}>
-            <h2>2nd Pane</h2>
-            <WorkDrawer/>
-            </div>
-          </FillParent>
-        }
-      </SplitterLayout>
-    );
-  }
-}
-
-*/ 
+], CatalogModule);
+exports.CatalogModule = CatalogModule;
 
 });
-___scope___.file("modules/charts/drawer.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/catalog/mainView.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+var Splitter = require('react-split-pane');
+const inspectorView_1 = require("./inspectorView");
+const logView_1 = require("./logView");
+const Icons = require("../../components/icons");
+const remote = require('electron').remote;
+class MainView extends React.Component {
+    constructor() {
+        super(...arguments);
+        this.reuseKey = 0;
+        this.shouldWarnOfServiceChange = false;
+    }
+    verticalSplitChange(size) { this.updateCogChatContainerCSS(size); }
+    updateCogChatContainerCSS(size) {
+        if (this.cogChatContainer) {
+            let bounds = remote.getCurrentWindow().getBounds();
+            if (bounds.width - size <= 450) {
+                this.cogChatContainer.classList.remove('wc-wide');
+                this.cogChatContainer.classList.add('wc-narrow');
+            }
+            else if (bounds.width - size >= 768) {
+                this.cogChatContainer.classList.remove('wc-narrow');
+                this.cogChatContainer.classList.add('wc-wide');
+            }
+            else {
+                this.cogChatContainer.classList.remove('wc-wide', 'wc-narrow');
+            }
+        }
+    }
+    initCogChatContainerRef(ref, initialWidth) {
+        this.cogChatContainer = ref;
+        this.updateCogChatContainerCSS(initialWidth);
+    }
+    cogChatComponent(initialWidth) {
+        return (React.createElement("div", { className: 'cog-app-msg-view-background' },
+            React.createElement("div", { className: 'box-centered', dangerouslySetInnerHTML: { __html: Icons.tempFrameworkIconEmbossed('', 158) } })));
+    }
+    render() {
+        let vertSplit;
+        let horizSplit;
+        return (React.createElement("div", { className: 'mainview' },
+            React.createElement("div", { className: 'fill-parent' },
+                React.createElement(Splitter, { split: "vertical", minSize: 0, maxSize: -200, defaultSize: 300, primary: "first", onChange: (size) => this.verticalSplitChange(size) },
+                    React.createElement("div", { className: "fill-parent" },
+                        React.createElement(Splitter, { split: "horizontal", primary: "second", minSize: 42, maxSize: -44, defaultSize: 300, onChange: (size) => (size) },
+                            React.createElement("div", { className: "wc-app-msg-view-panel" },
+                                React.createElement(inspectorView_1.InspectorView, null)),
+                            React.createElement("div", { className: "fill-parent" },
+                                React.createElement(logView_1.LogView, null)))),
+                    React.createElement("div", { className: 'fill-parent' }, this.cogChatComponent(vertSplit))))));
+    }
+}
+exports.MainView = MainView;
+
+});
+___scope___.file("modules/catalog/inspectorView.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class InspectorView extends React.Component {
+    render() {
+        return (React.createElement("div", null,
+            React.createElement("div", { className: "cog-panel-header" },
+                React.createElement("span", null, "Details")),
+            React.createElement("div", { className: "wc-inspectorview" },
+                React.createElement("div", { className: "wc-inspectorview-json" }, formatJSON('')))));
+    }
+}
+exports.InspectorView = InspectorView;
+const formatJSON = (obj) => {
+    if (!obj)
+        return null;
+    let json = JSON.stringify(obj, null, 2);
+    // Hide ampersands we don't want replaced
+    json = json.replace(/&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g, '\x01');
+    // Escape remaining ampersands and other HTML special characters
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Restore hidden ampersands
+    json = json.replace(/\x01/g, '&');
+    // Match all the JSON parts and add theming markup
+    json = json.replace(/"(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, (match) => {
+        // Default to "number"
+        let cls = 'number';
+        // Detect the type of the JSON part
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            }
+            else {
+                cls = 'string';
+            }
+        }
+        else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        }
+        else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        if (cls === 'key') {
+            // Color string content, not the quotes or colon delimiter
+            let exec = /"(.*)":\s*/.exec(match);
+            return `"<span class="json-${cls}">${exec[1]}</span>":`;
+        }
+        else if (cls === 'string') {
+            // Color string content, not the quotes
+            let exec = /"(.*)"/.exec(match);
+            return `"<span class="json-${cls}">${exec[1]}</span>"`;
+        }
+        else {
+            return `<span class="json-${cls}">${match}</span>`;
+        }
+    });
+    return React.createElement("span", { dangerouslySetInnerHTML: { __html: json } });
+};
+
+});
+___scope___.file("modules/catalog/logView.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const rxjs_1 = require("rxjs");
+const Icons = require("../../components/icons");
+const utils_1 = require("../../common/utils");
+const { remote } = require('electron');
+const { Menu } = remote;
+var Severity;
+(function (Severity) {
+    Severity[Severity["log"] = 0] = "log";
+    Severity[Severity["info"] = 1] = "info";
+    Severity[Severity["trace"] = 2] = "trace";
+    Severity[Severity["debug"] = 3] = "debug";
+    Severity[Severity["warn"] = 4] = "warn";
+    Severity[Severity["error"] = 5] = "error";
+})(Severity = exports.Severity || (exports.Severity = {}));
+const number2 = (n) => ('0' + n).slice(-2);
+const timestamp = (entry) => {
+    const hours = number2(entry.timestamp.getHours());
+    const minutes = number2(entry.timestamp.getMinutes());
+    const seconds = number2(entry.timestamp.getSeconds());
+    return React.createElement("span", { className: 'wc-logview-timestamp' },
+        `[${hours}:${minutes}:${seconds}]`,
+        "\u00A0");
+};
+const emit = (val, className) => {
+    if (!val)
+        return null;
+    if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
+        //return <div className={className}><a className={className} title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
+        return React.createElement("span", { className: className, key: val.link },
+            React.createElement("a", { title: val.title, href: val.link }, val.text),
+            "\u00A0");
+    }
+    else {
+        let str = utils_1.safeStringify(val);
+        return str.match(/\S+/g).map((s, i) => React.createElement("span", { className: className, key: s + i },
+            s,
+            "\u00A0"));
+    }
+};
+const message = (entry, className) => {
+    return emit(entry.message, className);
+};
+const args = (entry, className) => {
+    if (entry.args && entry.args.length) {
+        return entry.args
+            .filter(arg => !!arg)
+            .map((arg, i) => emit(arg, className));
+    }
+    return null;
+};
+const format = (entry, index, items, wrapStyle) => {
+    const className = 'wc-logview-' + Severity[entry.severity];
+    return (React.createElement("div", { key: index, className: 'cog-log-entry', style: wrapStyle },
+        timestamp(entry),
+        message(entry, className),
+        args(entry, className)));
+};
+class LogView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { entries: [] };
+    }
+    componentDidMount() {
+        this.logSubscription = LogView.log$.subscribe(entry => {
+            // Yep we have to set this.state here because otherwise we lose entries due to batching.
+            if (entry) {
+                this.state = { entries: [...this.state.entries, entry] };
+            }
+            else {
+                this.state = { entries: [] };
+            }
+            this.setState(this.state);
+        });
+    }
+    componentWillUnmount() {
+        //this.autoscrollSubscription.unsubscribe();
+        //this.logSubscription.unsubscribe();
+    }
+    componentDidUpdate(prevProps, prevState) { }
+    //whitespace can be set to 'nowrap' for no wordwrap
+    render() {
+        return (React.createElement("div", null,
+            React.createElement("div", { className: "cog-panel-header" },
+                React.createElement("span", { className: "logview-header-text" }, "Log"),
+                React.createElement("a", { className: 'undecorated-text', href: 'javascript:void(0)', title: 'Log Menu' },
+                    React.createElement("div", { className: 'logview-clear-output-button', dangerouslySetInnerHTML: { __html: Icons.hamburgerIcon('toolbar-button-dark', 24) }, onClick: () => this.showMenu() }))),
+            React.createElement("div", { className: "wc-logview", ref: ref => this.scrollMe = ref }, this.state.entries.map((entry, i, items) => format(entry, i, items, { whiteSpace: ('normal') })))));
+    }
+    showMenu() {
+        const template = [
+            { label: 'Clear log', click: () => LogView.clear() },
+            { type: 'checkbox',
+                label: 'Word wrap', click: () => { } }
+        ];
+        const menu = Menu.buildFromTemplate(template);
+        //@ts-ignore
+        menu.popup();
+    }
+    static add(severity, message, ...args) {
+        let entry = {
+            severity,
+            timestamp: new Date(),
+            message,
+            args
+        };
+        this.log$.next(entry);
+        console[Severity[severity]](message, ...args);
+    }
+    static clear() {
+        this.log$.next(null);
+    }
+}
+LogView.log$ = new rxjs_1.Subject();
+exports.LogView = LogView;
+
+});
+___scope___.file("common/utils.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const url = require("url");
+exports.uniqueId = (length) => Math.random().toString(24).substr(2, length);
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+}
+exports.isObject = isObject;
+function mergeDeep(target, source) {
+    let output = Object.assign({}, target);
+    {
+        Object.keys(source).forEach(key => {
+            if (isObject(source[key])) {
+                if (!(key in target))
+                    Object.assign(output, { [key]: source[key] });
+                else
+                    output[key] = mergeDeep(target[key], source[key]);
+            }
+            else {
+                Object.assign(output, { [key]: source[key] });
+            }
+        });
+    }
+    return output;
+}
+exports.mergeDeep = mergeDeep;
+exports.isLocalhostUrl = (urlStr) => {
+    const parsedUrl = url.parse(urlStr);
+    return (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1');
+};
+exports.isSecuretUrl = (urlStr) => {
+    const parsedUrl = url.parse(urlStr);
+    return (!!parsedUrl.protocol && parsedUrl.protocol.startsWith('https'));
+};
+exports.safeStringify = (o, space = undefined) => {
+    let cache = [];
+    if (typeof o !== 'object')
+        return `${o}`;
+    return JSON.stringify(o, function (key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.indexOf(value) !== -1) {
+                return;
+            }
+            cache.push(value);
+        }
+        return value;
+    }, space);
+};
+exports.approximateObjectSize = (object, cache = []) => {
+    switch (typeof object) {
+        case 'boolean': return 4;
+        case 'number': return 8;
+        case 'string': return object.length * 2;
+        case 'object':
+            let bytes = 0;
+            cache.push(object);
+            for (let i in object) {
+                let value = object[i];
+                if (typeof value === 'object' && value !== null) {
+                    if (cache.indexOf(value) !== -1) {
+                        continue;
+                    }
+                    cache.push(value);
+                }
+                bytes += exports.approximateObjectSize(value, cache);
+            }
+            return bytes;
+        default: //value is null, undefined, or a function
+            return 0; //this checked for infinite recursion
+    }
+};
+function repeat(str, times) {
+    let output = '';
+    for (let i = 0; i < times; ++i) {
+        output += str;
+    }
+    return output;
+}
+exports.repeat = repeat;
+
+});
+___scope___.file("modules/catalog/css/resizer.css", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/catalog/css/resizer.css", "*, *:before, *:after {\r\n    -moz-box-sizing: border-box;\r\n    -webkit-box-sizing: border-box;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.root {\r\n    height: 100vh;\r\n    width: 100vw;\r\n}\r\n\r\n.Resizer {\r\n    -moz-box-sizing: border-box;\r\n    -webkit-box-sizing: border-box;\r\n    box-sizing: border-box;\r\n    background: #000;\r\n    opacity: .74;\r\n    background-clip: padding-box;\r\n    z-index: 99;\r\n}\r\n\r\n.Resizer:hover {\r\n    -webkit-transition: all 2s ease;\r\n    transition: all 2s ease;\r\n}\r\n\r\n.Resizer.horizontal {\r\n    height: 5px;\r\n    margin: -2px 0;\r\n    border-top: 2px solid rgba(255, 255, 255, 0);\r\n    border-bottom: 2px solid rgba(255, 255, 255, 0);\r\n    cursor: row-resize;\r\n    width: 100%;\r\n}\r\n\r\n.Resizer.horizontal:hover {\r\n    border-top: 2px solid rgba(0, 0, 0, 0.5);\r\n    border-bottom: 2px solid rgba(0, 0, 0, 0.5);\r\n}\r\n\r\n.Resizer.vertical {\r\n    width: 5px;\r\n    margin: 0 -2px;\r\n    border-left: 2px solid rgba(255, 255, 255, 0);\r\n    border-right: 2px solid rgba(255, 255, 255, 0);\r\n    cursor: col-resize;\r\n}\r\n\r\n.Resizer.vertical:hover {\r\n    border-left: 2px solid rgba(0, 0, 0, 0.5);\r\n    border-right: 2px solid rgba(0, 0, 0, 0.5);\r\n}\r\n\r\n.vertical section {\r\n    width: 100vh;\r\n    height: 100vh;\r\n    display: -webkit-box;\r\n    display: -webkit-flex;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -webkit-box-orient: vertical;\r\n    -webkit-box-direction: normal;\r\n    -webkit-flex-direction: column;\r\n        -ms-flex-direction: column;\r\n            flex-direction: column;\r\n}\r\n\r\n.vertical header {\r\n    padding: 1rem;\r\n    background: #eee;\r\n}\r\n\r\n.vertical footer {\r\n    padding: 1rem;\r\n    background: #eee;\r\n}\r\n\r\n.horizontal section {\r\n    width: 100vh;\r\n    height: 100vh;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n.horizontal header {\r\n    padding: 1rem;\r\n    background: #eee;\r\n}\r\n\r\n.horizontal footer {\r\n    padding: 1rem;\r\n    background: #eee;\r\n}\r\n\r\n.parent {\r\n    width: 100%;\r\n    height: 100%;\r\n    flex: 1;\r\n    display: -webkit-box;\r\n    display: -webkit-flex;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -webkit-box-orient: vertical;\r\n    -webkit-box-direction: normal;\r\n    -webkit-flex-direction: column;\r\n        -ms-flex-direction: column;\r\n            flex-direction: column;\r\n}\r\n.header {\r\n    background: #aaa;\r\n    height: 3rem;\r\n    line-height: 3rem;\r\n}\r\n.wrapper {\r\n    background: #ffa;\r\n    margin: 5rem;\r\n    flex: 1;\r\n}\r\n")
+});
+___scope___.file("modules/catalog/css/application.css", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/catalog/css/application.css", "/* reset */\r\n\r\n    html, body {\r\n        height: 100%;\r\n        width: 100%;\r\n        margin: 0;\r\n        padding: 0;\r\n        overflow: hidden;\r\n    }\r\n\r\n    body, button, input, textarea, select {\r\n        font-family: -apple-system, BlinkMacSystemFont, \"Segoe WPC\", \"Segoe UI\", \"HelveticaNeue-Light\", \"Ubuntu\", \"Droid Sans\", sans-serif;\r\n        font-size: 15px;\r\n        border-radius: 2px;\r\n    }\r\n\r\n    a, button {\r\n        transition: all .2s;\r\n    }\r\n\r\n    input:focus,\r\n    textarea:focus,\r\n    select:focus,\r\n    button:focus {\r\n        outline-width: 0;\r\n    }\r\n\r\n    button {\r\n        background: #3A96DD;\r\n        border: none;\r\n        border-radius: 2px;\r\n        color: #fff;\r\n        cursor: pointer;\r\n        outline: none;\r\n    }\r\n    button:hover {\r\n        background: #0063B1;\r\n    }\r\n\r\n    *, *:before, *:after {\r\n        box-sizing: border-box;\r\n        user-select: none;\r\n        -webkit-user-select: none;\r\n    }\r\n\r\n    input[type=checkbox] {\r\n        width: 20px;\r\n        height: 20px;\r\n        -webkit-appearance: none;\r\n        background: transparent;\r\n        color: #fff;\r\n        padding: 0;\r\n        text-align: center;\r\n        vertical-align: middle;\r\n        margin-left: 0;\r\n        margin-right: 8px;\r\n        margin-top: 8px;\r\n        margin-bottom: 8px;\r\n        border: 1px solid #ccc;\r\n    }\r\n\r\n    input[type=number] {\r\n        text-align: right;\r\n    }\r\n\r\n    input[type=checkbox]:checked {\r\n        background: #3A96DD;\r\n    }\r\n\r\n    input[type=checkbox]:checked:before {\r\n        content: '\\2714';\r\n    }\r\n\r\n    ::-webkit-scrollbar {\r\n        width: 8px;\r\n        height: 8px;\r\n    }\r\n\r\n    ::-webkit-scrollbar-track {\r\n        background: transparent;\r\n    }\r\n\r\n    ::-webkit-scrollbar-thumb {\r\n        border-radius: 1px;\r\n        background: #D5D5D5;\r\n    }\r\n\r\n/* app-msg- overrides */\r\n\r\n    .format-markdown>p {\r\n        margin-bottom: 0px;\r\n        margin-top: 0px;\r\n    }\r\n\r\n    .wc-message-content * {\r\n        user-select: text;\r\n        -webkit-user-select: text;\r\n    }\r\n\r\n    .wc-message-content.selected {\r\n        color: white;\r\n        background-color: #1e1e1e;\r\n        box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);\r\n    }\r\n\r\n    .wc-message-content.selected>svg.wc-message-callout>path {\r\n        fill: #1e1e1e;\r\n    }\r\n\r\n    .wc-card {\r\n        color: #000;\r\n    }\r\n\r\n    .wc-card button {\r\n        border: 1px solid #ccc;\r\n        border-radius: 1px;\r\n        cursor: pointer;\r\n        outline: none;\r\n        transition: color .2s ease, background-color .2s ease;\r\n        background-color: transparent;\r\n        color: #3A96DD;\r\n        min-height: 32px;\r\n        width: 100%;\r\n        padding: 0 16px;\r\n    }\r\n\r\n    .wc-list ul {\r\n        padding: 0;\r\n    }\r\n\r\n/* coglator */\r\n\r\n    .cog-app-msg-view-background {\r\n        background: #f7f7f7;\r\n        position: absolute;\r\n        right: 0;\r\n        left: 0;\r\n        top: 0;\r\n        bottom: 0;\r\n    }\r\n\r\n    .box-centered {\r\n        position: absolute;\r\n        top: 50%;\r\n        left: 50%;\r\n        transform: translate(-50%, -50%);\r\n    }\r\n\r\n    .app-msg-container {\r\n        position: absolute;\r\n        top: 0;\r\n        bottom: 0;\r\n        left: 0;\r\n        right: 0;\r\n    }\r\n\r\n    .addressbar {\r\n        background: #3A96DD;\r\n        position: absolute;\r\n        top: 0;\r\n        height: 42px;\r\n        left: 0;\r\n        right: 0;\r\n        color: white;\r\n        z-index: 900;\r\n    }\r\n\r\n    .addressbar-status {\r\n        position: absolute;\r\n        height: 42px;\r\n        width: 32px;\r\n        top: 0;\r\n        left: 0;\r\n        line-height: 42px;\r\n        text-align: center;\r\n    }\r\n\r\n    .addressbar-textbox {\r\n        position: absolute;\r\n        top: 0;\r\n        left: 32px;\r\n        height: 42px;\r\n        right: 84px;\r\n    }\r\n    .addressbar-textbox input[type=text] {\r\n        background: #3A96DD;\r\n        color: white;\r\n        border: none;\r\n        height: 100%;\r\n        outline: none;\r\n        padding: 0;\r\n        resize: none;\r\n        width: 100%;\r\n        padding-left: 4px;\r\n    }\r\n    .addressbar-textbox input[type=text]::-webkit-input-placeholder {\r\n        color: rgba(255, 255, 255, 0.75);\r\n    }\r\n\r\n    .addressbar-control {\r\n        position: absolute;\r\n        width: 32px;\r\n        height: 42px;\r\n        right: 32px;\r\n        top: 0;\r\n        line-height: 42px;\r\n        text-align: center;\r\n    }\r\n\r\n    .addressbar-refresh {\r\n        position: absolute;\r\n        width: 42px;\r\n        height: 42px;\r\n        right: 42px;\r\n        top: 0;\r\n        line-height: 37px;\r\n        text-align: center;\r\n    }\r\n\r\n    .addressbar-payment {\r\n        position: absolute;\r\n        width: 42px;\r\n        height: 42px;\r\n        right: 84px;\r\n        top: 0;\r\n        line-height: 37px;\r\n        text-align: center;\r\n    }\r\n\r\n    .addressbar-menu {\r\n        position: absolute;\r\n        width: 42px;\r\n        height: 42px;\r\n        right: 0;\r\n        top: 0;\r\n        line-height: 37px;\r\n        text-align: center;\r\n    }\r\n\r\n    .addressbar-search {\r\n        background: #3A96DD;\r\n        max-height: 500px;\r\n        overflow-y: auto;\r\n        position: absolute;\r\n        left: 0;\r\n        right: 0;\r\n        top: 42px;\r\n        z-index: 1000;\r\n        transition: all .2s;\r\n        display: block;\r\n        padding-bottom: 8px;\r\n    }\r\n    .addressbar-search.closed {\r\n        max-height: 0;\r\n    }\r\n\r\n    .addressbar-searchresult-a {\r\n        color: #fff;\r\n        text-decoration: none;\r\n    }\r\n\r\n    .addressbar-searchresult {\r\n        position: relative;\r\n        margin-left: 28px;\r\n        margin-right: 6px;\r\n        display: block;\r\n        transition: background-color 0.1s;\r\n    }\r\n\r\n    .addressbar-searchresult:hover {\r\n        background: #6AAFE5;\r\n        border-radius: 2px;\r\n    }\r\n    .addressbar-searchresult:hover .addressbar-searchresult-delete {\r\n        opacity: 1;\r\n    }\r\n\r\n    .addressbar-searchresult-title {\r\n        cursor: pointer;\r\n        display: block;\r\n        line-height: 32px;\r\n        padding-left: 8px;\r\n        padding-right: 24px;\r\n        overflow-wrap: break-word;\r\n    }\r\n\r\n    .addressbar-searchresult-delete {\r\n        opacity: 0;\r\n        cursor: pointer;\r\n        position: absolute;\r\n        right: 8px;\r\n        top: 7px;\r\n        bottom: 0;\r\n        transition: opacity 0.1s;\r\n    }\r\n\r\n    .addressbar-usercreds {\r\n        background-color: white;\r\n        color: black;\r\n        overflow: hidden;\r\n        position: absolute;\r\n        right: 0;\r\n        left: 0;\r\n        top: 42px;\r\n        z-index: 1000;\r\n        background: #fff;\r\n        padding: 24px 24px 24px 40px;\r\n        box-shadow: 0 1px 2px rgba(0,0,0,.2);\r\n    }\r\n    .addressbar-usercreds.closed {\r\n        max-height: 0;\r\n        border-width: 0;\r\n        box-shadow: 0;\r\n    }\r\n    .addressbar-usercreds-title {\r\n        font-weight: 500;\r\n    }\r\n    .addressbar-usercreds input[type=text] {\r\n        border-width: 0.1px;\r\n        border-style: solid;\r\n        border-color: #ccc;\r\n        padding-left: 4px;\r\n        padding-right: 4px;\r\n    }\r\n    .addressbar-usercreds-input {\r\n        display: inline-block;\r\n    }\r\n    .addressbar-usercreds-appid {\r\n        width: 300px;\r\n    }\r\n    .addressbar-usercreds-password {\r\n        width: 160px;\r\n    }\r\n    .addressbar-usercreds-locale {\r\n        width: 50px;\r\n    }\r\n    .addressbar-usercreds-connect-button {\r\n        display: block;\r\n        padding: 11px 16px 10px 16px;\r\n        font-size: 13px;\r\n        text-transform: uppercase;\r\n        line-height: 1.3333333;\r\n        font-weight: 500;\r\n        margin-top: 24px;\r\n    }\r\n    .addressbar-usercreds-callout {\r\n        width: 0;\r\n        height: 0;\r\n        border-left: 8px solid transparent;\r\n        border-right: 8px solid transparent;\r\n        border-top: 8px solid #3A96DD;\r\n        position:absolute;\r\n        top:0;\r\n        left:40px;\r\n    }\r\n\r\n    .clickable:hover {\r\n        cursor: pointer;\r\n    }\r\n\r\n/* appsettings-dialog */\r\n\r\n    .appsettings-dialog {\r\n        width: 512px;\r\n        height: 487px;\r\n    }\r\n\r\n    .appsettings-dialog .input-group {\r\n        margin: 0;\r\n    }\r\n\r\n    .appsettings-checkbox-group {\r\n        width: 100%;\r\n    }\r\n\r\n    .appsettings-checkbox-group .form-label {\r\n        width: 100%;\r\n    }\r\n\r\n    .appsettings-browsebtn {\r\n        padding: 11px 16px 10px 16px;\r\n        margin-left: 8px;\r\n        font-size: 13px;\r\n        text-transform: uppercase;\r\n        line-height: 1.3333333;\r\n        font-weight: 400;\r\n        width: 96px;\r\n    }\r\n\r\n    .appsettings-savebtn {\r\n        position: absolute;\r\n        left: 50%;\r\n        transform: translate(-110%, 0%);\r\n        padding: 11px 16px 10px 16px;\r\n        font-size: 13px;\r\n        text-transform: uppercase;\r\n        line-height: 1.3333333;\r\n        font-weight: 500;\r\n        width: 96px;\r\n    }\r\n\r\n    .appsettings-cancelbtn {\r\n        background: #E6E6E6;\r\n        color: #888;\r\n        position: absolute;\r\n        left: 50%;\r\n        transform: translate(10%, 0%);\r\n        padding: 11px 16px 10px 16px;\r\n        font-size: 13px;\r\n        text-transform: uppercase;\r\n        line-height: 1.3333333;\r\n        font-weight: 500;\r\n        width: 96px;\r\n    }\r\n\r\n    .appsettings-cancelbtn:hover {\r\n        background: #D9D9D9;\r\n    }\r\n\r\n    .appsettings-port {\r\n        width: 155px;\r\n    }\r\n\r\n    .appsettings-port-group {\r\n        padding-bottom: 20px;\r\n    }\r\n\r\n    .appsettings-ngrokpath-input {\r\n        width: 357px;\r\n        margin-bottom: 8px;\r\n    }\r\n\r\n    .appsettings-serviceurl-input {\r\n        width: 460px;\r\n    }\r\n\r\n\r\n/* conversationsettings-dialog */\r\n\r\n    .conversationsettings-dialog {\r\n\r\n        width: 500px;\r\n        height: 400px;\r\n\r\n    }\r\n\r\n    .conversationsettings-closex {\r\n        position: absolute;\r\n        width: 42px;\r\n        height: 42px;\r\n        line-height: 42px;\r\n        text-align: center;\r\n        z-index: 900;\r\n        top: 0;\r\n        right: 0;\r\n    }\r\n\r\n    .conversationsettings-userlist {\r\n        position: absolute;\r\n        top: 24px;\r\n        bottom: 100px;\r\n        left: 24px;\r\n        right: 24px;\r\n        background: lightgray;\r\n        border-width: 1px;\r\n        border-radius: 2px;\r\n        border-color: black;\r\n        overflow: hidden;\r\n    }\r\n\r\n    .conversationsettings-userlist-area {\r\n        position: absolute;\r\n        left: 0;\r\n        right: 0;\r\n        height: 200px;\r\n        background: lightgreen;\r\n        overflow: hidden;\r\n    }\r\n\r\n/* about-dialog */\r\n\r\n    .about-dialog {\r\n        width: 320px;\r\n        height: 360px;\r\n        padding: 0 !important;\r\n    }\r\n\r\n    .about-okbtn {\r\n        position: absolute;\r\n        left: 50%;\r\n        transform: translate(-50%, 0%);\r\n        padding: 11px 16px 10px 16px;\r\n        font-size: 13px;\r\n        text-transform: uppercase;\r\n        line-height: 1.3333333;\r\n        font-weight: 500;\r\n        width: 96px;\r\n    }\r\n\r\n    .about-logo-fill {\r\n        fill: #3A96DD;\r\n    }\r\n    .about-logo {\r\n        padding-top: 50px;\r\n        width: 100%;\r\n        text-align: center;\r\n    }\r\n    .about-name {\r\n        text-align: center;\r\n        width: 100%;\r\n        font-weight: 500;\r\n        font-size: 18px;\r\n        padding-top: 6px;\r\n        padding-bottom: 6px;\r\n        letter-spacing: -0.3px;\r\n    }\r\n    .about-link {\r\n        text-align: center;\r\n        width: 100%;\r\n        padding-bottom: 6px;\r\n    }\r\n    .about-link a {\r\n        text-decoration: none;\r\n        color: #3A96DD;\r\n    }\r\n    .about-version {\r\n        text-align: center;\r\n        width: 100%;\r\n        font-size: 15px;\r\n    }\r\n    .about-copyright {\r\n        text-align: center;\r\n        width: 100%;\r\n        position: absolute;\r\n        bottom: 18px;\r\n        font-size: 12px;\r\n        color: #999;\r\n    }\r\n\r\n/* checkout window */\r\n    .checkout-index {\r\n        height: 100%;\r\n        display: flex;\r\n        flex-direction: column;\r\n    }\r\n\r\n    .checkout-container {\r\n        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n        flex-grow: 1;\r\n        display: flex;\r\n        flex-direction: column;\r\n        padding: 20px;\r\n        border-top-color: darkgray;\r\n        border-top-style: solid;\r\n        border-top-width: 1px;\r\n    }\r\n\r\n    .checkout-table {\r\n        flex-grow: 1;\r\n        display: flex;\r\n        flex-direction: column;\r\n    }\r\n\r\n    .checkout-table .title-container {\r\n        display: flex;\r\n    }\r\n\r\n    .checkout-table .title {\r\n        font-size: 16px;\r\n        font-weight: 500;\r\n        margin-bottom: 10px;\r\n        flex-grow: 1;\r\n    }\r\n\r\n    .checkout-table .fixed-right {\r\n        margin-left: 132px;\r\n    }\r\n\r\n    .checkout-table .checkout-form {\r\n        flex-grow: 1;\r\n    }\r\n\r\n    .checkout-table .checkout-field {\r\n        display: flex;\r\n        flex-direction: row;\r\n    }\r\n\r\n    .checkout-table .checkout-label {\r\n        color: #666;\r\n        font-size: 13px;\r\n        align-self: center;\r\n        min-width: 120px;\r\n        text-align: right;\r\n        margin-right: 8px;\r\n    }\r\n\r\n    .checkout-table .checkout-input {\r\n        background-color: #EEE;\r\n        font-size: 14px;\r\n        margin-top: 4px;\r\n        margin-bottom: 4px;\r\n        margin-left: 4px;\r\n        min-height: 40px;\r\n        flex-grow: 1;\r\n        border-width: 0px;\r\n        border-radius: 0;\r\n        padding-left: 10px;\r\n        padding-right: 10px;\r\n        text-overflow: ellipsis;\r\n    }\r\n\r\n    .checkout-table .checkout-button-bar {\r\n        display: flex;\r\n        flex-direction: row;\r\n    }\r\n\r\n    .checkout-table .button {\r\n        min-height: 28px;\r\n        text-align: center;\r\n        font-size: 14px;\r\n        display: flex;\r\n        flex-direction: column;\r\n        justify-content: center;\r\n        margin-top: 10px;\r\n        flex-grow: 1;\r\n        cursor: pointer;\r\n    }\r\n\r\n    .checkout-table .primary-button {\r\n        color: white;\r\n        background: #3A96DD;\r\n    }\r\n\r\n    .checkout-table .primary-button:hover {\r\n        background: #0063B1;\r\n    }\r\n\r\n    .checkout-table .primary-button:active {\r\n        background: #4C4C4C;\r\n    }\r\n\r\n    .checkout-table .secondary-button {\r\n        color: white;\r\n        background: #ababab;\r\n    }\r\n\r\n    .checkout-table .secondary-button:hover {\r\n        background: #0063B1;\r\n    }\r\n\r\n    .checkout-table .secondary-button:active {\r\n        background: #4C4C4C;\r\n    }\r\n\r\n    .checkout-table .cancel-button {\r\n        margin-right: 20px;\r\n    }\r\n\r\n    .checkout-table .total-line {\r\n        display: flex;\r\n        align-items: center;\r\n    }\r\n\r\n    .checkout-table .total-label-container {\r\n        flex-grow: 1;\r\n        display: flex;\r\n    }\r\n\r\n    .checkout-table .total-label {\r\n        font-weight: 600;\r\n        margin-right: 8px;\r\n    }\r\n\r\n    .checkout-table .total-value {\r\n        font-size: 20px;\r\n    }\r\n\r\n    .checkout-table .show-details {\r\n        color: #3A96DD;\r\n        cursor: pointer;\r\n    }\r\n\r\n    .checkout-table .show-details:hover {\r\n        color: #0063B1;\r\n    }\r\n\r\n    .checkout-table .show-details:active {\r\n        color: #4C4C4C;\r\n    }\r\n\r\n    .checkout-table .line-items {\r\n        border-top-style: solid;\r\n        border-top-width: 1px;\r\n        border-top-color: #999;\r\n        border-bottom-style: solid;\r\n        border-bottom-width: 1px;\r\n        border-bottom-color: #999;\r\n        margin-top: 10px;\r\n        margin-bottom: 10px;\r\n    }\r\n\r\n    .checkout-table .line-item {\r\n        display: flex;\r\n        align-items: center;\r\n        margin-top: 4px;\r\n        margin-bottom: 4px;\r\n        flex-grow: 1;\r\n    }\r\n\r\n    .checkout-table .item-label {\r\n        flex-grow: 1;\r\n    }\r\n\r\n    .checkout-table .not-final {\r\n        font-size: 12px;\r\n    }\r\n\r\n    .checkout-table .checkout-selector {\r\n        cursor: pointer;\r\n        display: flex;\r\n        align-items: center;\r\n        background-color: #EEE;\r\n        font-size: 14px;\r\n        margin-top: 4px;\r\n        margin-bottom: 4px;\r\n        margin-left: 4px;\r\n        min-height: 40px;\r\n        flex-grow: 1;\r\n        border-width: 0px;\r\n        border-radius: 0;\r\n        text-overflow: ellipsis;\r\n    }\r\n\r\n    .checkout-table .selected-item-label-container {\r\n        flex-grow: 1;\r\n        display: flex;\r\n        flex-direction: row;\r\n    }\r\n\r\n    .checkout-table .placeholder-text {\r\n        color: #666;\r\n        margin-left: 10px;\r\n    }\r\n\r\n    .checkout-table .selected-item-label {\r\n        flex-grow: 1;\r\n    }\r\n\r\n    .checkout-table .down-chevron {\r\n        margin-right: 10px;\r\n        width: 20px;\r\n        align-self: center;\r\n        color: #666;\r\n        font-size: 10px;\r\n    }\r\n\r\n    .checkout-table .selector-items {\r\n        border-color: #BBB;\r\n        border-style: solid;\r\n        border-width: 1px;\r\n        z-index: 10;\r\n        animation-duration: 0.25s;\r\n        animation-timing-function: ease-out;\r\n        transform-origin: top;\r\n        position: absolute;\r\n        background: white;\r\n        max-height: 300px;\r\n        overflow-y: auto;\r\n    }\r\n\r\n    .checkout-table .selector-item-container {\r\n        display: flex;\r\n    }\r\n\r\n    .checkout-table .selector-item {\r\n        display: flex;\r\n        flex-grow: 1;\r\n        align-items: center;\r\n        min-height: 40px;\r\n    }\r\n\r\n    .checkout-table .selector-item-container:hover {\r\n        background-color: #EEE;\r\n    }\r\n\r\n    .checkout-table .selector-item-container:active {\r\n        background-color: #BBB;\r\n    }\r\n\r\n    .checkout-table .remove-item {\r\n        display: flex;\r\n        align-items: center;\r\n        stroke: black;\r\n        margin-right: 10px\r\n    }\r\n\r\n    .checkout-table .grow {\r\n        animation-name: show;\r\n    }\r\n\r\n    @keyframes show {\r\n        0%   {transform: scaleY(0); offset: 0;}\r\n        100% {transform: scaleY(-100%); offset: 1; }\r\n    }\r\n\r\n    .checkout-table .add-item {\r\n        color: #3A96DD;\r\n        margin-left: 10px;\r\n        margin-right: 10px;\r\n    }\r\n\r\n    .checkout-table .validation-error {\r\n        color: #FF4444;\r\n        margin-left: 10px;\r\n        margin-right: 10px;\r\n    }\r\n\r\n    .checkout-table .invalid-input {\r\n        background-color: pink;\r\n    }\r\n\r\n    .shipping-method {\r\n        margin-left: 10px;\r\n        margin-right: 10px;\r\n    }\r\n\r\n    .credit-card {\r\n        margin-left: 10px;\r\n        margin-right: 10px;\r\n    }\r\n\r\n    .shipping-address {\r\n        margin: 10px;\r\n    }\r\n\r\n    .postal-code-input {\r\n        width: 140px;\r\n        flex-grow: 0;\r\n    }\r\n\r\n/* base classes */\r\n\r\n    .fill-parent {\r\n        position: absolute;\r\n        top: 0;\r\n        left: 0;\r\n        right: 0;\r\n        bottom: 0;\r\n    }\r\n\r\n    .cog-dialog {\r\n        line-height: initial;\r\n        background: #fff;\r\n        color: black;\r\n        overflow: hidden;\r\n        padding: 0 24px 0 24px;\r\n        box-shadow: 0 1px 2px rgba(0,0,0,.2);\r\n        z-index: 9999;\r\n        position: fixed;\r\n        top: 50%;\r\n        left: 50%;\r\n        transform: translate(-50%, -50%);\r\n        transition: all .2s;\r\n        text-align: left;\r\n        transition: opacity .2s ease;\r\n        border-radius: 2px;\r\n        cursor: default;\r\n    }\r\n\r\n    .cog-dialog-text {\r\n        margin-bottom: 12px;\r\n    }\r\n    .cog-dialog-text a {\r\n        text-decoration: none;\r\n        color: #3A96DD;\r\n    }\r\n\r\n    .dialog-background {\r\n        background: black;\r\n        opacity: 0.5;\r\n        position: fixed;\r\n        top: 0;\r\n        left: 0;\r\n        right: 0;\r\n        bottom: 0;\r\n        z-index: 9998;\r\n        transition: opacity .2s ease;\r\n    }\r\n\r\n    .dialog-closex {\r\n        cursor: pointer;\r\n        position: absolute;\r\n        top: 8px;\r\n        right: 8px;\r\n        cursor: pointer;\r\n    }\r\n\r\n    .dialog-closex path {\r\n        stroke: #CCC;\r\n    }\r\n\r\n    .dialog-buttons {\r\n        position: absolute;\r\n        padding: 0 0 52px 0;\r\n        left: 0;\r\n        right: 0;\r\n        bottom: 0;\r\n    }\r\n\r\n    .invisible {\r\n        opacity: 0;\r\n    }\r\n\r\n    .input-group {\r\n        display: inline-block;\r\n        margin-right: 16px;\r\n    }\r\n\r\n    .form-label {\r\n        display: block;\r\n        font-size: 13px;\r\n        margin-bottom: 8px;\r\n    }\r\n\r\n    .form-input {\r\n        padding: 8px;\r\n        border: 1px solid #ccc;\r\n        font-size: 15px;\r\n    }\r\n\r\n    .toolbar-button {\r\n\t\twidth: 24px;\r\n\t\theight: 24px;\r\n        vertical-align: middle;\r\n        transition: all .2s;\r\n    }\r\n    .toolbar-button:hover {\r\n        background: #6AAFE5;\r\n    }\r\n    .toolbar-button-disabled {\r\n        opacity: 0.5\r\n    }\r\n    svg.toolbar-button-disabled:hover {\r\n        background: initial;\r\n    }\r\n\r\n    .toolbar-button-dark {\r\n\t\twidth: 24px;\r\n\t\theight: 24px;\r\n        vertical-align: middle;\r\n        transition: all .2s;\r\n    }\r\n    .toolbar-button-dark:hover {\r\n        background: #4C4C4C;\r\n    }\r\n\r\n    .cog-visible {\r\n        display: block;\r\n    }\r\n    .cog-hidden {\r\n        display: none;\r\n    }\r\n    .cog-navbar {\r\n        list-style-type: none;\r\n        margin: 16px 0 0 0;\r\n        padding: 0;\r\n        overflow: hidden;\r\n    }\r\n    .cog-navbar li {\r\n        float: left;\r\n    }\r\n    .cog-navbar, .cog-navitem {\r\n        color: #3A96DD;\r\n        text-decoration: none;\r\n        transition: border 0s;\r\n    }\r\n    .cog-navitem {\r\n        padding: 0px 16px 10px 16px;\r\n        margin: 0 26px 0px 0px;\r\n        display: block;\r\n        border-bottom: 3px #CCC solid;\r\n    }\r\n    .cog-navitem-selected {\r\n        color: #000;\r\n        border-bottom: 3px #3A96DD solid;\r\n        transition: border 0s;\r\n    }\r\n    .enu-navhdr {\r\n        height: 0;\r\n        border: 0;\r\n        border-top: 1px solid #CCC;\r\n        margin: -1px 0 0 0;\r\n    }\r\n    .cog-tab {\r\n        margin-top: 16px;\r\n    }\r\n    .cog-readonly {\r\n        background: #EEE;\r\n    }\r\n\r\n    .cog-panel-header {\r\n        background-color: #252526;\r\n        color: #fff;\r\n        border-bottom: solid 1px #403F3F;\r\n        height: 42px;\r\n        left: 0;\r\n        letter-spacing: 0.5px;\r\n        font-size: 13px;\r\n        line-height: 42px;\r\n        padding-left: 8px;\r\n        position: absolute;\r\n        right: 0;\r\n        top: 0;\r\n        z-index: 1000;\r\n        box-shadow: 0 2px 3px rgba(0,0,0,.5);\r\n    }\r\n    .undecorated-text {\r\n        text-decoration: none;\r\n    }\r\n\r\n/* inspectorview */\r\n\r\n    .wc-inspectorview {\r\n        background-color: #1e1e1e;\r\n        color: white;\r\n        position: absolute;\r\n        left: 0;\r\n        right: 0;\r\n        top: 42px;\r\n        bottom: 0;\r\n        overflow-y: auto;\r\n    }\r\n\r\n    .wc-inspectorview * {\r\n        user-select: text;\r\n        -webkit-user-select: text;\r\n    }\r\n\r\n    .wc-inspectorview::-webkit-scrollbar-thumb {\r\n        background: #403F3F;\r\n    }\r\n\r\n    .wc-inspectorview-json {\r\n        font-size: 13px;\r\n\t    font-family: 'Menlo', 'Monaco', 'Consolas', \"Droid Sans Mono\", \"Courier New\", monospace, \"Droid Sans Fallback\";\r\n        position: absolute;\r\n        top: 0;\r\n        left: 0;\r\n        right: 0;\r\n        bottom: 0;\r\n        word-wrap: break-word;\r\n        white-space: pre-wrap;\r\n        padding: 10px 10px 10px 10px;\r\n    }\r\n\r\n/* JSON */\r\n\r\n    .json-key {\r\n        color: #9cdcfe;\r\n    }\r\n\r\n    .json-string {\r\n        color: #ce9178;\r\n    }\r\n\r\n    .json-number {\r\n        color: #b5cea8;\r\n    }\r\n\r\n    .json-boolean {\r\n        color: #569cd6;\r\n    }\r\n\r\n    .json-null {\r\n        color: #569cd6;\r\n    }\r\n\r\n/* logview */\r\n\r\n    .wc-logview {\r\n        background-color: #1e1e1e;\r\n        color: white;\r\n        overflow: auto;\r\n        font-size: 13px;\r\n\t    font-family: 'Menlo', 'Monaco', 'Consolas', \"Droid Sans Mono\", \"Courier New\", monospace, \"Droid Sans Fallback\";\r\n        white-space: nowrap;\r\n        position: absolute;\r\n        left: 0;\r\n        top: 42px;\r\n        right: 0;\r\n        bottom: 0;\r\n        padding: 10px 10px 10px 10px;\r\n    }\r\n\r\n    .wc-logview * {\r\n        user-select: text;\r\n        -webkit-user-select: text;\r\n        font-size: 12px;\r\n    }\r\n\r\n    .wc-logview::-webkit-scrollbar-thumb {\r\n        background: #403F3F;\r\n    }\r\n\r\n    .logview-header-text {\r\n        float: left;\r\n    }\r\n\r\n    .logview-clear-output-button {\r\n        position: absolute;\r\n        right: 12px;\r\n        height: 100%;\r\n    }\r\n\r\n    .wc-logview-timestamp {\r\n        color: lightgray;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview a {\r\n        color: #9CDCFE;\r\n        display: inline-block;\r\n    }\r\n/*    .wc-logview a {\r\n        color: #d1d1d1;\r\n    }\r\n*/\r\n    .wc-logview-arg {\r\n        color: lightgray;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview-log {\r\n        color: lightgray;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview-info {\r\n        color: lightgray;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview-trace {\r\n        color: lightgreen;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview-debug {\r\n        color: #808080;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview-warn {\r\n        color: #f5a623;\r\n        display: inline-block;\r\n    }\r\n\r\n    .wc-logview-error {\r\n        /*color: #ec407a;*/\r\n        color: #ed4556;\r\n        display: inline-block;\r\n    }\r\n")
+});
+___scope___.file("modules/catalog/css/messages.css", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/catalog/css/messages.css", "/* reset */\r\nbody .wc-app, .wc-app button, .wc-app input, .wc-app textarea {\r\n  font-family: \"Segoe UI\", sans-serif;\r\n  font-size: 15px; }\r\n\r\n.wc-app button {\r\n  background-color: #0063b1;\r\n  border: 1px solid #cccccc;\r\n  border-radius: 1px;\r\n  color: #ffffff;\r\n  cursor: pointer;\r\n  outline: none;\r\n  transition: color .2s ease, background-color .2s ease; }\r\n\r\n.wc-app h1, .wc-app h2, .wc-app h3, .wc-app h4, .wc-app p, .wc-app ul, .wc-app ol {\r\n  margin: 0;\r\n  padding: 0; }\r\n\r\n.wc-app audio, .wc-app video {\r\n  display: block; }\r\n\r\n\r\n@media (max-width: 450px) {\r\n  .wc-card {\r\n    border: 1px solid #d2dde5;\r\n    width: 198px; }\r\n  .wc-adaptive-card {\r\n    width: 214px; } }\r\n\r\n@media (min-width: 768px) {\r\n  .wc-card {\r\n    border: 1px solid #d2dde5;\r\n    width: 398px; }\r\n  .wc-adaptive-card {\r\n    width: 414px; } }\r\n\r\n\r\n\r\n\r\n/* docking */\r\n.wc-hidden {\r\n  visibility: hidden; }\r\n\r\n.wc-header {\r\n  background-color: #0078D7;\r\n  box-shadow: 0 1px rgba(0, 0, 0, 0.2);\r\n  box-sizing: content-box;\r\n  color: #ffffff;\r\n  font-weight: 500;\r\n  height: 30px;\r\n  left: 0;\r\n  letter-spacing: 0.5px;\r\n  padding: 8px 8px 0 8px;\r\n  position: absolute;\r\n  right: 0;\r\n  top: 0;\r\n  z-index: 1; }\r\n\r\n.wc-time {\r\n  color: #999999;\r\n  margin-bottom: 10px; }\r\n\r\n.wc-message-groups {\r\n  bottom: 50px;\r\n  left: 0;\r\n  transform: translateY(0);\r\n  overflow-x: hidden;\r\n  overflow-y: scroll;\r\n  padding: 10px;\r\n  position: absolute;\r\n  right: 0;\r\n  top: 38px;\r\n  transition: transform 0.2s cubic-bezier(0, 0, 0.5, 1); }\r\n  .wc-message-groups.no-header {\r\n    top: 0; }\r\n\r\n.wc-message-group-content {\r\n  overflow: hidden; }\r\n\r\n.wc-suggested-actions {\r\n  background-color: #f9f9f9;\r\n  bottom: 50px;\r\n  height: 0;\r\n  left: 0;\r\n  overflow: hidden;\r\n  position: absolute;\r\n  right: 0;\r\n  transition: height 0.2s cubic-bezier(0, 0, 0.5, 1); }\r\n  .wc-suggested-actions .wc-hscroll > ul {\r\n    height: 40px;\r\n    padding: 2px 3px; }\r\n    .wc-suggested-actions .wc-hscroll > ul > li {\r\n      display: inline-block;\r\n      margin: 2px;\r\n      max-width: 40%; }\r\n      .wc-suggested-actions .wc-hscroll > ul > li button {\r\n        background-color: #fff;\r\n        color: #0078D7;\r\n        min-height: 32px;\r\n        overflow: hidden;\r\n        padding: 0 16px;\r\n        text-overflow: ellipsis;\r\n        white-space: nowrap;\r\n        width: 100%; }\r\n      .wc-suggested-actions .wc-hscroll > ul > li button:hover {\r\n        background-color: #fff;\r\n        border-color: #0078D7;\r\n        color: #0078D7; }\r\n      .wc-suggested-actions .wc-hscroll > ul > li button:active {\r\n        background-color: #0078D7;\r\n        border-color: #0078D7;\r\n        color: #ffffff; }\r\n  .wc-suggested-actions button.scroll {\r\n    background-color: #d2dde5;\r\n    height: 40px;\r\n    overflow: hidden;\r\n    padding: 0;\r\n    position: absolute;\r\n    top: 0;\r\n    width: 28px; }\r\n  .wc-suggested-actions button.scroll:disabled {\r\n    display: none; }\r\n  .wc-suggested-actions button.scroll:hover {\r\n    background-color: #808c95; }\r\n  .wc-suggested-actions button.scroll svg {\r\n    fill: #ffffff; }\r\n    .wc-suggested-actions button.scroll svg path {\r\n      transform: translateY(6px); }\r\n  .wc-suggested-actions button.scroll.previous {\r\n    left: 0; }\r\n  .wc-suggested-actions button.scroll.next {\r\n    right: 0; }\r\n\r\n.wc-message-pane.show-actions .wc-message-groups {\r\n  transform: translateY(-40px); }\r\n\r\n.wc-message-pane.show-actions .wc-suggested-actions {\r\n  height: 40px; }\r\n\r\n.wc-console {\r\n  border: 5px solid #dbdee1;\r\n  bottom: 0;\r\n  box-sizing: border-box;\r\n  height: 50px;\r\n  left: 0;\r\n  position: absolute;\r\n  right: 0; }\r\n\r\n/* views */\r\n.wc-app-msg-view-panel {\r\n  overflow: hidden;\r\n  position: absolute;\r\n  right: 0;\r\n  left: 0;\r\n  top: 0;\r\n  bottom: 0; }\r\n\r\n/* messages */\r\n.wc-message-wrapper {\r\n  animation: animationFrames 2s;\r\n  animation-iteration-count: 1;\r\n  clear: both;\r\n  margin-bottom: 10px;\r\n  overflow: hidden;\r\n  position: relative;\r\n  /*transition: max-height 2s ease-in-out;*/ }\r\n\r\n@keyframes animationFrames {\r\n  0% {\r\n    /*max-height: 0;*/\r\n    opacity: 0; }\r\n  20% {\r\n    opacity: 1; }\r\n  100% {\r\n    /*max-height: 2000px;*/ } }\r\n\r\n.wc-message {\r\n  position: relative; }\r\n\r\n.wc-message-wrapper.carousel .wc-message {\r\n  max-width: none;\r\n  padding-right: 8px; }\r\n\r\n.wc-message svg.wc-message-callout {\r\n  height: 22px;\r\n  position: absolute;\r\n  stroke: none;\r\n  top: 12px;\r\n  width: 6px; }\r\n\r\n.wc-message-content {\r\n  border-radius: 2px;\r\n  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);\r\n  padding: 8px;\r\n  word-break: break-word; }\r\n\r\n.wc-message-content.clickable {\r\n  cursor: pointer; }\r\n\r\n.wc-message-content.selected {\r\n  box-shadow: 0px 1px 1px 0px #ffa333; }\r\n\r\n.wc-message-content img {\r\n  max-height: 320px;\r\n  max-width: 100%; }\r\n\r\n.wc-message-content .video iframe {\r\n  border: 0; }\r\n\r\n.wc-message-content audio, .wc-message-content video {\r\n  max-width: 100%; }\r\n\r\n.wc-message-content audio + h1, .wc-message-content video + h1 {\r\n  margin-top: 11px; }\r\n\r\n.wc-message-from {\r\n  clear: both;\r\n  color: #999999;\r\n  font-size: 11px;\r\n  margin-top: 5px; }\r\n\r\n/* cards */\r\n.wc-card {\r\n  background-color: #ffffff; }\r\n  .wc-card .non-adaptive-content {\r\n    margin: 8px 8px 0 8px; }\r\n  .wc-card button {\r\n    background-color: transparent;\r\n    color: #0078D7;\r\n    min-height: 32px;\r\n    width: 100%;\r\n    padding: 0 16px; }\r\n  .wc-card button:hover {\r\n    background-color: transparent;\r\n    border-color: #0078D7;\r\n    color: #0078D7; }\r\n  .wc-card button:active {\r\n    background-color: #0078D7;\r\n    border-color: #0078D7;\r\n    color: #ffffff; }\r\n  .wc-card.receipt table {\r\n    border-collapse: collapse;\r\n    width: 100%; }\r\n  .wc-card.receipt th, .wc-card.receipt td {\r\n    text-align: right;\r\n    vertical-align: top; }\r\n  .wc-card.receipt th:first-child, .wc-card.receipt td:first-child {\r\n    text-align: left; }\r\n  .wc-card.receipt th {\r\n    color: #808c95;\r\n    font-size: inherit;\r\n    font-weight: normal;\r\n    line-height: 1.75; }\r\n  .wc-card.receipt thead tr:last-child th {\r\n    padding-bottom: 16px; }\r\n  .wc-card.receipt th[colspan=\"2\"] {\r\n    color: inherit;\r\n    font-size: 15px;\r\n    font-weight: 700; }\r\n  .wc-card.receipt td {\r\n    padding: 4px 8px 0 8px; }\r\n  .wc-card.receipt td img {\r\n    float: left;\r\n    margin: 5px 8px 8px 0;\r\n    max-height: 50px;\r\n    max-width: 50px; }\r\n  .wc-card.receipt div.title {\r\n    font-weight: bolder; }\r\n  .wc-card.receipt div.subtitle {\r\n    font-weight: lighter; }\r\n  .wc-card.receipt tbody tr, .wc-card.receipt tfoot tr {\r\n    border-top: 1px solid #d2dde5; }\r\n  .wc-card.receipt tbody tr:first-child, .wc-card.receipt tfoot tr:first-child {\r\n    border-top-width: 2px; }\r\n  .wc-card.receipt tfoot td {\r\n    line-height: 2.25; }\r\n  .wc-card.receipt tfoot .total {\r\n    font-weight: bold; }\r\n  .wc-card.thumbnail img {\r\n    float: right;\r\n    margin-bottom: 10px;\r\n    margin-left: 10px;\r\n    width: 100px; }\r\n  .wc-card.signin h1 {\r\n    margin: 10px 24px 16px 14px; }\r\n  .wc-card.error {\r\n    text-align: center; }\r\n    .wc-card.error .error-icon {\r\n      fill: #cccccc;\r\n      height: 56px;\r\n      margin-bottom: 2px;\r\n      margin-top: 20px;\r\n      padding-left: 12px; }\r\n    .wc-card.error .error-text {\r\n      color: #cccccc;\r\n      font-weight: 600;\r\n      letter-spacing: 0.5px;\r\n      margin-bottom: 20px;\r\n      text-align: inherit; }\r\n\r\n/* alternate app-msg- sizes */\r\n.wc-message {\r\n  max-width: 91%; }\r\n\r\n.wc-card {\r\n  border: 1px solid #d2dde5;\r\n  width: 302px; }\r\n\r\n.wc-adaptive-card {\r\n  width: 318px; }\r\n\r\n.wc-wide .wc-card {\r\n  border: 1px solid #d2dde5;\r\n  width: 398px; }\r\n\r\n.wc-wide .wc-adaptive-card {\r\n  width: 414px; }\r\n\r\n.wc-narrow .wc-card {\r\n  border: 1px solid #d2dde5;\r\n  width: 198px; }\r\n\r\n.wc-narrow .wc-adaptive-card {\r\n  width: 214px; }\r\n\r\n/* adaptive card adjustments from wc-card */\r\n.wc-adaptive-card p {\r\n  margin-left: 0;\r\n  margin-right: 0; }\r\n\r\n/* list */\r\n.wc-list > .wc-card {\r\n  margin-top: 8px; }\r\n\r\n.wc-list > .wc-card:first-child {\r\n  margin-top: 0; }\r\n\r\n/* horizontal scroll */\r\n.wc-hscroll-outer {\r\n  /* allow horizontal scrolling but hide the scrollbar */\r\n  overflow: hidden; }\r\n\r\n.wc-hscroll {\r\n  /* allow horizontal scrolling but hide the scrollbar */\r\n  overflow-x: scroll;\r\n  overflow-y: hidden; }\r\n\r\n.wc-hscroll > ul {\r\n  white-space: nowrap; }\r\n\r\n.wc-hscroll > ul > li {\r\n  display: inline-block;\r\n  vertical-align: top;\r\n  white-space: normal; }\r\n\r\n/* carousel */\r\n.wc-carousel {\r\n  position: relative; }\r\n  .wc-carousel button.scroll {\r\n    background-color: #d2dde5;\r\n    height: 28px;\r\n    overflow: hidden;\r\n    padding: 0;\r\n    position: absolute;\r\n    top: 50%;\r\n    width: 28px; }\r\n  .wc-carousel button.scroll:disabled {\r\n    display: none; }\r\n  .wc-carousel button.scroll:hover {\r\n    background-color: #808c95; }\r\n  .wc-carousel button.scroll svg {\r\n    fill: #ffffff; }\r\n  .wc-carousel button.scroll.previous {\r\n    left: -16px; }\r\n  .wc-carousel button.scroll.next {\r\n    right: -16px; }\r\n  .wc-carousel .wc-hscroll > ul {\r\n    margin-left: -4px; }\r\n  .wc-carousel .wc-hscroll > ul > li {\r\n    padding: 0 4px; }\r\n  .wc-carousel .wc-hscroll > ul > li:last-child {\r\n    padding-right: 0; }\r\n  .wc-carousel li p {\r\n    min-height: 4em;\r\n    white-space: normal; }\r\n  .wc-carousel li .wc-adaptive-card p {\r\n    min-height: initial; }\r\n\r\n/* from me */\r\n.wc-message-from-me {\r\n  float: right;\r\n  margin-right: 6px; }\r\n\r\n.wc-message-from-me.wc-message-from {\r\n  text-align: right; }\r\n\r\n.wc-message-from-me .wc-message-content {\r\n  background-color: #0078D7;\r\n  color: #ffffff; }\r\n\r\n.wc-message-from-me svg.wc-message-callout path {\r\n  fill: #0078D7; }\r\n\r\n.wc-message-from-me svg.wc-message-callout path.point-left {\r\n  display: none; }\r\n\r\n.wc-message-from-me svg.wc-message-callout {\r\n  right: -6px; }\r\n\r\n/* from bot */\r\n.wc-message-from-bot {\r\n  float: left;\r\n  margin-left: 8px; }\r\n\r\n.wc-message-from-bot .wc-message-content {\r\n  background-color: #eceff1;\r\n  color: #000000; }\r\n\r\n.wc-message-from-bot svg.wc-message-callout path {\r\n  fill: #eceff1; }\r\n\r\n.wc-message-from-bot svg.wc-message-callout path.point-right {\r\n  display: none; }\r\n\r\n.wc-message-from-bot svg.wc-message-callout {\r\n  left: -6px; }\r\n\r\n/* console */\r\n.wc-console > * {\r\n  position: absolute;\r\n  top: 0;\r\n  vertical-align: middle; }\r\n\r\n.wc-console label {\r\n  cursor: pointer;\r\n  display: inline-block;\r\n  height: 40px; }\r\n\r\n.wc-console svg {\r\n  fill: #8a8a8a;\r\n  margin: 11px; }\r\n\r\n.wc-console textarea, .wc-console input[type=text] {\r\n  border: none;\r\n  height: 100%;\r\n  outline: none;\r\n  padding: 0;\r\n  resize: none;\r\n  width: 100%; }\r\n\r\n.wc-send svg {\r\n  height: 18px;\r\n  width: 27px; }\r\n\r\n.wc-upload svg {\r\n  height: 18px;\r\n  width: 26px; }\r\n\r\n#wc-upload-input {\r\n  display: none; }\r\n\r\n.wc-textbox {\r\n  bottom: 0;\r\n  left: 48px;\r\n  right: 49px; }\r\n\r\n.wc-send {\r\n  right: 0; }\r\n\r\n.wc-send.hidden {\r\n  visibility: hidden; }\r\n\r\n.wc-mic {\r\n  right: 0; }\r\n\r\n.wc-mic.hidden {\r\n  visibility: hidden; }\r\n\r\n.wc-mic.active path#micFilling {\r\n  fill: #4e3787; }\r\n\r\n.wc-mic.inactive path#micFilling {\r\n  visibility: hidden; }\r\n\r\n.wc-console.has-text .wc-send svg {\r\n  fill: #0078D7; }\r\n\r\n/* animation */\r\n.wc-typing {\r\n  background-image: url(\"data:image/gif;base64,R0lGODlhQAAYAPYBAOzv8evu8Ort7+fq7Ons7ujr7eXo6uTn6ebp6+Xn6ebo6uzu8OPm6OTm6OPm5+Tn6N/i4+Ll59/i5N7h4+Hk5uDj5evu7+Hk5d/h49PV18PFx7/BwsfJysXHyMLExdja3Nfa28vNz72/wL7Awc/S08TGyMDCw9TW2NbY2t3g4trd39bZ2szO0M7Q0dnb3djb3Nvd39ve4Nnc3dze4Nrc3t7g4tzf4dXX2d3f4d7h4tnc3tve383P0MrMzs7Q0sjKzNLU1s/R08jKy9DT1NfZ293g4efp68bIyby+v9bZ27q8vdHT1c7R0uvt78nLzM/R0tjb3ens7bO0tbS2t7GztK+xsrW3uK6vsLe4utfa3L/Awtzf4MnLzamqq5WWl66wsbm7vNrd3uXo6a2ur6yurp2en6KjpKusrZ+goKeoqers7urt7peXmIGBgYSEhHx8fJmamqipqnZ2doqLi8XHyY2NjpGSkpOUlJiYmZOTlI+QkJqbm4eIiJucnIuMjP///yH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MEY0RUJCMDNENkM4MTFFNkI5RENGRDgzMjAyQjU3QzUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MEY0RUJCMDRENkM4MTFFNkI5RENGRDgzMjAyQjU3QzUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowRjRFQkIwMUQ2QzgxMUU2QjlEQ0ZEODMyMDJCNTdDNSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowRjRFQkIwMkQ2QzgxMUU2QjlEQ0ZEODMyMDJCNTdDNSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAUOAAEAIf4YT3B0aW1pemVkIHdpdGggZXpnaWYuY29tACwAAAAAQAAYAAACJoSPqcvtD6OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+l0AACH5BAUHAAAALD4ACQACAAYAAAIERI5oBQAh+QQFBwAOACwsAAcAFAAJAAAEJRDISZetmJQ9uhcZyClGSY4hYjbHKqYs06ooLLuBPeM6b2u1SgQAIfkEBQcADQAsGAAHACUACQAABlFAgHAYKBqJyKRS+ahMchKnoSBYWq0Mp+rzimEiiUH1SjaCd64VioaTEo5lbA3GvaWjCmpcfnl27TZ4ent8Mmo6KW6EhXSIEGCDi4VZCG+SSUEAIfkEBQcABgAsEQAHABcACQAAB0aAAIKDAoSGh4RELD8sHwkBiJEoIUKVPSAHkJGJQZaWNQSbnJ6VMAOigzI8pDwxp6gCKUOMnhKFsAgvi59GuKkZPhkTBb6BACH5BAUHAAQALA8ABwANAAkAAAYsQICwYAgMj0LWZokSIAedpTSDREmvxaHyyjy2uN2hCqwZVLmqp2DF0bAkzyAAIfkEBRUABQAsDgAHAAoACQAABidAgDBgGAyHH5NoyUAunxuEcANdkqbVJTa7hZ6EkFFVcAx5ShmCMAgAIfkEBQcAAAAsLAAHABAACQAABC0QyClXpZWUwbsOU/AhSWmQGyiOB+Mq3rJ6zosKM22n+d2YqQzvBOOFcMOgJAIAIfkEBQcAAwAsIQAHABsACQAAB0yAAIKDAgGEh4iJKStLGTARBYmShDgoJEyYNBSRk4ouQJiZNQeFnYc5II2hJzMOBKanH6qiDK+wlBlBqxMGhreDE6m0Ub+xjBi9xYKBACH5BAUHAAYALB0ABwAQAAkAAAc+gACCAgoFg4eIGSNKSj0MiIckjJNHB5AAEiaTkzcBkC8im4w8BJ+hoj6lkBqiSC+XAUmnowOwsT8bJSiGl4EAIfkEBQcAAgAsHAAHAAsACQAABy2AAIIGDIOGRVhXijeHVYqPjIIej5QBglKUjweXmYoIkp0ClpyVhghCiRoUhoEAIfkEBRUAAgAsGwAHAAoACQAAByyAAIKCB4ODMlNkijKHY4qPMIJgj49ggpSUAQBXmIqSnRuEVJgMhiWJJQmCgQAh+QQFBwAAACwxAAcADQAJAAAEJRDICQKdgQyktrBS5h0G91WfSXYaWqjrK8rx6LL1cpf8GaY2SQQAIfkEBQcABgAsKwAHABMACQAABzyAAIKDBISGhzwbSB4ZCIeIIouLQI6PgjcmkpI4AZYDJCOak4WWQ1qiJi8Cnh8eqBiel6GbpLEgHIycsYEAIfkEBQcAAgAsKQAHAA0ACQAABzyAAIIBEhQBg4gBXHh1dWUZiQCLjZQriWWUlF2Hghh2mY14A4MVn6B7UYhmoHVSnJ13maiROFdse1YMiYEAIfkEBQcAAwAsDgAHACUACQAAB2OAA4KCBYOGh4iIETBRAI6PIIYNiZSHKWxymVUCkIcmlaAHbpmkcQCVQ6CUUqStKaeJR6qJcK2kdI6zugNltplOjh6IN7uGJr5vB44YngTFgwKYrRuPwR4dAwLPklNzbV4sj4EAIfkEBQcACgAsCwAHACcACQAAB2qAAIKDBAEACoiJiouMiQ4qBYSCLiw/LCsHho2bjF6KhpM9lpY3D4KcnAmMXaGjozECh6izihMFM5Wul5G0vQodBDY8uruyvqhcARVAxDgWxscbjQatrwOnx4mem8EZLUApkdDZClKJPIKBACH5BAUHAAoALAQABwASAAkAAAdCgACCCwEWhoOIiQMRKTQxFQYCioiMMi8fMJAEk5sQKpegjIWTEzqhNhcIo4qlpxSqnBWZroSxpi4zr5KcnTWei5yBACH5BAUHAAYALAAABwAQAAkAAAMRCLrc/rCIEIe9tOKpd/dfqCUAIfkEBRUAAQAsAAAIAAcACAAAAgaEj6nL7VAAIfkEBQcABQAsGwAHAAoACQAABzSAAIICDAODgyxSX1UeDYiLkEoIABJUkJBDADeXkZqci0eUU58ogkBVlxoEgzobVkpLqwCBACH5BAUHAAMALBMABwARAAkAAAdPgACCgwIEhoSIhTJBRx08RBSFiRQvTBoimI8VkoQ4GU4bmKFLMAqTS42iji8RAYgwqCOqQS4Mpz2hmUAxCJMqQ6mrrYmuOShPLSc2Bq6EgQAh+QQFBwAJACwHAAcAGgAJAAAHWIAAgoMBhYaEiImDFTNZRC44FAiHiomMK0A+mTaSlJWCEUVQJySaNzoYDAWfiJIfGUymkBEDrIuusLI1tJ6VDrs3pUMoKhANBLa3W4+lLym8ycqczwer0YEAIfkEBQcACwAsAAAHABYACQAABS4gIAbkaJ5oVF3HIJTpqWJ048bpVKsFjM+7xA03WgV7xOIRmUQ4jKxh0/V0+oghACH5BAUVAAEALAAABwAKAAkAAAIIhI+py+0PYQEAIfkEBQcABQAsJgAHAAwACQAAB0qAAIIEYhQGAYODN1R1bnpXN4iCGV98bZd+ZxmIFx54l6B4SodhYI2gbXZUOQAwSnqoqVMYrSV9sWUbA5NYp7IwiRgaZndmHhWDgQAh+QQFBwAHACwZAAcAGAAJAAAHboAAgoMEhYYBhImJMUMcGyNII0JANQWKimEkHUpVaWlUSkdLOFGXgxIoIY9dZWZnWCYsRBGmgikZPyJSnmhdU1pOJxKIpkW4kLy+kjfDtRWpHlhnvWOwPB8NxMXHVGevyxBqtacgQSFcTsFQtOOBACH5BAUHAAMALAkABwAgAAkAAAdtgACCgwKFhoSIiYoFFWEZPi1PJDczEQSLmIONQCElGyYckZUFmZg2KEwcHkqsPUsfEwYBpYkRMDc8R59gHkJBKzgNh7SCtriqvL2/KQzDxGIpK0FOq0jKsLLPiConLLrXNs3atS6UqDQS2eMAgQAh+QQFBwALACwAAAcAGQAJAAAHUIAAAYNNhIKHiImIDDk6ICoSCQSKlIg1MjcnmRAHk5WKFTErmqQURoafghA0KKStoQKplpCuMRUKsbKqW0S1EQOoshispQa5urtFMxO/x8iBACH5BAUHAAIALAAABwALAAkAAAIJhI+py+3xolwFACH5BAUHAAEALAAACQABAAUAAAIChF0AOw==\");\r\n  background-repeat: no-repeat;\r\n  height: 20px;\r\n  width: 64px; }\r\n\r\n.wc-animate-scroll {\r\n  left: 0;\r\n  position: absolute;\r\n  transition: left .8s ease; }\r\n\r\n.wc-animate-scroll-rapid {\r\n  left: 0;\r\n  position: absolute;\r\n  transition: left .4s ease; }\r\n\r\n.wc-animate-scroll-near {\r\n  left: 0;\r\n  position: absolute;\r\n  transition: left .3s ease-in-out; }\r\n\r\n/* text formats */\r\n.format-markdown > p {\r\n  margin-bottom: 0px; }\r\n\r\n.format-markdown code {\r\n  white-space: pre-wrap; }\r\n\r\n.format-markdown + div {\r\n  margin-top: 8px; }\r\n\r\n.format-markdown ol {\r\n  padding-left: 30px;\r\n  /* numbers are right-aligned to the period */ }\r\n\r\n.format-markdown ul {\r\n  padding-left: 33px; }\r\n\r\n/* browser scrollbar customization */\r\n.wc-app ::-webkit-scrollbar {\r\n  width: 8px; }\r\n\r\n.wc-app ::-webkit-scrollbar * {\r\n  background-color: transparent; }\r\n\r\n.wc-app ::-webkit-scrollbar-thumb {\r\n  background-color: #dbdee1; }\r\n")
+});
+___scope___.file("modules/dashboard/index.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const react_emotion_1 = require("react-emotion");
+const theming_1 = require("theming");
+const TabRouter_1 = require("./TabRouter");
+exports.Tester = theming_1.withTheme(react_emotion_1.default('div')(({ theme }) => ({
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+})));
+exports.DashboardPage = mobx_react_1.observer(() => React.createElement("div", null,
+    React.createElement(TabRouter_1.DashboardTabRouterOutlet, null)));
+
+});
+___scope___.file("modules/dashboard/TabRouter.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1353,73 +2131,62 @@ const when_switch_1 = require("when-switch");
 const tabs_1 = require("./tabs");
 const csstips_1 = require("csstips");
 const typestyle_1 = require("typestyle");
-const lib_1 = require("csx/lib");
 const core_1 = require("@blueprintjs/core");
 const icons_1 = require("@blueprintjs/icons");
-//import { BlueprintNavIcon } from '../../../design';
-exports.ChartDrawerToolbar = mobx_react_1.observer((props) => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
-    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.CODE, route: 'chartdrawer:charts' }),
-    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.GRAPH, route: 'chartdrawer:dashboard' }),
-    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.SCATTER_PLOT, route: 'chartdrawer:datasets' }),
-    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.GRAPH, route: 'chartdrawer:notebook' }))));
-const LinkStyle = typestyle_1.style({
-    color: 'black',
-    textDecoration: 'none',
-    transitionDuration: '0.3s',
-    padding: [0, 10, 0, 10],
-    $nest: {
-        '&:hover': {
-            color: '#6642C6',
-            transform: lib_1.scale3d(1.1, 1.1, 1.1)
-        }
+exports.MLDrawerToolbar = mobx_react_1.observer((props) => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.CODE, route: 'mldrawer:charts' }),
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.GRAPH, route: 'mldrawer:dashboard' }),
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.SCATTER_PLOT, route: 'mldrawer:datasets' }),
+    React.createElement(ChartDrawerLink, { icon: icons_1.IconNames.GRAPH, route: 'mldrawer:notebook' }))));
+const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(core_1.Button, Object.assign({}, props, { onClick: () => props.nav.goToMlDrawer(props.route) }), props.children))));
+const DashboardTabRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", Object.assign({ className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, props), when_switch_1.default(props.nav.mlDrawerRoute)
+    .is('mldrawer:charts', () => React.createElement(tabs_1.DataTab, null))
+    .is('mldrawer:datasets', () => React.createElement(tabs_1.SettingsTab, null))
+    .is('mldrawer:notebook', () => React.createElement(tabs_1.ModelTab, null))
+    .is('mldrawer:dashboard', () => React.createElement(tabs_1.TrainTab, null))
+    .else(() => React.createElement(tabs_1.TrainTab, null))))));
+exports.DashboardTabRouterOutlet = mobx_react_1.observer((props) => (React.createElement(design_1.FillParent, null,
+    React.createElement(exports.MLDrawerToolbar, null),
+    React.createElement(DashboardTabRouter, null))));
+/*
+//import { scale3d } from 'csx/lib';
+
+const LinkStyle = style({
+  color: 'black',
+  textDecoration: 'none',
+  transitionDuration: '0.3s',
+  padding: [0, 10, 0, 10],
+  $nest: {
+    '&:hover': {
+      color: '#6642C6',
+      transform: scale3d(1.1, 1.1, 1.1)
     }
-});
-const ChartDrawerLinkWORK = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("a", { href: '#', className: LinkStyle, onClick: () => props.nav.goToChartDrawer(props.route) }, props.children))));
-const ChartDrawerLink = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(core_1.Button, Object.assign({}, props, { onClick: () => props.nav.goToChartDrawer(props.route) }), props.children))));
-const ChartDrawerRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement("div", Object.assign({ className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, props), when_switch_1.default(props.nav.chartDrawerRoute)
-    .is('chartdrawer:charts', () => React.createElement(tabs_1.ChartsPage, null))
-    .is('chartdrawer:datasets', () => React.createElement(tabs_1.DatasetsPage, null))
-    .is('chartdrawer:notebook', () => React.createElement(tabs_1.NotebookPage, null))
-    .is('chartdrawer:dashboard', () => React.createElement(tabs_1.DashboardPage, null))
-    .else(() => React.createElement(tabs_1.DashboardPage, null))))));
-exports.WorkDrawer = mobx_react_1.observer((props) => (React.createElement(design_1.FillParent, null,
-    React.createElement(exports.ChartDrawerToolbar, null),
-    React.createElement(ChartDrawerRouter, null))));
+  }
+})
+
+const ChartDrawerLinkWORKS: React.SFC<LinkProps> = inject('nav')(observer((props: LinkProps) => (
+  <a href='#' className={LinkStyle}
+    onClick={() => props.nav.goToChartDrawer(props.route)}>
+    {(props as React.Props<any>).children}
+  </a>
+)))
+*/ 
 
 });
-___scope___.file("modules/charts/tabs/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/dashboard/tabs/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./notebook"));
-__export(require("./datasets"));
-__export(require("./charts"));
-__export(require("./dashboard"));
-__export(require("./cloud"));
+__export(require("./DataTab"));
+__export(require("./ModelTab"));
+__export(require("./SettingsTab"));
+__export(require("./TrainTab"));
 
 });
-___scope___.file("modules/charts/tabs/notebook.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-exports.NotebookPage = (props) => React.createElement("div", null,
-    React.createElement("h2", null, "Notebook Page"));
-
-});
-___scope___.file("modules/charts/tabs/datasets.jsx", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const mobx_react_1 = require("mobx-react");
-exports.DatasetsPage = mobx_react_1.observer((props) => React.createElement("div", null, "datasets"));
-
-});
-___scope___.file("modules/charts/tabs/charts.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/dashboard/tabs/DataTab.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1427,7 +2194,7 @@ const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const theming_1 = require("theming");
 const styled_jss_1 = require("styled-jss");
-exports.ChartsPage = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null,
+exports.DataTab = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null,
     "Charts",
     React.createElement(Button, null))));
 const Button = theming_1.withTheme(styled_jss_1.default('button')(({ theme }) => ({
@@ -1436,44 +2203,698 @@ const Button = theming_1.withTheme(styled_jss_1.default('button')(({ theme }) =>
 })));
 
 });
-___scope___.file("modules/charts/tabs/dashboard.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/dashboard/tabs/ModelTab.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-exports.DashboardPage = mobx_react_1.observer((props) => React.createElement("div", null, "Dashboard"));
+const theming_1 = require("theming");
+const polynomial_regression_1 = require("../../polynomial-regression");
+exports.ModelTab = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null,
+    "model",
+    React.createElement(polynomial_regression_1.PolynomialRegression, null))));
 
 });
-___scope___.file("modules/charts/tabs/cloud.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/polynomial-regression/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const mobx_react_1 = require("mobx-react");
-exports.CloudPage = mobx_react_1.observer((props) => React.createElement("div", null,
-    React.createElement("div", null, "Cloud")));
+const components_1 = require("./components");
+exports.PolynomialRegression = components_1.PolynomialRegression;
 
 });
-___scope___.file("modules/cloud/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/polynomial-regression/components/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./cloud"));
+__export(require("./DataChart"));
+__export(require("./DataPlot"));
+__export(require("./Equation"));
+__export(require("./ErrorChart"));
+__export(require("./InlineCaption"));
+__export(require("./LearningRateSelector"));
+__export(require("./NumericParameter"));
+__export(require("./ParametersInfo"));
+__export(require("./PolynomialRegression"));
 
 });
-___scope___.file("modules/cloud/cloud.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/polynomial-regression/components/DataChart.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const vegaSpecs_1 = require("../vega/vegaSpecs");
+const vega_embed_1 = require("vega-embed");
+class DataChart extends React.Component {
+    componentDidUpdate() {
+        this.createDataChart();
+    }
+    createDataChart() {
+        const { testData, trainingData, predictions, showTestData } = this.props;
+        const trainXs = trainingData.xs.dataSync();
+        const trainYs = trainingData.ys.dataSync();
+        const testXs = testData.xs.dataSync();
+        const testYs = testData.ys.dataSync();
+        const trainValues = Array.from(trainYs).map((y, i) => ({ trainX: trainXs[i], trainY: trainYs[i], pred: predictions[i] }));
+        const values = showTestData ?
+            //@ts-ignore
+            trainValues.concat(Array.from(testYs).map((y, i) => ({ testX: testXs[i], testY: testYs[i] })))
+            : trainValues;
+        //@ts-ignore
+        return vega_embed_1.default(this.dataChart, vegaSpecs_1.createDataSpec(values, showTestData), { actions: false });
+    }
+    render() {
+        return React.createElement("div", { ref: dataChart => this.dataChart = dataChart });
+    }
+}
+exports.DataChart = DataChart;
+
+});
+___scope___.file("modules/polynomial-regression/vega/vegaSpecs.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const $schema = 'https://vega.github.io/schema/vega-lite/v2.json';
+exports.createDataSpec = (values, showTestData = false) => {
+    const spec = {
+        $schema,
+        width: 300,
+        height: 300,
+        data: { values },
+        layer: [
+            {
+                mark: 'point',
+                encoding: {
+                    x: { field: 'trainX', type: 'quantitative' },
+                    y: { field: 'trainY', type: 'quantitative' },
+                    color: { value: 'grey' }
+                }
+            },
+            {
+                mark: {
+                    orient: 'vertical',
+                    type: 'line'
+                },
+                orient: 'vertical',
+                encoding: {
+                    x: { field: 'trainX', type: 'quantitative' },
+                    y: { field: 'pred', type: 'quantitative' },
+                    color: { value: 'tomato' }
+                },
+            }
+        ]
+    };
+    const testLayer = {
+        mark: 'point',
+        encoding: {
+            x: { field: 'testX', type: 'quantitative' },
+            y: { field: 'testY', type: 'quantitative' },
+            color: { value: 'green' }
+        },
+    };
+    if (showTestData) {
+        spec.layer.push(testLayer);
+    }
+    return spec;
+};
+exports.createErrorSpec = (errorFieldName, values) => ({
+    $schema,
+    width: 100,
+    height: 100,
+    data: { values },
+    layer: [
+        {
+            mark: {
+                orient: 'vertical',
+                type: 'line'
+            },
+            encoding: {
+                x: { field: 'iterations', type: 'quantitative' },
+                y: { field: errorFieldName, type: 'quantitative' },
+                color: { value: 'blue' }
+            },
+        }
+    ]
+});
+
+});
+___scope___.file("modules/polynomial-regression/components/DataPlot.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+//import styled from 'react-emotion';
+const DataChart_1 = require("./DataChart");
+const ErrorChart_1 = require("./ErrorChart");
+const ParametersInfo_1 = require("./ParametersInfo");
+exports.DataPlot = ({ className, a, b, c, d, trainingError, iteration, predictions, showTestData, testError, testData, trainingData }) => {
+    return (React.createElement("div", { className: className, style: { padding: '1.3em' } },
+        React.createElement(ParametersInfo_1.ParametersInfo, { a: a, b: b, c: c, d: d, error: trainingError, iteration: iteration, testError: testError }),
+        React.createElement("div", { style: { display: 'flex' } },
+            React.createElement(DataChart_1.DataChart, { testData: testData, trainingData: trainingData, predictions: predictions, showTestData: showTestData }),
+            React.createElement(ErrorChart_1.ErrorChart, { label: "train_error", error: trainingError }),
+            React.createElement(ErrorChart_1.ErrorChart, { label: "test_error", error: testError }))));
+};
+
+});
+___scope___.file("modules/polynomial-regression/components/ErrorChart.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const vegaSpecs_1 = require("../vega/vegaSpecs");
+const vega_embed_1 = require("vega-embed");
+class ErrorChart extends React.Component {
+    componentDidUpdate() {
+        this.createErrorChart();
+    }
+    createErrorChart() {
+        const { error, label } = this.props;
+        const values = error.map((e, i) => ({ iterations: i, [label]: e }));
+        //@ts-ignore
+        return vega_embed_1.default(this.errorChart, vegaSpecs_1.createErrorSpec(label, values), { actions: false });
+    }
+    render() {
+        return React.createElement("div", { ref: errorChart => this.errorChart = errorChart });
+    }
+}
+exports.ErrorChart = ErrorChart;
+
+});
+___scope___.file("modules/polynomial-regression/components/ParametersInfo.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const NumericParameter_1 = require("./NumericParameter");
+const Equation_1 = require("./Equation");
+const react_emotion_1 = require("react-emotion");
+const _ParametersInfo = ({ className, a, b, c, d, error, iteration, testError }) => React.createElement("div", { className: className },
+    React.createElement(Equation_1.Equation, { a: a, b: b, c: c, d: d }),
+    React.createElement("div", { style: { margin: '.25em 0' } },
+        React.createElement(NumericParameter_1.NumericParameter, { label: "training error", value: error[error.length - 1] }),
+        React.createElement(NumericParameter_1.NumericParameter, { label: "test error", value: testError[testError.length - 1] }),
+        React.createElement(NumericParameter_1.NumericParameter, { label: "iteration", value: iteration, round: 0 })));
+exports.ParametersInfo = react_emotion_1.default(_ParametersInfo)({
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "1em"
+});
+/*
+  .parameters {
+    margin: .25em 0;
+  }
+  */ 
+
+});
+___scope___.file("modules/polynomial-regression/components/NumericParameter.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const InlineCaption_1 = require("./InlineCaption");
+const react_emotion_1 = require("react-emotion");
+const roundNumber = (number, round) => round === 0 ? number : number.toFixed(round);
+const _NumericParameter = ({ children, className, label, value, round = 3 }) => {
+    const sanitizedValue = typeof value === 'number' ?
+        roundNumber(value, round)
+        : value;
+    return (React.createElement("span", { className: className },
+        React.createElement(InlineCaption_1.InlineCaption, null,
+            label,
+            ": "),
+        React.createElement("span", null,
+            sanitizedValue,
+            children)));
+};
+exports.NumericParameter = react_emotion_1.default(_NumericParameter)({
+    margin: "0 .25em"
+});
+
+});
+___scope___.file("modules/polynomial-regression/components/InlineCaption.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_emotion_1 = require("react-emotion");
+exports.InlineCaption = react_emotion_1.default('span')({
+    fontWeight: "bold"
+});
+
+});
+___scope___.file("modules/polynomial-regression/components/Equation.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const react_emotion_1 = require("react-emotion");
+const sanitizeValue = v => Math.abs(v.toFixed(3));
+const _Equation = ({ className, a, b, c, d }) => {
+    return React.createElement("div", { className: className },
+        React.createElement("span", null, "y = "),
+        React.createElement("span", null,
+            `${sanitizeValue(a)}x`,
+            React.createElement("sup", null, "3")),
+        React.createElement("span", null, `${b >= 0 ? ' + ' : ' - '}`),
+        React.createElement("span", null,
+            `${sanitizeValue(b)}x`,
+            React.createElement("sup", null, "2")),
+        React.createElement("span", null, `${c >= 0 ? ' + ' : ' - '}`),
+        React.createElement("span", null, `${sanitizeValue(c)}x`),
+        React.createElement("span", null, `${d >= 0 ? ' + ' : ' - '}`),
+        React.createElement("span", null, `${sanitizeValue(d)}`));
+};
+exports.Equation = react_emotion_1.default(_Equation)({
+    fontStyle: "italic",
+    margin: ".25em 0"
+});
+
+});
+___scope___.file("modules/polynomial-regression/components/LearningRateSelector.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const SelectField_1 = require("material-ui/SelectField");
+const MenuItem_1 = require("material-ui/MenuItem");
+exports.LearningRateSelector = ({ learningRate, onChange }) => React.createElement(SelectField_1.default, { floatingLabelText: "learning rate", value: learningRate, onChange: onChange },
+    React.createElement(MenuItem_1.default, { value: 3, primaryText: "3" }),
+    React.createElement(MenuItem_1.default, { value: 1, primaryText: "1" }),
+    React.createElement(MenuItem_1.default, { value: 0.5, primaryText: "0.5" }),
+    React.createElement(MenuItem_1.default, { value: 0.3, primaryText: "0.3" }),
+    React.createElement(MenuItem_1.default, { value: 0.1, primaryText: "0.1" }),
+    React.createElement(MenuItem_1.default, { value: 0.05, primaryText: "0.05" }),
+    React.createElement(MenuItem_1.default, { value: 0.03, primaryText: "0.03" }),
+    React.createElement(MenuItem_1.default, { value: 0.01, primaryText: "0.01" }));
+
+});
+___scope___.file("modules/polynomial-regression/components/PolynomialRegression.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const tf = require("@tensorflow/tfjs");
+const MuiThemeProvider_1 = require("material-ui/styles/MuiThemeProvider");
+const Checkbox_1 = require("material-ui/Checkbox");
+const FlatButton_1 = require("material-ui/FlatButton");
+const Paper_1 = require("material-ui/Paper");
+const Toolbar_1 = require("material-ui/Toolbar");
+const DataPlot_1 = require("./DataPlot");
+const LearningRateSelector_1 = require("./LearningRateSelector");
+const data_1 = require("../tensorflow/data");
+const trueCoefficients = { a: -.8, b: -.2, c: .9, d: .5 };
+class PolynomialRegression extends React.Component {
+    static resetState(learningRate = 0.5) {
+        const { trainXs, trainYs, testXs, testYs } = data_1.generateData(trueCoefficients);
+        return {
+            a: tf.variable(tf.scalar(Math.random())),
+            b: tf.variable(tf.scalar(Math.random())),
+            c: tf.variable(tf.scalar(Math.random())),
+            d: tf.variable(tf.scalar(Math.random())),
+            trainingError: [],
+            testError: [],
+            isTraining: false,
+            iteration: 0,
+            learningRate,
+            predictions: new Float32Array(),
+            showTestData: true,
+            trainingData: { xs: trainXs, ys: trainYs },
+            testData: { xs: testXs, ys: testYs }
+        };
+    }
+    constructor(props) {
+        super(props);
+        this.state = PolynomialRegression.resetState();
+    }
+    componentDidMount() {
+        this.optimizer = tf.train.sgd(this.state.learningRate);
+        this.singleStepTrain();
+    }
+    loss(prediction, labels) {
+        // Having a good error function is key for training a machine learning model
+        return prediction.sub(labels).square().mean();
+    }
+    predict(xs, a, b, c, d) {
+        // y = a * x ^ 3 + b * x ^ 2 + c * x + d
+        return tf.tidy(() => {
+            return a.mul(xs.pow(tf.scalar(3, 'int32')))
+                .add(b.mul(xs.square()))
+                .add(c.mul(xs))
+                .add(d);
+        });
+    }
+    continuousTrain(xs, ys) {
+        return __awaiter(this, void 0, void 0, function* () {
+            while (this.state.isTraining) {
+                this.train(xs, ys);
+                // Use tf.nextFrame to not block the browser.
+                yield tf.nextFrame();
+            }
+        });
+    }
+    singleStepTrain() {
+        const { xs, ys } = this.state.trainingData;
+        this.train(xs, ys);
+    }
+    train(xs, ys) {
+        this.optimizer.minimize(() => {
+            const predictions = this.predict(xs, this.state.a, this.state.b, this.state.c, this.state.d);
+            const predictionsValue = predictions.dataSync();
+            const trainingError = this.loss(predictions, ys);
+            const trainingErrorValue = trainingError.dataSync()[0];
+            this.setState(({ iteration, trainingError }) => ({ trainingError: trainingError.concat(trainingErrorValue), iteration: iteration + 1, predictions: predictionsValue }));
+            return trainingError;
+        });
+        const { testData } = this.state;
+        const testPredictions = this.predict(testData.xs, this.state.a, this.state.b, this.state.c, this.state.d);
+        const testErrorValue = this.loss(testPredictions, testData.ys).dataSync()[0];
+        this.setState(({ testError }) => ({ testError: testError.concat(testErrorValue) }));
+    }
+    playToggle() {
+        const isTraining = !this.state.isTraining;
+        this.setState(() => ({ isTraining }), () => {
+            if (this.state.isTraining) {
+                const { xs, ys } = this.state.trainingData;
+                this.continuousTrain(xs, ys);
+            }
+        });
+    }
+    reset(learningRate = this.state.learningRate) {
+        this.setState(() => PolynomialRegression.resetState(learningRate), () => {
+            this.optimizer = tf.train.sgd(this.state.learningRate);
+            this.singleStepTrain();
+        });
+    }
+    render() {
+        const _a = this.state, { a, b, c, d, isTraining, learningRate, showTestData } = _a, otherState = __rest(_a, ["a", "b", "c", "d", "isTraining", "learningRate", "showTestData"]);
+        return (React.createElement(MuiThemeProvider_1.default, null,
+            React.createElement(Paper_1.default, { style: { height: '90vh' }, zDepth: 2 },
+                React.createElement(Toolbar_1.Toolbar, null,
+                    React.createElement(Toolbar_1.ToolbarGroup, null,
+                        React.createElement(LearningRateSelector_1.LearningRateSelector, { learningRate: learningRate, onChange: (e, i, value) => this.reset(value) }),
+                        React.createElement(Checkbox_1.default, { label: "show test data", checked: showTestData, onCheck: () => this.setState(({ showTestData }) => ({ showTestData: !showTestData })) })),
+                    React.createElement(Toolbar_1.ToolbarGroup, null,
+                        React.createElement(Toolbar_1.ToolbarSeparator, null),
+                        React.createElement(FlatButton_1.default, { label: isTraining ? 'stop' : 'train', onClick: this.playToggle.bind(this) }),
+                        React.createElement(FlatButton_1.default, { label: "reset", onClick: () => this.reset(), secondary: true }),
+                        React.createElement(FlatButton_1.default, { label: "step+", disabled: isTraining, onClick: this.singleStepTrain.bind(this) }))),
+                React.createElement(DataPlot_1.DataPlot, Object.assign({ a: a.dataSync()[0], b: b.dataSync()[0], c: c.dataSync()[0], d: d.dataSync()[0], showTestData: showTestData }, otherState)))));
+    }
+}
+exports.PolynomialRegression = PolynomialRegression;
+
+});
+___scope___.file("modules/polynomial-regression/tensorflow/data.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tf = require("@tensorflow/tfjs");
+function generateData(coeff, sigma = 0.04) {
+    const numPoints = 120;
+    return tf.tidy(() => {
+        const [a, b, c, d] = [
+            tf.scalar(coeff.a), tf.scalar(coeff.b), tf.scalar(coeff.c),
+            tf.scalar(coeff.d)
+        ];
+        const xs = tf.randomUniform([numPoints], -1, 1);
+        // Generate polynomial data
+        const three = tf.scalar(3, 'int32');
+        const ys = a.mul(xs.pow(three))
+            .add(b.mul(xs.square()))
+            .add(c.mul(xs))
+            .add(d)
+            // Add random noise to the generated data
+            // to make the problem a bit more interesting
+            .add(tf.randomNormal([numPoints], 0, sigma));
+        // Normalize the y values to the range 0 to 1.
+        const ymin = ys.min();
+        const ymax = ys.max();
+        const yrange = ymax.sub(ymin);
+        const ysNormalized = ys.sub(ymin).div(yrange);
+        const trainXs = xs.slice(0, 100);
+        const testXs = xs.slice(100);
+        const trainYs = ysNormalized.slice(0, 100);
+        const testYs = ysNormalized.slice(100);
+        return {
+            trainXs,
+            trainYs,
+            testXs,
+            testYs
+        };
+    });
+}
+exports.generateData = generateData;
+
+});
+___scope___.file("modules/dashboard/tabs/SettingsTab.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
-const designer_screen_1 = require("../workflow-designer/components/workflow-toolbar/designer-screen");
-exports.CloudPage = mobx_react_1.observer((props) => React.createElement("div", null,
-    React.createElement(designer_screen_1.DesignerApp, null)));
+const theming_1 = require("theming");
+exports.SettingsTab = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null, "settings")));
+
+});
+___scope___.file("modules/dashboard/tabs/TrainTab.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const theming_1 = require("theming");
+exports.TrainTab = theming_1.withTheme(mobx_react_1.observer((props) => React.createElement("div", null, "train")));
+
+});
+___scope___.file("modules/datasets.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+exports.DatasetsPage = mobx_react_1.observer((props) => React.createElement("div", null,
+    React.createElement("p", null, "datasets"),
+    React.createElement("p", null, "manage data here across projects"),
+    React.createElement("p", null, "add connections, manage global datasets, etc "),
+    React.createElement("p", null, "adding project datasets will happen within the notebook module")));
+
+});
+___scope___.file("modules/notebook/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./Diagram"));
+__export(require("./Drawers"));
+__export(require("./Nodes"));
+__export(require("./View"));
+
+});
+___scope___.file("modules/notebook/Diagram/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./Canvas"));
+__export(require("./CogliteLinkFactory"));
+__export(require("./CogliteLinkModel"));
+__export(require("./CogliteNodeFactory"));
+__export(require("./CogliteNodeModel"));
+__export(require("./CogliteNodeWidget"));
+__export(require("./CoglitePortModel"));
+__export(require("./Default"));
+__export(require("./SimplePortFactory"));
+
+});
+___scope___.file("modules/notebook/Diagram/Default.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const storm_react_diagrams_1 = require("storm-react-diagrams");
+const CogliteLinkFactory_1 = require("./CogliteLinkFactory");
+// import the custom models
+const CogliteNodeFactory_1 = require("./CogliteNodeFactory");
+const CogliteNodeModel_1 = require("./CogliteNodeModel");
+const CoglitePortModel_1 = require("./CoglitePortModel");
+const SimplePortFactory_1 = require("./SimplePortFactory");
+exports.default = () => {
+    //1) setup the diagram engine
+    var engine = new storm_react_diagrams_1.DiagramEngine();
+    engine.installDefaultFactories();
+    // register some other factories as well
+    engine.registerLinkFactory(new CogliteLinkFactory_1.CogliteLinkFactory());
+    engine.registerPortFactory(new SimplePortFactory_1.SimplePortFactory("coglite", config => new CoglitePortModel_1.CoglitePortModel()));
+    engine.registerNodeFactory(new CogliteNodeFactory_1.CogliteNodeFactory());
+    //2) setup the diagram model
+    var model = new storm_react_diagrams_1.DiagramModel();
+    //3-A) create a default node
+    var node1 = new storm_react_diagrams_1.DefaultNodeModel("Node 1", "rgb(0,192,255)");
+    var port1 = node1.addOutPort("Out");
+    node1.setPosition(100, 150);
+    //3-B) create our new custom node
+    var node2 = new CogliteNodeModel_1.CogliteNodeModel("cogliteIn", "Coglite Transform block");
+    node2.setPosition(300, 108);
+    var node3 = new storm_react_diagrams_1.DefaultNodeModel("Node 3", "red");
+    var port3 = node3.addInPort("In");
+    node3.setPosition(550, 150);
+    var node4 = new CogliteNodeModel_1.CogliteNodeModel("cogliteOut", "Coglite Transform block");
+    node4.setPosition(50, 250);
+    //3-C) link the 2 nodes together
+    var link1 = port1.link(node2.getPort("leftTop"));
+    var link2 = port3.link(node2.getPort("rightBottom"));
+    var link3 = node4.getPort("rightTop").link(node2.getPort("leftBottom"));
+    //4) add the models to the root graph
+    model.addAll(node1, node2, node3, node4, link1, link2, link3);
+    //5) load model into engine
+    engine.setDiagramModel(model);
+    //6) render the diagram!
+    return React.createElement(storm_react_diagrams_1.DiagramWidget, { className: "srd-demo-canvas", diagramEngine: engine });
+};
+
+});
+___scope___.file("modules/notebook/Drawers/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./NodeDrawer"));
+
+});
+___scope___.file("modules/notebook/Nodes/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./Input"));
+__export(require("./Output"));
+
+});
+___scope___.file("modules/lab/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./lab"));
+
+});
+___scope___.file("modules/lab/lab.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const mobx_react_1 = require("mobx-react");
+const App_1 = require("./App");
+const design_1 = require("../../design");
+const toolbar_1 = require("./toolbar");
+exports.SettingsPage = mobx_react_1.observer((props) => React.createElement(design_1.FillParent, null,
+    React.createElement(toolbar_1.LabToolbar, null),
+    React.createElement(App_1.CogliteLabApp, null)));
+
+});
+___scope___.file("modules/lab/App.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_mosaic_component_1 = require("react-mosaic-component");
+//import {Mosaic, MosaicWindow} from './mosaic'
+//import './styles/index.css'
+//import './App.css';
+const React = require("react");
+require("react-dom");
+const design_1 = require("../../design");
+const ViewIdMosaic = react_mosaic_component_1.Mosaic.ofType();
+const ViewIdMosaicWindow = react_mosaic_component_1.MosaicWindow.ofType();
+const TITLE_MAP = {
+    a: 'Graph Window',
+    b: 'Populations',
+    c: 'Layout',
+    new: 'New Window',
+};
+class CogliteLabApp extends React.Component {
+    render() {
+        return (React.createElement("div", { style: { height: '100vh', display: 'flex' } },
+            React.createElement(design_1.VerticalStretch, null,
+                React.createElement("nav", { className: "pt-navbar" },
+                    React.createElement("div", { className: "pt-navbar-group pt-align-left" },
+                        React.createElement("div", { className: "pt-navbar-heading" }, "Untitled Lab"),
+                        React.createElement("span", { className: "pt-navbar-divider" }),
+                        React.createElement("div", { className: "pt-input-group" },
+                            React.createElement("span", { className: "pt-icon pt-icon-search" }),
+                            React.createElement("input", { type: "search", className: "pt-input pt-small", placeholder: "Search groups..." }))),
+                    React.createElement("div", { className: "pt-navbar-group pt-align-right" },
+                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-control" },
+                            React.createElement("span", null, "Configure Workspace")),
+                        React.createElement("div", { className: "pt-button-group pt-minimal" },
+                            React.createElement("a", { className: "pt-button pt-icon-undo", role: "button" }),
+                            React.createElement("a", { className: "pt-button pt-icon-redo", role: "button" })),
+                        React.createElement("span", { className: "pt-navbar-divider" }),
+                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-user" }),
+                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-help" }),
+                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-cog" }))),
+                React.createElement(ViewIdMosaic, { renderTile: (id, path) => (React.createElement(ViewIdMosaicWindow, { path: path, createNode: () => 'new', title: TITLE_MAP[id] },
+                        id === 'a' &&
+                            React.createElement("div", null, "ID: A"),
+                        id === 'b' &&
+                            React.createElement("div", null, "ID: B"),
+                        id === 'c' && React.createElement("h1", null, TITLE_MAP[id]))), initialValue: {
+                        direction: 'row',
+                        first: 'a',
+                        second: {
+                            direction: 'column',
+                            first: 'b',
+                            second: 'c',
+                        },
+                    } }))));
+    }
+}
+exports.CogliteLabApp = CogliteLabApp;
+
+});
+___scope___.file("modules/lab/toolbar.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const core_1 = require("@blueprintjs/core");
+const icons_1 = require("@blueprintjs/icons");
+const mobx_react_1 = require("mobx-react");
+exports.LabToolbar = mobx_react_1.observer((props) => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.CODE }),
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }),
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.SCATTER_PLOT }),
+    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }))));
 
 });
 ___scope___.file("modules/workflow-designer/components/workflow-toolbar/designer-screen.jsx", function(exports, require, module, __filename, __dirname){
@@ -7587,67 +9008,1304 @@ exports.StepList = StepList;
 //import { observable, computed } from 'mobx';
 
 });
-___scope___.file("modules/dashboard.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/App.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const mobx_react_1 = require("mobx-react");
-exports.DashboardPage = mobx_react_1.observer(props => React.createElement("div", null,
-    React.createElement("p", null, "Dashboard"),
-    React.createElement("p", null, "Recent Projects"),
-    React.createElement("p", null, "Reports"),
-    React.createElement("p", null, "Feeds"),
-    React.createElement("p", null, "Breadcrumbs / Progress for most recent project")));
+const material_ui_1 = require("material-ui");
+const ScatterPlot_1 = require("./ScatterPlot");
+const GridPlot_1 = require("./GridPlot");
+const DataTab_1 = require("./tabs/DataTab");
+const ModelTab_1 = require("./tabs/ModelTab");
+const TrainTab_1 = require("./tabs/TrainTab");
+const SettingsTab_1 = require("./tabs/SettingsTab");
+const lib_1 = require("../../lib");
+const MuiThemeProvider_1 = require("material-ui/styles/MuiThemeProvider");
+const style = require("./App.scss");
+const react_splitter_layout_1 = require("react-splitter-layout");
+const design_1 = require("../../design");
+const lib_2 = require("typestyle/lib");
+const csstips_1 = require("csstips");
+class SOMDesigner extends React.Component {
+    constructor(props) {
+        super(props);
+        this.som = new lib_1.SOMController();
+        this.errorPrecision = {
+            animating: 100,
+            idle: 1000
+        };
+        this.state = {
+            animationInterval: null,
+            stepAnimationInterval: null,
+            animationSpeed: 1,
+            datasetRevision: 0,
+            modelRevision: 0,
+            selectedDatasource: null,
+            quantizationError: 0,
+            topographicError: 0,
+            displayMap: true,
+            displayUMatrix: true
+        };
+    }
+    initializeModel() {
+        this.som.initialize();
+        this.recalculateError(this.errorPrecision.idle);
+    }
+    componentDidMount() {
+        this.initializeModel();
+    }
+    recalculateError(sampleCount) {
+        let { eQ, eT } = this.som.getErrors();
+        this.setState({
+            quantizationError: eQ,
+            topographicError: eT
+        });
+    }
+    startAnimating() {
+        if (this.isAnimating || this.som.trainer.hasFinished)
+            return;
+        let animationCounter = 0;
+        this.setState({
+            animationInterval: setInterval(() => {
+                if (this.som.trainer.hasFinished) {
+                    this.stopAnimating();
+                    return;
+                }
+                animationCounter += this.state.animationSpeed;
+                let iterationCount = Math.floor(animationCounter);
+                this.som.iterate(iterationCount);
+                this.recalculateError(this.errorPrecision.animating);
+                animationCounter -= iterationCount;
+                console.log(animationCounter);
+            }, 1000 / 30)
+        });
+    }
+    stopAnimating() {
+        clearInterval(this.state.animationInterval);
+        this.recalculateError(this.errorPrecision.idle);
+        this.setState({ animationInterval: null });
+    }
+    iterateSingle() {
+        if (this.state.stepAnimationInterval !== null)
+            // already animating
+            return;
+        let targetWeightMatrix = this.som.model.weightMatrix.cloneWithoutData();
+        this.som.trainer.iterate(1, targetWeightMatrix);
+        // perform animation
+        let t = 0;
+        let prevE = 0;
+        this.setState({
+            stepAnimationInterval: setInterval(() => {
+                // calculate interpolation parameters
+                let e = t < 0.5 ? 4 * Math.pow(t, 3) : 4 * Math.pow(t - 1, 3) + 1;
+                let aFactor = (1 - e) / (1 - prevE);
+                let bFactor = (e - prevE) / (1 - prevE);
+                prevE = e;
+                // update neuron weights
+                for (let neuronIndex = 0; neuronIndex < this.som.model.neuronCount; ++neuronIndex) {
+                    let target = targetWeightMatrix.getRow(neuronIndex);
+                    target.forEach((b, dim) => {
+                        let a = this.som.model.weightMatrix.get(neuronIndex, dim);
+                        this.som.model.weightMatrix.set(neuronIndex, dim, a * aFactor + b * bFactor);
+                    });
+                }
+                ;
+                if (t >= 1) {
+                    clearInterval(this.state.stepAnimationInterval);
+                    this.recalculateError(this.errorPrecision.idle);
+                    this.setState({
+                        stepAnimationInterval: null
+                    });
+                    return;
+                }
+                else
+                    this.forceUpdate();
+                t += 0.05; // @todo Magic constant
+            }, 1000 / 30)
+        });
+    }
+    get isAnimating() {
+        return this.state.animationInterval !== null;
+    }
+    reset() {
+        this.stopAnimating();
+        this.initializeModel();
+    }
+    render() {
+        let gridScale = Math.floor(256 / Math.sqrt(Math.pow(this.som.model.width, 2) +
+            Math.pow(this.som.model.height, 2)));
+        return (React.createElement(MuiThemeProvider_1.default, null,
+            React.createElement("div", null,
+                React.createElement(react_splitter_layout_1.default, { percentage: true, secondaryInitialSize: 25, style: { height: '100%', position: 'relative', display: 'flex', flexDirection: 'row' } },
+                    React.createElement(design_1.FillParent, null,
+                        React.createElement("div", { className: style["main-view"] },
+                            React.createElement(ScatterPlot_1.ScatterPlot, { dataset: this.som.dataset, datasetRevision: this.state.datasetRevision, currentSample: this.som.trainer.currentSample, model: this.som.model, modelRevision: this.state.modelRevision, animating: this.state.animationInterval !== null ||
+                                    this.state.stepAnimationInterval !== null })),
+                        React.createElement("div", { className: style["grid-plot"] },
+                            React.createElement(GridPlot_1.GridPlot, { model: this.som.model, tileWidth: gridScale, tileHeight: gridScale, width: this.som.model.width, height: this.som.model.height, displayMap: this.state.displayMap, displayUMatrix: this.state.displayUMatrix }))),
+                    React.createElement(design_1.FillParent, null,
+                        React.createElement("div", { className: lib_2.style(csstips_1.flex, csstips_1.vertical) },
+                            React.createElement("div", { className: style["sidebar"] },
+                                React.createElement(material_ui_1.Tabs, { style: { height: "100%", overflow: "scroll" } },
+                                    React.createElement(material_ui_1.Tab, { icon: React.createElement(material_ui_1.FontIcon, { className: "material-icons" }, "pie_chart"), label: "DATA" },
+                                        React.createElement(DataTab_1.DataTab, { dataset: this.som.dataset, revision: this.state.datasetRevision, onUpdate: () => {
+                                                this.initializeModel();
+                                                this.setState({ datasetRevision: this.state.datasetRevision + 1 });
+                                            }, onSelect: selectedDatasource => this.setState({ selectedDatasource }) })),
+                                    React.createElement(material_ui_1.Tab, { icon: React.createElement(material_ui_1.FontIcon, { className: "material-icons" }, "apps"), label: "MODEL" },
+                                        React.createElement(ModelTab_1.ModelTab, { model: this.som.model, initializer: this.som.initializer, trainer: this.som.trainer, modelRevision: this.state.modelRevision, onUpdateModel: () => {
+                                                this.initializeModel();
+                                                this.setState({ modelRevision: this.state.modelRevision + 1 });
+                                            }, onUpdateTrainer: () => {
+                                                this.forceUpdate();
+                                            }, onChangeInitializer: initializer => {
+                                                this.som.initializer = initializer;
+                                                this.initializeModel();
+                                            } })),
+                                    React.createElement(material_ui_1.Tab, { icon: React.createElement(material_ui_1.FontIcon, { className: "material-icons" }, "last_page"), label: "TRAIN" },
+                                        React.createElement(TrainTab_1.TrainTab, { trainer: this.som.trainer, quantizationError: this.state.quantizationError, topographicError: this.state.topographicError, isTraining: this.isAnimating, animationSpeed: this.state.animationSpeed, setAnimationSpeed: animationSpeed => this.setState({ animationSpeed }), startTraining: () => this.startAnimating(), endTraining: () => this.stopAnimating(), iterateSingle: () => this.iterateSingle(), reset: () => this.reset() })),
+                                    React.createElement(material_ui_1.Tab, { icon: React.createElement(material_ui_1.FontIcon, { className: "material-icons" }, "settings"), label: "OTHER" },
+                                        React.createElement(SettingsTab_1.SettingsTab, { displayMap: this.state.displayMap, displayUMatrix: this.state.displayUMatrix, onUpdateDisplayMap: displayMap => this.setState({ displayMap }), onUpdateDisplayUMatrix: displayUMatrix => this.setState({ displayUMatrix }) }))))))))));
+    }
+}
+exports.SOMDesigner = SOMDesigner;
 
 });
-___scope___.file("modules/datasets.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/ScatterPlot.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const mobx_react_1 = require("mobx-react");
-exports.DatasetsPage = mobx_react_1.observer(props => React.createElement("div", null,
-    React.createElement("p", null, "datasets"),
-    React.createElement("p", null, "manage data here across projects"),
-    React.createElement("p", null, "add connections, manage global datasets, etc "),
-    React.createElement("p", null, "adding project datasets will happen within the notebook module")));
+const THREE = require("three");
+class ScatterPlot extends React.Component {
+    constructor(props) {
+        super(props);
+        this.isDirty = true;
+        // initialize camera
+        this.camera = new THREE.PerspectiveCamera(30, 1, 1, 10000);
+        this.camera.position.z = 3;
+        this.camera.position.x = -1;
+        this.camera.position.y = 1;
+        // initialize scene
+        this.scene = new THREE.Scene();
+        // initialize scatter plot
+        this.scatterPlot = new THREE.Object3D();
+        this.scatterPlot.rotation.y = 0;
+        this.scene.add(this.scatterPlot);
+        // others
+        this.initializeCoordinateSystem();
+        this.updateDatasetGeometry();
+        this.initializeMapGeometry();
+        this.initializeSampleIndicatorGeometry();
+    }
+    initializeCoordinateSystem() {
+        function v(x, y, z) {
+            return new THREE.Vector3(x, y, z);
+        }
+        const vpts = {
+            min: { x: 0, y: 0, z: 0 },
+            max: { x: 1, y: 1, z: 1 }
+        };
+        let black = new THREE.Color(0, 0, 0);
+        let gray = new THREE.Color(0.8, 0.8, 0.8);
+        let lineGeo = new THREE.Geometry();
+        lineGeo.vertices.push(v(vpts.min.x, vpts.min.y, vpts.min.z), v(vpts.max.x, vpts.min.y, vpts.min.z), v(vpts.min.x, vpts.min.y, vpts.min.z), v(vpts.min.x, vpts.max.y, vpts.min.z), v(vpts.min.x, vpts.min.y, vpts.min.z), v(vpts.min.x, vpts.min.y, vpts.max.z));
+        for (let i = 0; i < 6; ++i)
+            lineGeo.colors.push(black);
+        let axes = ["x", "y", "z"];
+        axes.forEach(axis => {
+            let others = axes.filter(a => a !== axis);
+            for (let value = vpts.min[axis] + 0.1; value < vpts.max[axis]; value += 0.1) {
+                others.forEach(otherAxis => {
+                    let a = Object.assign({}, vpts.min);
+                    let b = Object.assign({}, vpts.min);
+                    a[axis] = value;
+                    b[axis] = value;
+                    a[otherAxis] = vpts.min[otherAxis];
+                    b[otherAxis] = vpts.max[otherAxis];
+                    lineGeo.vertices.push(v(a.x, a.y, a.z), v(b.x, b.y, b.z));
+                    lineGeo.colors.push(gray, gray);
+                });
+            }
+        });
+        lineGeo.applyMatrix(new THREE.Matrix4().makeTranslation(-0.5, -0.5, -0.5));
+        let lineMat = new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            vertexColors: THREE.VertexColors,
+            linewidth: 2
+        });
+        this.coordinateSystem = new THREE.Line(lineGeo, lineMat, THREE.LinePieces);
+        this.scatterPlot.add(this.coordinateSystem);
+    }
+    updateDatasetGeometry() {
+        let needsNewGeometry = !this.datasetGeometry || this.datasetGeometry.vertices.length !== this.props.dataset.sampleCount;
+        if (needsNewGeometry) {
+            // create new geometry
+            if (this.datasetPoints)
+                this.scatterPlot.remove(this.datasetPoints);
+            let mat = new THREE.PointsMaterial({
+                color: 0x222222,
+                size: 0.01
+            });
+            this.datasetGeometry = new THREE.Geometry();
+            for (let i = 0; i < this.props.dataset.sampleCount; ++i) {
+                let [x, y, z] = this.props.dataset.getSample(i);
+                this.datasetGeometry.vertices.push(new THREE.Vector3(x, y, z));
+            }
+            this.datasetPoints = new THREE.Points(this.datasetGeometry, mat);
+            this.scatterPlot.add(this.datasetPoints);
+        }
+        else {
+            // update existing geometry
+            for (let i = 0; i < this.props.dataset.sampleCount; ++i) {
+                let vertex = this.datasetGeometry.vertices[i];
+                [vertex.x, vertex.y, vertex.z] = this.props.dataset.getSample(i);
+            }
+            this.datasetGeometry.verticesNeedUpdate = true;
+        }
+        this.datasetGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(-0.5, -0.5, -0.5));
+    }
+    initializeMapGeometry() {
+        this.weightsToVectors = new Map();
+        this.mapGeometry = new THREE.Geometry();
+        for (let i = 0; i < this.props.model.neuronCount; ++i) {
+            if (!this.weightsToVectors.has(i))
+                this.weightsToVectors.set(i, new Set());
+            for (let j = 0; j < this.props.model.neuronCount; ++j) {
+                if (!this.weightsToVectors.has(j))
+                    this.weightsToVectors.set(j, new Set());
+                if (this.props.model.distanceMatrix.get(i, j) <= 1) {
+                    let iW = this.props.model.weightMatrix.getRow(i);
+                    let jW = this.props.model.weightMatrix.getRow(j);
+                    let iWT = new THREE.Vector3(iW[0], iW[1], iW[2]);
+                    let jWT = new THREE.Vector3(jW[0], jW[1], jW[2]);
+                    this.weightsToVectors.get(i).add(iWT);
+                    this.weightsToVectors.get(j).add(jWT);
+                    this.mapGeometry.vertices.push(iWT, jWT);
+                }
+            }
+            ;
+        }
+        ;
+        let lineMat = new THREE.LineBasicMaterial({
+            color: 0xff0000,
+            linewidth: 1
+        });
+        this.mapGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(-0.5, -0.5, -0.5));
+        if (this.mapLineSegments)
+            this.scatterPlot.remove(this.mapLineSegments);
+        this.mapLineSegments = new THREE.LineSegments(this.mapGeometry, lineMat);
+        this.scatterPlot.add(this.mapLineSegments);
+    }
+    updateMapGeometry() {
+        [...this.weightsToVectors].forEach(([neuronIndex, tvs]) => {
+            let weights = this.props.model.weightMatrix.getRow(neuronIndex);
+            tvs.forEach(tv => {
+                tv.x = weights[0] - 0.5;
+                tv.y = weights[1] - 0.5;
+                tv.z = weights[2] - 0.5;
+            });
+        });
+        this.mapGeometry.verticesNeedUpdate = true;
+    }
+    updateAspectRatio() {
+        let canvas = this.refs["canvas"];
+        let w = canvas.width, h = canvas.height;
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(w, h);
+        canvas.style.width = "";
+        canvas.style.height = "";
+        this.isDirty = true;
+    }
+    componentDidMount() {
+        let canvas = this.refs["canvas"];
+        // initialize renderer
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            canvas
+        });
+        this.renderer.setClearColor(0xEEEEEE, 1.0);
+        // update canvas resolution on resize
+        let resizeTimeout;
+        window.addEventListener("resize", e => {
+            // throttle to improve performance
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                console.log("resize");
+                this.resizeCanvas();
+            }, 500);
+        });
+        this.resizeCanvas();
+        // drag handlers
+        let down = false;
+        let sx = 0, sy = 0;
+        canvas.onmousedown = ev => {
+            down = true;
+            dx = 0;
+            dy = 0;
+            sx = ev.clientX;
+            sy = ev.clientY;
+        };
+        window.onmouseup = () => {
+            down = false;
+        };
+        let dx = 0, dy = 0;
+        let lastMouseMove = new Date().getTime();
+        window.onmousemove = ev => {
+            let t = new Date().getTime();
+            let deltaT = t - lastMouseMove;
+            lastMouseMove = t;
+            if (down) {
+                let timeFactor = Math.max(deltaT / 1000 * 60, 0.001);
+                dx = (ev.clientX - sx) / timeFactor;
+                dy = (ev.clientY - sy) / timeFactor;
+                this.scatterPlot.rotation.y += dx * timeFactor * 0.01;
+                this.camera.position.y += dy * timeFactor * 0.01;
+                const softMax = (a, max) => max * (1 / (1 + Math.exp(-4 * a / max)) - 1 / 2);
+                dx = softMax(dx * 0.5, 40);
+                dy = softMax(dy * 0.5, 40);
+                sx = ev.clientX;
+                sy = ev.clientY;
+            }
+        };
+        let lastT = new Date().getTime();
+        const animate = () => {
+            let t = new Date().getTime();
+            let deltaT = t - lastT;
+            lastT = t;
+            if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
+                // stop moving
+                dx = 0;
+                dy = 0;
+            }
+            if (this.isDirty ||
+                down ||
+                dx !== 0 || dy !== 0 ||
+                this.props.animating) {
+                this.isDirty = false;
+                if (!down) {
+                    let timeFactor = deltaT / 1000 * 60;
+                    dx *= Math.pow(0.99, timeFactor);
+                    dy *= Math.pow(0.95, timeFactor);
+                    this.scatterPlot.rotation.y += dx * 0.01 * timeFactor;
+                    this.camera.position.y += dy * 0.01 * timeFactor;
+                }
+                this.updateMapGeometry();
+                this.renderer.clear();
+                this.camera.lookAt(this.scene.position);
+                this.renderer.render(this.scene, this.camera);
+            }
+            window.requestAnimationFrame(animate);
+        };
+        animate();
+    }
+    resizeCanvas() {
+        let canvas = this.refs["canvas"];
+        let rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * 2;
+        canvas.height = rect.height * 2;
+        this.updateAspectRatio();
+    }
+    initializeSampleIndicatorGeometry() {
+        let mat = new THREE.PointsMaterial({
+            color: 0xFF00FF,
+            size: 0.05
+        });
+        this.sampleIndicatorGeometry = new THREE.Geometry();
+        this.sampleIndicatorGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
+        this.sampleIndicatorPoints = new THREE.Points(this.sampleIndicatorGeometry, mat);
+    }
+    updateCurrentSample(currentSample) {
+        if (!currentSample) {
+            this.scatterPlot.remove(this.sampleIndicatorPoints);
+            return;
+        }
+        let vertex = this.sampleIndicatorGeometry.vertices[0];
+        [vertex.x, vertex.y, vertex.z] = currentSample;
+        this.sampleIndicatorGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(-0.5, -0.5, -0.5));
+        if (this.scatterPlot.children.indexOf(this.sampleIndicatorPoints) > -1) {
+            this.sampleIndicatorGeometry.verticesNeedUpdate = true;
+        }
+        else {
+            this.scatterPlot.add(this.sampleIndicatorPoints);
+        }
+    }
+    componentWillReceiveProps(props) {
+        if (this.props.datasetRevision !== props.datasetRevision)
+            // dataset was updated
+            this.updateDatasetGeometry();
+        if (this.props.modelRevision !== props.modelRevision)
+            // model dimensions were updated
+            this.initializeMapGeometry();
+        if (this.props.currentSample !== props.currentSample)
+            // update current sample
+            this.updateCurrentSample(props.currentSample);
+        this.isDirty = true;
+    }
+    shouldComponentUpdate() {
+        return false;
+    }
+    render() {
+        return React.createElement("canvas", { ref: "canvas" });
+    }
+}
+exports.ScatterPlot = ScatterPlot;
 
 });
-___scope___.file("modules/notebook.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/GridPlot.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-exports.NotebookPage = props => React.createElement("div", null,
-    React.createElement("h2", null, "Notebook Page"));
+class GridPlot extends React.Component {
+    colorForNeuron(neuronIndex, model) {
+        return "rgb(" +
+            model.weightMatrix.getRow(neuronIndex)
+                .map(v => Math.max(0, Math.min(Math.floor(v * 255), 255)))
+                .join(", ") +
+            ")";
+    }
+    avgDistForNeuron(neuronIndex, model) {
+        let weights = model.weightMatrix.getRow(neuronIndex);
+        let distances = [];
+        for (let i = 0; i < model.neuronCount; ++i)
+            if (i !== neuronIndex && model.distanceMatrix.get(neuronIndex, i) <= 1) {
+                let w = model.weightMatrix.getRow(i);
+                let dist = weights.reduce((sum, v, i) => sum + Math.pow((v - w[i]), 2), 0);
+                distances.push(Math.sqrt(dist));
+            }
+        return distances.reduce((sum, v) => sum + v, 0) / distances.length;
+    }
+    redraw(props) {
+        let width = 0;
+        width += props.displayMap ? 1 : 0;
+        width += props.displayUMatrix ? 1 : 0;
+        let canvas = this.refs["canvas"];
+        canvas.width = width * props.width * props.tileWidth;
+        canvas.height = props.height * props.tileHeight;
+        let ctx = canvas.getContext("2d");
+        let umatrix = new Map();
+        let minDist = 0, maxDist = 0;
+        if (props.displayUMatrix) {
+            for (let i = 0; i < props.model.neuronCount; ++i)
+                umatrix.set(i, this.avgDistForNeuron(i, props.model));
+            let v = [...umatrix.values()].sort((a, b) => a - b);
+            minDist = v.shift();
+            maxDist = v.pop();
+        }
+        // redraw canvas
+        for (let neuronIndex = 0; neuronIndex < props.model.neuronCount; ++neuronIndex) {
+            let xOffset = 0;
+            let [x, y] = props.model.neuronPositionInLattice(neuronIndex);
+            if (props.displayMap) {
+                ctx.fillStyle = this.colorForNeuron(neuronIndex, props.model);
+                ctx.fillRect(xOffset + x * props.tileWidth, y * props.tileHeight, props.tileWidth, props.tileHeight);
+                xOffset += props.width * props.tileWidth;
+            }
+            if (props.displayUMatrix) {
+                let normDist = (umatrix.get(neuronIndex) - minDist) / (maxDist - minDist);
+                let shade = Math.floor(normDist * 255);
+                ctx.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
+                ctx.fillRect(xOffset + x * props.tileWidth, y * props.tileHeight, props.tileWidth, props.tileHeight);
+                xOffset += props.width * props.tileWidth;
+            }
+        }
+    }
+    componentDidMount() {
+        this.redraw(this.props);
+    }
+    componentWillReceiveProps(props) {
+        this.redraw(props);
+    }
+    shouldComponentUpdate() {
+        return false;
+    }
+    render() {
+        return React.createElement("canvas", { ref: "canvas", width: 0, height: 0 });
+    }
+}
+exports.GridPlot = GridPlot;
 
 });
-___scope___.file("modules/lab/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/tabs/DataTab.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const Popover_1 = require("material-ui/Popover");
+const Slider_1 = require("material-ui/Slider");
+const IconMenu_1 = require("material-ui/IconMenu");
+const MenuItem_1 = require("material-ui/MenuItem");
+const FontIcon_1 = require("material-ui/FontIcon");
+const Subheader_1 = require("material-ui/Subheader");
+const Divider_1 = require("material-ui/Divider");
+const Toolbar_1 = require("material-ui/Toolbar");
+const Dialog_1 = require("material-ui/Dialog");
+const FlatButton_1 = require("material-ui/FlatButton");
+const lib_1 = require("../../../lib");
+const LogSlider_1 = require("../LogSlider");
+const NumberInput_1 = require("../NumberInput");
+const style = require("./DataTab.scss");
+//const MonacoEditor = require("react-monaco-editor").default;
+const ronaco_1 = require("ronaco");
+class WeightEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+            anchorElement: undefined
+        };
+    }
+    render() {
+        return React.createElement("div", { className: style["weight-editor"] },
+            React.createElement("div", { className: "color", style: {
+                    backgroundColor: `rgb(${this.props.weights.map(v => Math.round(v * 255)).join(", ")})`
+                }, onClick: e => this.setState({ open: true, anchorElement: e.currentTarget }) }),
+            React.createElement(Popover_1.default, { open: this.state.open, anchorEl: this.state.anchorElement, anchorOrigin: { horizontal: "left", vertical: "center" }, targetOrigin: { horizontal: "right", vertical: "center" }, onRequestClose: () => this.setState({ open: false }), style: {
+                    padding: "12px 0",
+                    overflow: "hidden"
+                } },
+                React.createElement("div", { className: style["we-popover-content"] },
+                    React.createElement("span", { className: "title" }, this.props.weights.map(w => w.toFixed(2)).join("/")),
+                    this.props.weights.map((weight, dim) => React.createElement("div", { key: dim, style: { paddingLeft: 20 }, className: "coordinate" },
+                        React.createElement("b", { className: "caption" }, ["X", "Y", "Z"][dim]),
+                        React.createElement(Slider_1.default, { defaultValue: weight, onChange: (e, newValue) => this.props.onChange(this.props.weights.map((prev, i) => i === dim ? newValue : prev)), style: {
+                                display: "inline-block",
+                                width: 200,
+                                verticalAlign: "middle",
+                                marginRight: 30
+                            }, sliderStyle: {
+                                margin: 4
+                            } }))))));
+    }
+}
+class ScriptEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            modalOpen: false
+        };
+    }
+    openModal() {
+        this.setState({ modalOpen: true });
+    }
+    closeModal() {
+        this.setState({ modalOpen: false });
+    }
+    editorDidMount(editor) {
+        let monaco = window.monaco;
+        monaco.languages.typescript.javascriptDefaults.addExtraLib(require("raw-loader!client/assets/script-environment.d.ts"));
+        editor.focus();
+    }
+    render() {
+        const options = {
+            selectOnLineNumbers: true
+        };
+        return React.createElement("div", null,
+            React.createElement("span", { className: "js-label", onClick: () => this.openModal() }, "JS"),
+            React.createElement(Dialog_1.default, { title: "Edit code", actions: [
+                    React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onClick: () => this.closeModal() }),
+                    React.createElement(FlatButton_1.default, { label: "Save", primary: true, keyboardFocused: true, onClick: () => {
+                            // commit code change
+                            this.props.source.code = this.newCode;
+                            this.closeModal();
+                            this.props.onUpdate();
+                        } })
+                ], modal: true, open: this.state.modalOpen, onRequestClose: () => this.closeModal() },
+                React.createElement(ronaco_1.MonacoEditor, { width: "100%", height: "600", language: "javascript", value: this.props.source.code, options: options, onChange: (v) => this.newCode = v, editorDidMount: (editor) => this.editorDidMount(editor) })));
+    }
+}
+class Example {
+}
+class DataTab extends React.Component {
+    renderSourceTitle(source) {
+        return React.createElement("span", { className: "title" },
+            React.createElement("span", { className: "cluster-type" }, "Cluster"),
+            " ",
+            "with",
+            React.createElement(NumberInput_1.NumberInput, { value: source.sampleCount, onChange: value => {
+                    source.sampleCount = value;
+                    this.props.onUpdate();
+                } }),
+            " datapoints");
+    }
+    renderClusterSource(source, key) {
+        return React.createElement("div", { key: key, className: style["datasource"] },
+            React.createElement(WeightEditor, { weights: source.center, onChange: weights => {
+                    source.center = weights;
+                    this.props.onUpdate();
+                } }),
+            React.createElement("div", { className: "content" },
+                this.renderSourceTitle(source),
+                React.createElement("div", null,
+                    React.createElement("span", null, "\u03C3"),
+                    React.createElement(LogSlider_1.LogSlider, { min: -4, max: 0, step: 0.1, value: source.stddev, onChange: (e, newValue) => {
+                            source.stddev = newValue;
+                            this.props.onUpdate();
+                        }, style: {
+                            display: "inline-block",
+                            width: "calc(100% - 60px)",
+                            verticalAlign: "middle",
+                            marginRight: 0
+                        }, sliderStyle: {
+                            margin: 4
+                        } }))));
+    }
+    renderCallbackSource(source, key) {
+        return React.createElement("div", { key: key, className: style["datasource"] },
+            React.createElement(ScriptEditor, { source: source, onUpdate: this.props.onUpdate }),
+            React.createElement("div", { className: "content" }, this.renderSourceTitle(source)));
+    }
+    renderSource(source, key) {
+        let interior = React.createElement("b", null, "Unknown datasource");
+        if (source instanceof lib_1.ClusterDatasetSource)
+            interior = this.renderClusterSource(source, key);
+        else if (source instanceof lib_1.CallbackDatasetSource)
+            interior = this.renderCallbackSource(source, key);
+        return React.createElement("div", null,
+            React.createElement(FontIcon_1.default, { className: "material-icons", style: { float: "right", zIndex: 1000 }, onClick: () => this.removeSource(source) }, "remove"),
+            interior);
+    }
+    addSource(source) {
+        this.props.dataset.sources.push(source);
+        this.props.onUpdate();
+    }
+    removeSource(source) {
+        let { dataset } = this.props;
+        dataset.sources = dataset.sources.filter(s => s !== source);
+        this.props.onUpdate();
+    }
+    removeAllSources() {
+        this.props.dataset.sources = [];
+        this.props.onUpdate();
+    }
+    renderToolbar() {
+        return React.createElement(Toolbar_1.Toolbar, { style: {
+                height: 36,
+                padding: "6px 8px",
+                lineHeight: "1em"
+            } },
+            React.createElement(Toolbar_1.ToolbarGroup, { firstChild: true, style: { marginLeft: 0 } },
+                React.createElement(Toolbar_1.ToolbarTitle, { text: `${this.props.dataset.sources.length} sources`, style: {
+                        fontSize: 12,
+                        lineHeight: "20px"
+                    } })),
+            React.createElement(Toolbar_1.ToolbarGroup, null,
+                React.createElement(IconMenu_1.default, { iconButtonElement: React.createElement(FontIcon_1.default, { style: { fontSize: 20, marginRight: 8 }, className: "material-icons" }, "add") },
+                    React.createElement(MenuItem_1.default, { value: "1", primaryText: "Cluster", onClick: () => this.addSource(new lib_1.ClusterDatasetSource(1000, [0, 0, 0], 0.1)) }),
+                    React.createElement(MenuItem_1.default, { value: "2", primaryText: "JavaScript", onClick: () => this.addSource(new lib_1.CallbackDatasetSource(1000, require("raw-loader!client/assets/examples/template.js"))) })),
+                React.createElement(IconMenu_1.default, { iconButtonElement: React.createElement(FontIcon_1.default, { style: { fontSize: 20 }, className: "material-icons" }, "expand_more") },
+                    React.createElement(MenuItem_1.default, { primaryText: "Remove all", onClick: () => this.removeAllSources() }),
+                    React.createElement(Divider_1.default, null),
+                    React.createElement(Subheader_1.default, null, "Examples"),
+                    DataTab.examples.map(example => React.createElement(MenuItem_1.default, { value: "1", primaryText: example.name, onClick: () => {
+                            this.props.dataset.sources = example.generate();
+                            this.props.onUpdate();
+                        } })))));
+    }
+    render() {
+        return React.createElement("div", null,
+            this.renderToolbar(),
+            React.createElement("div", { className: "sources" }, this.props.dataset.sources.map((source, key) => this.renderSource(source, key))));
+    }
+}
+DataTab.examples = [];
+exports.DataTab = DataTab;
+DataTab.examples.push(new class extends Example {
+    constructor() {
+        super(...arguments);
+        this.name = "Clusters";
+    }
+    generate() {
+        return [
+            new lib_1.ClusterDatasetSource(400, [0.80, 0.10, 0.10], 0.01),
+            new lib_1.ClusterDatasetSource(1000, [0.88, 0.50, 0.10], 0.02),
+            new lib_1.ClusterDatasetSource(1000, [1.00, 0.88, 0.39], 0.04),
+            new lib_1.ClusterDatasetSource(2000, [0.40, 0.30, 0.50], 0.08),
+            new lib_1.ClusterDatasetSource(1000, [0.35, 0.45, 0.75], 0.03),
+            new lib_1.ClusterDatasetSource(200, [0.49, 0.69, 0.21], 0.005)
+        ];
+    }
+});
+DataTab.examples.push(new class extends Example {
+    constructor() {
+        super(...arguments);
+        this.name = "JavaScript";
+    }
+    generate() {
+        return [
+            new lib_1.CallbackDatasetSource(10000, require("raw-loader!client/assets/examples/sin.js"))
+        ];
+    }
+});
+DataTab.examples.push(new class extends Example {
+    constructor() {
+        super(...arguments);
+        this.name = "Sphere";
+    }
+    generate() {
+        return [
+            new lib_1.CallbackDatasetSource(10000, require("raw-loader!client/assets/examples/sphere.js"))
+        ];
+    }
+});
+DataTab.examples.push(new class extends Example {
+    constructor() {
+        super(...arguments);
+        this.name = "Spiral";
+    }
+    generate() {
+        return [
+            new lib_1.CallbackDatasetSource(1000, require("raw-loader!client/assets/examples/spiral.js"))
+        ];
+    }
+});
+
+});
+___scope___.file("lib/index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./lab"));
+__export(require("./som"));
+__export(require("./SOMController"));
 
 });
-___scope___.file("modules/lab/lab.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("lib/som/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./Dataset"));
+__export(require("./DatasetSampler"));
+__export(require("./DatasetSource"));
+__export(require("./Initializer"));
+__export(require("./Lattice"));
+__export(require("./Matrix"));
+__export(require("./Model"));
+__export(require("./Trainer"));
+__export(require("./utils"));
+
+});
+___scope___.file("lib/som/Dataset.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const mobx_react_1 = require("mobx-react");
-const App_1 = require("./App");
-const design_1 = require("../../design");
-const toolbar_1 = require("./toolbar");
-exports.SettingsPage = mobx_react_1.observer((props) => React.createElement(design_1.FillParent, null,
-    React.createElement(toolbar_1.LabToolbar, null),
-    React.createElement(App_1.CogliteLabApp, null)));
+/** Represents a set of datapoints. */
+class Dataset {
+    constructor(sources) {
+        this.sources = sources;
+    }
+    get sampleCount() {
+        return this.sources.reduce((sum, source) => sum + source.sampleCount, 0);
+    }
+    getSample(sampleIndex) {
+        let sourceIndex = 0;
+        while (sourceIndex < this.sources.length) {
+            let source = this.sources[sourceIndex++];
+            if (source.sampleCount > sampleIndex)
+                return source.getSample(sampleIndex);
+            sampleIndex -= source.sampleCount;
+        }
+        throw new Error("Sample index out of bounds");
+    }
+    getAllSamples() {
+        let matrix = [];
+        for (let i = 0; i < this.sampleCount; ++i)
+            matrix[i] = this.getSample(i);
+        return matrix;
+    }
+}
+exports.Dataset = Dataset;
 
 });
-___scope___.file("modules/lab/App.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("lib/som/DatasetSampler.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/** Provides a stream of datapoints from a `Dataset`. */
+class DatasetSampler {
+    constructor(dataset) {
+        this.dataset = dataset;
+    }
+}
+exports.DatasetSampler = DatasetSampler;
+//export default DatasetSampler;
+/** Returns a random datapoint from the `Dataset` on each request. */
+class BootstrapDatasetSampler extends DatasetSampler {
+    nextSample() {
+        return this.dataset.getSample(Math.floor(Math.random() * this.dataset.sampleCount));
+    }
+}
+exports.BootstrapDatasetSampler = BootstrapDatasetSampler;
+
+});
+___scope___.file("lib/som/DatasetSource.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class DatasetSource {
+    constructor(sampleCount) {
+        this.sampleCount = sampleCount;
+    }
+}
+exports.DatasetSource = DatasetSource;
+exports.default = DatasetSource;
+var Distribution;
+(function (Distribution) {
+    Distribution[Distribution["UNIFORM"] = 0] = "UNIFORM";
+    Distribution[Distribution["GAUSSIAN"] = 1] = "GAUSSIAN";
+})(Distribution = exports.Distribution || (exports.Distribution = {}));
+class RandomDatasetSource extends DatasetSource {
+    constructor() {
+        super(...arguments);
+        this.randomValues = new Map();
+    }
+    getRandomValue(index, distribution = Distribution.GAUSSIAN) {
+        if (!this.randomValues.has(index))
+            this.randomValues.set(index, this.generateRandomValue(distribution));
+        return this.randomValues.get(index);
+    }
+    generateRandomValue(distribution) {
+        switch (distribution) {
+            case Distribution.UNIFORM: return Math.random();
+            case Distribution.GAUSSIAN: { // Box-Muller
+                let u1 = 1.0 - Math.random();
+                let u2 = 1.0 - Math.random();
+                return Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+            }
+        }
+    }
+}
+exports.RandomDatasetSource = RandomDatasetSource;
+class ClusterDatasetSource extends RandomDatasetSource {
+    constructor(sampleCount, center, stddev) {
+        super(sampleCount);
+        this.center = center;
+        this.stddev = stddev;
+    }
+    getSample(index) {
+        return this.center.map((v, i) => v + this.getRandomValue(index * this.center.length + i, Distribution.GAUSSIAN) * this.stddev);
+    }
+}
+exports.ClusterDatasetSource = ClusterDatasetSource;
+class CallbackDatasetSource extends RandomDatasetSource {
+    constructor(sampleCount, code) {
+        super(sampleCount);
+        this.code = code;
+    }
+    set code(code) {
+        // we provide "source" because there seems to be no way to specify the "this"-context for monaco-editor
+        // we provide "Distribution"" because there seems to be no other way to add something to the context of a function
+        this._callback = new Function("index", "source", "Distribution", code);
+        this._code = code;
+    }
+    get code() {
+        return this._code;
+    }
+    getSample(index) {
+        return this._callback(index, this, Distribution);
+    }
+}
+exports.CallbackDatasetSource = CallbackDatasetSource;
+
+});
+___scope___.file("lib/som/Initializer.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const PCA_1 = require("./utils/PCA");
+/** Used to initialize a `Model`. */
+class Initializer {
+}
+exports.Initializer = Initializer;
+//export default Initializer
+/** Initializes all neuron weights to random positions. */
+class RandomInitializer extends Initializer {
+    performInitialization(dataset, model) {
+        for (let neuronIndex = 0; neuronIndex < model.neuronCount; ++neuronIndex)
+            for (let dim = 0; dim < model.dataDimension; ++dim)
+                model.weightMatrix.set(neuronIndex, dim, Math.random());
+    }
+}
+exports.RandomInitializer = RandomInitializer;
+/** Initializes all neuron weights using a PCA dimension reduction. */
+class PCAInitializer extends Initializer {
+    performInitialization(dataset, model) {
+        let pca;
+        try {
+            pca = new PCA_1.PCA(dataset.getAllSamples(), 2);
+        }
+        catch (e) {
+            console.warn(e);
+            // no PCA convergence
+            return;
+        }
+        for (let x = 0; x < model.width; ++x)
+            for (let y = 0; y < model.height; ++y) {
+                let weights = pca.recover([(x + 0.5) / model.width, (y + 0.5) / model.height]);
+                weights.forEach((weight, dim) => model.weightMatrix.set(model.getNeuronIndex(x, y), dim, weight));
+            }
+    }
+}
+exports.PCAInitializer = PCAInitializer;
+
+});
+___scope___.file("lib/som/utils/PCA.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const numeric = require("numericjs");
+class PCA {
+    constructor(data, k // reduction
+    ) {
+        this.k = k;
+        // normalize data
+        this.means = PCA.mean(data);
+        data = data.map(row => row.map((v, i) => v - this.means[i]));
+        this.stddevs = PCA.squareMean(data).map(Math.sqrt);
+        data.forEach(row => row.forEach((v, i) => row[i] /= this.stddevs[i]));
+        this.data = data;
+        // do PCA
+        let m = data.length;
+        let sigma = numeric.div(numeric.dot(numeric.transpose(data), data), m);
+        this.U = numeric.svd(sigma).U.map(row => row.slice(0, k));
+        // find min/max
+        let projected = numeric.dot(this.data, this.U);
+        this.min = [...projected[0]];
+        this.max = [...projected[0]];
+        projected.forEach(row => row.forEach((v, i) => {
+            if (this.min[i] > v)
+                this.min[i] = v;
+            else if (this.max[i] < v)
+                this.max[i] = v;
+        }));
+    }
+    static mean(data) {
+        return data
+            .reduce((sum, row) => {
+            for (let i = 0; i < sum.length; ++i)
+                sum[i] += row[i];
+            return sum;
+        }, data[0].map(v => 0))
+            .map(v => v / data.length);
+    }
+    static squareMean(data) {
+        return data
+            .reduce((sum, row) => {
+            for (let i = 0; i < sum.length; ++i)
+                sum[i] += row[i] * row[i];
+            return sum;
+        }, data[0].map(v => 0))
+            .map(v => v / data.length);
+    }
+    recover(vector) {
+        vector = vector.map((v, i) => v * (this.max[i] - this.min[i]) + this.min[i]);
+        let raw = numeric.dot(vector, numeric.transpose(this.U));
+        return raw.map((v, i) => v * this.stddevs[i] + this.means[i]);
+    }
+}
+exports.PCA = PCA;
+
+});
+___scope___.file("lib/som/Lattice.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Lattice {
+}
+exports.Lattice = Lattice;
+//export default Lattice;
+class SquareLattice extends Lattice {
+    calculatePosition(x, y) {
+        return [x, y];
+    }
+}
+exports.SquareLattice = SquareLattice;
+class HexagonalLattice extends Lattice {
+    calculatePosition(x, y) {
+        return [
+            x + (y % 2) * HexagonalLattice.X_OFFSET,
+            y * HexagonalLattice.Y_OFFSET
+        ];
+    }
+}
+HexagonalLattice.X_OFFSET = Math.cos(Math.PI / 3);
+HexagonalLattice.Y_OFFSET = Math.sin(Math.PI / 3);
+exports.HexagonalLattice = HexagonalLattice;
+
+});
+___scope___.file("lib/som/Matrix.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Matrix {
+    constructor(
+    /** The constructor for the kind of ArrayBufferView to be used with this Matrix. */
+    arrayConstructor, 
+    /** The vertical dimension of the matrix. */
+    rows, 
+    /** The horizontal dimension of the matrix. */
+    columns, 
+    /** Buffer for the ArrayBufferView. */
+    buffer = new ArrayBuffer(arrayConstructor.BYTES_PER_ELEMENT * columns * rows)) {
+        this.arrayConstructor = arrayConstructor;
+        this.rows = rows;
+        this.columns = columns;
+        this.buffer = buffer;
+        this.data = new arrayConstructor(this.buffer);
+    }
+    /** Sets a single element in the matrix. */
+    set(row, col, value) {
+        this.data[col + row * this.columns] = value;
+    }
+    /** Returns a single element from the matrix. */
+    get(row, col) {
+        return this.data[col + row * this.columns];
+    }
+    /** Returns a row vector from the matrix. */
+    getRow(row) {
+        return this.data.slice(row * this.columns, (row + 1) * this.columns);
+    }
+    /** Returns a new matrix with identical dimensions and elements. */
+    clone() {
+        return new Matrix(this.arrayConstructor, this.rows, this.columns, this.buffer.slice(0));
+    }
+    /** Returns a new uninitialized matrix with identical dimensions. */
+    cloneWithoutData() {
+        return new Matrix(this.arrayConstructor, this.rows, this.columns);
+    }
+}
+exports.Matrix = Matrix;
+
+});
+___scope___.file("lib/som/Model.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Matrix_1 = require("./Matrix");
+/** Represents the model of a self-organizing map. */
+class Model {
+    constructor(width, height, lattice) {
+        /** The dimension the dataset and therefore the neurons' weights have. */
+        this.dataDimension = 3;
+        this._lattice = lattice;
+        this.setDimensions(width, height);
+    }
+    /** Contains the squared euclidean distance from a neuron to another neuron. */
+    get distanceMatrix() { return this._distanceMatrix; }
+    /** Contains the weight vectors (as row vectors) of all neurons. */
+    get weightMatrix() { return this._weightMatrix; }
+    get width() { return this._width; }
+    get height() { return this._height; }
+    get lattice() { return this._lattice; }
+    /**
+     * Resizes the model.
+     * Warning: This will reset the weight matrix.
+     */
+    setDimensions(width, height) {
+        this._width = width;
+        this._height = height;
+        // initialize distance matrix
+        this._distanceMatrix = new Matrix_1.Matrix(Float64Array, this.neuronCount, this.neuronCount);
+        this.calculateDistanceMatrix();
+        // allocate weight matrix
+        this._weightMatrix = new Matrix_1.Matrix(Float64Array, this.neuronCount, this.dataDimension);
+    }
+    /** Updates the lattice and causes the distanceMatrix to be recalculated. */
+    set lattice(lattice) {
+        this._lattice = lattice;
+        this.calculateDistanceMatrix();
+    }
+    neuronPositionInLattice(neuronIndex) {
+        return this.lattice.calculatePosition(neuronIndex % this.width, Math.floor(neuronIndex / this.width));
+    }
+    /** Populates the distanceMatrix. */
+    calculateDistanceMatrix() {
+        // from each neuron
+        for (let i = 0; i < this.neuronCount; ++i) {
+            let posI = this.neuronPositionInLattice(i);
+            // to each other neuron
+            for (let j = i; j < this.neuronCount; ++j) {
+                // calculate the distance
+                let posJ = this.neuronPositionInLattice(j);
+                let distSqr = Math.pow((posJ[0] - posI[0]), 2) + Math.pow((posJ[1] - posI[1]), 2);
+                this.distanceMatrix.set(i, j, distSqr);
+                this.distanceMatrix.set(j, i, distSqr);
+            }
+        }
+    }
+    /** Returns the count of neurons in this model. */
+    get neuronCount() {
+        return this.width * this.height;
+    }
+    /**
+     * Returns the index of the neuron (used as row index in matrices) at a given position.
+     * The position is the grid index (i. e. not processed by Lattice.calculatePosition).
+     */
+    getNeuronIndex(x, y) {
+        return x + y * this.width;
+    }
+    /**
+     * Returns the index of the neuron whose weights are closest to a given weight vector.
+     * @param excludeNeuron Will exclude a given neuron from the search (for example to find the second best matching unit).
+     */
+    findBestMatchingUnit(weights) {
+        let bmu = 0, dist = Infinity;
+        for (let i = 0; i < this.neuronCount; ++i) {
+            let d = this._weightMatrix.getRow(i).reduce((sum, v, i) => sum + Math.pow((weights[i] - v), 2), 0);
+            if (d < dist) {
+                dist = d;
+                bmu = i;
+            }
+        }
+        return bmu;
+    }
+    findBestMatchingUnits(weights, count) {
+        let dists = new Map();
+        let neurons = [];
+        for (let i = 0; i < this.neuronCount; ++i) {
+            let d = this._weightMatrix.getRow(i).reduce((sum, v, i) => sum + Math.pow((weights[i] - v), 2), 0);
+            dists.set(i, d);
+            neurons.push(i);
+        }
+        return neurons.sort((a, b) => dists.get(a) - dists.get(b)).slice(0, count);
+    }
+}
+exports.Model = Model;
+
+});
+___scope___.file("lib/som/Trainer.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const exponentialDecay = (value, t) => value.start * Math.pow(value.end / value.start, t);
+/** Used to train a `Model`. */
+class Trainer {
+    constructor(model, datasetSampler) {
+        this.model = model;
+        this.datasetSampler = datasetSampler;
+        this.currentIteration = 0;
+    }
+    /** Returns the learning rate for the current iteration. */
+    get learningRate() {
+        return exponentialDecay(this.learningRateBounds, this.progress);
+    }
+    /** Returns the neighbor size for the current iteration. */
+    get neighborSize() {
+        return exponentialDecay(this.neighborSizeBounds, this.progress);
+    }
+    /** Returns a number between [0;1] to denote current training progress. */
+    get progress() {
+        return this.currentIteration / this.maxIteration;
+    }
+    iterate(count, targetWeightMatrix = this.model.weightMatrix) {
+        count = Math.min(count, this.maxIteration - this.currentIteration);
+        let input;
+        for (let iteration = 0; iteration < count; ++iteration) {
+            // get a datapoint for this iteration
+            this.currentSample = input = this.datasetSampler.nextSample();
+            // get learning properties
+            let learningRate = this.learningRate;
+            let neighborSizeSqr = Math.pow(this.neighborSize, 2);
+            // find best matching unit
+            let bmu = this.model.findBestMatchingUnit(input);
+            for (let i = 0; i < this.model.neuronCount; ++i) {
+                // adjust every neuron's weights
+                let distSqr = this.model.distanceMatrix.get(bmu, i);
+                let exponent = -distSqr / (2 * neighborSizeSqr);
+                let df = exponent < -2.3 ? 0 : Math.exp(exponent);
+                let lf = 1.0 - learningRate * df;
+                for (let dim = 0; dim < this.model.dataDimension; ++dim)
+                    targetWeightMatrix.set(i, dim, 
+                    // blend between previous value and input vector
+                    this.model.weightMatrix.get(i, dim) * lf + input[dim] * (1 - lf));
+            }
+            // advance to next iteration
+            ++this.currentIteration;
+        }
+    }
+    get hasFinished() {
+        return this.currentIteration >= this.maxIteration;
+    }
+    reset() {
+        this.currentIteration = 0;
+    }
+}
+exports.Trainer = Trainer;
+
+});
+___scope___.file("lib/som/utils/index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./PCA"));
+
+});
+___scope___.file("lib/SOMController.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Model_1 = require("./som/Model");
+const Trainer_1 = require("./som/Trainer");
+const Dataset_1 = require("./som/Dataset");
+const DatasetSource_1 = require("./som/DatasetSource");
+const Lattice_1 = require("./som/Lattice");
+const DatasetSampler_1 = require("./som/DatasetSampler");
+const Initializer_1 = require("./som/Initializer");
+/** Controller for self-organizing maps. */
+class SOMController {
+    constructor() {
+        this.model = new Model_1.Model(12, 12, new Lattice_1.SquareLattice());
+        this.initializer = new Initializer_1.PCAInitializer();
+        let sources = [];
+        for (let i = 0; i < 6; ++i)
+            sources.push(new DatasetSource_1.ClusterDatasetSource(1000, [0, 0, 0].map(Math.random), 0.02));
+        this.dataset = new Dataset_1.Dataset(sources);
+        this.trainer = new Trainer_1.Trainer(this.model, new DatasetSampler_1.BootstrapDatasetSampler(this.dataset));
+        this.trainer.learningRateBounds = { start: 0.2, end: 0.02 };
+        this.trainer.neighborSizeBounds = { start: 4, end: 0.1 };
+        this.trainer.maxIteration = 5000;
+    }
+    initialize() {
+        this.initializer.performInitialization(this.dataset, this.model);
+        this.trainer.reset();
+    }
+    iterate(count) {
+        this.trainer.iterate(count);
+    }
+    getErrors(sampleCount = 100) {
+        let stride = Math.max(1, Math.floor(this.dataset.sampleCount / sampleCount));
+        //@ts-ignore
+        let eQ = 0, eT = 0, count = 0;
+        for (let i = 0; i < this.dataset.sampleCount; i += stride) {
+            let point = this.dataset.getSample(i);
+            let [bmu, bmu2] = this.model.findBestMatchingUnits(point, 2);
+            let point2 = this.model.weightMatrix.getRow(bmu);
+            eQ += Math.sqrt(point.map((a, i) => Math.pow((a - point2[i]), 2)).reduce((sum, v) => sum + v, 0));
+            eT += this.model.distanceMatrix.get(bmu, bmu2) <= 1 ? 0 : 1;
+            ++count;
+        }
+        eQ /= sampleCount;
+        eT /= sampleCount;
+        return {
+            eQ, eT
+        };
+    }
+}
+exports.SOMController = SOMController;
+
+});
+___scope___.file("modules/som-designer/LogSlider.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 var __rest = (this && this.__rest) || function (s, e) {
@@ -7660,159 +10318,459 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_mosaic_component_1 = require("react-mosaic-component");
-require("./styles/index.css");
-require("./App.css");
 const React = require("react");
-const design_1 = require("../../design");
-const ViewIdMosaic = react_mosaic_component_1.Mosaic.ofType();
-const ViewIdMosaicWindow = react_mosaic_component_1.MosaicWindow.ofType();
-const TITLE_MAP = {
-    a: 'Graph Window',
-    b: 'Populations',
-    c: 'Layout',
-    new: 'New Window',
-};
-class CogliteLabApp extends React.Component {
-    constructor() {
-        super(...arguments);
-        this.state = { showHeader: true };
-    }
+const material_ui_1 = require("material-ui");
+class LogSlider extends React.Component {
     render() {
-        const _a = this.state, { showHeader } = _a, calloutProps = __rest(_a, ["showHeader"]);
-        return (React.createElement("div", { style: { height: '100vh', display: 'flex' } },
-            React.createElement(design_1.VerticalStretch, null,
-                React.createElement("nav", { className: "pt-navbar" },
-                    React.createElement("div", { className: "pt-navbar-group pt-align-left" },
-                        React.createElement("div", { className: "pt-navbar-heading" }, "Untitled Lab"),
-                        React.createElement("span", { className: "pt-navbar-divider" }),
-                        React.createElement("div", { className: "sm:hidden md:flex pt-input-group" },
-                            React.createElement("span", { className: "pt-icon pt-icon-search" }),
-                            React.createElement("input", { type: "search", className: "pt-input pt-small", placeholder: "Search groups..." })),
-                        React.createElement("div", { className: "sm:hidden lg:flex lg:flex-col ml-4" },
-                            React.createElement("div", { className: "pt-ui-text ml-2" }, "Notebooks"),
-                            React.createElement("div", { className: "pt-ui-text pt-text-muted ml-2 text-xs" }, "380 events"))),
-                    React.createElement("div", { className: "pt-navbar-group pt-align-right" },
-                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-control" },
-                            React.createElement("span", { className: "sm:hidden lg:flex" }, "Configure Workspace")),
-                        React.createElement("div", { className: "pt-button-group pt-minimal" },
-                            React.createElement("a", { className: "pt-button pt-icon-undo", role: "button" }),
-                            React.createElement("a", { className: "pt-button pt-icon-redo", role: "button" })),
-                        React.createElement("span", { className: "pt-navbar-divider" }),
-                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-user" }),
-                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-help" }),
-                        React.createElement("button", { className: "pt-button pt-minimal pt-icon-cog" }))),
-                React.createElement(ViewIdMosaic, { renderTile: (id, path) => (
-                    // tslint:disable-next-line jsx-no-lambda
-                    React.createElement(ViewIdMosaicWindow, { path: path, createNode: () => 'new', title: TITLE_MAP[id] },
-                        id === 'a' &&
-                            React.createElement("div", { className: "grid max-w-l mx-auto p-8" },
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/histogram1.png", alt: "Histogran 1", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/dot-plot1.png", alt: "Dotplot 1", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/density3.png", alt: "Quads 1", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/gate1.png", alt: "Gate 1", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/quad2.png", alt: "Quad 2", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "span-col-2 span-row-2 bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/quads1.png", alt: "Quads 1", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/cdf1.png", alt: "Quad 2", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/heatmap1.png", alt: "Quad 2", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/zebra1.png", alt: "Quad 2", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/density-plot1.png", alt: "Quad 2", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/contour-plot1.png", alt: "Contour plot", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/density2.png", alt: "Contour plot", className: "w-full block rounded-b" })),
-                                React.createElement("div", { className: "bg-white rounded h-full text-grey-darkest shadow-md" },
-                                    React.createElement("img", { src: "img/histogram2.png", alt: "Contour plot", className: "w-full block rounded-b" }))),
-                        id === 'b' &&
-                            React.createElement("div", null,
-                                React.createElement("div", { className: "pt-tree pt-elevation-0" },
-                                    React.createElement("ul", { className: "pt-tree-node-list pt-tree-root" },
-                                        React.createElement("li", { className: "pt-tree-node pt-tree-node-expanded border-b bg-orange-lightest" },
-                                            React.createElement("div", { className: "bg-orange-lightest border-l-4 border-orange-dark" },
-                                                React.createElement("div", { className: "pt-tree-node-content flex-none border-b border-dotted" },
-                                                    React.createElement("span", { className: "pt-tree-node-caret pt-tree-node-caret-open pt-icon-standard" }),
-                                                    React.createElement("span", { className: "pt-tree-node-icon pt-icon-standard pt-icon-selection text-green" }),
-                                                    React.createElement("span", { className: "pt-tree-node-label font-bold text-orange-dark" }, "mynotebook.ipynb"),
-                                                    React.createElement("span", { className: "pt-tree-node-secondary-label text-xs" }, "96,670 events")),
-                                                React.createElement("ul", { className: "pt-tree-node-list" },
-                                                    React.createElement("li", { className: "pt-tree-node border-b border-dotted" },
-                                                        React.createElement("div", { className: "pt-tree-node-content" },
-                                                            React.createElement("span", { className: "pt-tree-node-caret-none pt-icon-standard" }),
-                                                            React.createElement("span", { className: "pt-tree-node-icon pt-icon-standard pt-icon-left-join" }),
-                                                            React.createElement("span", { className: "pt-tree-node-label" }, "Q1: DTG:Domain "),
-                                                            React.createElement("span", { className: "pt-tree-node-secondary-label text-xs" }, "42,908 events"))),
-                                                    React.createElement("li", { className: "pt-tree-node" },
-                                                        React.createElement("div", { className: "pt-tree-node-content" },
-                                                            React.createElement("span", { className: "pt-tree-node-caret-none pt-icon-standard" }),
-                                                            React.createElement("span", { className: "pt-tree-node-icon pt-icon-standard pt-icon-left-join" }),
-                                                            React.createElement("span", { className: "pt-tree-node-label" }, "Q2: DTG:Domain "),
-                                                            React.createElement("span", { className: "pt-tree-node-secondary-label text-xs" }, "25,398 events")))))),
-                                        React.createElement("li", { className: "pt-tree-node pt-tree-node-expanded border-b" },
-                                            React.createElement("div", { className: "pt-tree-node-content" },
-                                                React.createElement("span", { className: "pt-tree-node-caret pt-tree-node-caret-closed pt-icon-standard" }),
-                                                React.createElement("span", { className: "pt-tree-node-icon pt-icon-standard pt-icon-selection text-blue" }),
-                                                React.createElement("span", { className: "pt-tree-node-label font-bold" }, "mynb2.ipynb"),
-                                                React.createElement("span", { className: "pt-tree-node-secondary-label text-xs" }, "222,670 events"))),
-                                        React.createElement("li", { className: "pt-tree-node pt-tree-node-expanded border-b" },
-                                            React.createElement("div", { className: "pt-tree-node-content" },
-                                                React.createElement("span", { className: "pt-tree-node-caret pt-tree-node-caret-closed pt-icon-standard" }),
-                                                React.createElement("span", { className: "pt-tree-node-icon pt-icon-standard pt-icon-selection text-red" }),
-                                                React.createElement("span", { className: "pt-tree-node-label font-bold" }, "mynb3.ipynb"),
-                                                React.createElement("span", { className: "pt-tag pt-intent-danger" }, "File not found"),
-                                                React.createElement("span", { className: "pt-tree-node-secondary-label" },
-                                                    React.createElement("button", { type: "button", className: "pt-button pt-intent-danger pt-minimal text-xs" },
-                                                        React.createElement("span", { className: "pt-icon-standard pt-icon-refresh pt-align-right" })))))),
-                                    React.createElement("a", { href: "#" }, "Add Statistics"),
-                                    React.createElement("a", { href: "#", className: "ml-3" }, "Add Keyword"))),
-                        id === 'c' && React.createElement("h1", null, TITLE_MAP[id]))), initialValue: {
-                        direction: 'row',
-                        first: 'a',
-                        second: {
-                            direction: 'column',
-                            first: 'b',
-                            second: 'c',
-                        },
-                    } }))));
+        let _a = this.props, { value, onChange } = _a, props = __rest(_a, ["value", "onChange"]);
+        return React.createElement(material_ui_1.Slider, Object.assign({ value: Math.log10(value), onChange: (event, value) => onChange(event, Math.pow(10, value)) }, props));
     }
 }
-exports.CogliteLabApp = CogliteLabApp;
+exports.LogSlider = LogSlider;
 
 });
-___scope___.file("modules/lab/styles/index.css", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/NumberInput.jsx", function(exports, require, module, __filename, __dirname){
 
+"use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class NumberInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: String(props.value || 0)
+        };
+    }
+    componentWillReceiveProps(props) {
+        this.setState({
+            value: String(props.value)
+        });
+    }
+    handleKeyDown(e) {
+        switch (e.keyCode) {
+            case 13: // enter
+                this.commitValue(); // commit value
+                break;
+            case 27: // escape
+                this.setState({ value: String(this.props.value) }); // reset to previous value
+                break;
+            default:
+                console.log(e.keyCode);
+        }
+    }
+    commitValue() {
+        let newValue = Number(this.state.value);
+        if (this.props.value !== newValue)
+            // only update if value has changed
+            this.props.onChange(newValue);
+    }
+    render() {
+        let _a = this.props, { value, onChange } = _a, props = __rest(_a, ["value", "onChange"]);
+        return React.createElement("input", Object.assign({ type: "number", value: this.state.value, onChange: e => this.setState({ value: e.currentTarget.value }), onKeyDown: e => this.handleKeyDown(e), onBlur: e => this.commitValue() }, props));
+    }
+}
+exports.NumberInput = NumberInput;
 
-require("fuse-box-css")("modules/lab/styles/index.css", "/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */\n\n/* Document\n   ========================================================================== */\n\n/**\n * 1. Correct the line height in all browsers.\n * 2. Prevent adjustments of font size after orientation changes in\n *    IE on Windows Phone and in iOS.\n */\n\nhtml {\n  line-height: 1.15; /* 1 */\n      -ms-text-size-adjust: 100%; /* 2 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n}\n\n/* Sections\n   ========================================================================== */\n\n/**\n * Remove the margin in all browsers (opinionated).\n */\n\nbody {\n  margin: 0;\n}\n\n/**\n * Add the correct display in IE 9-.\n */\n\narticle,\naside,\nfooter,\nheader,\nnav,\nsection {\n  display: block;\n}\n\n/**\n * Correct the font size and margin on `h1` elements within `section` and\n * `article` contexts in Chrome, Firefox, and Safari.\n */\n\nh1 {\n  font-size: 2em;\n  margin: .67em 0;\n}\n\n/* Grouping content\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n * 1. Add the correct display in IE.\n */\n\nfigcaption,\nfigure,\nmain {\n  /* 1 */\n  display: block;\n}\n\n/**\n * Add the correct margin in IE 8.\n */\n\nfigure {\n  margin: 1em 40px;\n}\n\n/**\n * 1. Add the correct box sizing in Firefox.\n * 2. Show the overflow in Edge and IE.\n */\n\nhr {\n  box-sizing: content-box; /* 1 */\n  height: 0; /* 1 */\n  overflow: visible; /* 2 */\n}\n\n/**\n * 1. Correct the inheritance and scaling of font size in all browsers.\n * 2. Correct the odd `em` font sizing in all browsers.\n */\n\npre {\n  font-family: monospace, monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/* Text-level semantics\n   ========================================================================== */\n\n/**\n * 1. Remove the gray background on active links in IE 10.\n * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.\n */\n\na {\n  background-color: transparent; /* 1 */\n  -webkit-text-decoration-skip: objects; /* 2 */\n}\n\n/**\n * 1. Remove the bottom border in Chrome 57- and Firefox 39-.\n * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.\n */\n\nabbr[title] {\n  border-bottom: none; /* 1 */\n  text-decoration: underline; /* 2 */\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted; /* 2 */\n}\n\n/**\n * Prevent the duplicate application of `bolder` by the next rule in Safari 6.\n */\n\nb,\nstrong {\n  font-weight: inherit;\n}\n\n/**\n * Add the correct font weight in Chrome, Edge, and Safari.\n */\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/**\n * 1. Correct the inheritance and scaling of font size in all browsers.\n * 2. Correct the odd `em` font sizing in all browsers.\n */\n\ncode,\nkbd,\nsamp {\n  font-family: monospace, monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/**\n * Add the correct font style in Android 4.3-.\n */\n\ndfn {\n  font-style: italic;\n}\n\n/**\n * Add the correct background and color in IE 9-.\n */\n\nmark {\n  background-color: #ff0;\n  color: #000;\n}\n\n/**\n * Add the correct font size in all browsers.\n */\n\nsmall {\n  font-size: 80%;\n}\n\n/**\n * Prevent `sub` and `sup` elements from affecting the line height in\n * all browsers.\n */\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/* Embedded content\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n */\n\naudio,\nvideo {\n  display: inline-block;\n}\n\n/**\n * Add the correct display in iOS 4-7.\n */\n\naudio:not([controls]) {\n  display: none;\n  height: 0;\n}\n\n/**\n * Remove the border on images inside links in IE 10-.\n */\n\nimg {\n  border-style: none;\n}\n\n/**\n * Hide the overflow in IE.\n */\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\n/* Forms\n   ========================================================================== */\n\n/**\n * 1. Change the font styles in all browsers (opinionated).\n * 2. Remove the margin in Firefox and Safari.\n */\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: sans-serif; /* 1 */\n  font-size: 100%; /* 1 */\n  line-height: 1.15; /* 1 */\n  margin: 0; /* 2 */\n}\n\n/**\n * Show the overflow in IE.\n * 1. Show the overflow in Edge.\n */\n\nbutton,\ninput {\n  /* 1 */\n  overflow: visible;\n}\n\n/**\n * Remove the inheritance of text transform in Edge, Firefox, and IE.\n * 1. Remove the inheritance of text transform in Firefox.\n */\n\nbutton,\nselect {\n  /* 1 */\n  text-transform: none;\n}\n\n/**\n * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`\n *    controls in Android 4.\n * 2. Correct the inability to style clickable types in iOS and Safari.\n */\n\nbutton,\nhtml [type=\"button\"],\n/* 1 */\n[type=\"reset\"],\n[type=\"submit\"] {\n  -webkit-appearance: button; /* 2 */\n}\n\n/**\n * Remove the inner border and padding in Firefox.\n */\n\nbutton::-moz-focus-inner,\n[type=\"button\"]::-moz-focus-inner,\n[type=\"reset\"]::-moz-focus-inner,\n[type=\"submit\"]::-moz-focus-inner {\n  border-style: none;\n  padding: 0;\n}\n\n/**\n * Restore the focus styles unset by the previous rule.\n */\n\nbutton:-moz-focusring,\n[type=\"button\"]:-moz-focusring,\n[type=\"reset\"]:-moz-focusring,\n[type=\"submit\"]:-moz-focusring {\n  outline: 1px dotted ButtonText;\n}\n\n/**\n * Correct the padding in Firefox.\n */\n\nfieldset {\n  padding: .35em .75em .625em;\n}\n\n/**\n * 1. Correct the text wrapping in Edge and IE.\n * 2. Correct the color inheritance from `fieldset` elements in IE.\n * 3. Remove the padding so developers are not caught out when they zero out\n *    `fieldset` elements in all browsers.\n */\n\nlegend {\n  box-sizing: border-box; /* 1 */\n  color: inherit; /* 2 */\n  display: table; /* 1 */\n  max-width: 100%; /* 1 */\n  padding: 0; /* 3 */\n  white-space: normal; /* 1 */\n}\n\n/**\n * 1. Add the correct display in IE 9-.\n * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.\n */\n\nprogress {\n  display: inline-block; /* 1 */\n  vertical-align: baseline; /* 2 */\n}\n\n/**\n * Remove the default vertical scrollbar in IE.\n */\n\ntextarea {\n  overflow: auto;\n}\n\n/**\n * 1. Add the correct box sizing in IE 10-.\n * 2. Remove the padding in IE 10-.\n */\n\n[type=\"checkbox\"],\n[type=\"radio\"] {\n  box-sizing: border-box; /* 1 */\n  padding: 0; /* 2 */\n}\n\n/**\n * Correct the cursor style of increment and decrement buttons in Chrome.\n */\n\n[type=\"number\"]::-webkit-inner-spin-button,\n[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/**\n * 1. Correct the odd appearance in Chrome and Safari.\n * 2. Correct the outline style in Safari.\n */\n\n[type=\"search\"] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/**\n * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.\n */\n\n[type=\"search\"]::-webkit-search-cancel-button,\n[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/**\n * 1. Correct the inability to style clickable types in iOS and Safari.\n * 2. Change font properties to `inherit` in Safari.\n */\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/* Interactive\n   ========================================================================== */\n\n/*\n * Add the correct display in IE 9-.\n * 1. Add the correct display in Edge, IE, and Firefox.\n */\n\ndetails,\n/* 1 */\nmenu {\n  display: block;\n}\n\n/*\n * Add the correct display in all browsers.\n */\n\nsummary {\n  display: list-item;\n}\n\n/* Scripting\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n */\n\ncanvas {\n  display: inline-block;\n}\n\n/**\n * Add the correct display in IE.\n */\n\ntemplate {\n  display: none;\n}\n\n/* Hidden\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 10-.\n */\n\n[hidden] {\n  display: none;\n}\n\n/**\n * Manually forked from SUIT CSS Base: https://github.com/suitcss/base\n * A thin layer on top of normalize.css that provides a starting point more\n * suitable for web applications.\n */\n\n/**\n * 1. Prevent padding and border from affecting element width\n * https://goo.gl/pYtbK7\n * 2. Change the default font family in all browsers (opinionated)\n */\n\nhtml {\n  box-sizing: border-box; /* 1 */\n  font-family: sans-serif; /* 2 */\n}\n\n*,\n*::before,\n*::after {\n  box-sizing: inherit;\n}\n\n/**\n * Removes the default spacing and border for appropriate elements.\n */\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nbutton {\n  background: transparent;\n  padding: 0;\n}\n\n/**\n * Work around a Firefox/IE bug where the transparent `button` background\n * results in a loss of the default `button` focus styles.\n */\n\nbutton:focus {\n  outline: 1px dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nol,\nul {\n  margin: 0;\n}\n\n/**\n * Suppress the focus outline on elements that cannot be accessed via keyboard.\n * This prevents an unwanted focus outline from appearing around elements that\n * might still respond to pointer events.\n */\n\n[tabindex=\"-1\"]:focus {\n  outline: none !important;\n}\n\n/**\n * Tailwind custom reset styles\n */\n\n/**\n * Allow adding a border to an element by just adding a border-width.\n *\n * By default, the way the browser specifies that an element should have no\n * border is by setting it's border-style to `none` in the user-agent\n * stylesheet.\n *\n * In order to easily add borders to elements by just setting the `border-width`\n * property, we change the default border-style for all elements to `solid`, and\n * use border-width to hide them instead. This way our `border` utilities only\n * need to set the `border-width` property instead of the entire `border`\n * shorthand, making our border utilities much more straightforward to compose.\n *\n * https://github.com/tailwindcss/tailwindcss/pull/116\n */\n\n*,\n*::before,\n*::after {\n  border-width: 0;\n  border-style: solid;\n  border-color: #dae1e7;\n}\n\n/**\n * Undo the `border-style: none` reset that Normalize applies to images so that\n * our `border-{width}` utilities have the expected effect.\n *\n * The Normalize reset is unnecessary for us since we default the border-width\n * to 0 on all elements.\n *\n * https://github.com/tailwindcss/tailwindcss/issues/362\n */\n\nimg {\n  border-style: solid;\n}\n\n/**\n * Temporary reset for a change introduced in Chrome 62 but now reverted.\n *\n * We can remove this when the reversion is in a normal Chrome release.\n */\n\nbutton,\n[type=\"button\"],\n[type=\"reset\"],\n[type=\"submit\"] {\n  border-radius: 0;\n}\n\ntextarea {\n  resize: vertical;\n}\n\nimg {\n  max-width: 100%;\n}\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit;\n}\n\ninput::-webkit-input-placeholder,\ntextarea::-webkit-input-placeholder {\n  color: inherit;\n  opacity: .5;\n}\n\ninput:-ms-input-placeholder,\ntextarea:-ms-input-placeholder {\n  color: inherit;\n  opacity: .5;\n}\n\ninput::-ms-input-placeholder,\ntextarea::-ms-input-placeholder {\n  color: inherit;\n  opacity: .5;\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  color: inherit;\n  opacity: .5;\n}\n\nbutton,\n[role=button] {\n  cursor: pointer;\n}\n\n.container {\n  width: 100%;\n}\n\n@media (min-width: 576px) {\n  .container {\n    max-width: 576px;\n  }\n}\n\n@media (min-width: 768px) {\n  .container {\n    max-width: 768px;\n  }\n}\n\n@media (min-width: 992px) {\n  .container {\n    max-width: 992px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .container {\n    max-width: 1200px;\n  }\n}\n\n.list-reset {\n  list-style: none;\n  padding: 0;\n}\n\n.appearance-none {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none;\n}\n\n.bg-fixed {\n  background-attachment: fixed;\n}\n\n.bg-local {\n  background-attachment: local;\n}\n\n.bg-scroll {\n  background-attachment: scroll;\n}\n\n.bg-transparent {\n  background-color: transparent;\n}\n\n.bg-black {\n  background-color: #22292f;\n}\n\n.bg-grey-darkest {\n  background-color: #3d4852;\n}\n\n.bg-grey-darker {\n  background-color: #606f7b;\n}\n\n.bg-grey-dark {\n  background-color: #8795a1;\n}\n\n.bg-grey {\n  background-color: #b8c2cc;\n}\n\n.bg-grey-light {\n  background-color: #dae1e7;\n}\n\n.bg-grey-lighter {\n  background-color: #f1f5f8;\n}\n\n.bg-grey-lightest {\n  background-color: #f8fafc;\n}\n\n.bg-white {\n  background-color: #fff;\n}\n\n.bg-red-darkest {\n  background-color: #3b0d0c;\n}\n\n.bg-red-darker {\n  background-color: #621b18;\n}\n\n.bg-red-dark {\n  background-color: #cc1f1a;\n}\n\n.bg-red {\n  background-color: #e3342f;\n}\n\n.bg-red-light {\n  background-color: #ef5753;\n}\n\n.bg-red-lighter {\n  background-color: #f9acaa;\n}\n\n.bg-red-lightest {\n  background-color: #fcebea;\n}\n\n.bg-orange-darkest {\n  background-color: #462a16;\n}\n\n.bg-orange-darker {\n  background-color: #613b1f;\n}\n\n.bg-orange-dark {\n  background-color: #de751f;\n}\n\n.bg-orange {\n  background-color: #f6993f;\n}\n\n.bg-orange-light {\n  background-color: #faad63;\n}\n\n.bg-orange-lighter {\n  background-color: #fcd9b6;\n}\n\n.bg-orange-lightest {\n  background-color: #fff5eb;\n}\n\n.bg-yellow-darkest {\n  background-color: #453411;\n}\n\n.bg-yellow-darker {\n  background-color: #684f1d;\n}\n\n.bg-yellow-dark {\n  background-color: #f2d024;\n}\n\n.bg-yellow {\n  background-color: #ffed4a;\n}\n\n.bg-yellow-light {\n  background-color: #fff382;\n}\n\n.bg-yellow-lighter {\n  background-color: #fff9c2;\n}\n\n.bg-yellow-lightest {\n  background-color: #fcfbeb;\n}\n\n.bg-green-darkest {\n  background-color: #0f2f21;\n}\n\n.bg-green-darker {\n  background-color: #1a4731;\n}\n\n.bg-green-dark {\n  background-color: #1f9d55;\n}\n\n.bg-green {\n  background-color: #38c172;\n}\n\n.bg-green-light {\n  background-color: #51d88a;\n}\n\n.bg-green-lighter {\n  background-color: #a2f5bf;\n}\n\n.bg-green-lightest {\n  background-color: #e3fcec;\n}\n\n.bg-teal-darkest {\n  background-color: #0d3331;\n}\n\n.bg-teal-darker {\n  background-color: #20504f;\n}\n\n.bg-teal-dark {\n  background-color: #38a89d;\n}\n\n.bg-teal {\n  background-color: #4dc0b5;\n}\n\n.bg-teal-light {\n  background-color: #64d5ca;\n}\n\n.bg-teal-lighter {\n  background-color: #a0f0ed;\n}\n\n.bg-teal-lightest {\n  background-color: #e8fffe;\n}\n\n.bg-blue-darkest {\n  background-color: #12283a;\n}\n\n.bg-blue-darker {\n  background-color: #1c3d5a;\n}\n\n.bg-blue-dark {\n  background-color: #2779bd;\n}\n\n.bg-blue {\n  background-color: #3490dc;\n}\n\n.bg-blue-light {\n  background-color: #6cb2eb;\n}\n\n.bg-blue-lighter {\n  background-color: #bcdefa;\n}\n\n.bg-blue-lightest {\n  background-color: #eff8ff;\n}\n\n.bg-indigo-darkest {\n  background-color: #191e38;\n}\n\n.bg-indigo-darker {\n  background-color: #2f365f;\n}\n\n.bg-indigo-dark {\n  background-color: #5661b3;\n}\n\n.bg-indigo {\n  background-color: #6574cd;\n}\n\n.bg-indigo-light {\n  background-color: #7886d7;\n}\n\n.bg-indigo-lighter {\n  background-color: #b2b7ff;\n}\n\n.bg-indigo-lightest {\n  background-color: #e6e8ff;\n}\n\n.bg-purple-darkest {\n  background-color: #21183c;\n}\n\n.bg-purple-darker {\n  background-color: #382b5f;\n}\n\n.bg-purple-dark {\n  background-color: #794acf;\n}\n\n.bg-purple {\n  background-color: #9561e2;\n}\n\n.bg-purple-light {\n  background-color: #a779e9;\n}\n\n.bg-purple-lighter {\n  background-color: #d6bbfc;\n}\n\n.bg-purple-lightest {\n  background-color: #f3ebff;\n}\n\n.bg-pink-darkest {\n  background-color: #451225;\n}\n\n.bg-pink-darker {\n  background-color: #6f213f;\n}\n\n.bg-pink-dark {\n  background-color: #eb5286;\n}\n\n.bg-pink {\n  background-color: #f66d9b;\n}\n\n.bg-pink-light {\n  background-color: #fa7ea8;\n}\n\n.bg-pink-lighter {\n  background-color: #ffbbca;\n}\n\n.bg-pink-lightest {\n  background-color: #ffebef;\n}\n\n.hover\\:bg-transparent:hover {\n  background-color: transparent;\n}\n\n.hover\\:bg-black:hover {\n  background-color: #22292f;\n}\n\n.hover\\:bg-grey-darkest:hover {\n  background-color: #3d4852;\n}\n\n.hover\\:bg-grey-darker:hover {\n  background-color: #606f7b;\n}\n\n.hover\\:bg-grey-dark:hover {\n  background-color: #8795a1;\n}\n\n.hover\\:bg-grey:hover {\n  background-color: #b8c2cc;\n}\n\n.hover\\:bg-grey-light:hover {\n  background-color: #dae1e7;\n}\n\n.hover\\:bg-grey-lighter:hover {\n  background-color: #f1f5f8;\n}\n\n.hover\\:bg-grey-lightest:hover {\n  background-color: #f8fafc;\n}\n\n.hover\\:bg-white:hover {\n  background-color: #fff;\n}\n\n.hover\\:bg-red-darkest:hover {\n  background-color: #3b0d0c;\n}\n\n.hover\\:bg-red-darker:hover {\n  background-color: #621b18;\n}\n\n.hover\\:bg-red-dark:hover {\n  background-color: #cc1f1a;\n}\n\n.hover\\:bg-red:hover {\n  background-color: #e3342f;\n}\n\n.hover\\:bg-red-light:hover {\n  background-color: #ef5753;\n}\n\n.hover\\:bg-red-lighter:hover {\n  background-color: #f9acaa;\n}\n\n.hover\\:bg-red-lightest:hover {\n  background-color: #fcebea;\n}\n\n.hover\\:bg-orange-darkest:hover {\n  background-color: #462a16;\n}\n\n.hover\\:bg-orange-darker:hover {\n  background-color: #613b1f;\n}\n\n.hover\\:bg-orange-dark:hover {\n  background-color: #de751f;\n}\n\n.hover\\:bg-orange:hover {\n  background-color: #f6993f;\n}\n\n.hover\\:bg-orange-light:hover {\n  background-color: #faad63;\n}\n\n.hover\\:bg-orange-lighter:hover {\n  background-color: #fcd9b6;\n}\n\n.hover\\:bg-orange-lightest:hover {\n  background-color: #fff5eb;\n}\n\n.hover\\:bg-yellow-darkest:hover {\n  background-color: #453411;\n}\n\n.hover\\:bg-yellow-darker:hover {\n  background-color: #684f1d;\n}\n\n.hover\\:bg-yellow-dark:hover {\n  background-color: #f2d024;\n}\n\n.hover\\:bg-yellow:hover {\n  background-color: #ffed4a;\n}\n\n.hover\\:bg-yellow-light:hover {\n  background-color: #fff382;\n}\n\n.hover\\:bg-yellow-lighter:hover {\n  background-color: #fff9c2;\n}\n\n.hover\\:bg-yellow-lightest:hover {\n  background-color: #fcfbeb;\n}\n\n.hover\\:bg-green-darkest:hover {\n  background-color: #0f2f21;\n}\n\n.hover\\:bg-green-darker:hover {\n  background-color: #1a4731;\n}\n\n.hover\\:bg-green-dark:hover {\n  background-color: #1f9d55;\n}\n\n.hover\\:bg-green:hover {\n  background-color: #38c172;\n}\n\n.hover\\:bg-green-light:hover {\n  background-color: #51d88a;\n}\n\n.hover\\:bg-green-lighter:hover {\n  background-color: #a2f5bf;\n}\n\n.hover\\:bg-green-lightest:hover {\n  background-color: #e3fcec;\n}\n\n.hover\\:bg-teal-darkest:hover {\n  background-color: #0d3331;\n}\n\n.hover\\:bg-teal-darker:hover {\n  background-color: #20504f;\n}\n\n.hover\\:bg-teal-dark:hover {\n  background-color: #38a89d;\n}\n\n.hover\\:bg-teal:hover {\n  background-color: #4dc0b5;\n}\n\n.hover\\:bg-teal-light:hover {\n  background-color: #64d5ca;\n}\n\n.hover\\:bg-teal-lighter:hover {\n  background-color: #a0f0ed;\n}\n\n.hover\\:bg-teal-lightest:hover {\n  background-color: #e8fffe;\n}\n\n.hover\\:bg-blue-darkest:hover {\n  background-color: #12283a;\n}\n\n.hover\\:bg-blue-darker:hover {\n  background-color: #1c3d5a;\n}\n\n.hover\\:bg-blue-dark:hover {\n  background-color: #2779bd;\n}\n\n.hover\\:bg-blue:hover {\n  background-color: #3490dc;\n}\n\n.hover\\:bg-blue-light:hover {\n  background-color: #6cb2eb;\n}\n\n.hover\\:bg-blue-lighter:hover {\n  background-color: #bcdefa;\n}\n\n.hover\\:bg-blue-lightest:hover {\n  background-color: #eff8ff;\n}\n\n.hover\\:bg-indigo-darkest:hover {\n  background-color: #191e38;\n}\n\n.hover\\:bg-indigo-darker:hover {\n  background-color: #2f365f;\n}\n\n.hover\\:bg-indigo-dark:hover {\n  background-color: #5661b3;\n}\n\n.hover\\:bg-indigo:hover {\n  background-color: #6574cd;\n}\n\n.hover\\:bg-indigo-light:hover {\n  background-color: #7886d7;\n}\n\n.hover\\:bg-indigo-lighter:hover {\n  background-color: #b2b7ff;\n}\n\n.hover\\:bg-indigo-lightest:hover {\n  background-color: #e6e8ff;\n}\n\n.hover\\:bg-purple-darkest:hover {\n  background-color: #21183c;\n}\n\n.hover\\:bg-purple-darker:hover {\n  background-color: #382b5f;\n}\n\n.hover\\:bg-purple-dark:hover {\n  background-color: #794acf;\n}\n\n.hover\\:bg-purple:hover {\n  background-color: #9561e2;\n}\n\n.hover\\:bg-purple-light:hover {\n  background-color: #a779e9;\n}\n\n.hover\\:bg-purple-lighter:hover {\n  background-color: #d6bbfc;\n}\n\n.hover\\:bg-purple-lightest:hover {\n  background-color: #f3ebff;\n}\n\n.hover\\:bg-pink-darkest:hover {\n  background-color: #451225;\n}\n\n.hover\\:bg-pink-darker:hover {\n  background-color: #6f213f;\n}\n\n.hover\\:bg-pink-dark:hover {\n  background-color: #eb5286;\n}\n\n.hover\\:bg-pink:hover {\n  background-color: #f66d9b;\n}\n\n.hover\\:bg-pink-light:hover {\n  background-color: #fa7ea8;\n}\n\n.hover\\:bg-pink-lighter:hover {\n  background-color: #ffbbca;\n}\n\n.hover\\:bg-pink-lightest:hover {\n  background-color: #ffebef;\n}\n\n.bg-bottom {\n  background-position: bottom;\n}\n\n.bg-center {\n  background-position: center;\n}\n\n.bg-left {\n  background-position: left;\n}\n\n.bg-left-bottom {\n  background-position: left bottom;\n}\n\n.bg-left-top {\n  background-position: left top;\n}\n\n.bg-right {\n  background-position: right;\n}\n\n.bg-right-bottom {\n  background-position: right bottom;\n}\n\n.bg-right-top {\n  background-position: right top;\n}\n\n.bg-top {\n  background-position: top;\n}\n\n.bg-repeat {\n  background-repeat: repeat;\n}\n\n.bg-no-repeat {\n  background-repeat: no-repeat;\n}\n\n.bg-repeat-x {\n  background-repeat: repeat-x;\n}\n\n.bg-repeat-y {\n  background-repeat: repeat-y;\n}\n\n.bg-auto {\n  background-size: auto;\n}\n\n.bg-cover {\n  background-size: cover;\n}\n\n.bg-contain {\n  background-size: contain;\n}\n\n.border-transparent {\n  border-color: transparent;\n}\n\n.border-black {\n  border-color: #22292f;\n}\n\n.border-grey-darkest {\n  border-color: #3d4852;\n}\n\n.border-grey-darker {\n  border-color: #606f7b;\n}\n\n.border-grey-dark {\n  border-color: #8795a1;\n}\n\n.border-grey {\n  border-color: #b8c2cc;\n}\n\n.border-grey-light {\n  border-color: #dae1e7;\n}\n\n.border-grey-lighter {\n  border-color: #f1f5f8;\n}\n\n.border-grey-lightest {\n  border-color: #f8fafc;\n}\n\n.border-white {\n  border-color: #fff;\n}\n\n.border-red-darkest {\n  border-color: #3b0d0c;\n}\n\n.border-red-darker {\n  border-color: #621b18;\n}\n\n.border-red-dark {\n  border-color: #cc1f1a;\n}\n\n.border-red {\n  border-color: #e3342f;\n}\n\n.border-red-light {\n  border-color: #ef5753;\n}\n\n.border-red-lighter {\n  border-color: #f9acaa;\n}\n\n.border-red-lightest {\n  border-color: #fcebea;\n}\n\n.border-orange-darkest {\n  border-color: #462a16;\n}\n\n.border-orange-darker {\n  border-color: #613b1f;\n}\n\n.border-orange-dark {\n  border-color: #de751f;\n}\n\n.border-orange {\n  border-color: #f6993f;\n}\n\n.border-orange-light {\n  border-color: #faad63;\n}\n\n.border-orange-lighter {\n  border-color: #fcd9b6;\n}\n\n.border-orange-lightest {\n  border-color: #fff5eb;\n}\n\n.border-yellow-darkest {\n  border-color: #453411;\n}\n\n.border-yellow-darker {\n  border-color: #684f1d;\n}\n\n.border-yellow-dark {\n  border-color: #f2d024;\n}\n\n.border-yellow {\n  border-color: #ffed4a;\n}\n\n.border-yellow-light {\n  border-color: #fff382;\n}\n\n.border-yellow-lighter {\n  border-color: #fff9c2;\n}\n\n.border-yellow-lightest {\n  border-color: #fcfbeb;\n}\n\n.border-green-darkest {\n  border-color: #0f2f21;\n}\n\n.border-green-darker {\n  border-color: #1a4731;\n}\n\n.border-green-dark {\n  border-color: #1f9d55;\n}\n\n.border-green {\n  border-color: #38c172;\n}\n\n.border-green-light {\n  border-color: #51d88a;\n}\n\n.border-green-lighter {\n  border-color: #a2f5bf;\n}\n\n.border-green-lightest {\n  border-color: #e3fcec;\n}\n\n.border-teal-darkest {\n  border-color: #0d3331;\n}\n\n.border-teal-darker {\n  border-color: #20504f;\n}\n\n.border-teal-dark {\n  border-color: #38a89d;\n}\n\n.border-teal {\n  border-color: #4dc0b5;\n}\n\n.border-teal-light {\n  border-color: #64d5ca;\n}\n\n.border-teal-lighter {\n  border-color: #a0f0ed;\n}\n\n.border-teal-lightest {\n  border-color: #e8fffe;\n}\n\n.border-blue-darkest {\n  border-color: #12283a;\n}\n\n.border-blue-darker {\n  border-color: #1c3d5a;\n}\n\n.border-blue-dark {\n  border-color: #2779bd;\n}\n\n.border-blue {\n  border-color: #3490dc;\n}\n\n.border-blue-light {\n  border-color: #6cb2eb;\n}\n\n.border-blue-lighter {\n  border-color: #bcdefa;\n}\n\n.border-blue-lightest {\n  border-color: #eff8ff;\n}\n\n.border-indigo-darkest {\n  border-color: #191e38;\n}\n\n.border-indigo-darker {\n  border-color: #2f365f;\n}\n\n.border-indigo-dark {\n  border-color: #5661b3;\n}\n\n.border-indigo {\n  border-color: #6574cd;\n}\n\n.border-indigo-light {\n  border-color: #7886d7;\n}\n\n.border-indigo-lighter {\n  border-color: #b2b7ff;\n}\n\n.border-indigo-lightest {\n  border-color: #e6e8ff;\n}\n\n.border-purple-darkest {\n  border-color: #21183c;\n}\n\n.border-purple-darker {\n  border-color: #382b5f;\n}\n\n.border-purple-dark {\n  border-color: #794acf;\n}\n\n.border-purple {\n  border-color: #9561e2;\n}\n\n.border-purple-light {\n  border-color: #a779e9;\n}\n\n.border-purple-lighter {\n  border-color: #d6bbfc;\n}\n\n.border-purple-lightest {\n  border-color: #f3ebff;\n}\n\n.border-pink-darkest {\n  border-color: #451225;\n}\n\n.border-pink-darker {\n  border-color: #6f213f;\n}\n\n.border-pink-dark {\n  border-color: #eb5286;\n}\n\n.border-pink {\n  border-color: #f66d9b;\n}\n\n.border-pink-light {\n  border-color: #fa7ea8;\n}\n\n.border-pink-lighter {\n  border-color: #ffbbca;\n}\n\n.border-pink-lightest {\n  border-color: #ffebef;\n}\n\n.hover\\:border-transparent:hover {\n  border-color: transparent;\n}\n\n.hover\\:border-black:hover {\n  border-color: #22292f;\n}\n\n.hover\\:border-grey-darkest:hover {\n  border-color: #3d4852;\n}\n\n.hover\\:border-grey-darker:hover {\n  border-color: #606f7b;\n}\n\n.hover\\:border-grey-dark:hover {\n  border-color: #8795a1;\n}\n\n.hover\\:border-grey:hover {\n  border-color: #b8c2cc;\n}\n\n.hover\\:border-grey-light:hover {\n  border-color: #dae1e7;\n}\n\n.hover\\:border-grey-lighter:hover {\n  border-color: #f1f5f8;\n}\n\n.hover\\:border-grey-lightest:hover {\n  border-color: #f8fafc;\n}\n\n.hover\\:border-white:hover {\n  border-color: #fff;\n}\n\n.hover\\:border-red-darkest:hover {\n  border-color: #3b0d0c;\n}\n\n.hover\\:border-red-darker:hover {\n  border-color: #621b18;\n}\n\n.hover\\:border-red-dark:hover {\n  border-color: #cc1f1a;\n}\n\n.hover\\:border-red:hover {\n  border-color: #e3342f;\n}\n\n.hover\\:border-red-light:hover {\n  border-color: #ef5753;\n}\n\n.hover\\:border-red-lighter:hover {\n  border-color: #f9acaa;\n}\n\n.hover\\:border-red-lightest:hover {\n  border-color: #fcebea;\n}\n\n.hover\\:border-orange-darkest:hover {\n  border-color: #462a16;\n}\n\n.hover\\:border-orange-darker:hover {\n  border-color: #613b1f;\n}\n\n.hover\\:border-orange-dark:hover {\n  border-color: #de751f;\n}\n\n.hover\\:border-orange:hover {\n  border-color: #f6993f;\n}\n\n.hover\\:border-orange-light:hover {\n  border-color: #faad63;\n}\n\n.hover\\:border-orange-lighter:hover {\n  border-color: #fcd9b6;\n}\n\n.hover\\:border-orange-lightest:hover {\n  border-color: #fff5eb;\n}\n\n.hover\\:border-yellow-darkest:hover {\n  border-color: #453411;\n}\n\n.hover\\:border-yellow-darker:hover {\n  border-color: #684f1d;\n}\n\n.hover\\:border-yellow-dark:hover {\n  border-color: #f2d024;\n}\n\n.hover\\:border-yellow:hover {\n  border-color: #ffed4a;\n}\n\n.hover\\:border-yellow-light:hover {\n  border-color: #fff382;\n}\n\n.hover\\:border-yellow-lighter:hover {\n  border-color: #fff9c2;\n}\n\n.hover\\:border-yellow-lightest:hover {\n  border-color: #fcfbeb;\n}\n\n.hover\\:border-green-darkest:hover {\n  border-color: #0f2f21;\n}\n\n.hover\\:border-green-darker:hover {\n  border-color: #1a4731;\n}\n\n.hover\\:border-green-dark:hover {\n  border-color: #1f9d55;\n}\n\n.hover\\:border-green:hover {\n  border-color: #38c172;\n}\n\n.hover\\:border-green-light:hover {\n  border-color: #51d88a;\n}\n\n.hover\\:border-green-lighter:hover {\n  border-color: #a2f5bf;\n}\n\n.hover\\:border-green-lightest:hover {\n  border-color: #e3fcec;\n}\n\n.hover\\:border-teal-darkest:hover {\n  border-color: #0d3331;\n}\n\n.hover\\:border-teal-darker:hover {\n  border-color: #20504f;\n}\n\n.hover\\:border-teal-dark:hover {\n  border-color: #38a89d;\n}\n\n.hover\\:border-teal:hover {\n  border-color: #4dc0b5;\n}\n\n.hover\\:border-teal-light:hover {\n  border-color: #64d5ca;\n}\n\n.hover\\:border-teal-lighter:hover {\n  border-color: #a0f0ed;\n}\n\n.hover\\:border-teal-lightest:hover {\n  border-color: #e8fffe;\n}\n\n.hover\\:border-blue-darkest:hover {\n  border-color: #12283a;\n}\n\n.hover\\:border-blue-darker:hover {\n  border-color: #1c3d5a;\n}\n\n.hover\\:border-blue-dark:hover {\n  border-color: #2779bd;\n}\n\n.hover\\:border-blue:hover {\n  border-color: #3490dc;\n}\n\n.hover\\:border-blue-light:hover {\n  border-color: #6cb2eb;\n}\n\n.hover\\:border-blue-lighter:hover {\n  border-color: #bcdefa;\n}\n\n.hover\\:border-blue-lightest:hover {\n  border-color: #eff8ff;\n}\n\n.hover\\:border-indigo-darkest:hover {\n  border-color: #191e38;\n}\n\n.hover\\:border-indigo-darker:hover {\n  border-color: #2f365f;\n}\n\n.hover\\:border-indigo-dark:hover {\n  border-color: #5661b3;\n}\n\n.hover\\:border-indigo:hover {\n  border-color: #6574cd;\n}\n\n.hover\\:border-indigo-light:hover {\n  border-color: #7886d7;\n}\n\n.hover\\:border-indigo-lighter:hover {\n  border-color: #b2b7ff;\n}\n\n.hover\\:border-indigo-lightest:hover {\n  border-color: #e6e8ff;\n}\n\n.hover\\:border-purple-darkest:hover {\n  border-color: #21183c;\n}\n\n.hover\\:border-purple-darker:hover {\n  border-color: #382b5f;\n}\n\n.hover\\:border-purple-dark:hover {\n  border-color: #794acf;\n}\n\n.hover\\:border-purple:hover {\n  border-color: #9561e2;\n}\n\n.hover\\:border-purple-light:hover {\n  border-color: #a779e9;\n}\n\n.hover\\:border-purple-lighter:hover {\n  border-color: #d6bbfc;\n}\n\n.hover\\:border-purple-lightest:hover {\n  border-color: #f3ebff;\n}\n\n.hover\\:border-pink-darkest:hover {\n  border-color: #451225;\n}\n\n.hover\\:border-pink-darker:hover {\n  border-color: #6f213f;\n}\n\n.hover\\:border-pink-dark:hover {\n  border-color: #eb5286;\n}\n\n.hover\\:border-pink:hover {\n  border-color: #f66d9b;\n}\n\n.hover\\:border-pink-light:hover {\n  border-color: #fa7ea8;\n}\n\n.hover\\:border-pink-lighter:hover {\n  border-color: #ffbbca;\n}\n\n.hover\\:border-pink-lightest:hover {\n  border-color: #ffebef;\n}\n\n.rounded-none {\n  border-radius: 0;\n}\n\n.rounded-sm {\n  border-radius: .125rem;\n}\n\n.rounded {\n  border-radius: .25rem;\n}\n\n.rounded-lg {\n  border-radius: .5rem;\n}\n\n.rounded-full {\n  border-radius: 9999px;\n}\n\n.rounded-t-none {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n\n.rounded-r-none {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.rounded-b-none {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n.rounded-l-none {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n.rounded-t-sm {\n  border-top-left-radius: .125rem;\n  border-top-right-radius: .125rem;\n}\n\n.rounded-r-sm {\n  border-top-right-radius: .125rem;\n  border-bottom-right-radius: .125rem;\n}\n\n.rounded-b-sm {\n  border-bottom-right-radius: .125rem;\n  border-bottom-left-radius: .125rem;\n}\n\n.rounded-l-sm {\n  border-top-left-radius: .125rem;\n  border-bottom-left-radius: .125rem;\n}\n\n.rounded-t {\n  border-top-left-radius: .25rem;\n  border-top-right-radius: .25rem;\n}\n\n.rounded-r {\n  border-top-right-radius: .25rem;\n  border-bottom-right-radius: .25rem;\n}\n\n.rounded-b {\n  border-bottom-right-radius: .25rem;\n  border-bottom-left-radius: .25rem;\n}\n\n.rounded-l {\n  border-top-left-radius: .25rem;\n  border-bottom-left-radius: .25rem;\n}\n\n.rounded-t-lg {\n  border-top-left-radius: .5rem;\n  border-top-right-radius: .5rem;\n}\n\n.rounded-r-lg {\n  border-top-right-radius: .5rem;\n  border-bottom-right-radius: .5rem;\n}\n\n.rounded-b-lg {\n  border-bottom-right-radius: .5rem;\n  border-bottom-left-radius: .5rem;\n}\n\n.rounded-l-lg {\n  border-top-left-radius: .5rem;\n  border-bottom-left-radius: .5rem;\n}\n\n.rounded-t-full {\n  border-top-left-radius: 9999px;\n  border-top-right-radius: 9999px;\n}\n\n.rounded-r-full {\n  border-top-right-radius: 9999px;\n  border-bottom-right-radius: 9999px;\n}\n\n.rounded-b-full {\n  border-bottom-right-radius: 9999px;\n  border-bottom-left-radius: 9999px;\n}\n\n.rounded-l-full {\n  border-top-left-radius: 9999px;\n  border-bottom-left-radius: 9999px;\n}\n\n.rounded-tl-none {\n  border-top-left-radius: 0;\n}\n\n.rounded-tr-none {\n  border-top-right-radius: 0;\n}\n\n.rounded-br-none {\n  border-bottom-right-radius: 0;\n}\n\n.rounded-bl-none {\n  border-bottom-left-radius: 0;\n}\n\n.rounded-tl-sm {\n  border-top-left-radius: .125rem;\n}\n\n.rounded-tr-sm {\n  border-top-right-radius: .125rem;\n}\n\n.rounded-br-sm {\n  border-bottom-right-radius: .125rem;\n}\n\n.rounded-bl-sm {\n  border-bottom-left-radius: .125rem;\n}\n\n.rounded-tl {\n  border-top-left-radius: .25rem;\n}\n\n.rounded-tr {\n  border-top-right-radius: .25rem;\n}\n\n.rounded-br {\n  border-bottom-right-radius: .25rem;\n}\n\n.rounded-bl {\n  border-bottom-left-radius: .25rem;\n}\n\n.rounded-tl-lg {\n  border-top-left-radius: .5rem;\n}\n\n.rounded-tr-lg {\n  border-top-right-radius: .5rem;\n}\n\n.rounded-br-lg {\n  border-bottom-right-radius: .5rem;\n}\n\n.rounded-bl-lg {\n  border-bottom-left-radius: .5rem;\n}\n\n.rounded-tl-full {\n  border-top-left-radius: 9999px;\n}\n\n.rounded-tr-full {\n  border-top-right-radius: 9999px;\n}\n\n.rounded-br-full {\n  border-bottom-right-radius: 9999px;\n}\n\n.rounded-bl-full {\n  border-bottom-left-radius: 9999px;\n}\n\n.border-solid {\n  border-style: solid;\n}\n\n.border-dashed {\n  border-style: dashed;\n}\n\n.border-dotted {\n  border-style: dotted;\n}\n\n.border-none {\n  border-style: none;\n}\n\n.border-0 {\n  border-width: 0;\n}\n\n.border-2 {\n  border-width: 2px;\n}\n\n.border-4 {\n  border-width: 4px;\n}\n\n.border-8 {\n  border-width: 8px;\n}\n\n.border {\n  border-width: 1px;\n}\n\n.border-t-0 {\n  border-top-width: 0;\n}\n\n.border-r-0 {\n  border-right-width: 0;\n}\n\n.border-b-0 {\n  border-bottom-width: 0;\n}\n\n.border-l-0 {\n  border-left-width: 0;\n}\n\n.border-t-2 {\n  border-top-width: 2px;\n}\n\n.border-r-2 {\n  border-right-width: 2px;\n}\n\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n\n.border-l-2 {\n  border-left-width: 2px;\n}\n\n.border-t-4 {\n  border-top-width: 4px;\n}\n\n.border-r-4 {\n  border-right-width: 4px;\n}\n\n.border-b-4 {\n  border-bottom-width: 4px;\n}\n\n.border-l-4 {\n  border-left-width: 4px;\n}\n\n.border-t-8 {\n  border-top-width: 8px;\n}\n\n.border-r-8 {\n  border-right-width: 8px;\n}\n\n.border-b-8 {\n  border-bottom-width: 8px;\n}\n\n.border-l-8 {\n  border-left-width: 8px;\n}\n\n.border-t {\n  border-top-width: 1px;\n}\n\n.border-r {\n  border-right-width: 1px;\n}\n\n.border-b {\n  border-bottom-width: 1px;\n}\n\n.border-l {\n  border-left-width: 1px;\n}\n\n.cursor-auto {\n  cursor: auto;\n}\n\n.cursor-default {\n  cursor: default;\n}\n\n.cursor-pointer {\n  cursor: pointer;\n}\n\n.cursor-wait {\n  cursor: wait;\n}\n\n.cursor-move {\n  cursor: move;\n}\n\n.cursor-not-allowed {\n  cursor: not-allowed;\n}\n\n.block {\n  display: block;\n}\n\n.inline-block {\n  display: inline-block;\n}\n\n.inline {\n  display: inline;\n}\n\n.table {\n  display: table;\n}\n\n.table-row {\n  display: table-row;\n}\n\n.table-cell {\n  display: table-cell;\n}\n\n.hidden {\n  display: none;\n}\n\n.flex {\n  display: flex;\n}\n\n.inline-flex {\n  display: inline-flex;\n}\n\n.flex-row {\n  flex-direction: row;\n}\n\n.flex-row-reverse {\n  flex-direction: row-reverse;\n}\n\n.flex-col {\n  flex-direction: column;\n}\n\n.flex-col-reverse {\n  flex-direction: column-reverse;\n}\n\n.flex-wrap {\n  flex-wrap: wrap;\n}\n\n.flex-wrap-reverse {\n  flex-wrap: wrap-reverse;\n}\n\n.flex-no-wrap {\n  flex-wrap: nowrap;\n}\n\n.items-start {\n  align-items: flex-start;\n}\n\n.items-end {\n  align-items: flex-end;\n}\n\n.items-center {\n  align-items: center;\n}\n\n.items-baseline {\n  align-items: baseline;\n}\n\n.items-stretch {\n  align-items: stretch;\n}\n\n.self-auto {\n  align-self: auto;\n}\n\n.self-start {\n  align-self: flex-start;\n}\n\n.self-end {\n  align-self: flex-end;\n}\n\n.self-center {\n  align-self: center;\n}\n\n.self-stretch {\n  align-self: stretch;\n}\n\n.justify-start {\n  justify-content: flex-start;\n}\n\n.justify-end {\n  justify-content: flex-end;\n}\n\n.justify-center {\n  justify-content: center;\n}\n\n.justify-between {\n  justify-content: space-between;\n}\n\n.justify-around {\n  justify-content: space-around;\n}\n\n.content-center {\n  align-content: center;\n}\n\n.content-start {\n  align-content: flex-start;\n}\n\n.content-end {\n  align-content: flex-end;\n}\n\n.content-between {\n  align-content: space-between;\n}\n\n.content-around {\n  align-content: space-around;\n}\n\n.flex-1 {\n  flex: 1;\n}\n\n.flex-auto {\n  flex: auto;\n}\n\n.flex-initial {\n  flex: initial;\n}\n\n.flex-none {\n  flex: none;\n}\n\n.flex-grow {\n  flex-grow: 1;\n}\n\n.flex-shrink {\n  flex-shrink: 1;\n}\n\n.flex-no-grow {\n  flex-grow: 0;\n}\n\n.flex-no-shrink {\n  flex-shrink: 0;\n}\n\n.float-right {\n  float: right;\n}\n\n.float-left {\n  float: left;\n}\n\n.float-none {\n  float: none;\n}\n\n.clearfix:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n.font-sans {\n  font-family: system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;\n}\n\n.font-serif {\n  font-family: Constantia, Lucida Bright, Lucidabright, Lucida Serif, Lucida, DejaVu Serif, Bitstream Vera Serif, Liberation Serif, Georgia, serif;\n}\n\n.font-mono {\n  font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;\n}\n\n.font-hairline {\n  font-weight: 100;\n}\n\n.font-thin {\n  font-weight: 200;\n}\n\n.font-light {\n  font-weight: 300;\n}\n\n.font-normal {\n  font-weight: 400;\n}\n\n.font-medium {\n  font-weight: 500;\n}\n\n.font-semibold {\n  font-weight: 600;\n}\n\n.font-bold {\n  font-weight: 700;\n}\n\n.font-extrabold {\n  font-weight: 800;\n}\n\n.font-black {\n  font-weight: 900;\n}\n\n.hover\\:font-hairline:hover {\n  font-weight: 100;\n}\n\n.hover\\:font-thin:hover {\n  font-weight: 200;\n}\n\n.hover\\:font-light:hover {\n  font-weight: 300;\n}\n\n.hover\\:font-normal:hover {\n  font-weight: 400;\n}\n\n.hover\\:font-medium:hover {\n  font-weight: 500;\n}\n\n.hover\\:font-semibold:hover {\n  font-weight: 600;\n}\n\n.hover\\:font-bold:hover {\n  font-weight: 700;\n}\n\n.hover\\:font-extrabold:hover {\n  font-weight: 800;\n}\n\n.hover\\:font-black:hover {\n  font-weight: 900;\n}\n\n.h-1 {\n  height: .25rem;\n}\n\n.h-2 {\n  height: .5rem;\n}\n\n.h-3 {\n  height: .75rem;\n}\n\n.h-4 {\n  height: 1rem;\n}\n\n.h-6 {\n  height: 1.5rem;\n}\n\n.h-8 {\n  height: 2rem;\n}\n\n.h-10 {\n  height: 2.5rem;\n}\n\n.h-12 {\n  height: 3rem;\n}\n\n.h-16 {\n  height: 4rem;\n}\n\n.h-24 {\n  height: 6rem;\n}\n\n.h-32 {\n  height: 8rem;\n}\n\n.h-48 {\n  height: 12rem;\n}\n\n.h-64 {\n  height: 16rem;\n}\n\n.h-auto {\n  height: auto;\n}\n\n.h-px {\n  height: 1px;\n}\n\n.h-full {\n  height: 100%;\n}\n\n.h-screen {\n  height: 100vh;\n}\n\n.leading-none {\n  line-height: 1;\n}\n\n.leading-tight {\n  line-height: 1.25;\n}\n\n.leading-normal {\n  line-height: 1.5;\n}\n\n.leading-loose {\n  line-height: 2;\n}\n\n.m-0 {\n  margin: 0;\n}\n\n.m-1 {\n  margin: .25rem;\n}\n\n.m-2 {\n  margin: .5rem;\n}\n\n.m-3 {\n  margin: .75rem;\n}\n\n.m-4 {\n  margin: 1rem;\n}\n\n.m-6 {\n  margin: 1.5rem;\n}\n\n.m-8 {\n  margin: 2rem;\n}\n\n.m-auto {\n  margin: auto;\n}\n\n.m-px {\n  margin: 1px;\n}\n\n.my-0 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\n.mx-0 {\n  margin-left: 0;\n  margin-right: 0;\n}\n\n.my-1 {\n  margin-top: .25rem;\n  margin-bottom: .25rem;\n}\n\n.mx-1 {\n  margin-left: .25rem;\n  margin-right: .25rem;\n}\n\n.my-2 {\n  margin-top: .5rem;\n  margin-bottom: .5rem;\n}\n\n.mx-2 {\n  margin-left: .5rem;\n  margin-right: .5rem;\n}\n\n.my-3 {\n  margin-top: .75rem;\n  margin-bottom: .75rem;\n}\n\n.mx-3 {\n  margin-left: .75rem;\n  margin-right: .75rem;\n}\n\n.my-4 {\n  margin-top: 1rem;\n  margin-bottom: 1rem;\n}\n\n.mx-4 {\n  margin-left: 1rem;\n  margin-right: 1rem;\n}\n\n.my-6 {\n  margin-top: 1.5rem;\n  margin-bottom: 1.5rem;\n}\n\n.mx-6 {\n  margin-left: 1.5rem;\n  margin-right: 1.5rem;\n}\n\n.my-8 {\n  margin-top: 2rem;\n  margin-bottom: 2rem;\n}\n\n.mx-8 {\n  margin-left: 2rem;\n  margin-right: 2rem;\n}\n\n.my-auto {\n  margin-top: auto;\n  margin-bottom: auto;\n}\n\n.mx-auto {\n  margin-left: auto;\n  margin-right: auto;\n}\n\n.my-px {\n  margin-top: 1px;\n  margin-bottom: 1px;\n}\n\n.mx-px {\n  margin-left: 1px;\n  margin-right: 1px;\n}\n\n.mt-0 {\n  margin-top: 0;\n}\n\n.mr-0 {\n  margin-right: 0;\n}\n\n.mb-0 {\n  margin-bottom: 0;\n}\n\n.ml-0 {\n  margin-left: 0;\n}\n\n.mt-1 {\n  margin-top: .25rem;\n}\n\n.mr-1 {\n  margin-right: .25rem;\n}\n\n.mb-1 {\n  margin-bottom: .25rem;\n}\n\n.ml-1 {\n  margin-left: .25rem;\n}\n\n.mt-2 {\n  margin-top: .5rem;\n}\n\n.mr-2 {\n  margin-right: .5rem;\n}\n\n.mb-2 {\n  margin-bottom: .5rem;\n}\n\n.ml-2 {\n  margin-left: .5rem;\n}\n\n.mt-3 {\n  margin-top: .75rem;\n}\n\n.mr-3 {\n  margin-right: .75rem;\n}\n\n.mb-3 {\n  margin-bottom: .75rem;\n}\n\n.ml-3 {\n  margin-left: .75rem;\n}\n\n.mt-4 {\n  margin-top: 1rem;\n}\n\n.mr-4 {\n  margin-right: 1rem;\n}\n\n.mb-4 {\n  margin-bottom: 1rem;\n}\n\n.ml-4 {\n  margin-left: 1rem;\n}\n\n.mt-6 {\n  margin-top: 1.5rem;\n}\n\n.mr-6 {\n  margin-right: 1.5rem;\n}\n\n.mb-6 {\n  margin-bottom: 1.5rem;\n}\n\n.ml-6 {\n  margin-left: 1.5rem;\n}\n\n.mt-8 {\n  margin-top: 2rem;\n}\n\n.mr-8 {\n  margin-right: 2rem;\n}\n\n.mb-8 {\n  margin-bottom: 2rem;\n}\n\n.ml-8 {\n  margin-left: 2rem;\n}\n\n.mt-auto {\n  margin-top: auto;\n}\n\n.mr-auto {\n  margin-right: auto;\n}\n\n.mb-auto {\n  margin-bottom: auto;\n}\n\n.ml-auto {\n  margin-left: auto;\n}\n\n.mt-px {\n  margin-top: 1px;\n}\n\n.mr-px {\n  margin-right: 1px;\n}\n\n.mb-px {\n  margin-bottom: 1px;\n}\n\n.ml-px {\n  margin-left: 1px;\n}\n\n.max-h-full {\n  max-height: 100%;\n}\n\n.max-h-screen {\n  max-height: 100vh;\n}\n\n.max-w-xs {\n  max-width: 20rem;\n}\n\n.max-w-sm {\n  max-width: 30rem;\n}\n\n.max-w-md {\n  max-width: 40rem;\n}\n\n.max-w-lg {\n  max-width: 50rem;\n}\n\n.max-w-xl {\n  max-width: 60rem;\n}\n\n.max-w-2xl {\n  max-width: 70rem;\n}\n\n.max-w-3xl {\n  max-width: 80rem;\n}\n\n.max-w-4xl {\n  max-width: 90rem;\n}\n\n.max-w-5xl {\n  max-width: 100rem;\n}\n\n.max-w-full {\n  max-width: 100%;\n}\n\n.min-h-0 {\n  min-height: 0;\n}\n\n.min-h-full {\n  min-height: 100%;\n}\n\n.min-h-screen {\n  min-height: 100vh;\n}\n\n.min-w-0 {\n  min-width: 0;\n}\n\n.min-w-full {\n  min-width: 100%;\n}\n\n.-m-0 {\n  margin: 0;\n}\n\n.-m-1 {\n  margin: -0.25rem;\n}\n\n.-m-2 {\n  margin: -0.5rem;\n}\n\n.-m-3 {\n  margin: -0.75rem;\n}\n\n.-m-4 {\n  margin: -1rem;\n}\n\n.-m-6 {\n  margin: -1.5rem;\n}\n\n.-m-8 {\n  margin: -2rem;\n}\n\n.-m-px {\n  margin: -1px;\n}\n\n.-my-0 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\n.-mx-0 {\n  margin-left: 0;\n  margin-right: 0;\n}\n\n.-my-1 {\n  margin-top: -0.25rem;\n  margin-bottom: -0.25rem;\n}\n\n.-mx-1 {\n  margin-left: -0.25rem;\n  margin-right: -0.25rem;\n}\n\n.-my-2 {\n  margin-top: -0.5rem;\n  margin-bottom: -0.5rem;\n}\n\n.-mx-2 {\n  margin-left: -0.5rem;\n  margin-right: -0.5rem;\n}\n\n.-my-3 {\n  margin-top: -0.75rem;\n  margin-bottom: -0.75rem;\n}\n\n.-mx-3 {\n  margin-left: -0.75rem;\n  margin-right: -0.75rem;\n}\n\n.-my-4 {\n  margin-top: -1rem;\n  margin-bottom: -1rem;\n}\n\n.-mx-4 {\n  margin-left: -1rem;\n  margin-right: -1rem;\n}\n\n.-my-6 {\n  margin-top: -1.5rem;\n  margin-bottom: -1.5rem;\n}\n\n.-mx-6 {\n  margin-left: -1.5rem;\n  margin-right: -1.5rem;\n}\n\n.-my-8 {\n  margin-top: -2rem;\n  margin-bottom: -2rem;\n}\n\n.-mx-8 {\n  margin-left: -2rem;\n  margin-right: -2rem;\n}\n\n.-my-px {\n  margin-top: -1px;\n  margin-bottom: -1px;\n}\n\n.-mx-px {\n  margin-left: -1px;\n  margin-right: -1px;\n}\n\n.-mt-0 {\n  margin-top: 0;\n}\n\n.-mr-0 {\n  margin-right: 0;\n}\n\n.-mb-0 {\n  margin-bottom: 0;\n}\n\n.-ml-0 {\n  margin-left: 0;\n}\n\n.-mt-1 {\n  margin-top: -0.25rem;\n}\n\n.-mr-1 {\n  margin-right: -0.25rem;\n}\n\n.-mb-1 {\n  margin-bottom: -0.25rem;\n}\n\n.-ml-1 {\n  margin-left: -0.25rem;\n}\n\n.-mt-2 {\n  margin-top: -0.5rem;\n}\n\n.-mr-2 {\n  margin-right: -0.5rem;\n}\n\n.-mb-2 {\n  margin-bottom: -0.5rem;\n}\n\n.-ml-2 {\n  margin-left: -0.5rem;\n}\n\n.-mt-3 {\n  margin-top: -0.75rem;\n}\n\n.-mr-3 {\n  margin-right: -0.75rem;\n}\n\n.-mb-3 {\n  margin-bottom: -0.75rem;\n}\n\n.-ml-3 {\n  margin-left: -0.75rem;\n}\n\n.-mt-4 {\n  margin-top: -1rem;\n}\n\n.-mr-4 {\n  margin-right: -1rem;\n}\n\n.-mb-4 {\n  margin-bottom: -1rem;\n}\n\n.-ml-4 {\n  margin-left: -1rem;\n}\n\n.-mt-6 {\n  margin-top: -1.5rem;\n}\n\n.-mr-6 {\n  margin-right: -1.5rem;\n}\n\n.-mb-6 {\n  margin-bottom: -1.5rem;\n}\n\n.-ml-6 {\n  margin-left: -1.5rem;\n}\n\n.-mt-8 {\n  margin-top: -2rem;\n}\n\n.-mr-8 {\n  margin-right: -2rem;\n}\n\n.-mb-8 {\n  margin-bottom: -2rem;\n}\n\n.-ml-8 {\n  margin-left: -2rem;\n}\n\n.-mt-px {\n  margin-top: -1px;\n}\n\n.-mr-px {\n  margin-right: -1px;\n}\n\n.-mb-px {\n  margin-bottom: -1px;\n}\n\n.-ml-px {\n  margin-left: -1px;\n}\n\n.opacity-0 {\n  opacity: 0;\n}\n\n.opacity-25 {\n  opacity: .25;\n}\n\n.opacity-50 {\n  opacity: .5;\n}\n\n.opacity-75 {\n  opacity: .75;\n}\n\n.opacity-100 {\n  opacity: 1;\n}\n\n.overflow-auto {\n  overflow: auto;\n}\n\n.overflow-hidden {\n  overflow: hidden;\n}\n\n.overflow-visible {\n  overflow: visible;\n}\n\n.overflow-scroll {\n  overflow: scroll;\n}\n\n.overflow-x-auto {\n  overflow-x: auto;\n}\n\n.overflow-y-auto {\n  overflow-y: auto;\n}\n\n.overflow-x-scroll {\n  overflow-x: scroll;\n}\n\n.overflow-y-scroll {\n  overflow-y: scroll;\n}\n\n.scrolling-touch {\n  -webkit-overflow-scrolling: touch;\n}\n\n.scrolling-auto {\n  -webkit-overflow-scrolling: auto;\n}\n\n.p-0 {\n  padding: 0;\n}\n\n.p-1 {\n  padding: .25rem;\n}\n\n.p-2 {\n  padding: .5rem;\n}\n\n.p-3 {\n  padding: .75rem;\n}\n\n.p-4 {\n  padding: 1rem;\n}\n\n.p-6 {\n  padding: 1.5rem;\n}\n\n.p-8 {\n  padding: 2rem;\n}\n\n.p-px {\n  padding: 1px;\n}\n\n.py-0 {\n  padding-top: 0;\n  padding-bottom: 0;\n}\n\n.px-0 {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.py-1 {\n  padding-top: .25rem;\n  padding-bottom: .25rem;\n}\n\n.px-1 {\n  padding-left: .25rem;\n  padding-right: .25rem;\n}\n\n.py-2 {\n  padding-top: .5rem;\n  padding-bottom: .5rem;\n}\n\n.px-2 {\n  padding-left: .5rem;\n  padding-right: .5rem;\n}\n\n.py-3 {\n  padding-top: .75rem;\n  padding-bottom: .75rem;\n}\n\n.px-3 {\n  padding-left: .75rem;\n  padding-right: .75rem;\n}\n\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n\n.px-6 {\n  padding-left: 1.5rem;\n  padding-right: 1.5rem;\n}\n\n.py-8 {\n  padding-top: 2rem;\n  padding-bottom: 2rem;\n}\n\n.px-8 {\n  padding-left: 2rem;\n  padding-right: 2rem;\n}\n\n.py-px {\n  padding-top: 1px;\n  padding-bottom: 1px;\n}\n\n.px-px {\n  padding-left: 1px;\n  padding-right: 1px;\n}\n\n.pt-0 {\n  padding-top: 0;\n}\n\n.pr-0 {\n  padding-right: 0;\n}\n\n.pb-0 {\n  padding-bottom: 0;\n}\n\n.pl-0 {\n  padding-left: 0;\n}\n\n.pt-1 {\n  padding-top: .25rem;\n}\n\n.pr-1 {\n  padding-right: .25rem;\n}\n\n.pb-1 {\n  padding-bottom: .25rem;\n}\n\n.pl-1 {\n  padding-left: .25rem;\n}\n\n.pt-2 {\n  padding-top: .5rem;\n}\n\n.pr-2 {\n  padding-right: .5rem;\n}\n\n.pb-2 {\n  padding-bottom: .5rem;\n}\n\n.pl-2 {\n  padding-left: .5rem;\n}\n\n.pt-3 {\n  padding-top: .75rem;\n}\n\n.pr-3 {\n  padding-right: .75rem;\n}\n\n.pb-3 {\n  padding-bottom: .75rem;\n}\n\n.pl-3 {\n  padding-left: .75rem;\n}\n\n.pt-4 {\n  padding-top: 1rem;\n}\n\n.pr-4 {\n  padding-right: 1rem;\n}\n\n.pb-4 {\n  padding-bottom: 1rem;\n}\n\n.pl-4 {\n  padding-left: 1rem;\n}\n\n.pt-6 {\n  padding-top: 1.5rem;\n}\n\n.pr-6 {\n  padding-right: 1.5rem;\n}\n\n.pb-6 {\n  padding-bottom: 1.5rem;\n}\n\n.pl-6 {\n  padding-left: 1.5rem;\n}\n\n.pt-8 {\n  padding-top: 2rem;\n}\n\n.pr-8 {\n  padding-right: 2rem;\n}\n\n.pb-8 {\n  padding-bottom: 2rem;\n}\n\n.pl-8 {\n  padding-left: 2rem;\n}\n\n.pt-px {\n  padding-top: 1px;\n}\n\n.pr-px {\n  padding-right: 1px;\n}\n\n.pb-px {\n  padding-bottom: 1px;\n}\n\n.pl-px {\n  padding-left: 1px;\n}\n\n.pointer-events-none {\n  pointer-events: none;\n}\n\n.pointer-events-auto {\n  pointer-events: auto;\n}\n\n.static {\n  position: static;\n}\n\n.fixed {\n  position: fixed;\n}\n\n.absolute {\n  position: absolute;\n}\n\n.relative {\n  position: relative;\n}\n\n.sticky {\n  position: -webkit-sticky;\n  position: sticky;\n}\n\n.pin-none {\n  top: auto;\n  right: auto;\n  bottom: auto;\n  left: auto;\n}\n\n.pin {\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n}\n\n.pin-y {\n  top: 0;\n  bottom: 0;\n}\n\n.pin-x {\n  right: 0;\n  left: 0;\n}\n\n.pin-t {\n  top: 0;\n}\n\n.pin-r {\n  right: 0;\n}\n\n.pin-b {\n  bottom: 0;\n}\n\n.pin-l {\n  left: 0;\n}\n\n.resize-none {\n  resize: none;\n}\n\n.resize-y {\n  resize: vertical;\n}\n\n.resize-x {\n  resize: horizontal;\n}\n\n.resize {\n  resize: both;\n}\n\n.shadow {\n  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);\n}\n\n.shadow-md {\n  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);\n}\n\n.shadow-lg {\n  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, .11), 0 5px 15px 0 rgba(0, 0, 0, .08);\n}\n\n.shadow-inner {\n  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);\n}\n\n.shadow-none {\n  box-shadow: none;\n}\n\n.fill-current {\n  fill: currentColor;\n}\n\n.stroke-current {\n  stroke: currentColor;\n}\n\n.text-left {\n  text-align: left;\n}\n\n.text-center {\n  text-align: center;\n}\n\n.text-right {\n  text-align: right;\n}\n\n.text-justify {\n  text-align: justify;\n}\n\n.text-transparent {\n  color: transparent;\n}\n\n.text-black {\n  color: #22292f;\n}\n\n.text-grey-darkest {\n  color: #3d4852;\n}\n\n.text-grey-darker {\n  color: #606f7b;\n}\n\n.text-grey-dark {\n  color: #8795a1;\n}\n\n.text-grey {\n  color: #b8c2cc;\n}\n\n.text-grey-light {\n  color: #dae1e7;\n}\n\n.text-grey-lighter {\n  color: #f1f5f8;\n}\n\n.text-grey-lightest {\n  color: #f8fafc;\n}\n\n.text-white {\n  color: #fff;\n}\n\n.text-red-darkest {\n  color: #3b0d0c;\n}\n\n.text-red-darker {\n  color: #621b18;\n}\n\n.text-red-dark {\n  color: #cc1f1a;\n}\n\n.text-red {\n  color: #e3342f;\n}\n\n.text-red-light {\n  color: #ef5753;\n}\n\n.text-red-lighter {\n  color: #f9acaa;\n}\n\n.text-red-lightest {\n  color: #fcebea;\n}\n\n.text-orange-darkest {\n  color: #462a16;\n}\n\n.text-orange-darker {\n  color: #613b1f;\n}\n\n.text-orange-dark {\n  color: #de751f;\n}\n\n.text-orange {\n  color: #f6993f;\n}\n\n.text-orange-light {\n  color: #faad63;\n}\n\n.text-orange-lighter {\n  color: #fcd9b6;\n}\n\n.text-orange-lightest {\n  color: #fff5eb;\n}\n\n.text-yellow-darkest {\n  color: #453411;\n}\n\n.text-yellow-darker {\n  color: #684f1d;\n}\n\n.text-yellow-dark {\n  color: #f2d024;\n}\n\n.text-yellow {\n  color: #ffed4a;\n}\n\n.text-yellow-light {\n  color: #fff382;\n}\n\n.text-yellow-lighter {\n  color: #fff9c2;\n}\n\n.text-yellow-lightest {\n  color: #fcfbeb;\n}\n\n.text-green-darkest {\n  color: #0f2f21;\n}\n\n.text-green-darker {\n  color: #1a4731;\n}\n\n.text-green-dark {\n  color: #1f9d55;\n}\n\n.text-green {\n  color: #38c172;\n}\n\n.text-green-light {\n  color: #51d88a;\n}\n\n.text-green-lighter {\n  color: #a2f5bf;\n}\n\n.text-green-lightest {\n  color: #e3fcec;\n}\n\n.text-teal-darkest {\n  color: #0d3331;\n}\n\n.text-teal-darker {\n  color: #20504f;\n}\n\n.text-teal-dark {\n  color: #38a89d;\n}\n\n.text-teal {\n  color: #4dc0b5;\n}\n\n.text-teal-light {\n  color: #64d5ca;\n}\n\n.text-teal-lighter {\n  color: #a0f0ed;\n}\n\n.text-teal-lightest {\n  color: #e8fffe;\n}\n\n.text-blue-darkest {\n  color: #12283a;\n}\n\n.text-blue-darker {\n  color: #1c3d5a;\n}\n\n.text-blue-dark {\n  color: #2779bd;\n}\n\n.text-blue {\n  color: #3490dc;\n}\n\n.text-blue-light {\n  color: #6cb2eb;\n}\n\n.text-blue-lighter {\n  color: #bcdefa;\n}\n\n.text-blue-lightest {\n  color: #eff8ff;\n}\n\n.text-indigo-darkest {\n  color: #191e38;\n}\n\n.text-indigo-darker {\n  color: #2f365f;\n}\n\n.text-indigo-dark {\n  color: #5661b3;\n}\n\n.text-indigo {\n  color: #6574cd;\n}\n\n.text-indigo-light {\n  color: #7886d7;\n}\n\n.text-indigo-lighter {\n  color: #b2b7ff;\n}\n\n.text-indigo-lightest {\n  color: #e6e8ff;\n}\n\n.text-purple-darkest {\n  color: #21183c;\n}\n\n.text-purple-darker {\n  color: #382b5f;\n}\n\n.text-purple-dark {\n  color: #794acf;\n}\n\n.text-purple {\n  color: #9561e2;\n}\n\n.text-purple-light {\n  color: #a779e9;\n}\n\n.text-purple-lighter {\n  color: #d6bbfc;\n}\n\n.text-purple-lightest {\n  color: #f3ebff;\n}\n\n.text-pink-darkest {\n  color: #451225;\n}\n\n.text-pink-darker {\n  color: #6f213f;\n}\n\n.text-pink-dark {\n  color: #eb5286;\n}\n\n.text-pink {\n  color: #f66d9b;\n}\n\n.text-pink-light {\n  color: #fa7ea8;\n}\n\n.text-pink-lighter {\n  color: #ffbbca;\n}\n\n.text-pink-lightest {\n  color: #ffebef;\n}\n\n.hover\\:text-transparent:hover {\n  color: transparent;\n}\n\n.hover\\:text-black:hover {\n  color: #22292f;\n}\n\n.hover\\:text-grey-darkest:hover {\n  color: #3d4852;\n}\n\n.hover\\:text-grey-darker:hover {\n  color: #606f7b;\n}\n\n.hover\\:text-grey-dark:hover {\n  color: #8795a1;\n}\n\n.hover\\:text-grey:hover {\n  color: #b8c2cc;\n}\n\n.hover\\:text-grey-light:hover {\n  color: #dae1e7;\n}\n\n.hover\\:text-grey-lighter:hover {\n  color: #f1f5f8;\n}\n\n.hover\\:text-grey-lightest:hover {\n  color: #f8fafc;\n}\n\n.hover\\:text-white:hover {\n  color: #fff;\n}\n\n.hover\\:text-red-darkest:hover {\n  color: #3b0d0c;\n}\n\n.hover\\:text-red-darker:hover {\n  color: #621b18;\n}\n\n.hover\\:text-red-dark:hover {\n  color: #cc1f1a;\n}\n\n.hover\\:text-red:hover {\n  color: #e3342f;\n}\n\n.hover\\:text-red-light:hover {\n  color: #ef5753;\n}\n\n.hover\\:text-red-lighter:hover {\n  color: #f9acaa;\n}\n\n.hover\\:text-red-lightest:hover {\n  color: #fcebea;\n}\n\n.hover\\:text-orange-darkest:hover {\n  color: #462a16;\n}\n\n.hover\\:text-orange-darker:hover {\n  color: #613b1f;\n}\n\n.hover\\:text-orange-dark:hover {\n  color: #de751f;\n}\n\n.hover\\:text-orange:hover {\n  color: #f6993f;\n}\n\n.hover\\:text-orange-light:hover {\n  color: #faad63;\n}\n\n.hover\\:text-orange-lighter:hover {\n  color: #fcd9b6;\n}\n\n.hover\\:text-orange-lightest:hover {\n  color: #fff5eb;\n}\n\n.hover\\:text-yellow-darkest:hover {\n  color: #453411;\n}\n\n.hover\\:text-yellow-darker:hover {\n  color: #684f1d;\n}\n\n.hover\\:text-yellow-dark:hover {\n  color: #f2d024;\n}\n\n.hover\\:text-yellow:hover {\n  color: #ffed4a;\n}\n\n.hover\\:text-yellow-light:hover {\n  color: #fff382;\n}\n\n.hover\\:text-yellow-lighter:hover {\n  color: #fff9c2;\n}\n\n.hover\\:text-yellow-lightest:hover {\n  color: #fcfbeb;\n}\n\n.hover\\:text-green-darkest:hover {\n  color: #0f2f21;\n}\n\n.hover\\:text-green-darker:hover {\n  color: #1a4731;\n}\n\n.hover\\:text-green-dark:hover {\n  color: #1f9d55;\n}\n\n.hover\\:text-green:hover {\n  color: #38c172;\n}\n\n.hover\\:text-green-light:hover {\n  color: #51d88a;\n}\n\n.hover\\:text-green-lighter:hover {\n  color: #a2f5bf;\n}\n\n.hover\\:text-green-lightest:hover {\n  color: #e3fcec;\n}\n\n.hover\\:text-teal-darkest:hover {\n  color: #0d3331;\n}\n\n.hover\\:text-teal-darker:hover {\n  color: #20504f;\n}\n\n.hover\\:text-teal-dark:hover {\n  color: #38a89d;\n}\n\n.hover\\:text-teal:hover {\n  color: #4dc0b5;\n}\n\n.hover\\:text-teal-light:hover {\n  color: #64d5ca;\n}\n\n.hover\\:text-teal-lighter:hover {\n  color: #a0f0ed;\n}\n\n.hover\\:text-teal-lightest:hover {\n  color: #e8fffe;\n}\n\n.hover\\:text-blue-darkest:hover {\n  color: #12283a;\n}\n\n.hover\\:text-blue-darker:hover {\n  color: #1c3d5a;\n}\n\n.hover\\:text-blue-dark:hover {\n  color: #2779bd;\n}\n\n.hover\\:text-blue:hover {\n  color: #3490dc;\n}\n\n.hover\\:text-blue-light:hover {\n  color: #6cb2eb;\n}\n\n.hover\\:text-blue-lighter:hover {\n  color: #bcdefa;\n}\n\n.hover\\:text-blue-lightest:hover {\n  color: #eff8ff;\n}\n\n.hover\\:text-indigo-darkest:hover {\n  color: #191e38;\n}\n\n.hover\\:text-indigo-darker:hover {\n  color: #2f365f;\n}\n\n.hover\\:text-indigo-dark:hover {\n  color: #5661b3;\n}\n\n.hover\\:text-indigo:hover {\n  color: #6574cd;\n}\n\n.hover\\:text-indigo-light:hover {\n  color: #7886d7;\n}\n\n.hover\\:text-indigo-lighter:hover {\n  color: #b2b7ff;\n}\n\n.hover\\:text-indigo-lightest:hover {\n  color: #e6e8ff;\n}\n\n.hover\\:text-purple-darkest:hover {\n  color: #21183c;\n}\n\n.hover\\:text-purple-darker:hover {\n  color: #382b5f;\n}\n\n.hover\\:text-purple-dark:hover {\n  color: #794acf;\n}\n\n.hover\\:text-purple:hover {\n  color: #9561e2;\n}\n\n.hover\\:text-purple-light:hover {\n  color: #a779e9;\n}\n\n.hover\\:text-purple-lighter:hover {\n  color: #d6bbfc;\n}\n\n.hover\\:text-purple-lightest:hover {\n  color: #f3ebff;\n}\n\n.hover\\:text-pink-darkest:hover {\n  color: #451225;\n}\n\n.hover\\:text-pink-darker:hover {\n  color: #6f213f;\n}\n\n.hover\\:text-pink-dark:hover {\n  color: #eb5286;\n}\n\n.hover\\:text-pink:hover {\n  color: #f66d9b;\n}\n\n.hover\\:text-pink-light:hover {\n  color: #fa7ea8;\n}\n\n.hover\\:text-pink-lighter:hover {\n  color: #ffbbca;\n}\n\n.hover\\:text-pink-lightest:hover {\n  color: #ffebef;\n}\n\n.text-xs {\n  font-size: .75rem;\n}\n\n.text-sm {\n  font-size: .875rem;\n}\n\n.text-base {\n  font-size: 1rem;\n}\n\n.text-lg {\n  font-size: 1.125rem;\n}\n\n.text-xl {\n  font-size: 1.25rem;\n}\n\n.text-2xl {\n  font-size: 1.5rem;\n}\n\n.text-3xl {\n  font-size: 1.875rem;\n}\n\n.text-4xl {\n  font-size: 2.25rem;\n}\n\n.text-5xl {\n  font-size: 3rem;\n}\n\n.italic {\n  font-style: italic;\n}\n\n.roman {\n  font-style: normal;\n}\n\n.uppercase {\n  text-transform: uppercase;\n}\n\n.lowercase {\n  text-transform: lowercase;\n}\n\n.capitalize {\n  text-transform: capitalize;\n}\n\n.normal-case {\n  text-transform: none;\n}\n\n.underline {\n  text-decoration: underline;\n}\n\n.line-through {\n  text-decoration: line-through;\n}\n\n.no-underline {\n  text-decoration: none;\n}\n\n.antialiased {\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n.subpixel-antialiased {\n  -webkit-font-smoothing: auto;\n  -moz-osx-font-smoothing: auto;\n}\n\n.hover\\:italic:hover {\n  font-style: italic;\n}\n\n.hover\\:roman:hover {\n  font-style: normal;\n}\n\n.hover\\:uppercase:hover {\n  text-transform: uppercase;\n}\n\n.hover\\:lowercase:hover {\n  text-transform: lowercase;\n}\n\n.hover\\:capitalize:hover {\n  text-transform: capitalize;\n}\n\n.hover\\:normal-case:hover {\n  text-transform: none;\n}\n\n.hover\\:underline:hover {\n  text-decoration: underline;\n}\n\n.hover\\:line-through:hover {\n  text-decoration: line-through;\n}\n\n.hover\\:no-underline:hover {\n  text-decoration: none;\n}\n\n.hover\\:antialiased:hover {\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n.hover\\:subpixel-antialiased:hover {\n  -webkit-font-smoothing: auto;\n  -moz-osx-font-smoothing: auto;\n}\n\n.tracking-tight {\n  letter-spacing: -0.05em;\n}\n\n.tracking-normal {\n  letter-spacing: 0;\n}\n\n.tracking-wide {\n  letter-spacing: .05em;\n}\n\n.select-none {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n\n.select-text {\n  -webkit-user-select: text;\n     -moz-user-select: text;\n      -ms-user-select: text;\n          user-select: text;\n}\n\n.align-baseline {\n  vertical-align: baseline;\n}\n\n.align-top {\n  vertical-align: top;\n}\n\n.align-middle {\n  vertical-align: middle;\n}\n\n.align-bottom {\n  vertical-align: bottom;\n}\n\n.align-text-top {\n  vertical-align: text-top;\n}\n\n.align-text-bottom {\n  vertical-align: text-bottom;\n}\n\n.visible {\n  visibility: visible;\n}\n\n.invisible {\n  visibility: hidden;\n}\n\n.whitespace-normal {\n  white-space: normal;\n}\n\n.whitespace-no-wrap {\n  white-space: nowrap;\n}\n\n.whitespace-pre {\n  white-space: pre;\n}\n\n.whitespace-pre-line {\n  white-space: pre-line;\n}\n\n.whitespace-pre-wrap {\n  white-space: pre-wrap;\n}\n\n.break-words {\n  word-wrap: break-word;\n}\n\n.break-normal {\n  word-wrap: normal;\n}\n\n.truncate {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.w-1 {\n  width: .25rem;\n}\n\n.w-2 {\n  width: .5rem;\n}\n\n.w-3 {\n  width: .75rem;\n}\n\n.w-4 {\n  width: 1rem;\n}\n\n.w-6 {\n  width: 1.5rem;\n}\n\n.w-8 {\n  width: 2rem;\n}\n\n.w-10 {\n  width: 2.5rem;\n}\n\n.w-12 {\n  width: 3rem;\n}\n\n.w-16 {\n  width: 4rem;\n}\n\n.w-24 {\n  width: 6rem;\n}\n\n.w-32 {\n  width: 8rem;\n}\n\n.w-48 {\n  width: 12rem;\n}\n\n.w-64 {\n  width: 16rem;\n}\n\n.w-auto {\n  width: auto;\n}\n\n.w-px {\n  width: 1px;\n}\n\n.w-1\\/2 {\n  width: 50%;\n}\n\n.w-1\\/3 {\n  width: 33.33333%;\n}\n\n.w-2\\/3 {\n  width: 66.66667%;\n}\n\n.w-1\\/4 {\n  width: 25%;\n}\n\n.w-3\\/4 {\n  width: 75%;\n}\n\n.w-1\\/5 {\n  width: 20%;\n}\n\n.w-2\\/5 {\n  width: 40%;\n}\n\n.w-3\\/5 {\n  width: 60%;\n}\n\n.w-4\\/5 {\n  width: 80%;\n}\n\n.w-1\\/6 {\n  width: 16.66667%;\n}\n\n.w-5\\/6 {\n  width: 83.33333%;\n}\n\n.w-full {\n  width: 100%;\n}\n\n.w-screen {\n  width: 100vw;\n}\n\n.z-0 {\n  z-index: 0;\n}\n\n.z-10 {\n  z-index: 10;\n}\n\n.z-20 {\n  z-index: 20;\n}\n\n.z-30 {\n  z-index: 30;\n}\n\n.z-40 {\n  z-index: 40;\n}\n\n.z-50 {\n  z-index: 50;\n}\n\n.z-auto {\n  z-index: auto;\n}\n\n@media (min-width: 576px) {\n  .sm\\:list-reset {\n    list-style: none;\n    padding: 0;\n  }\n\n  .sm\\:appearance-none {\n    -webkit-appearance: none;\n       -moz-appearance: none;\n            appearance: none;\n  }\n\n  .sm\\:bg-fixed {\n    background-attachment: fixed;\n  }\n\n  .sm\\:bg-local {\n    background-attachment: local;\n  }\n\n  .sm\\:bg-scroll {\n    background-attachment: scroll;\n  }\n\n  .sm\\:bg-transparent {\n    background-color: transparent;\n  }\n\n  .sm\\:bg-black {\n    background-color: #22292f;\n  }\n\n  .sm\\:bg-grey-darkest {\n    background-color: #3d4852;\n  }\n\n  .sm\\:bg-grey-darker {\n    background-color: #606f7b;\n  }\n\n  .sm\\:bg-grey-dark {\n    background-color: #8795a1;\n  }\n\n  .sm\\:bg-grey {\n    background-color: #b8c2cc;\n  }\n\n  .sm\\:bg-grey-light {\n    background-color: #dae1e7;\n  }\n\n  .sm\\:bg-grey-lighter {\n    background-color: #f1f5f8;\n  }\n\n  .sm\\:bg-grey-lightest {\n    background-color: #f8fafc;\n  }\n\n  .sm\\:bg-white {\n    background-color: #fff;\n  }\n\n  .sm\\:bg-red-darkest {\n    background-color: #3b0d0c;\n  }\n\n  .sm\\:bg-red-darker {\n    background-color: #621b18;\n  }\n\n  .sm\\:bg-red-dark {\n    background-color: #cc1f1a;\n  }\n\n  .sm\\:bg-red {\n    background-color: #e3342f;\n  }\n\n  .sm\\:bg-red-light {\n    background-color: #ef5753;\n  }\n\n  .sm\\:bg-red-lighter {\n    background-color: #f9acaa;\n  }\n\n  .sm\\:bg-red-lightest {\n    background-color: #fcebea;\n  }\n\n  .sm\\:bg-orange-darkest {\n    background-color: #462a16;\n  }\n\n  .sm\\:bg-orange-darker {\n    background-color: #613b1f;\n  }\n\n  .sm\\:bg-orange-dark {\n    background-color: #de751f;\n  }\n\n  .sm\\:bg-orange {\n    background-color: #f6993f;\n  }\n\n  .sm\\:bg-orange-light {\n    background-color: #faad63;\n  }\n\n  .sm\\:bg-orange-lighter {\n    background-color: #fcd9b6;\n  }\n\n  .sm\\:bg-orange-lightest {\n    background-color: #fff5eb;\n  }\n\n  .sm\\:bg-yellow-darkest {\n    background-color: #453411;\n  }\n\n  .sm\\:bg-yellow-darker {\n    background-color: #684f1d;\n  }\n\n  .sm\\:bg-yellow-dark {\n    background-color: #f2d024;\n  }\n\n  .sm\\:bg-yellow {\n    background-color: #ffed4a;\n  }\n\n  .sm\\:bg-yellow-light {\n    background-color: #fff382;\n  }\n\n  .sm\\:bg-yellow-lighter {\n    background-color: #fff9c2;\n  }\n\n  .sm\\:bg-yellow-lightest {\n    background-color: #fcfbeb;\n  }\n\n  .sm\\:bg-green-darkest {\n    background-color: #0f2f21;\n  }\n\n  .sm\\:bg-green-darker {\n    background-color: #1a4731;\n  }\n\n  .sm\\:bg-green-dark {\n    background-color: #1f9d55;\n  }\n\n  .sm\\:bg-green {\n    background-color: #38c172;\n  }\n\n  .sm\\:bg-green-light {\n    background-color: #51d88a;\n  }\n\n  .sm\\:bg-green-lighter {\n    background-color: #a2f5bf;\n  }\n\n  .sm\\:bg-green-lightest {\n    background-color: #e3fcec;\n  }\n\n  .sm\\:bg-teal-darkest {\n    background-color: #0d3331;\n  }\n\n  .sm\\:bg-teal-darker {\n    background-color: #20504f;\n  }\n\n  .sm\\:bg-teal-dark {\n    background-color: #38a89d;\n  }\n\n  .sm\\:bg-teal {\n    background-color: #4dc0b5;\n  }\n\n  .sm\\:bg-teal-light {\n    background-color: #64d5ca;\n  }\n\n  .sm\\:bg-teal-lighter {\n    background-color: #a0f0ed;\n  }\n\n  .sm\\:bg-teal-lightest {\n    background-color: #e8fffe;\n  }\n\n  .sm\\:bg-blue-darkest {\n    background-color: #12283a;\n  }\n\n  .sm\\:bg-blue-darker {\n    background-color: #1c3d5a;\n  }\n\n  .sm\\:bg-blue-dark {\n    background-color: #2779bd;\n  }\n\n  .sm\\:bg-blue {\n    background-color: #3490dc;\n  }\n\n  .sm\\:bg-blue-light {\n    background-color: #6cb2eb;\n  }\n\n  .sm\\:bg-blue-lighter {\n    background-color: #bcdefa;\n  }\n\n  .sm\\:bg-blue-lightest {\n    background-color: #eff8ff;\n  }\n\n  .sm\\:bg-indigo-darkest {\n    background-color: #191e38;\n  }\n\n  .sm\\:bg-indigo-darker {\n    background-color: #2f365f;\n  }\n\n  .sm\\:bg-indigo-dark {\n    background-color: #5661b3;\n  }\n\n  .sm\\:bg-indigo {\n    background-color: #6574cd;\n  }\n\n  .sm\\:bg-indigo-light {\n    background-color: #7886d7;\n  }\n\n  .sm\\:bg-indigo-lighter {\n    background-color: #b2b7ff;\n  }\n\n  .sm\\:bg-indigo-lightest {\n    background-color: #e6e8ff;\n  }\n\n  .sm\\:bg-purple-darkest {\n    background-color: #21183c;\n  }\n\n  .sm\\:bg-purple-darker {\n    background-color: #382b5f;\n  }\n\n  .sm\\:bg-purple-dark {\n    background-color: #794acf;\n  }\n\n  .sm\\:bg-purple {\n    background-color: #9561e2;\n  }\n\n  .sm\\:bg-purple-light {\n    background-color: #a779e9;\n  }\n\n  .sm\\:bg-purple-lighter {\n    background-color: #d6bbfc;\n  }\n\n  .sm\\:bg-purple-lightest {\n    background-color: #f3ebff;\n  }\n\n  .sm\\:bg-pink-darkest {\n    background-color: #451225;\n  }\n\n  .sm\\:bg-pink-darker {\n    background-color: #6f213f;\n  }\n\n  .sm\\:bg-pink-dark {\n    background-color: #eb5286;\n  }\n\n  .sm\\:bg-pink {\n    background-color: #f66d9b;\n  }\n\n  .sm\\:bg-pink-light {\n    background-color: #fa7ea8;\n  }\n\n  .sm\\:bg-pink-lighter {\n    background-color: #ffbbca;\n  }\n\n  .sm\\:bg-pink-lightest {\n    background-color: #ffebef;\n  }\n\n  .sm\\:hover\\:bg-transparent:hover {\n    background-color: transparent;\n  }\n\n  .sm\\:hover\\:bg-black:hover {\n    background-color: #22292f;\n  }\n\n  .sm\\:hover\\:bg-grey-darkest:hover {\n    background-color: #3d4852;\n  }\n\n  .sm\\:hover\\:bg-grey-darker:hover {\n    background-color: #606f7b;\n  }\n\n  .sm\\:hover\\:bg-grey-dark:hover {\n    background-color: #8795a1;\n  }\n\n  .sm\\:hover\\:bg-grey:hover {\n    background-color: #b8c2cc;\n  }\n\n  .sm\\:hover\\:bg-grey-light:hover {\n    background-color: #dae1e7;\n  }\n\n  .sm\\:hover\\:bg-grey-lighter:hover {\n    background-color: #f1f5f8;\n  }\n\n  .sm\\:hover\\:bg-grey-lightest:hover {\n    background-color: #f8fafc;\n  }\n\n  .sm\\:hover\\:bg-white:hover {\n    background-color: #fff;\n  }\n\n  .sm\\:hover\\:bg-red-darkest:hover {\n    background-color: #3b0d0c;\n  }\n\n  .sm\\:hover\\:bg-red-darker:hover {\n    background-color: #621b18;\n  }\n\n  .sm\\:hover\\:bg-red-dark:hover {\n    background-color: #cc1f1a;\n  }\n\n  .sm\\:hover\\:bg-red:hover {\n    background-color: #e3342f;\n  }\n\n  .sm\\:hover\\:bg-red-light:hover {\n    background-color: #ef5753;\n  }\n\n  .sm\\:hover\\:bg-red-lighter:hover {\n    background-color: #f9acaa;\n  }\n\n  .sm\\:hover\\:bg-red-lightest:hover {\n    background-color: #fcebea;\n  }\n\n  .sm\\:hover\\:bg-orange-darkest:hover {\n    background-color: #462a16;\n  }\n\n  .sm\\:hover\\:bg-orange-darker:hover {\n    background-color: #613b1f;\n  }\n\n  .sm\\:hover\\:bg-orange-dark:hover {\n    background-color: #de751f;\n  }\n\n  .sm\\:hover\\:bg-orange:hover {\n    background-color: #f6993f;\n  }\n\n  .sm\\:hover\\:bg-orange-light:hover {\n    background-color: #faad63;\n  }\n\n  .sm\\:hover\\:bg-orange-lighter:hover {\n    background-color: #fcd9b6;\n  }\n\n  .sm\\:hover\\:bg-orange-lightest:hover {\n    background-color: #fff5eb;\n  }\n\n  .sm\\:hover\\:bg-yellow-darkest:hover {\n    background-color: #453411;\n  }\n\n  .sm\\:hover\\:bg-yellow-darker:hover {\n    background-color: #684f1d;\n  }\n\n  .sm\\:hover\\:bg-yellow-dark:hover {\n    background-color: #f2d024;\n  }\n\n  .sm\\:hover\\:bg-yellow:hover {\n    background-color: #ffed4a;\n  }\n\n  .sm\\:hover\\:bg-yellow-light:hover {\n    background-color: #fff382;\n  }\n\n  .sm\\:hover\\:bg-yellow-lighter:hover {\n    background-color: #fff9c2;\n  }\n\n  .sm\\:hover\\:bg-yellow-lightest:hover {\n    background-color: #fcfbeb;\n  }\n\n  .sm\\:hover\\:bg-green-darkest:hover {\n    background-color: #0f2f21;\n  }\n\n  .sm\\:hover\\:bg-green-darker:hover {\n    background-color: #1a4731;\n  }\n\n  .sm\\:hover\\:bg-green-dark:hover {\n    background-color: #1f9d55;\n  }\n\n  .sm\\:hover\\:bg-green:hover {\n    background-color: #38c172;\n  }\n\n  .sm\\:hover\\:bg-green-light:hover {\n    background-color: #51d88a;\n  }\n\n  .sm\\:hover\\:bg-green-lighter:hover {\n    background-color: #a2f5bf;\n  }\n\n  .sm\\:hover\\:bg-green-lightest:hover {\n    background-color: #e3fcec;\n  }\n\n  .sm\\:hover\\:bg-teal-darkest:hover {\n    background-color: #0d3331;\n  }\n\n  .sm\\:hover\\:bg-teal-darker:hover {\n    background-color: #20504f;\n  }\n\n  .sm\\:hover\\:bg-teal-dark:hover {\n    background-color: #38a89d;\n  }\n\n  .sm\\:hover\\:bg-teal:hover {\n    background-color: #4dc0b5;\n  }\n\n  .sm\\:hover\\:bg-teal-light:hover {\n    background-color: #64d5ca;\n  }\n\n  .sm\\:hover\\:bg-teal-lighter:hover {\n    background-color: #a0f0ed;\n  }\n\n  .sm\\:hover\\:bg-teal-lightest:hover {\n    background-color: #e8fffe;\n  }\n\n  .sm\\:hover\\:bg-blue-darkest:hover {\n    background-color: #12283a;\n  }\n\n  .sm\\:hover\\:bg-blue-darker:hover {\n    background-color: #1c3d5a;\n  }\n\n  .sm\\:hover\\:bg-blue-dark:hover {\n    background-color: #2779bd;\n  }\n\n  .sm\\:hover\\:bg-blue:hover {\n    background-color: #3490dc;\n  }\n\n  .sm\\:hover\\:bg-blue-light:hover {\n    background-color: #6cb2eb;\n  }\n\n  .sm\\:hover\\:bg-blue-lighter:hover {\n    background-color: #bcdefa;\n  }\n\n  .sm\\:hover\\:bg-blue-lightest:hover {\n    background-color: #eff8ff;\n  }\n\n  .sm\\:hover\\:bg-indigo-darkest:hover {\n    background-color: #191e38;\n  }\n\n  .sm\\:hover\\:bg-indigo-darker:hover {\n    background-color: #2f365f;\n  }\n\n  .sm\\:hover\\:bg-indigo-dark:hover {\n    background-color: #5661b3;\n  }\n\n  .sm\\:hover\\:bg-indigo:hover {\n    background-color: #6574cd;\n  }\n\n  .sm\\:hover\\:bg-indigo-light:hover {\n    background-color: #7886d7;\n  }\n\n  .sm\\:hover\\:bg-indigo-lighter:hover {\n    background-color: #b2b7ff;\n  }\n\n  .sm\\:hover\\:bg-indigo-lightest:hover {\n    background-color: #e6e8ff;\n  }\n\n  .sm\\:hover\\:bg-purple-darkest:hover {\n    background-color: #21183c;\n  }\n\n  .sm\\:hover\\:bg-purple-darker:hover {\n    background-color: #382b5f;\n  }\n\n  .sm\\:hover\\:bg-purple-dark:hover {\n    background-color: #794acf;\n  }\n\n  .sm\\:hover\\:bg-purple:hover {\n    background-color: #9561e2;\n  }\n\n  .sm\\:hover\\:bg-purple-light:hover {\n    background-color: #a779e9;\n  }\n\n  .sm\\:hover\\:bg-purple-lighter:hover {\n    background-color: #d6bbfc;\n  }\n\n  .sm\\:hover\\:bg-purple-lightest:hover {\n    background-color: #f3ebff;\n  }\n\n  .sm\\:hover\\:bg-pink-darkest:hover {\n    background-color: #451225;\n  }\n\n  .sm\\:hover\\:bg-pink-darker:hover {\n    background-color: #6f213f;\n  }\n\n  .sm\\:hover\\:bg-pink-dark:hover {\n    background-color: #eb5286;\n  }\n\n  .sm\\:hover\\:bg-pink:hover {\n    background-color: #f66d9b;\n  }\n\n  .sm\\:hover\\:bg-pink-light:hover {\n    background-color: #fa7ea8;\n  }\n\n  .sm\\:hover\\:bg-pink-lighter:hover {\n    background-color: #ffbbca;\n  }\n\n  .sm\\:hover\\:bg-pink-lightest:hover {\n    background-color: #ffebef;\n  }\n\n  .sm\\:bg-bottom {\n    background-position: bottom;\n  }\n\n  .sm\\:bg-center {\n    background-position: center;\n  }\n\n  .sm\\:bg-left {\n    background-position: left;\n  }\n\n  .sm\\:bg-left-bottom {\n    background-position: left bottom;\n  }\n\n  .sm\\:bg-left-top {\n    background-position: left top;\n  }\n\n  .sm\\:bg-right {\n    background-position: right;\n  }\n\n  .sm\\:bg-right-bottom {\n    background-position: right bottom;\n  }\n\n  .sm\\:bg-right-top {\n    background-position: right top;\n  }\n\n  .sm\\:bg-top {\n    background-position: top;\n  }\n\n  .sm\\:bg-repeat {\n    background-repeat: repeat;\n  }\n\n  .sm\\:bg-no-repeat {\n    background-repeat: no-repeat;\n  }\n\n  .sm\\:bg-repeat-x {\n    background-repeat: repeat-x;\n  }\n\n  .sm\\:bg-repeat-y {\n    background-repeat: repeat-y;\n  }\n\n  .sm\\:bg-auto {\n    background-size: auto;\n  }\n\n  .sm\\:bg-cover {\n    background-size: cover;\n  }\n\n  .sm\\:bg-contain {\n    background-size: contain;\n  }\n\n  .sm\\:border-transparent {\n    border-color: transparent;\n  }\n\n  .sm\\:border-black {\n    border-color: #22292f;\n  }\n\n  .sm\\:border-grey-darkest {\n    border-color: #3d4852;\n  }\n\n  .sm\\:border-grey-darker {\n    border-color: #606f7b;\n  }\n\n  .sm\\:border-grey-dark {\n    border-color: #8795a1;\n  }\n\n  .sm\\:border-grey {\n    border-color: #b8c2cc;\n  }\n\n  .sm\\:border-grey-light {\n    border-color: #dae1e7;\n  }\n\n  .sm\\:border-grey-lighter {\n    border-color: #f1f5f8;\n  }\n\n  .sm\\:border-grey-lightest {\n    border-color: #f8fafc;\n  }\n\n  .sm\\:border-white {\n    border-color: #fff;\n  }\n\n  .sm\\:border-red-darkest {\n    border-color: #3b0d0c;\n  }\n\n  .sm\\:border-red-darker {\n    border-color: #621b18;\n  }\n\n  .sm\\:border-red-dark {\n    border-color: #cc1f1a;\n  }\n\n  .sm\\:border-red {\n    border-color: #e3342f;\n  }\n\n  .sm\\:border-red-light {\n    border-color: #ef5753;\n  }\n\n  .sm\\:border-red-lighter {\n    border-color: #f9acaa;\n  }\n\n  .sm\\:border-red-lightest {\n    border-color: #fcebea;\n  }\n\n  .sm\\:border-orange-darkest {\n    border-color: #462a16;\n  }\n\n  .sm\\:border-orange-darker {\n    border-color: #613b1f;\n  }\n\n  .sm\\:border-orange-dark {\n    border-color: #de751f;\n  }\n\n  .sm\\:border-orange {\n    border-color: #f6993f;\n  }\n\n  .sm\\:border-orange-light {\n    border-color: #faad63;\n  }\n\n  .sm\\:border-orange-lighter {\n    border-color: #fcd9b6;\n  }\n\n  .sm\\:border-orange-lightest {\n    border-color: #fff5eb;\n  }\n\n  .sm\\:border-yellow-darkest {\n    border-color: #453411;\n  }\n\n  .sm\\:border-yellow-darker {\n    border-color: #684f1d;\n  }\n\n  .sm\\:border-yellow-dark {\n    border-color: #f2d024;\n  }\n\n  .sm\\:border-yellow {\n    border-color: #ffed4a;\n  }\n\n  .sm\\:border-yellow-light {\n    border-color: #fff382;\n  }\n\n  .sm\\:border-yellow-lighter {\n    border-color: #fff9c2;\n  }\n\n  .sm\\:border-yellow-lightest {\n    border-color: #fcfbeb;\n  }\n\n  .sm\\:border-green-darkest {\n    border-color: #0f2f21;\n  }\n\n  .sm\\:border-green-darker {\n    border-color: #1a4731;\n  }\n\n  .sm\\:border-green-dark {\n    border-color: #1f9d55;\n  }\n\n  .sm\\:border-green {\n    border-color: #38c172;\n  }\n\n  .sm\\:border-green-light {\n    border-color: #51d88a;\n  }\n\n  .sm\\:border-green-lighter {\n    border-color: #a2f5bf;\n  }\n\n  .sm\\:border-green-lightest {\n    border-color: #e3fcec;\n  }\n\n  .sm\\:border-teal-darkest {\n    border-color: #0d3331;\n  }\n\n  .sm\\:border-teal-darker {\n    border-color: #20504f;\n  }\n\n  .sm\\:border-teal-dark {\n    border-color: #38a89d;\n  }\n\n  .sm\\:border-teal {\n    border-color: #4dc0b5;\n  }\n\n  .sm\\:border-teal-light {\n    border-color: #64d5ca;\n  }\n\n  .sm\\:border-teal-lighter {\n    border-color: #a0f0ed;\n  }\n\n  .sm\\:border-teal-lightest {\n    border-color: #e8fffe;\n  }\n\n  .sm\\:border-blue-darkest {\n    border-color: #12283a;\n  }\n\n  .sm\\:border-blue-darker {\n    border-color: #1c3d5a;\n  }\n\n  .sm\\:border-blue-dark {\n    border-color: #2779bd;\n  }\n\n  .sm\\:border-blue {\n    border-color: #3490dc;\n  }\n\n  .sm\\:border-blue-light {\n    border-color: #6cb2eb;\n  }\n\n  .sm\\:border-blue-lighter {\n    border-color: #bcdefa;\n  }\n\n  .sm\\:border-blue-lightest {\n    border-color: #eff8ff;\n  }\n\n  .sm\\:border-indigo-darkest {\n    border-color: #191e38;\n  }\n\n  .sm\\:border-indigo-darker {\n    border-color: #2f365f;\n  }\n\n  .sm\\:border-indigo-dark {\n    border-color: #5661b3;\n  }\n\n  .sm\\:border-indigo {\n    border-color: #6574cd;\n  }\n\n  .sm\\:border-indigo-light {\n    border-color: #7886d7;\n  }\n\n  .sm\\:border-indigo-lighter {\n    border-color: #b2b7ff;\n  }\n\n  .sm\\:border-indigo-lightest {\n    border-color: #e6e8ff;\n  }\n\n  .sm\\:border-purple-darkest {\n    border-color: #21183c;\n  }\n\n  .sm\\:border-purple-darker {\n    border-color: #382b5f;\n  }\n\n  .sm\\:border-purple-dark {\n    border-color: #794acf;\n  }\n\n  .sm\\:border-purple {\n    border-color: #9561e2;\n  }\n\n  .sm\\:border-purple-light {\n    border-color: #a779e9;\n  }\n\n  .sm\\:border-purple-lighter {\n    border-color: #d6bbfc;\n  }\n\n  .sm\\:border-purple-lightest {\n    border-color: #f3ebff;\n  }\n\n  .sm\\:border-pink-darkest {\n    border-color: #451225;\n  }\n\n  .sm\\:border-pink-darker {\n    border-color: #6f213f;\n  }\n\n  .sm\\:border-pink-dark {\n    border-color: #eb5286;\n  }\n\n  .sm\\:border-pink {\n    border-color: #f66d9b;\n  }\n\n  .sm\\:border-pink-light {\n    border-color: #fa7ea8;\n  }\n\n  .sm\\:border-pink-lighter {\n    border-color: #ffbbca;\n  }\n\n  .sm\\:border-pink-lightest {\n    border-color: #ffebef;\n  }\n\n  .sm\\:hover\\:border-transparent:hover {\n    border-color: transparent;\n  }\n\n  .sm\\:hover\\:border-black:hover {\n    border-color: #22292f;\n  }\n\n  .sm\\:hover\\:border-grey-darkest:hover {\n    border-color: #3d4852;\n  }\n\n  .sm\\:hover\\:border-grey-darker:hover {\n    border-color: #606f7b;\n  }\n\n  .sm\\:hover\\:border-grey-dark:hover {\n    border-color: #8795a1;\n  }\n\n  .sm\\:hover\\:border-grey:hover {\n    border-color: #b8c2cc;\n  }\n\n  .sm\\:hover\\:border-grey-light:hover {\n    border-color: #dae1e7;\n  }\n\n  .sm\\:hover\\:border-grey-lighter:hover {\n    border-color: #f1f5f8;\n  }\n\n  .sm\\:hover\\:border-grey-lightest:hover {\n    border-color: #f8fafc;\n  }\n\n  .sm\\:hover\\:border-white:hover {\n    border-color: #fff;\n  }\n\n  .sm\\:hover\\:border-red-darkest:hover {\n    border-color: #3b0d0c;\n  }\n\n  .sm\\:hover\\:border-red-darker:hover {\n    border-color: #621b18;\n  }\n\n  .sm\\:hover\\:border-red-dark:hover {\n    border-color: #cc1f1a;\n  }\n\n  .sm\\:hover\\:border-red:hover {\n    border-color: #e3342f;\n  }\n\n  .sm\\:hover\\:border-red-light:hover {\n    border-color: #ef5753;\n  }\n\n  .sm\\:hover\\:border-red-lighter:hover {\n    border-color: #f9acaa;\n  }\n\n  .sm\\:hover\\:border-red-lightest:hover {\n    border-color: #fcebea;\n  }\n\n  .sm\\:hover\\:border-orange-darkest:hover {\n    border-color: #462a16;\n  }\n\n  .sm\\:hover\\:border-orange-darker:hover {\n    border-color: #613b1f;\n  }\n\n  .sm\\:hover\\:border-orange-dark:hover {\n    border-color: #de751f;\n  }\n\n  .sm\\:hover\\:border-orange:hover {\n    border-color: #f6993f;\n  }\n\n  .sm\\:hover\\:border-orange-light:hover {\n    border-color: #faad63;\n  }\n\n  .sm\\:hover\\:border-orange-lighter:hover {\n    border-color: #fcd9b6;\n  }\n\n  .sm\\:hover\\:border-orange-lightest:hover {\n    border-color: #fff5eb;\n  }\n\n  .sm\\:hover\\:border-yellow-darkest:hover {\n    border-color: #453411;\n  }\n\n  .sm\\:hover\\:border-yellow-darker:hover {\n    border-color: #684f1d;\n  }\n\n  .sm\\:hover\\:border-yellow-dark:hover {\n    border-color: #f2d024;\n  }\n\n  .sm\\:hover\\:border-yellow:hover {\n    border-color: #ffed4a;\n  }\n\n  .sm\\:hover\\:border-yellow-light:hover {\n    border-color: #fff382;\n  }\n\n  .sm\\:hover\\:border-yellow-lighter:hover {\n    border-color: #fff9c2;\n  }\n\n  .sm\\:hover\\:border-yellow-lightest:hover {\n    border-color: #fcfbeb;\n  }\n\n  .sm\\:hover\\:border-green-darkest:hover {\n    border-color: #0f2f21;\n  }\n\n  .sm\\:hover\\:border-green-darker:hover {\n    border-color: #1a4731;\n  }\n\n  .sm\\:hover\\:border-green-dark:hover {\n    border-color: #1f9d55;\n  }\n\n  .sm\\:hover\\:border-green:hover {\n    border-color: #38c172;\n  }\n\n  .sm\\:hover\\:border-green-light:hover {\n    border-color: #51d88a;\n  }\n\n  .sm\\:hover\\:border-green-lighter:hover {\n    border-color: #a2f5bf;\n  }\n\n  .sm\\:hover\\:border-green-lightest:hover {\n    border-color: #e3fcec;\n  }\n\n  .sm\\:hover\\:border-teal-darkest:hover {\n    border-color: #0d3331;\n  }\n\n  .sm\\:hover\\:border-teal-darker:hover {\n    border-color: #20504f;\n  }\n\n  .sm\\:hover\\:border-teal-dark:hover {\n    border-color: #38a89d;\n  }\n\n  .sm\\:hover\\:border-teal:hover {\n    border-color: #4dc0b5;\n  }\n\n  .sm\\:hover\\:border-teal-light:hover {\n    border-color: #64d5ca;\n  }\n\n  .sm\\:hover\\:border-teal-lighter:hover {\n    border-color: #a0f0ed;\n  }\n\n  .sm\\:hover\\:border-teal-lightest:hover {\n    border-color: #e8fffe;\n  }\n\n  .sm\\:hover\\:border-blue-darkest:hover {\n    border-color: #12283a;\n  }\n\n  .sm\\:hover\\:border-blue-darker:hover {\n    border-color: #1c3d5a;\n  }\n\n  .sm\\:hover\\:border-blue-dark:hover {\n    border-color: #2779bd;\n  }\n\n  .sm\\:hover\\:border-blue:hover {\n    border-color: #3490dc;\n  }\n\n  .sm\\:hover\\:border-blue-light:hover {\n    border-color: #6cb2eb;\n  }\n\n  .sm\\:hover\\:border-blue-lighter:hover {\n    border-color: #bcdefa;\n  }\n\n  .sm\\:hover\\:border-blue-lightest:hover {\n    border-color: #eff8ff;\n  }\n\n  .sm\\:hover\\:border-indigo-darkest:hover {\n    border-color: #191e38;\n  }\n\n  .sm\\:hover\\:border-indigo-darker:hover {\n    border-color: #2f365f;\n  }\n\n  .sm\\:hover\\:border-indigo-dark:hover {\n    border-color: #5661b3;\n  }\n\n  .sm\\:hover\\:border-indigo:hover {\n    border-color: #6574cd;\n  }\n\n  .sm\\:hover\\:border-indigo-light:hover {\n    border-color: #7886d7;\n  }\n\n  .sm\\:hover\\:border-indigo-lighter:hover {\n    border-color: #b2b7ff;\n  }\n\n  .sm\\:hover\\:border-indigo-lightest:hover {\n    border-color: #e6e8ff;\n  }\n\n  .sm\\:hover\\:border-purple-darkest:hover {\n    border-color: #21183c;\n  }\n\n  .sm\\:hover\\:border-purple-darker:hover {\n    border-color: #382b5f;\n  }\n\n  .sm\\:hover\\:border-purple-dark:hover {\n    border-color: #794acf;\n  }\n\n  .sm\\:hover\\:border-purple:hover {\n    border-color: #9561e2;\n  }\n\n  .sm\\:hover\\:border-purple-light:hover {\n    border-color: #a779e9;\n  }\n\n  .sm\\:hover\\:border-purple-lighter:hover {\n    border-color: #d6bbfc;\n  }\n\n  .sm\\:hover\\:border-purple-lightest:hover {\n    border-color: #f3ebff;\n  }\n\n  .sm\\:hover\\:border-pink-darkest:hover {\n    border-color: #451225;\n  }\n\n  .sm\\:hover\\:border-pink-darker:hover {\n    border-color: #6f213f;\n  }\n\n  .sm\\:hover\\:border-pink-dark:hover {\n    border-color: #eb5286;\n  }\n\n  .sm\\:hover\\:border-pink:hover {\n    border-color: #f66d9b;\n  }\n\n  .sm\\:hover\\:border-pink-light:hover {\n    border-color: #fa7ea8;\n  }\n\n  .sm\\:hover\\:border-pink-lighter:hover {\n    border-color: #ffbbca;\n  }\n\n  .sm\\:hover\\:border-pink-lightest:hover {\n    border-color: #ffebef;\n  }\n\n  .sm\\:rounded-none {\n    border-radius: 0;\n  }\n\n  .sm\\:rounded-sm {\n    border-radius: .125rem;\n  }\n\n  .sm\\:rounded {\n    border-radius: .25rem;\n  }\n\n  .sm\\:rounded-lg {\n    border-radius: .5rem;\n  }\n\n  .sm\\:rounded-full {\n    border-radius: 9999px;\n  }\n\n  .sm\\:rounded-t-none {\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n  }\n\n  .sm\\:rounded-r-none {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n\n  .sm\\:rounded-b-none {\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .sm\\:rounded-l-none {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .sm\\:rounded-t-sm {\n    border-top-left-radius: .125rem;\n    border-top-right-radius: .125rem;\n  }\n\n  .sm\\:rounded-r-sm {\n    border-top-right-radius: .125rem;\n    border-bottom-right-radius: .125rem;\n  }\n\n  .sm\\:rounded-b-sm {\n    border-bottom-right-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .sm\\:rounded-l-sm {\n    border-top-left-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .sm\\:rounded-t {\n    border-top-left-radius: .25rem;\n    border-top-right-radius: .25rem;\n  }\n\n  .sm\\:rounded-r {\n    border-top-right-radius: .25rem;\n    border-bottom-right-radius: .25rem;\n  }\n\n  .sm\\:rounded-b {\n    border-bottom-right-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .sm\\:rounded-l {\n    border-top-left-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .sm\\:rounded-t-lg {\n    border-top-left-radius: .5rem;\n    border-top-right-radius: .5rem;\n  }\n\n  .sm\\:rounded-r-lg {\n    border-top-right-radius: .5rem;\n    border-bottom-right-radius: .5rem;\n  }\n\n  .sm\\:rounded-b-lg {\n    border-bottom-right-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .sm\\:rounded-l-lg {\n    border-top-left-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .sm\\:rounded-t-full {\n    border-top-left-radius: 9999px;\n    border-top-right-radius: 9999px;\n  }\n\n  .sm\\:rounded-r-full {\n    border-top-right-radius: 9999px;\n    border-bottom-right-radius: 9999px;\n  }\n\n  .sm\\:rounded-b-full {\n    border-bottom-right-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .sm\\:rounded-l-full {\n    border-top-left-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .sm\\:rounded-tl-none {\n    border-top-left-radius: 0;\n  }\n\n  .sm\\:rounded-tr-none {\n    border-top-right-radius: 0;\n  }\n\n  .sm\\:rounded-br-none {\n    border-bottom-right-radius: 0;\n  }\n\n  .sm\\:rounded-bl-none {\n    border-bottom-left-radius: 0;\n  }\n\n  .sm\\:rounded-tl-sm {\n    border-top-left-radius: .125rem;\n  }\n\n  .sm\\:rounded-tr-sm {\n    border-top-right-radius: .125rem;\n  }\n\n  .sm\\:rounded-br-sm {\n    border-bottom-right-radius: .125rem;\n  }\n\n  .sm\\:rounded-bl-sm {\n    border-bottom-left-radius: .125rem;\n  }\n\n  .sm\\:rounded-tl {\n    border-top-left-radius: .25rem;\n  }\n\n  .sm\\:rounded-tr {\n    border-top-right-radius: .25rem;\n  }\n\n  .sm\\:rounded-br {\n    border-bottom-right-radius: .25rem;\n  }\n\n  .sm\\:rounded-bl {\n    border-bottom-left-radius: .25rem;\n  }\n\n  .sm\\:rounded-tl-lg {\n    border-top-left-radius: .5rem;\n  }\n\n  .sm\\:rounded-tr-lg {\n    border-top-right-radius: .5rem;\n  }\n\n  .sm\\:rounded-br-lg {\n    border-bottom-right-radius: .5rem;\n  }\n\n  .sm\\:rounded-bl-lg {\n    border-bottom-left-radius: .5rem;\n  }\n\n  .sm\\:rounded-tl-full {\n    border-top-left-radius: 9999px;\n  }\n\n  .sm\\:rounded-tr-full {\n    border-top-right-radius: 9999px;\n  }\n\n  .sm\\:rounded-br-full {\n    border-bottom-right-radius: 9999px;\n  }\n\n  .sm\\:rounded-bl-full {\n    border-bottom-left-radius: 9999px;\n  }\n\n  .sm\\:border-solid {\n    border-style: solid;\n  }\n\n  .sm\\:border-dashed {\n    border-style: dashed;\n  }\n\n  .sm\\:border-dotted {\n    border-style: dotted;\n  }\n\n  .sm\\:border-none {\n    border-style: none;\n  }\n\n  .sm\\:border-0 {\n    border-width: 0;\n  }\n\n  .sm\\:border-2 {\n    border-width: 2px;\n  }\n\n  .sm\\:border-4 {\n    border-width: 4px;\n  }\n\n  .sm\\:border-8 {\n    border-width: 8px;\n  }\n\n  .sm\\:border {\n    border-width: 1px;\n  }\n\n  .sm\\:border-t-0 {\n    border-top-width: 0;\n  }\n\n  .sm\\:border-r-0 {\n    border-right-width: 0;\n  }\n\n  .sm\\:border-b-0 {\n    border-bottom-width: 0;\n  }\n\n  .sm\\:border-l-0 {\n    border-left-width: 0;\n  }\n\n  .sm\\:border-t-2 {\n    border-top-width: 2px;\n  }\n\n  .sm\\:border-r-2 {\n    border-right-width: 2px;\n  }\n\n  .sm\\:border-b-2 {\n    border-bottom-width: 2px;\n  }\n\n  .sm\\:border-l-2 {\n    border-left-width: 2px;\n  }\n\n  .sm\\:border-t-4 {\n    border-top-width: 4px;\n  }\n\n  .sm\\:border-r-4 {\n    border-right-width: 4px;\n  }\n\n  .sm\\:border-b-4 {\n    border-bottom-width: 4px;\n  }\n\n  .sm\\:border-l-4 {\n    border-left-width: 4px;\n  }\n\n  .sm\\:border-t-8 {\n    border-top-width: 8px;\n  }\n\n  .sm\\:border-r-8 {\n    border-right-width: 8px;\n  }\n\n  .sm\\:border-b-8 {\n    border-bottom-width: 8px;\n  }\n\n  .sm\\:border-l-8 {\n    border-left-width: 8px;\n  }\n\n  .sm\\:border-t {\n    border-top-width: 1px;\n  }\n\n  .sm\\:border-r {\n    border-right-width: 1px;\n  }\n\n  .sm\\:border-b {\n    border-bottom-width: 1px;\n  }\n\n  .sm\\:border-l {\n    border-left-width: 1px;\n  }\n\n  .sm\\:cursor-auto {\n    cursor: auto;\n  }\n\n  .sm\\:cursor-default {\n    cursor: default;\n  }\n\n  .sm\\:cursor-pointer {\n    cursor: pointer;\n  }\n\n  .sm\\:cursor-wait {\n    cursor: wait;\n  }\n\n  .sm\\:cursor-move {\n    cursor: move;\n  }\n\n  .sm\\:cursor-not-allowed {\n    cursor: not-allowed;\n  }\n\n  .sm\\:block {\n    display: block;\n  }\n\n  .sm\\:inline-block {\n    display: inline-block;\n  }\n\n  .sm\\:inline {\n    display: inline;\n  }\n\n  .sm\\:table {\n    display: table;\n  }\n\n  .sm\\:table-row {\n    display: table-row;\n  }\n\n  .sm\\:table-cell {\n    display: table-cell;\n  }\n\n  .sm\\:hidden {\n    display: none;\n  }\n\n  .sm\\:flex {\n    display: flex;\n  }\n\n  .sm\\:inline-flex {\n    display: inline-flex;\n  }\n\n  .sm\\:flex-row {\n    flex-direction: row;\n  }\n\n  .sm\\:flex-row-reverse {\n    flex-direction: row-reverse;\n  }\n\n  .sm\\:flex-col {\n    flex-direction: column;\n  }\n\n  .sm\\:flex-col-reverse {\n    flex-direction: column-reverse;\n  }\n\n  .sm\\:flex-wrap {\n    flex-wrap: wrap;\n  }\n\n  .sm\\:flex-wrap-reverse {\n    flex-wrap: wrap-reverse;\n  }\n\n  .sm\\:flex-no-wrap {\n    flex-wrap: nowrap;\n  }\n\n  .sm\\:items-start {\n    align-items: flex-start;\n  }\n\n  .sm\\:items-end {\n    align-items: flex-end;\n  }\n\n  .sm\\:items-center {\n    align-items: center;\n  }\n\n  .sm\\:items-baseline {\n    align-items: baseline;\n  }\n\n  .sm\\:items-stretch {\n    align-items: stretch;\n  }\n\n  .sm\\:self-auto {\n    align-self: auto;\n  }\n\n  .sm\\:self-start {\n    align-self: flex-start;\n  }\n\n  .sm\\:self-end {\n    align-self: flex-end;\n  }\n\n  .sm\\:self-center {\n    align-self: center;\n  }\n\n  .sm\\:self-stretch {\n    align-self: stretch;\n  }\n\n  .sm\\:justify-start {\n    justify-content: flex-start;\n  }\n\n  .sm\\:justify-end {\n    justify-content: flex-end;\n  }\n\n  .sm\\:justify-center {\n    justify-content: center;\n  }\n\n  .sm\\:justify-between {\n    justify-content: space-between;\n  }\n\n  .sm\\:justify-around {\n    justify-content: space-around;\n  }\n\n  .sm\\:content-center {\n    align-content: center;\n  }\n\n  .sm\\:content-start {\n    align-content: flex-start;\n  }\n\n  .sm\\:content-end {\n    align-content: flex-end;\n  }\n\n  .sm\\:content-between {\n    align-content: space-between;\n  }\n\n  .sm\\:content-around {\n    align-content: space-around;\n  }\n\n  .sm\\:flex-1 {\n    flex: 1;\n  }\n\n  .sm\\:flex-auto {\n    flex: auto;\n  }\n\n  .sm\\:flex-initial {\n    flex: initial;\n  }\n\n  .sm\\:flex-none {\n    flex: none;\n  }\n\n  .sm\\:flex-grow {\n    flex-grow: 1;\n  }\n\n  .sm\\:flex-shrink {\n    flex-shrink: 1;\n  }\n\n  .sm\\:flex-no-grow {\n    flex-grow: 0;\n  }\n\n  .sm\\:flex-no-shrink {\n    flex-shrink: 0;\n  }\n\n  .sm\\:float-right {\n    float: right;\n  }\n\n  .sm\\:float-left {\n    float: left;\n  }\n\n  .sm\\:float-none {\n    float: none;\n  }\n\n  .sm\\:clearfix:after {\n    content: \"\";\n    display: table;\n    clear: both;\n  }\n\n  .sm\\:font-sans {\n    font-family: system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;\n  }\n\n  .sm\\:font-serif {\n    font-family: Constantia, Lucida Bright, Lucidabright, Lucida Serif, Lucida, DejaVu Serif, Bitstream Vera Serif, Liberation Serif, Georgia, serif;\n  }\n\n  .sm\\:font-mono {\n    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;\n  }\n\n  .sm\\:font-hairline {\n    font-weight: 100;\n  }\n\n  .sm\\:font-thin {\n    font-weight: 200;\n  }\n\n  .sm\\:font-light {\n    font-weight: 300;\n  }\n\n  .sm\\:font-normal {\n    font-weight: 400;\n  }\n\n  .sm\\:font-medium {\n    font-weight: 500;\n  }\n\n  .sm\\:font-semibold {\n    font-weight: 600;\n  }\n\n  .sm\\:font-bold {\n    font-weight: 700;\n  }\n\n  .sm\\:font-extrabold {\n    font-weight: 800;\n  }\n\n  .sm\\:font-black {\n    font-weight: 900;\n  }\n\n  .sm\\:hover\\:font-hairline:hover {\n    font-weight: 100;\n  }\n\n  .sm\\:hover\\:font-thin:hover {\n    font-weight: 200;\n  }\n\n  .sm\\:hover\\:font-light:hover {\n    font-weight: 300;\n  }\n\n  .sm\\:hover\\:font-normal:hover {\n    font-weight: 400;\n  }\n\n  .sm\\:hover\\:font-medium:hover {\n    font-weight: 500;\n  }\n\n  .sm\\:hover\\:font-semibold:hover {\n    font-weight: 600;\n  }\n\n  .sm\\:hover\\:font-bold:hover {\n    font-weight: 700;\n  }\n\n  .sm\\:hover\\:font-extrabold:hover {\n    font-weight: 800;\n  }\n\n  .sm\\:hover\\:font-black:hover {\n    font-weight: 900;\n  }\n\n  .sm\\:h-1 {\n    height: .25rem;\n  }\n\n  .sm\\:h-2 {\n    height: .5rem;\n  }\n\n  .sm\\:h-3 {\n    height: .75rem;\n  }\n\n  .sm\\:h-4 {\n    height: 1rem;\n  }\n\n  .sm\\:h-6 {\n    height: 1.5rem;\n  }\n\n  .sm\\:h-8 {\n    height: 2rem;\n  }\n\n  .sm\\:h-10 {\n    height: 2.5rem;\n  }\n\n  .sm\\:h-12 {\n    height: 3rem;\n  }\n\n  .sm\\:h-16 {\n    height: 4rem;\n  }\n\n  .sm\\:h-24 {\n    height: 6rem;\n  }\n\n  .sm\\:h-32 {\n    height: 8rem;\n  }\n\n  .sm\\:h-48 {\n    height: 12rem;\n  }\n\n  .sm\\:h-64 {\n    height: 16rem;\n  }\n\n  .sm\\:h-auto {\n    height: auto;\n  }\n\n  .sm\\:h-px {\n    height: 1px;\n  }\n\n  .sm\\:h-full {\n    height: 100%;\n  }\n\n  .sm\\:h-screen {\n    height: 100vh;\n  }\n\n  .sm\\:leading-none {\n    line-height: 1;\n  }\n\n  .sm\\:leading-tight {\n    line-height: 1.25;\n  }\n\n  .sm\\:leading-normal {\n    line-height: 1.5;\n  }\n\n  .sm\\:leading-loose {\n    line-height: 2;\n  }\n\n  .sm\\:m-0 {\n    margin: 0;\n  }\n\n  .sm\\:m-1 {\n    margin: .25rem;\n  }\n\n  .sm\\:m-2 {\n    margin: .5rem;\n  }\n\n  .sm\\:m-3 {\n    margin: .75rem;\n  }\n\n  .sm\\:m-4 {\n    margin: 1rem;\n  }\n\n  .sm\\:m-6 {\n    margin: 1.5rem;\n  }\n\n  .sm\\:m-8 {\n    margin: 2rem;\n  }\n\n  .sm\\:m-auto {\n    margin: auto;\n  }\n\n  .sm\\:m-px {\n    margin: 1px;\n  }\n\n  .sm\\:my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .sm\\:mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .sm\\:my-1 {\n    margin-top: .25rem;\n    margin-bottom: .25rem;\n  }\n\n  .sm\\:mx-1 {\n    margin-left: .25rem;\n    margin-right: .25rem;\n  }\n\n  .sm\\:my-2 {\n    margin-top: .5rem;\n    margin-bottom: .5rem;\n  }\n\n  .sm\\:mx-2 {\n    margin-left: .5rem;\n    margin-right: .5rem;\n  }\n\n  .sm\\:my-3 {\n    margin-top: .75rem;\n    margin-bottom: .75rem;\n  }\n\n  .sm\\:mx-3 {\n    margin-left: .75rem;\n    margin-right: .75rem;\n  }\n\n  .sm\\:my-4 {\n    margin-top: 1rem;\n    margin-bottom: 1rem;\n  }\n\n  .sm\\:mx-4 {\n    margin-left: 1rem;\n    margin-right: 1rem;\n  }\n\n  .sm\\:my-6 {\n    margin-top: 1.5rem;\n    margin-bottom: 1.5rem;\n  }\n\n  .sm\\:mx-6 {\n    margin-left: 1.5rem;\n    margin-right: 1.5rem;\n  }\n\n  .sm\\:my-8 {\n    margin-top: 2rem;\n    margin-bottom: 2rem;\n  }\n\n  .sm\\:mx-8 {\n    margin-left: 2rem;\n    margin-right: 2rem;\n  }\n\n  .sm\\:my-auto {\n    margin-top: auto;\n    margin-bottom: auto;\n  }\n\n  .sm\\:mx-auto {\n    margin-left: auto;\n    margin-right: auto;\n  }\n\n  .sm\\:my-px {\n    margin-top: 1px;\n    margin-bottom: 1px;\n  }\n\n  .sm\\:mx-px {\n    margin-left: 1px;\n    margin-right: 1px;\n  }\n\n  .sm\\:mt-0 {\n    margin-top: 0;\n  }\n\n  .sm\\:mr-0 {\n    margin-right: 0;\n  }\n\n  .sm\\:mb-0 {\n    margin-bottom: 0;\n  }\n\n  .sm\\:ml-0 {\n    margin-left: 0;\n  }\n\n  .sm\\:mt-1 {\n    margin-top: .25rem;\n  }\n\n  .sm\\:mr-1 {\n    margin-right: .25rem;\n  }\n\n  .sm\\:mb-1 {\n    margin-bottom: .25rem;\n  }\n\n  .sm\\:ml-1 {\n    margin-left: .25rem;\n  }\n\n  .sm\\:mt-2 {\n    margin-top: .5rem;\n  }\n\n  .sm\\:mr-2 {\n    margin-right: .5rem;\n  }\n\n  .sm\\:mb-2 {\n    margin-bottom: .5rem;\n  }\n\n  .sm\\:ml-2 {\n    margin-left: .5rem;\n  }\n\n  .sm\\:mt-3 {\n    margin-top: .75rem;\n  }\n\n  .sm\\:mr-3 {\n    margin-right: .75rem;\n  }\n\n  .sm\\:mb-3 {\n    margin-bottom: .75rem;\n  }\n\n  .sm\\:ml-3 {\n    margin-left: .75rem;\n  }\n\n  .sm\\:mt-4 {\n    margin-top: 1rem;\n  }\n\n  .sm\\:mr-4 {\n    margin-right: 1rem;\n  }\n\n  .sm\\:mb-4 {\n    margin-bottom: 1rem;\n  }\n\n  .sm\\:ml-4 {\n    margin-left: 1rem;\n  }\n\n  .sm\\:mt-6 {\n    margin-top: 1.5rem;\n  }\n\n  .sm\\:mr-6 {\n    margin-right: 1.5rem;\n  }\n\n  .sm\\:mb-6 {\n    margin-bottom: 1.5rem;\n  }\n\n  .sm\\:ml-6 {\n    margin-left: 1.5rem;\n  }\n\n  .sm\\:mt-8 {\n    margin-top: 2rem;\n  }\n\n  .sm\\:mr-8 {\n    margin-right: 2rem;\n  }\n\n  .sm\\:mb-8 {\n    margin-bottom: 2rem;\n  }\n\n  .sm\\:ml-8 {\n    margin-left: 2rem;\n  }\n\n  .sm\\:mt-auto {\n    margin-top: auto;\n  }\n\n  .sm\\:mr-auto {\n    margin-right: auto;\n  }\n\n  .sm\\:mb-auto {\n    margin-bottom: auto;\n  }\n\n  .sm\\:ml-auto {\n    margin-left: auto;\n  }\n\n  .sm\\:mt-px {\n    margin-top: 1px;\n  }\n\n  .sm\\:mr-px {\n    margin-right: 1px;\n  }\n\n  .sm\\:mb-px {\n    margin-bottom: 1px;\n  }\n\n  .sm\\:ml-px {\n    margin-left: 1px;\n  }\n\n  .sm\\:max-h-full {\n    max-height: 100%;\n  }\n\n  .sm\\:max-h-screen {\n    max-height: 100vh;\n  }\n\n  .sm\\:max-w-xs {\n    max-width: 20rem;\n  }\n\n  .sm\\:max-w-sm {\n    max-width: 30rem;\n  }\n\n  .sm\\:max-w-md {\n    max-width: 40rem;\n  }\n\n  .sm\\:max-w-lg {\n    max-width: 50rem;\n  }\n\n  .sm\\:max-w-xl {\n    max-width: 60rem;\n  }\n\n  .sm\\:max-w-2xl {\n    max-width: 70rem;\n  }\n\n  .sm\\:max-w-3xl {\n    max-width: 80rem;\n  }\n\n  .sm\\:max-w-4xl {\n    max-width: 90rem;\n  }\n\n  .sm\\:max-w-5xl {\n    max-width: 100rem;\n  }\n\n  .sm\\:max-w-full {\n    max-width: 100%;\n  }\n\n  .sm\\:min-h-0 {\n    min-height: 0;\n  }\n\n  .sm\\:min-h-full {\n    min-height: 100%;\n  }\n\n  .sm\\:min-h-screen {\n    min-height: 100vh;\n  }\n\n  .sm\\:min-w-0 {\n    min-width: 0;\n  }\n\n  .sm\\:min-w-full {\n    min-width: 100%;\n  }\n\n  .sm\\:-m-0 {\n    margin: 0;\n  }\n\n  .sm\\:-m-1 {\n    margin: -0.25rem;\n  }\n\n  .sm\\:-m-2 {\n    margin: -0.5rem;\n  }\n\n  .sm\\:-m-3 {\n    margin: -0.75rem;\n  }\n\n  .sm\\:-m-4 {\n    margin: -1rem;\n  }\n\n  .sm\\:-m-6 {\n    margin: -1.5rem;\n  }\n\n  .sm\\:-m-8 {\n    margin: -2rem;\n  }\n\n  .sm\\:-m-px {\n    margin: -1px;\n  }\n\n  .sm\\:-my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .sm\\:-mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .sm\\:-my-1 {\n    margin-top: -0.25rem;\n    margin-bottom: -0.25rem;\n  }\n\n  .sm\\:-mx-1 {\n    margin-left: -0.25rem;\n    margin-right: -0.25rem;\n  }\n\n  .sm\\:-my-2 {\n    margin-top: -0.5rem;\n    margin-bottom: -0.5rem;\n  }\n\n  .sm\\:-mx-2 {\n    margin-left: -0.5rem;\n    margin-right: -0.5rem;\n  }\n\n  .sm\\:-my-3 {\n    margin-top: -0.75rem;\n    margin-bottom: -0.75rem;\n  }\n\n  .sm\\:-mx-3 {\n    margin-left: -0.75rem;\n    margin-right: -0.75rem;\n  }\n\n  .sm\\:-my-4 {\n    margin-top: -1rem;\n    margin-bottom: -1rem;\n  }\n\n  .sm\\:-mx-4 {\n    margin-left: -1rem;\n    margin-right: -1rem;\n  }\n\n  .sm\\:-my-6 {\n    margin-top: -1.5rem;\n    margin-bottom: -1.5rem;\n  }\n\n  .sm\\:-mx-6 {\n    margin-left: -1.5rem;\n    margin-right: -1.5rem;\n  }\n\n  .sm\\:-my-8 {\n    margin-top: -2rem;\n    margin-bottom: -2rem;\n  }\n\n  .sm\\:-mx-8 {\n    margin-left: -2rem;\n    margin-right: -2rem;\n  }\n\n  .sm\\:-my-px {\n    margin-top: -1px;\n    margin-bottom: -1px;\n  }\n\n  .sm\\:-mx-px {\n    margin-left: -1px;\n    margin-right: -1px;\n  }\n\n  .sm\\:-mt-0 {\n    margin-top: 0;\n  }\n\n  .sm\\:-mr-0 {\n    margin-right: 0;\n  }\n\n  .sm\\:-mb-0 {\n    margin-bottom: 0;\n  }\n\n  .sm\\:-ml-0 {\n    margin-left: 0;\n  }\n\n  .sm\\:-mt-1 {\n    margin-top: -0.25rem;\n  }\n\n  .sm\\:-mr-1 {\n    margin-right: -0.25rem;\n  }\n\n  .sm\\:-mb-1 {\n    margin-bottom: -0.25rem;\n  }\n\n  .sm\\:-ml-1 {\n    margin-left: -0.25rem;\n  }\n\n  .sm\\:-mt-2 {\n    margin-top: -0.5rem;\n  }\n\n  .sm\\:-mr-2 {\n    margin-right: -0.5rem;\n  }\n\n  .sm\\:-mb-2 {\n    margin-bottom: -0.5rem;\n  }\n\n  .sm\\:-ml-2 {\n    margin-left: -0.5rem;\n  }\n\n  .sm\\:-mt-3 {\n    margin-top: -0.75rem;\n  }\n\n  .sm\\:-mr-3 {\n    margin-right: -0.75rem;\n  }\n\n  .sm\\:-mb-3 {\n    margin-bottom: -0.75rem;\n  }\n\n  .sm\\:-ml-3 {\n    margin-left: -0.75rem;\n  }\n\n  .sm\\:-mt-4 {\n    margin-top: -1rem;\n  }\n\n  .sm\\:-mr-4 {\n    margin-right: -1rem;\n  }\n\n  .sm\\:-mb-4 {\n    margin-bottom: -1rem;\n  }\n\n  .sm\\:-ml-4 {\n    margin-left: -1rem;\n  }\n\n  .sm\\:-mt-6 {\n    margin-top: -1.5rem;\n  }\n\n  .sm\\:-mr-6 {\n    margin-right: -1.5rem;\n  }\n\n  .sm\\:-mb-6 {\n    margin-bottom: -1.5rem;\n  }\n\n  .sm\\:-ml-6 {\n    margin-left: -1.5rem;\n  }\n\n  .sm\\:-mt-8 {\n    margin-top: -2rem;\n  }\n\n  .sm\\:-mr-8 {\n    margin-right: -2rem;\n  }\n\n  .sm\\:-mb-8 {\n    margin-bottom: -2rem;\n  }\n\n  .sm\\:-ml-8 {\n    margin-left: -2rem;\n  }\n\n  .sm\\:-mt-px {\n    margin-top: -1px;\n  }\n\n  .sm\\:-mr-px {\n    margin-right: -1px;\n  }\n\n  .sm\\:-mb-px {\n    margin-bottom: -1px;\n  }\n\n  .sm\\:-ml-px {\n    margin-left: -1px;\n  }\n\n  .sm\\:opacity-0 {\n    opacity: 0;\n  }\n\n  .sm\\:opacity-25 {\n    opacity: .25;\n  }\n\n  .sm\\:opacity-50 {\n    opacity: .5;\n  }\n\n  .sm\\:opacity-75 {\n    opacity: .75;\n  }\n\n  .sm\\:opacity-100 {\n    opacity: 1;\n  }\n\n  .sm\\:overflow-auto {\n    overflow: auto;\n  }\n\n  .sm\\:overflow-hidden {\n    overflow: hidden;\n  }\n\n  .sm\\:overflow-visible {\n    overflow: visible;\n  }\n\n  .sm\\:overflow-scroll {\n    overflow: scroll;\n  }\n\n  .sm\\:overflow-x-auto {\n    overflow-x: auto;\n  }\n\n  .sm\\:overflow-y-auto {\n    overflow-y: auto;\n  }\n\n  .sm\\:overflow-x-scroll {\n    overflow-x: scroll;\n  }\n\n  .sm\\:overflow-y-scroll {\n    overflow-y: scroll;\n  }\n\n  .sm\\:scrolling-touch {\n    -webkit-overflow-scrolling: touch;\n  }\n\n  .sm\\:scrolling-auto {\n    -webkit-overflow-scrolling: auto;\n  }\n\n  .sm\\:p-0 {\n    padding: 0;\n  }\n\n  .sm\\:p-1 {\n    padding: .25rem;\n  }\n\n  .sm\\:p-2 {\n    padding: .5rem;\n  }\n\n  .sm\\:p-3 {\n    padding: .75rem;\n  }\n\n  .sm\\:p-4 {\n    padding: 1rem;\n  }\n\n  .sm\\:p-6 {\n    padding: 1.5rem;\n  }\n\n  .sm\\:p-8 {\n    padding: 2rem;\n  }\n\n  .sm\\:p-px {\n    padding: 1px;\n  }\n\n  .sm\\:py-0 {\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n\n  .sm\\:px-0 {\n    padding-left: 0;\n    padding-right: 0;\n  }\n\n  .sm\\:py-1 {\n    padding-top: .25rem;\n    padding-bottom: .25rem;\n  }\n\n  .sm\\:px-1 {\n    padding-left: .25rem;\n    padding-right: .25rem;\n  }\n\n  .sm\\:py-2 {\n    padding-top: .5rem;\n    padding-bottom: .5rem;\n  }\n\n  .sm\\:px-2 {\n    padding-left: .5rem;\n    padding-right: .5rem;\n  }\n\n  .sm\\:py-3 {\n    padding-top: .75rem;\n    padding-bottom: .75rem;\n  }\n\n  .sm\\:px-3 {\n    padding-left: .75rem;\n    padding-right: .75rem;\n  }\n\n  .sm\\:py-4 {\n    padding-top: 1rem;\n    padding-bottom: 1rem;\n  }\n\n  .sm\\:px-4 {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n\n  .sm\\:py-6 {\n    padding-top: 1.5rem;\n    padding-bottom: 1.5rem;\n  }\n\n  .sm\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .sm\\:py-8 {\n    padding-top: 2rem;\n    padding-bottom: 2rem;\n  }\n\n  .sm\\:px-8 {\n    padding-left: 2rem;\n    padding-right: 2rem;\n  }\n\n  .sm\\:py-px {\n    padding-top: 1px;\n    padding-bottom: 1px;\n  }\n\n  .sm\\:px-px {\n    padding-left: 1px;\n    padding-right: 1px;\n  }\n\n  .sm\\:pt-0 {\n    padding-top: 0;\n  }\n\n  .sm\\:pr-0 {\n    padding-right: 0;\n  }\n\n  .sm\\:pb-0 {\n    padding-bottom: 0;\n  }\n\n  .sm\\:pl-0 {\n    padding-left: 0;\n  }\n\n  .sm\\:pt-1 {\n    padding-top: .25rem;\n  }\n\n  .sm\\:pr-1 {\n    padding-right: .25rem;\n  }\n\n  .sm\\:pb-1 {\n    padding-bottom: .25rem;\n  }\n\n  .sm\\:pl-1 {\n    padding-left: .25rem;\n  }\n\n  .sm\\:pt-2 {\n    padding-top: .5rem;\n  }\n\n  .sm\\:pr-2 {\n    padding-right: .5rem;\n  }\n\n  .sm\\:pb-2 {\n    padding-bottom: .5rem;\n  }\n\n  .sm\\:pl-2 {\n    padding-left: .5rem;\n  }\n\n  .sm\\:pt-3 {\n    padding-top: .75rem;\n  }\n\n  .sm\\:pr-3 {\n    padding-right: .75rem;\n  }\n\n  .sm\\:pb-3 {\n    padding-bottom: .75rem;\n  }\n\n  .sm\\:pl-3 {\n    padding-left: .75rem;\n  }\n\n  .sm\\:pt-4 {\n    padding-top: 1rem;\n  }\n\n  .sm\\:pr-4 {\n    padding-right: 1rem;\n  }\n\n  .sm\\:pb-4 {\n    padding-bottom: 1rem;\n  }\n\n  .sm\\:pl-4 {\n    padding-left: 1rem;\n  }\n\n  .sm\\:pt-6 {\n    padding-top: 1.5rem;\n  }\n\n  .sm\\:pr-6 {\n    padding-right: 1.5rem;\n  }\n\n  .sm\\:pb-6 {\n    padding-bottom: 1.5rem;\n  }\n\n  .sm\\:pl-6 {\n    padding-left: 1.5rem;\n  }\n\n  .sm\\:pt-8 {\n    padding-top: 2rem;\n  }\n\n  .sm\\:pr-8 {\n    padding-right: 2rem;\n  }\n\n  .sm\\:pb-8 {\n    padding-bottom: 2rem;\n  }\n\n  .sm\\:pl-8 {\n    padding-left: 2rem;\n  }\n\n  .sm\\:pt-px {\n    padding-top: 1px;\n  }\n\n  .sm\\:pr-px {\n    padding-right: 1px;\n  }\n\n  .sm\\:pb-px {\n    padding-bottom: 1px;\n  }\n\n  .sm\\:pl-px {\n    padding-left: 1px;\n  }\n\n  .sm\\:pointer-events-none {\n    pointer-events: none;\n  }\n\n  .sm\\:pointer-events-auto {\n    pointer-events: auto;\n  }\n\n  .sm\\:static {\n    position: static;\n  }\n\n  .sm\\:fixed {\n    position: fixed;\n  }\n\n  .sm\\:absolute {\n    position: absolute;\n  }\n\n  .sm\\:relative {\n    position: relative;\n  }\n\n  .sm\\:sticky {\n    position: -webkit-sticky;\n    position: sticky;\n  }\n\n  .sm\\:pin-none {\n    top: auto;\n    right: auto;\n    bottom: auto;\n    left: auto;\n  }\n\n  .sm\\:pin {\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n  }\n\n  .sm\\:pin-y {\n    top: 0;\n    bottom: 0;\n  }\n\n  .sm\\:pin-x {\n    right: 0;\n    left: 0;\n  }\n\n  .sm\\:pin-t {\n    top: 0;\n  }\n\n  .sm\\:pin-r {\n    right: 0;\n  }\n\n  .sm\\:pin-b {\n    bottom: 0;\n  }\n\n  .sm\\:pin-l {\n    left: 0;\n  }\n\n  .sm\\:resize-none {\n    resize: none;\n  }\n\n  .sm\\:resize-y {\n    resize: vertical;\n  }\n\n  .sm\\:resize-x {\n    resize: horizontal;\n  }\n\n  .sm\\:resize {\n    resize: both;\n  }\n\n  .sm\\:shadow {\n    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);\n  }\n\n  .sm\\:shadow-md {\n    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);\n  }\n\n  .sm\\:shadow-lg {\n    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, .11), 0 5px 15px 0 rgba(0, 0, 0, .08);\n  }\n\n  .sm\\:shadow-inner {\n    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);\n  }\n\n  .sm\\:shadow-none {\n    box-shadow: none;\n  }\n\n  .sm\\:text-left {\n    text-align: left;\n  }\n\n  .sm\\:text-center {\n    text-align: center;\n  }\n\n  .sm\\:text-right {\n    text-align: right;\n  }\n\n  .sm\\:text-justify {\n    text-align: justify;\n  }\n\n  .sm\\:text-transparent {\n    color: transparent;\n  }\n\n  .sm\\:text-black {\n    color: #22292f;\n  }\n\n  .sm\\:text-grey-darkest {\n    color: #3d4852;\n  }\n\n  .sm\\:text-grey-darker {\n    color: #606f7b;\n  }\n\n  .sm\\:text-grey-dark {\n    color: #8795a1;\n  }\n\n  .sm\\:text-grey {\n    color: #b8c2cc;\n  }\n\n  .sm\\:text-grey-light {\n    color: #dae1e7;\n  }\n\n  .sm\\:text-grey-lighter {\n    color: #f1f5f8;\n  }\n\n  .sm\\:text-grey-lightest {\n    color: #f8fafc;\n  }\n\n  .sm\\:text-white {\n    color: #fff;\n  }\n\n  .sm\\:text-red-darkest {\n    color: #3b0d0c;\n  }\n\n  .sm\\:text-red-darker {\n    color: #621b18;\n  }\n\n  .sm\\:text-red-dark {\n    color: #cc1f1a;\n  }\n\n  .sm\\:text-red {\n    color: #e3342f;\n  }\n\n  .sm\\:text-red-light {\n    color: #ef5753;\n  }\n\n  .sm\\:text-red-lighter {\n    color: #f9acaa;\n  }\n\n  .sm\\:text-red-lightest {\n    color: #fcebea;\n  }\n\n  .sm\\:text-orange-darkest {\n    color: #462a16;\n  }\n\n  .sm\\:text-orange-darker {\n    color: #613b1f;\n  }\n\n  .sm\\:text-orange-dark {\n    color: #de751f;\n  }\n\n  .sm\\:text-orange {\n    color: #f6993f;\n  }\n\n  .sm\\:text-orange-light {\n    color: #faad63;\n  }\n\n  .sm\\:text-orange-lighter {\n    color: #fcd9b6;\n  }\n\n  .sm\\:text-orange-lightest {\n    color: #fff5eb;\n  }\n\n  .sm\\:text-yellow-darkest {\n    color: #453411;\n  }\n\n  .sm\\:text-yellow-darker {\n    color: #684f1d;\n  }\n\n  .sm\\:text-yellow-dark {\n    color: #f2d024;\n  }\n\n  .sm\\:text-yellow {\n    color: #ffed4a;\n  }\n\n  .sm\\:text-yellow-light {\n    color: #fff382;\n  }\n\n  .sm\\:text-yellow-lighter {\n    color: #fff9c2;\n  }\n\n  .sm\\:text-yellow-lightest {\n    color: #fcfbeb;\n  }\n\n  .sm\\:text-green-darkest {\n    color: #0f2f21;\n  }\n\n  .sm\\:text-green-darker {\n    color: #1a4731;\n  }\n\n  .sm\\:text-green-dark {\n    color: #1f9d55;\n  }\n\n  .sm\\:text-green {\n    color: #38c172;\n  }\n\n  .sm\\:text-green-light {\n    color: #51d88a;\n  }\n\n  .sm\\:text-green-lighter {\n    color: #a2f5bf;\n  }\n\n  .sm\\:text-green-lightest {\n    color: #e3fcec;\n  }\n\n  .sm\\:text-teal-darkest {\n    color: #0d3331;\n  }\n\n  .sm\\:text-teal-darker {\n    color: #20504f;\n  }\n\n  .sm\\:text-teal-dark {\n    color: #38a89d;\n  }\n\n  .sm\\:text-teal {\n    color: #4dc0b5;\n  }\n\n  .sm\\:text-teal-light {\n    color: #64d5ca;\n  }\n\n  .sm\\:text-teal-lighter {\n    color: #a0f0ed;\n  }\n\n  .sm\\:text-teal-lightest {\n    color: #e8fffe;\n  }\n\n  .sm\\:text-blue-darkest {\n    color: #12283a;\n  }\n\n  .sm\\:text-blue-darker {\n    color: #1c3d5a;\n  }\n\n  .sm\\:text-blue-dark {\n    color: #2779bd;\n  }\n\n  .sm\\:text-blue {\n    color: #3490dc;\n  }\n\n  .sm\\:text-blue-light {\n    color: #6cb2eb;\n  }\n\n  .sm\\:text-blue-lighter {\n    color: #bcdefa;\n  }\n\n  .sm\\:text-blue-lightest {\n    color: #eff8ff;\n  }\n\n  .sm\\:text-indigo-darkest {\n    color: #191e38;\n  }\n\n  .sm\\:text-indigo-darker {\n    color: #2f365f;\n  }\n\n  .sm\\:text-indigo-dark {\n    color: #5661b3;\n  }\n\n  .sm\\:text-indigo {\n    color: #6574cd;\n  }\n\n  .sm\\:text-indigo-light {\n    color: #7886d7;\n  }\n\n  .sm\\:text-indigo-lighter {\n    color: #b2b7ff;\n  }\n\n  .sm\\:text-indigo-lightest {\n    color: #e6e8ff;\n  }\n\n  .sm\\:text-purple-darkest {\n    color: #21183c;\n  }\n\n  .sm\\:text-purple-darker {\n    color: #382b5f;\n  }\n\n  .sm\\:text-purple-dark {\n    color: #794acf;\n  }\n\n  .sm\\:text-purple {\n    color: #9561e2;\n  }\n\n  .sm\\:text-purple-light {\n    color: #a779e9;\n  }\n\n  .sm\\:text-purple-lighter {\n    color: #d6bbfc;\n  }\n\n  .sm\\:text-purple-lightest {\n    color: #f3ebff;\n  }\n\n  .sm\\:text-pink-darkest {\n    color: #451225;\n  }\n\n  .sm\\:text-pink-darker {\n    color: #6f213f;\n  }\n\n  .sm\\:text-pink-dark {\n    color: #eb5286;\n  }\n\n  .sm\\:text-pink {\n    color: #f66d9b;\n  }\n\n  .sm\\:text-pink-light {\n    color: #fa7ea8;\n  }\n\n  .sm\\:text-pink-lighter {\n    color: #ffbbca;\n  }\n\n  .sm\\:text-pink-lightest {\n    color: #ffebef;\n  }\n\n  .sm\\:hover\\:text-transparent:hover {\n    color: transparent;\n  }\n\n  .sm\\:hover\\:text-black:hover {\n    color: #22292f;\n  }\n\n  .sm\\:hover\\:text-grey-darkest:hover {\n    color: #3d4852;\n  }\n\n  .sm\\:hover\\:text-grey-darker:hover {\n    color: #606f7b;\n  }\n\n  .sm\\:hover\\:text-grey-dark:hover {\n    color: #8795a1;\n  }\n\n  .sm\\:hover\\:text-grey:hover {\n    color: #b8c2cc;\n  }\n\n  .sm\\:hover\\:text-grey-light:hover {\n    color: #dae1e7;\n  }\n\n  .sm\\:hover\\:text-grey-lighter:hover {\n    color: #f1f5f8;\n  }\n\n  .sm\\:hover\\:text-grey-lightest:hover {\n    color: #f8fafc;\n  }\n\n  .sm\\:hover\\:text-white:hover {\n    color: #fff;\n  }\n\n  .sm\\:hover\\:text-red-darkest:hover {\n    color: #3b0d0c;\n  }\n\n  .sm\\:hover\\:text-red-darker:hover {\n    color: #621b18;\n  }\n\n  .sm\\:hover\\:text-red-dark:hover {\n    color: #cc1f1a;\n  }\n\n  .sm\\:hover\\:text-red:hover {\n    color: #e3342f;\n  }\n\n  .sm\\:hover\\:text-red-light:hover {\n    color: #ef5753;\n  }\n\n  .sm\\:hover\\:text-red-lighter:hover {\n    color: #f9acaa;\n  }\n\n  .sm\\:hover\\:text-red-lightest:hover {\n    color: #fcebea;\n  }\n\n  .sm\\:hover\\:text-orange-darkest:hover {\n    color: #462a16;\n  }\n\n  .sm\\:hover\\:text-orange-darker:hover {\n    color: #613b1f;\n  }\n\n  .sm\\:hover\\:text-orange-dark:hover {\n    color: #de751f;\n  }\n\n  .sm\\:hover\\:text-orange:hover {\n    color: #f6993f;\n  }\n\n  .sm\\:hover\\:text-orange-light:hover {\n    color: #faad63;\n  }\n\n  .sm\\:hover\\:text-orange-lighter:hover {\n    color: #fcd9b6;\n  }\n\n  .sm\\:hover\\:text-orange-lightest:hover {\n    color: #fff5eb;\n  }\n\n  .sm\\:hover\\:text-yellow-darkest:hover {\n    color: #453411;\n  }\n\n  .sm\\:hover\\:text-yellow-darker:hover {\n    color: #684f1d;\n  }\n\n  .sm\\:hover\\:text-yellow-dark:hover {\n    color: #f2d024;\n  }\n\n  .sm\\:hover\\:text-yellow:hover {\n    color: #ffed4a;\n  }\n\n  .sm\\:hover\\:text-yellow-light:hover {\n    color: #fff382;\n  }\n\n  .sm\\:hover\\:text-yellow-lighter:hover {\n    color: #fff9c2;\n  }\n\n  .sm\\:hover\\:text-yellow-lightest:hover {\n    color: #fcfbeb;\n  }\n\n  .sm\\:hover\\:text-green-darkest:hover {\n    color: #0f2f21;\n  }\n\n  .sm\\:hover\\:text-green-darker:hover {\n    color: #1a4731;\n  }\n\n  .sm\\:hover\\:text-green-dark:hover {\n    color: #1f9d55;\n  }\n\n  .sm\\:hover\\:text-green:hover {\n    color: #38c172;\n  }\n\n  .sm\\:hover\\:text-green-light:hover {\n    color: #51d88a;\n  }\n\n  .sm\\:hover\\:text-green-lighter:hover {\n    color: #a2f5bf;\n  }\n\n  .sm\\:hover\\:text-green-lightest:hover {\n    color: #e3fcec;\n  }\n\n  .sm\\:hover\\:text-teal-darkest:hover {\n    color: #0d3331;\n  }\n\n  .sm\\:hover\\:text-teal-darker:hover {\n    color: #20504f;\n  }\n\n  .sm\\:hover\\:text-teal-dark:hover {\n    color: #38a89d;\n  }\n\n  .sm\\:hover\\:text-teal:hover {\n    color: #4dc0b5;\n  }\n\n  .sm\\:hover\\:text-teal-light:hover {\n    color: #64d5ca;\n  }\n\n  .sm\\:hover\\:text-teal-lighter:hover {\n    color: #a0f0ed;\n  }\n\n  .sm\\:hover\\:text-teal-lightest:hover {\n    color: #e8fffe;\n  }\n\n  .sm\\:hover\\:text-blue-darkest:hover {\n    color: #12283a;\n  }\n\n  .sm\\:hover\\:text-blue-darker:hover {\n    color: #1c3d5a;\n  }\n\n  .sm\\:hover\\:text-blue-dark:hover {\n    color: #2779bd;\n  }\n\n  .sm\\:hover\\:text-blue:hover {\n    color: #3490dc;\n  }\n\n  .sm\\:hover\\:text-blue-light:hover {\n    color: #6cb2eb;\n  }\n\n  .sm\\:hover\\:text-blue-lighter:hover {\n    color: #bcdefa;\n  }\n\n  .sm\\:hover\\:text-blue-lightest:hover {\n    color: #eff8ff;\n  }\n\n  .sm\\:hover\\:text-indigo-darkest:hover {\n    color: #191e38;\n  }\n\n  .sm\\:hover\\:text-indigo-darker:hover {\n    color: #2f365f;\n  }\n\n  .sm\\:hover\\:text-indigo-dark:hover {\n    color: #5661b3;\n  }\n\n  .sm\\:hover\\:text-indigo:hover {\n    color: #6574cd;\n  }\n\n  .sm\\:hover\\:text-indigo-light:hover {\n    color: #7886d7;\n  }\n\n  .sm\\:hover\\:text-indigo-lighter:hover {\n    color: #b2b7ff;\n  }\n\n  .sm\\:hover\\:text-indigo-lightest:hover {\n    color: #e6e8ff;\n  }\n\n  .sm\\:hover\\:text-purple-darkest:hover {\n    color: #21183c;\n  }\n\n  .sm\\:hover\\:text-purple-darker:hover {\n    color: #382b5f;\n  }\n\n  .sm\\:hover\\:text-purple-dark:hover {\n    color: #794acf;\n  }\n\n  .sm\\:hover\\:text-purple:hover {\n    color: #9561e2;\n  }\n\n  .sm\\:hover\\:text-purple-light:hover {\n    color: #a779e9;\n  }\n\n  .sm\\:hover\\:text-purple-lighter:hover {\n    color: #d6bbfc;\n  }\n\n  .sm\\:hover\\:text-purple-lightest:hover {\n    color: #f3ebff;\n  }\n\n  .sm\\:hover\\:text-pink-darkest:hover {\n    color: #451225;\n  }\n\n  .sm\\:hover\\:text-pink-darker:hover {\n    color: #6f213f;\n  }\n\n  .sm\\:hover\\:text-pink-dark:hover {\n    color: #eb5286;\n  }\n\n  .sm\\:hover\\:text-pink:hover {\n    color: #f66d9b;\n  }\n\n  .sm\\:hover\\:text-pink-light:hover {\n    color: #fa7ea8;\n  }\n\n  .sm\\:hover\\:text-pink-lighter:hover {\n    color: #ffbbca;\n  }\n\n  .sm\\:hover\\:text-pink-lightest:hover {\n    color: #ffebef;\n  }\n\n  .sm\\:text-xs {\n    font-size: .75rem;\n  }\n\n  .sm\\:text-sm {\n    font-size: .875rem;\n  }\n\n  .sm\\:text-base {\n    font-size: 1rem;\n  }\n\n  .sm\\:text-lg {\n    font-size: 1.125rem;\n  }\n\n  .sm\\:text-xl {\n    font-size: 1.25rem;\n  }\n\n  .sm\\:text-2xl {\n    font-size: 1.5rem;\n  }\n\n  .sm\\:text-3xl {\n    font-size: 1.875rem;\n  }\n\n  .sm\\:text-4xl {\n    font-size: 2.25rem;\n  }\n\n  .sm\\:text-5xl {\n    font-size: 3rem;\n  }\n\n  .sm\\:italic {\n    font-style: italic;\n  }\n\n  .sm\\:roman {\n    font-style: normal;\n  }\n\n  .sm\\:uppercase {\n    text-transform: uppercase;\n  }\n\n  .sm\\:lowercase {\n    text-transform: lowercase;\n  }\n\n  .sm\\:capitalize {\n    text-transform: capitalize;\n  }\n\n  .sm\\:normal-case {\n    text-transform: none;\n  }\n\n  .sm\\:underline {\n    text-decoration: underline;\n  }\n\n  .sm\\:line-through {\n    text-decoration: line-through;\n  }\n\n  .sm\\:no-underline {\n    text-decoration: none;\n  }\n\n  .sm\\:antialiased {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .sm\\:subpixel-antialiased {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .sm\\:hover\\:italic:hover {\n    font-style: italic;\n  }\n\n  .sm\\:hover\\:roman:hover {\n    font-style: normal;\n  }\n\n  .sm\\:hover\\:uppercase:hover {\n    text-transform: uppercase;\n  }\n\n  .sm\\:hover\\:lowercase:hover {\n    text-transform: lowercase;\n  }\n\n  .sm\\:hover\\:capitalize:hover {\n    text-transform: capitalize;\n  }\n\n  .sm\\:hover\\:normal-case:hover {\n    text-transform: none;\n  }\n\n  .sm\\:hover\\:underline:hover {\n    text-decoration: underline;\n  }\n\n  .sm\\:hover\\:line-through:hover {\n    text-decoration: line-through;\n  }\n\n  .sm\\:hover\\:no-underline:hover {\n    text-decoration: none;\n  }\n\n  .sm\\:hover\\:antialiased:hover {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .sm\\:hover\\:subpixel-antialiased:hover {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .sm\\:tracking-tight {\n    letter-spacing: -0.05em;\n  }\n\n  .sm\\:tracking-normal {\n    letter-spacing: 0;\n  }\n\n  .sm\\:tracking-wide {\n    letter-spacing: .05em;\n  }\n\n  .sm\\:select-none {\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n  }\n\n  .sm\\:select-text {\n    -webkit-user-select: text;\n       -moz-user-select: text;\n        -ms-user-select: text;\n            user-select: text;\n  }\n\n  .sm\\:align-baseline {\n    vertical-align: baseline;\n  }\n\n  .sm\\:align-top {\n    vertical-align: top;\n  }\n\n  .sm\\:align-middle {\n    vertical-align: middle;\n  }\n\n  .sm\\:align-bottom {\n    vertical-align: bottom;\n  }\n\n  .sm\\:align-text-top {\n    vertical-align: text-top;\n  }\n\n  .sm\\:align-text-bottom {\n    vertical-align: text-bottom;\n  }\n\n  .sm\\:visible {\n    visibility: visible;\n  }\n\n  .sm\\:invisible {\n    visibility: hidden;\n  }\n\n  .sm\\:whitespace-normal {\n    white-space: normal;\n  }\n\n  .sm\\:whitespace-no-wrap {\n    white-space: nowrap;\n  }\n\n  .sm\\:whitespace-pre {\n    white-space: pre;\n  }\n\n  .sm\\:whitespace-pre-line {\n    white-space: pre-line;\n  }\n\n  .sm\\:whitespace-pre-wrap {\n    white-space: pre-wrap;\n  }\n\n  .sm\\:break-words {\n    word-wrap: break-word;\n  }\n\n  .sm\\:break-normal {\n    word-wrap: normal;\n  }\n\n  .sm\\:truncate {\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n\n  .sm\\:w-1 {\n    width: .25rem;\n  }\n\n  .sm\\:w-2 {\n    width: .5rem;\n  }\n\n  .sm\\:w-3 {\n    width: .75rem;\n  }\n\n  .sm\\:w-4 {\n    width: 1rem;\n  }\n\n  .sm\\:w-6 {\n    width: 1.5rem;\n  }\n\n  .sm\\:w-8 {\n    width: 2rem;\n  }\n\n  .sm\\:w-10 {\n    width: 2.5rem;\n  }\n\n  .sm\\:w-12 {\n    width: 3rem;\n  }\n\n  .sm\\:w-16 {\n    width: 4rem;\n  }\n\n  .sm\\:w-24 {\n    width: 6rem;\n  }\n\n  .sm\\:w-32 {\n    width: 8rem;\n  }\n\n  .sm\\:w-48 {\n    width: 12rem;\n  }\n\n  .sm\\:w-64 {\n    width: 16rem;\n  }\n\n  .sm\\:w-auto {\n    width: auto;\n  }\n\n  .sm\\:w-px {\n    width: 1px;\n  }\n\n  .sm\\:w-1\\/2 {\n    width: 50%;\n  }\n\n  .sm\\:w-1\\/3 {\n    width: 33.33333%;\n  }\n\n  .sm\\:w-2\\/3 {\n    width: 66.66667%;\n  }\n\n  .sm\\:w-1\\/4 {\n    width: 25%;\n  }\n\n  .sm\\:w-3\\/4 {\n    width: 75%;\n  }\n\n  .sm\\:w-1\\/5 {\n    width: 20%;\n  }\n\n  .sm\\:w-2\\/5 {\n    width: 40%;\n  }\n\n  .sm\\:w-3\\/5 {\n    width: 60%;\n  }\n\n  .sm\\:w-4\\/5 {\n    width: 80%;\n  }\n\n  .sm\\:w-1\\/6 {\n    width: 16.66667%;\n  }\n\n  .sm\\:w-5\\/6 {\n    width: 83.33333%;\n  }\n\n  .sm\\:w-full {\n    width: 100%;\n  }\n\n  .sm\\:w-screen {\n    width: 100vw;\n  }\n\n  .sm\\:z-0 {\n    z-index: 0;\n  }\n\n  .sm\\:z-10 {\n    z-index: 10;\n  }\n\n  .sm\\:z-20 {\n    z-index: 20;\n  }\n\n  .sm\\:z-30 {\n    z-index: 30;\n  }\n\n  .sm\\:z-40 {\n    z-index: 40;\n  }\n\n  .sm\\:z-50 {\n    z-index: 50;\n  }\n\n  .sm\\:z-auto {\n    z-index: auto;\n  }\n}\n\n@media (min-width: 768px) {\n  .md\\:list-reset {\n    list-style: none;\n    padding: 0;\n  }\n\n  .md\\:appearance-none {\n    -webkit-appearance: none;\n       -moz-appearance: none;\n            appearance: none;\n  }\n\n  .md\\:bg-fixed {\n    background-attachment: fixed;\n  }\n\n  .md\\:bg-local {\n    background-attachment: local;\n  }\n\n  .md\\:bg-scroll {\n    background-attachment: scroll;\n  }\n\n  .md\\:bg-transparent {\n    background-color: transparent;\n  }\n\n  .md\\:bg-black {\n    background-color: #22292f;\n  }\n\n  .md\\:bg-grey-darkest {\n    background-color: #3d4852;\n  }\n\n  .md\\:bg-grey-darker {\n    background-color: #606f7b;\n  }\n\n  .md\\:bg-grey-dark {\n    background-color: #8795a1;\n  }\n\n  .md\\:bg-grey {\n    background-color: #b8c2cc;\n  }\n\n  .md\\:bg-grey-light {\n    background-color: #dae1e7;\n  }\n\n  .md\\:bg-grey-lighter {\n    background-color: #f1f5f8;\n  }\n\n  .md\\:bg-grey-lightest {\n    background-color: #f8fafc;\n  }\n\n  .md\\:bg-white {\n    background-color: #fff;\n  }\n\n  .md\\:bg-red-darkest {\n    background-color: #3b0d0c;\n  }\n\n  .md\\:bg-red-darker {\n    background-color: #621b18;\n  }\n\n  .md\\:bg-red-dark {\n    background-color: #cc1f1a;\n  }\n\n  .md\\:bg-red {\n    background-color: #e3342f;\n  }\n\n  .md\\:bg-red-light {\n    background-color: #ef5753;\n  }\n\n  .md\\:bg-red-lighter {\n    background-color: #f9acaa;\n  }\n\n  .md\\:bg-red-lightest {\n    background-color: #fcebea;\n  }\n\n  .md\\:bg-orange-darkest {\n    background-color: #462a16;\n  }\n\n  .md\\:bg-orange-darker {\n    background-color: #613b1f;\n  }\n\n  .md\\:bg-orange-dark {\n    background-color: #de751f;\n  }\n\n  .md\\:bg-orange {\n    background-color: #f6993f;\n  }\n\n  .md\\:bg-orange-light {\n    background-color: #faad63;\n  }\n\n  .md\\:bg-orange-lighter {\n    background-color: #fcd9b6;\n  }\n\n  .md\\:bg-orange-lightest {\n    background-color: #fff5eb;\n  }\n\n  .md\\:bg-yellow-darkest {\n    background-color: #453411;\n  }\n\n  .md\\:bg-yellow-darker {\n    background-color: #684f1d;\n  }\n\n  .md\\:bg-yellow-dark {\n    background-color: #f2d024;\n  }\n\n  .md\\:bg-yellow {\n    background-color: #ffed4a;\n  }\n\n  .md\\:bg-yellow-light {\n    background-color: #fff382;\n  }\n\n  .md\\:bg-yellow-lighter {\n    background-color: #fff9c2;\n  }\n\n  .md\\:bg-yellow-lightest {\n    background-color: #fcfbeb;\n  }\n\n  .md\\:bg-green-darkest {\n    background-color: #0f2f21;\n  }\n\n  .md\\:bg-green-darker {\n    background-color: #1a4731;\n  }\n\n  .md\\:bg-green-dark {\n    background-color: #1f9d55;\n  }\n\n  .md\\:bg-green {\n    background-color: #38c172;\n  }\n\n  .md\\:bg-green-light {\n    background-color: #51d88a;\n  }\n\n  .md\\:bg-green-lighter {\n    background-color: #a2f5bf;\n  }\n\n  .md\\:bg-green-lightest {\n    background-color: #e3fcec;\n  }\n\n  .md\\:bg-teal-darkest {\n    background-color: #0d3331;\n  }\n\n  .md\\:bg-teal-darker {\n    background-color: #20504f;\n  }\n\n  .md\\:bg-teal-dark {\n    background-color: #38a89d;\n  }\n\n  .md\\:bg-teal {\n    background-color: #4dc0b5;\n  }\n\n  .md\\:bg-teal-light {\n    background-color: #64d5ca;\n  }\n\n  .md\\:bg-teal-lighter {\n    background-color: #a0f0ed;\n  }\n\n  .md\\:bg-teal-lightest {\n    background-color: #e8fffe;\n  }\n\n  .md\\:bg-blue-darkest {\n    background-color: #12283a;\n  }\n\n  .md\\:bg-blue-darker {\n    background-color: #1c3d5a;\n  }\n\n  .md\\:bg-blue-dark {\n    background-color: #2779bd;\n  }\n\n  .md\\:bg-blue {\n    background-color: #3490dc;\n  }\n\n  .md\\:bg-blue-light {\n    background-color: #6cb2eb;\n  }\n\n  .md\\:bg-blue-lighter {\n    background-color: #bcdefa;\n  }\n\n  .md\\:bg-blue-lightest {\n    background-color: #eff8ff;\n  }\n\n  .md\\:bg-indigo-darkest {\n    background-color: #191e38;\n  }\n\n  .md\\:bg-indigo-darker {\n    background-color: #2f365f;\n  }\n\n  .md\\:bg-indigo-dark {\n    background-color: #5661b3;\n  }\n\n  .md\\:bg-indigo {\n    background-color: #6574cd;\n  }\n\n  .md\\:bg-indigo-light {\n    background-color: #7886d7;\n  }\n\n  .md\\:bg-indigo-lighter {\n    background-color: #b2b7ff;\n  }\n\n  .md\\:bg-indigo-lightest {\n    background-color: #e6e8ff;\n  }\n\n  .md\\:bg-purple-darkest {\n    background-color: #21183c;\n  }\n\n  .md\\:bg-purple-darker {\n    background-color: #382b5f;\n  }\n\n  .md\\:bg-purple-dark {\n    background-color: #794acf;\n  }\n\n  .md\\:bg-purple {\n    background-color: #9561e2;\n  }\n\n  .md\\:bg-purple-light {\n    background-color: #a779e9;\n  }\n\n  .md\\:bg-purple-lighter {\n    background-color: #d6bbfc;\n  }\n\n  .md\\:bg-purple-lightest {\n    background-color: #f3ebff;\n  }\n\n  .md\\:bg-pink-darkest {\n    background-color: #451225;\n  }\n\n  .md\\:bg-pink-darker {\n    background-color: #6f213f;\n  }\n\n  .md\\:bg-pink-dark {\n    background-color: #eb5286;\n  }\n\n  .md\\:bg-pink {\n    background-color: #f66d9b;\n  }\n\n  .md\\:bg-pink-light {\n    background-color: #fa7ea8;\n  }\n\n  .md\\:bg-pink-lighter {\n    background-color: #ffbbca;\n  }\n\n  .md\\:bg-pink-lightest {\n    background-color: #ffebef;\n  }\n\n  .md\\:hover\\:bg-transparent:hover {\n    background-color: transparent;\n  }\n\n  .md\\:hover\\:bg-black:hover {\n    background-color: #22292f;\n  }\n\n  .md\\:hover\\:bg-grey-darkest:hover {\n    background-color: #3d4852;\n  }\n\n  .md\\:hover\\:bg-grey-darker:hover {\n    background-color: #606f7b;\n  }\n\n  .md\\:hover\\:bg-grey-dark:hover {\n    background-color: #8795a1;\n  }\n\n  .md\\:hover\\:bg-grey:hover {\n    background-color: #b8c2cc;\n  }\n\n  .md\\:hover\\:bg-grey-light:hover {\n    background-color: #dae1e7;\n  }\n\n  .md\\:hover\\:bg-grey-lighter:hover {\n    background-color: #f1f5f8;\n  }\n\n  .md\\:hover\\:bg-grey-lightest:hover {\n    background-color: #f8fafc;\n  }\n\n  .md\\:hover\\:bg-white:hover {\n    background-color: #fff;\n  }\n\n  .md\\:hover\\:bg-red-darkest:hover {\n    background-color: #3b0d0c;\n  }\n\n  .md\\:hover\\:bg-red-darker:hover {\n    background-color: #621b18;\n  }\n\n  .md\\:hover\\:bg-red-dark:hover {\n    background-color: #cc1f1a;\n  }\n\n  .md\\:hover\\:bg-red:hover {\n    background-color: #e3342f;\n  }\n\n  .md\\:hover\\:bg-red-light:hover {\n    background-color: #ef5753;\n  }\n\n  .md\\:hover\\:bg-red-lighter:hover {\n    background-color: #f9acaa;\n  }\n\n  .md\\:hover\\:bg-red-lightest:hover {\n    background-color: #fcebea;\n  }\n\n  .md\\:hover\\:bg-orange-darkest:hover {\n    background-color: #462a16;\n  }\n\n  .md\\:hover\\:bg-orange-darker:hover {\n    background-color: #613b1f;\n  }\n\n  .md\\:hover\\:bg-orange-dark:hover {\n    background-color: #de751f;\n  }\n\n  .md\\:hover\\:bg-orange:hover {\n    background-color: #f6993f;\n  }\n\n  .md\\:hover\\:bg-orange-light:hover {\n    background-color: #faad63;\n  }\n\n  .md\\:hover\\:bg-orange-lighter:hover {\n    background-color: #fcd9b6;\n  }\n\n  .md\\:hover\\:bg-orange-lightest:hover {\n    background-color: #fff5eb;\n  }\n\n  .md\\:hover\\:bg-yellow-darkest:hover {\n    background-color: #453411;\n  }\n\n  .md\\:hover\\:bg-yellow-darker:hover {\n    background-color: #684f1d;\n  }\n\n  .md\\:hover\\:bg-yellow-dark:hover {\n    background-color: #f2d024;\n  }\n\n  .md\\:hover\\:bg-yellow:hover {\n    background-color: #ffed4a;\n  }\n\n  .md\\:hover\\:bg-yellow-light:hover {\n    background-color: #fff382;\n  }\n\n  .md\\:hover\\:bg-yellow-lighter:hover {\n    background-color: #fff9c2;\n  }\n\n  .md\\:hover\\:bg-yellow-lightest:hover {\n    background-color: #fcfbeb;\n  }\n\n  .md\\:hover\\:bg-green-darkest:hover {\n    background-color: #0f2f21;\n  }\n\n  .md\\:hover\\:bg-green-darker:hover {\n    background-color: #1a4731;\n  }\n\n  .md\\:hover\\:bg-green-dark:hover {\n    background-color: #1f9d55;\n  }\n\n  .md\\:hover\\:bg-green:hover {\n    background-color: #38c172;\n  }\n\n  .md\\:hover\\:bg-green-light:hover {\n    background-color: #51d88a;\n  }\n\n  .md\\:hover\\:bg-green-lighter:hover {\n    background-color: #a2f5bf;\n  }\n\n  .md\\:hover\\:bg-green-lightest:hover {\n    background-color: #e3fcec;\n  }\n\n  .md\\:hover\\:bg-teal-darkest:hover {\n    background-color: #0d3331;\n  }\n\n  .md\\:hover\\:bg-teal-darker:hover {\n    background-color: #20504f;\n  }\n\n  .md\\:hover\\:bg-teal-dark:hover {\n    background-color: #38a89d;\n  }\n\n  .md\\:hover\\:bg-teal:hover {\n    background-color: #4dc0b5;\n  }\n\n  .md\\:hover\\:bg-teal-light:hover {\n    background-color: #64d5ca;\n  }\n\n  .md\\:hover\\:bg-teal-lighter:hover {\n    background-color: #a0f0ed;\n  }\n\n  .md\\:hover\\:bg-teal-lightest:hover {\n    background-color: #e8fffe;\n  }\n\n  .md\\:hover\\:bg-blue-darkest:hover {\n    background-color: #12283a;\n  }\n\n  .md\\:hover\\:bg-blue-darker:hover {\n    background-color: #1c3d5a;\n  }\n\n  .md\\:hover\\:bg-blue-dark:hover {\n    background-color: #2779bd;\n  }\n\n  .md\\:hover\\:bg-blue:hover {\n    background-color: #3490dc;\n  }\n\n  .md\\:hover\\:bg-blue-light:hover {\n    background-color: #6cb2eb;\n  }\n\n  .md\\:hover\\:bg-blue-lighter:hover {\n    background-color: #bcdefa;\n  }\n\n  .md\\:hover\\:bg-blue-lightest:hover {\n    background-color: #eff8ff;\n  }\n\n  .md\\:hover\\:bg-indigo-darkest:hover {\n    background-color: #191e38;\n  }\n\n  .md\\:hover\\:bg-indigo-darker:hover {\n    background-color: #2f365f;\n  }\n\n  .md\\:hover\\:bg-indigo-dark:hover {\n    background-color: #5661b3;\n  }\n\n  .md\\:hover\\:bg-indigo:hover {\n    background-color: #6574cd;\n  }\n\n  .md\\:hover\\:bg-indigo-light:hover {\n    background-color: #7886d7;\n  }\n\n  .md\\:hover\\:bg-indigo-lighter:hover {\n    background-color: #b2b7ff;\n  }\n\n  .md\\:hover\\:bg-indigo-lightest:hover {\n    background-color: #e6e8ff;\n  }\n\n  .md\\:hover\\:bg-purple-darkest:hover {\n    background-color: #21183c;\n  }\n\n  .md\\:hover\\:bg-purple-darker:hover {\n    background-color: #382b5f;\n  }\n\n  .md\\:hover\\:bg-purple-dark:hover {\n    background-color: #794acf;\n  }\n\n  .md\\:hover\\:bg-purple:hover {\n    background-color: #9561e2;\n  }\n\n  .md\\:hover\\:bg-purple-light:hover {\n    background-color: #a779e9;\n  }\n\n  .md\\:hover\\:bg-purple-lighter:hover {\n    background-color: #d6bbfc;\n  }\n\n  .md\\:hover\\:bg-purple-lightest:hover {\n    background-color: #f3ebff;\n  }\n\n  .md\\:hover\\:bg-pink-darkest:hover {\n    background-color: #451225;\n  }\n\n  .md\\:hover\\:bg-pink-darker:hover {\n    background-color: #6f213f;\n  }\n\n  .md\\:hover\\:bg-pink-dark:hover {\n    background-color: #eb5286;\n  }\n\n  .md\\:hover\\:bg-pink:hover {\n    background-color: #f66d9b;\n  }\n\n  .md\\:hover\\:bg-pink-light:hover {\n    background-color: #fa7ea8;\n  }\n\n  .md\\:hover\\:bg-pink-lighter:hover {\n    background-color: #ffbbca;\n  }\n\n  .md\\:hover\\:bg-pink-lightest:hover {\n    background-color: #ffebef;\n  }\n\n  .md\\:bg-bottom {\n    background-position: bottom;\n  }\n\n  .md\\:bg-center {\n    background-position: center;\n  }\n\n  .md\\:bg-left {\n    background-position: left;\n  }\n\n  .md\\:bg-left-bottom {\n    background-position: left bottom;\n  }\n\n  .md\\:bg-left-top {\n    background-position: left top;\n  }\n\n  .md\\:bg-right {\n    background-position: right;\n  }\n\n  .md\\:bg-right-bottom {\n    background-position: right bottom;\n  }\n\n  .md\\:bg-right-top {\n    background-position: right top;\n  }\n\n  .md\\:bg-top {\n    background-position: top;\n  }\n\n  .md\\:bg-repeat {\n    background-repeat: repeat;\n  }\n\n  .md\\:bg-no-repeat {\n    background-repeat: no-repeat;\n  }\n\n  .md\\:bg-repeat-x {\n    background-repeat: repeat-x;\n  }\n\n  .md\\:bg-repeat-y {\n    background-repeat: repeat-y;\n  }\n\n  .md\\:bg-auto {\n    background-size: auto;\n  }\n\n  .md\\:bg-cover {\n    background-size: cover;\n  }\n\n  .md\\:bg-contain {\n    background-size: contain;\n  }\n\n  .md\\:border-transparent {\n    border-color: transparent;\n  }\n\n  .md\\:border-black {\n    border-color: #22292f;\n  }\n\n  .md\\:border-grey-darkest {\n    border-color: #3d4852;\n  }\n\n  .md\\:border-grey-darker {\n    border-color: #606f7b;\n  }\n\n  .md\\:border-grey-dark {\n    border-color: #8795a1;\n  }\n\n  .md\\:border-grey {\n    border-color: #b8c2cc;\n  }\n\n  .md\\:border-grey-light {\n    border-color: #dae1e7;\n  }\n\n  .md\\:border-grey-lighter {\n    border-color: #f1f5f8;\n  }\n\n  .md\\:border-grey-lightest {\n    border-color: #f8fafc;\n  }\n\n  .md\\:border-white {\n    border-color: #fff;\n  }\n\n  .md\\:border-red-darkest {\n    border-color: #3b0d0c;\n  }\n\n  .md\\:border-red-darker {\n    border-color: #621b18;\n  }\n\n  .md\\:border-red-dark {\n    border-color: #cc1f1a;\n  }\n\n  .md\\:border-red {\n    border-color: #e3342f;\n  }\n\n  .md\\:border-red-light {\n    border-color: #ef5753;\n  }\n\n  .md\\:border-red-lighter {\n    border-color: #f9acaa;\n  }\n\n  .md\\:border-red-lightest {\n    border-color: #fcebea;\n  }\n\n  .md\\:border-orange-darkest {\n    border-color: #462a16;\n  }\n\n  .md\\:border-orange-darker {\n    border-color: #613b1f;\n  }\n\n  .md\\:border-orange-dark {\n    border-color: #de751f;\n  }\n\n  .md\\:border-orange {\n    border-color: #f6993f;\n  }\n\n  .md\\:border-orange-light {\n    border-color: #faad63;\n  }\n\n  .md\\:border-orange-lighter {\n    border-color: #fcd9b6;\n  }\n\n  .md\\:border-orange-lightest {\n    border-color: #fff5eb;\n  }\n\n  .md\\:border-yellow-darkest {\n    border-color: #453411;\n  }\n\n  .md\\:border-yellow-darker {\n    border-color: #684f1d;\n  }\n\n  .md\\:border-yellow-dark {\n    border-color: #f2d024;\n  }\n\n  .md\\:border-yellow {\n    border-color: #ffed4a;\n  }\n\n  .md\\:border-yellow-light {\n    border-color: #fff382;\n  }\n\n  .md\\:border-yellow-lighter {\n    border-color: #fff9c2;\n  }\n\n  .md\\:border-yellow-lightest {\n    border-color: #fcfbeb;\n  }\n\n  .md\\:border-green-darkest {\n    border-color: #0f2f21;\n  }\n\n  .md\\:border-green-darker {\n    border-color: #1a4731;\n  }\n\n  .md\\:border-green-dark {\n    border-color: #1f9d55;\n  }\n\n  .md\\:border-green {\n    border-color: #38c172;\n  }\n\n  .md\\:border-green-light {\n    border-color: #51d88a;\n  }\n\n  .md\\:border-green-lighter {\n    border-color: #a2f5bf;\n  }\n\n  .md\\:border-green-lightest {\n    border-color: #e3fcec;\n  }\n\n  .md\\:border-teal-darkest {\n    border-color: #0d3331;\n  }\n\n  .md\\:border-teal-darker {\n    border-color: #20504f;\n  }\n\n  .md\\:border-teal-dark {\n    border-color: #38a89d;\n  }\n\n  .md\\:border-teal {\n    border-color: #4dc0b5;\n  }\n\n  .md\\:border-teal-light {\n    border-color: #64d5ca;\n  }\n\n  .md\\:border-teal-lighter {\n    border-color: #a0f0ed;\n  }\n\n  .md\\:border-teal-lightest {\n    border-color: #e8fffe;\n  }\n\n  .md\\:border-blue-darkest {\n    border-color: #12283a;\n  }\n\n  .md\\:border-blue-darker {\n    border-color: #1c3d5a;\n  }\n\n  .md\\:border-blue-dark {\n    border-color: #2779bd;\n  }\n\n  .md\\:border-blue {\n    border-color: #3490dc;\n  }\n\n  .md\\:border-blue-light {\n    border-color: #6cb2eb;\n  }\n\n  .md\\:border-blue-lighter {\n    border-color: #bcdefa;\n  }\n\n  .md\\:border-blue-lightest {\n    border-color: #eff8ff;\n  }\n\n  .md\\:border-indigo-darkest {\n    border-color: #191e38;\n  }\n\n  .md\\:border-indigo-darker {\n    border-color: #2f365f;\n  }\n\n  .md\\:border-indigo-dark {\n    border-color: #5661b3;\n  }\n\n  .md\\:border-indigo {\n    border-color: #6574cd;\n  }\n\n  .md\\:border-indigo-light {\n    border-color: #7886d7;\n  }\n\n  .md\\:border-indigo-lighter {\n    border-color: #b2b7ff;\n  }\n\n  .md\\:border-indigo-lightest {\n    border-color: #e6e8ff;\n  }\n\n  .md\\:border-purple-darkest {\n    border-color: #21183c;\n  }\n\n  .md\\:border-purple-darker {\n    border-color: #382b5f;\n  }\n\n  .md\\:border-purple-dark {\n    border-color: #794acf;\n  }\n\n  .md\\:border-purple {\n    border-color: #9561e2;\n  }\n\n  .md\\:border-purple-light {\n    border-color: #a779e9;\n  }\n\n  .md\\:border-purple-lighter {\n    border-color: #d6bbfc;\n  }\n\n  .md\\:border-purple-lightest {\n    border-color: #f3ebff;\n  }\n\n  .md\\:border-pink-darkest {\n    border-color: #451225;\n  }\n\n  .md\\:border-pink-darker {\n    border-color: #6f213f;\n  }\n\n  .md\\:border-pink-dark {\n    border-color: #eb5286;\n  }\n\n  .md\\:border-pink {\n    border-color: #f66d9b;\n  }\n\n  .md\\:border-pink-light {\n    border-color: #fa7ea8;\n  }\n\n  .md\\:border-pink-lighter {\n    border-color: #ffbbca;\n  }\n\n  .md\\:border-pink-lightest {\n    border-color: #ffebef;\n  }\n\n  .md\\:hover\\:border-transparent:hover {\n    border-color: transparent;\n  }\n\n  .md\\:hover\\:border-black:hover {\n    border-color: #22292f;\n  }\n\n  .md\\:hover\\:border-grey-darkest:hover {\n    border-color: #3d4852;\n  }\n\n  .md\\:hover\\:border-grey-darker:hover {\n    border-color: #606f7b;\n  }\n\n  .md\\:hover\\:border-grey-dark:hover {\n    border-color: #8795a1;\n  }\n\n  .md\\:hover\\:border-grey:hover {\n    border-color: #b8c2cc;\n  }\n\n  .md\\:hover\\:border-grey-light:hover {\n    border-color: #dae1e7;\n  }\n\n  .md\\:hover\\:border-grey-lighter:hover {\n    border-color: #f1f5f8;\n  }\n\n  .md\\:hover\\:border-grey-lightest:hover {\n    border-color: #f8fafc;\n  }\n\n  .md\\:hover\\:border-white:hover {\n    border-color: #fff;\n  }\n\n  .md\\:hover\\:border-red-darkest:hover {\n    border-color: #3b0d0c;\n  }\n\n  .md\\:hover\\:border-red-darker:hover {\n    border-color: #621b18;\n  }\n\n  .md\\:hover\\:border-red-dark:hover {\n    border-color: #cc1f1a;\n  }\n\n  .md\\:hover\\:border-red:hover {\n    border-color: #e3342f;\n  }\n\n  .md\\:hover\\:border-red-light:hover {\n    border-color: #ef5753;\n  }\n\n  .md\\:hover\\:border-red-lighter:hover {\n    border-color: #f9acaa;\n  }\n\n  .md\\:hover\\:border-red-lightest:hover {\n    border-color: #fcebea;\n  }\n\n  .md\\:hover\\:border-orange-darkest:hover {\n    border-color: #462a16;\n  }\n\n  .md\\:hover\\:border-orange-darker:hover {\n    border-color: #613b1f;\n  }\n\n  .md\\:hover\\:border-orange-dark:hover {\n    border-color: #de751f;\n  }\n\n  .md\\:hover\\:border-orange:hover {\n    border-color: #f6993f;\n  }\n\n  .md\\:hover\\:border-orange-light:hover {\n    border-color: #faad63;\n  }\n\n  .md\\:hover\\:border-orange-lighter:hover {\n    border-color: #fcd9b6;\n  }\n\n  .md\\:hover\\:border-orange-lightest:hover {\n    border-color: #fff5eb;\n  }\n\n  .md\\:hover\\:border-yellow-darkest:hover {\n    border-color: #453411;\n  }\n\n  .md\\:hover\\:border-yellow-darker:hover {\n    border-color: #684f1d;\n  }\n\n  .md\\:hover\\:border-yellow-dark:hover {\n    border-color: #f2d024;\n  }\n\n  .md\\:hover\\:border-yellow:hover {\n    border-color: #ffed4a;\n  }\n\n  .md\\:hover\\:border-yellow-light:hover {\n    border-color: #fff382;\n  }\n\n  .md\\:hover\\:border-yellow-lighter:hover {\n    border-color: #fff9c2;\n  }\n\n  .md\\:hover\\:border-yellow-lightest:hover {\n    border-color: #fcfbeb;\n  }\n\n  .md\\:hover\\:border-green-darkest:hover {\n    border-color: #0f2f21;\n  }\n\n  .md\\:hover\\:border-green-darker:hover {\n    border-color: #1a4731;\n  }\n\n  .md\\:hover\\:border-green-dark:hover {\n    border-color: #1f9d55;\n  }\n\n  .md\\:hover\\:border-green:hover {\n    border-color: #38c172;\n  }\n\n  .md\\:hover\\:border-green-light:hover {\n    border-color: #51d88a;\n  }\n\n  .md\\:hover\\:border-green-lighter:hover {\n    border-color: #a2f5bf;\n  }\n\n  .md\\:hover\\:border-green-lightest:hover {\n    border-color: #e3fcec;\n  }\n\n  .md\\:hover\\:border-teal-darkest:hover {\n    border-color: #0d3331;\n  }\n\n  .md\\:hover\\:border-teal-darker:hover {\n    border-color: #20504f;\n  }\n\n  .md\\:hover\\:border-teal-dark:hover {\n    border-color: #38a89d;\n  }\n\n  .md\\:hover\\:border-teal:hover {\n    border-color: #4dc0b5;\n  }\n\n  .md\\:hover\\:border-teal-light:hover {\n    border-color: #64d5ca;\n  }\n\n  .md\\:hover\\:border-teal-lighter:hover {\n    border-color: #a0f0ed;\n  }\n\n  .md\\:hover\\:border-teal-lightest:hover {\n    border-color: #e8fffe;\n  }\n\n  .md\\:hover\\:border-blue-darkest:hover {\n    border-color: #12283a;\n  }\n\n  .md\\:hover\\:border-blue-darker:hover {\n    border-color: #1c3d5a;\n  }\n\n  .md\\:hover\\:border-blue-dark:hover {\n    border-color: #2779bd;\n  }\n\n  .md\\:hover\\:border-blue:hover {\n    border-color: #3490dc;\n  }\n\n  .md\\:hover\\:border-blue-light:hover {\n    border-color: #6cb2eb;\n  }\n\n  .md\\:hover\\:border-blue-lighter:hover {\n    border-color: #bcdefa;\n  }\n\n  .md\\:hover\\:border-blue-lightest:hover {\n    border-color: #eff8ff;\n  }\n\n  .md\\:hover\\:border-indigo-darkest:hover {\n    border-color: #191e38;\n  }\n\n  .md\\:hover\\:border-indigo-darker:hover {\n    border-color: #2f365f;\n  }\n\n  .md\\:hover\\:border-indigo-dark:hover {\n    border-color: #5661b3;\n  }\n\n  .md\\:hover\\:border-indigo:hover {\n    border-color: #6574cd;\n  }\n\n  .md\\:hover\\:border-indigo-light:hover {\n    border-color: #7886d7;\n  }\n\n  .md\\:hover\\:border-indigo-lighter:hover {\n    border-color: #b2b7ff;\n  }\n\n  .md\\:hover\\:border-indigo-lightest:hover {\n    border-color: #e6e8ff;\n  }\n\n  .md\\:hover\\:border-purple-darkest:hover {\n    border-color: #21183c;\n  }\n\n  .md\\:hover\\:border-purple-darker:hover {\n    border-color: #382b5f;\n  }\n\n  .md\\:hover\\:border-purple-dark:hover {\n    border-color: #794acf;\n  }\n\n  .md\\:hover\\:border-purple:hover {\n    border-color: #9561e2;\n  }\n\n  .md\\:hover\\:border-purple-light:hover {\n    border-color: #a779e9;\n  }\n\n  .md\\:hover\\:border-purple-lighter:hover {\n    border-color: #d6bbfc;\n  }\n\n  .md\\:hover\\:border-purple-lightest:hover {\n    border-color: #f3ebff;\n  }\n\n  .md\\:hover\\:border-pink-darkest:hover {\n    border-color: #451225;\n  }\n\n  .md\\:hover\\:border-pink-darker:hover {\n    border-color: #6f213f;\n  }\n\n  .md\\:hover\\:border-pink-dark:hover {\n    border-color: #eb5286;\n  }\n\n  .md\\:hover\\:border-pink:hover {\n    border-color: #f66d9b;\n  }\n\n  .md\\:hover\\:border-pink-light:hover {\n    border-color: #fa7ea8;\n  }\n\n  .md\\:hover\\:border-pink-lighter:hover {\n    border-color: #ffbbca;\n  }\n\n  .md\\:hover\\:border-pink-lightest:hover {\n    border-color: #ffebef;\n  }\n\n  .md\\:rounded-none {\n    border-radius: 0;\n  }\n\n  .md\\:rounded-sm {\n    border-radius: .125rem;\n  }\n\n  .md\\:rounded {\n    border-radius: .25rem;\n  }\n\n  .md\\:rounded-lg {\n    border-radius: .5rem;\n  }\n\n  .md\\:rounded-full {\n    border-radius: 9999px;\n  }\n\n  .md\\:rounded-t-none {\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n  }\n\n  .md\\:rounded-r-none {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n\n  .md\\:rounded-b-none {\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .md\\:rounded-l-none {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .md\\:rounded-t-sm {\n    border-top-left-radius: .125rem;\n    border-top-right-radius: .125rem;\n  }\n\n  .md\\:rounded-r-sm {\n    border-top-right-radius: .125rem;\n    border-bottom-right-radius: .125rem;\n  }\n\n  .md\\:rounded-b-sm {\n    border-bottom-right-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .md\\:rounded-l-sm {\n    border-top-left-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .md\\:rounded-t {\n    border-top-left-radius: .25rem;\n    border-top-right-radius: .25rem;\n  }\n\n  .md\\:rounded-r {\n    border-top-right-radius: .25rem;\n    border-bottom-right-radius: .25rem;\n  }\n\n  .md\\:rounded-b {\n    border-bottom-right-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .md\\:rounded-l {\n    border-top-left-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .md\\:rounded-t-lg {\n    border-top-left-radius: .5rem;\n    border-top-right-radius: .5rem;\n  }\n\n  .md\\:rounded-r-lg {\n    border-top-right-radius: .5rem;\n    border-bottom-right-radius: .5rem;\n  }\n\n  .md\\:rounded-b-lg {\n    border-bottom-right-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .md\\:rounded-l-lg {\n    border-top-left-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .md\\:rounded-t-full {\n    border-top-left-radius: 9999px;\n    border-top-right-radius: 9999px;\n  }\n\n  .md\\:rounded-r-full {\n    border-top-right-radius: 9999px;\n    border-bottom-right-radius: 9999px;\n  }\n\n  .md\\:rounded-b-full {\n    border-bottom-right-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .md\\:rounded-l-full {\n    border-top-left-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .md\\:rounded-tl-none {\n    border-top-left-radius: 0;\n  }\n\n  .md\\:rounded-tr-none {\n    border-top-right-radius: 0;\n  }\n\n  .md\\:rounded-br-none {\n    border-bottom-right-radius: 0;\n  }\n\n  .md\\:rounded-bl-none {\n    border-bottom-left-radius: 0;\n  }\n\n  .md\\:rounded-tl-sm {\n    border-top-left-radius: .125rem;\n  }\n\n  .md\\:rounded-tr-sm {\n    border-top-right-radius: .125rem;\n  }\n\n  .md\\:rounded-br-sm {\n    border-bottom-right-radius: .125rem;\n  }\n\n  .md\\:rounded-bl-sm {\n    border-bottom-left-radius: .125rem;\n  }\n\n  .md\\:rounded-tl {\n    border-top-left-radius: .25rem;\n  }\n\n  .md\\:rounded-tr {\n    border-top-right-radius: .25rem;\n  }\n\n  .md\\:rounded-br {\n    border-bottom-right-radius: .25rem;\n  }\n\n  .md\\:rounded-bl {\n    border-bottom-left-radius: .25rem;\n  }\n\n  .md\\:rounded-tl-lg {\n    border-top-left-radius: .5rem;\n  }\n\n  .md\\:rounded-tr-lg {\n    border-top-right-radius: .5rem;\n  }\n\n  .md\\:rounded-br-lg {\n    border-bottom-right-radius: .5rem;\n  }\n\n  .md\\:rounded-bl-lg {\n    border-bottom-left-radius: .5rem;\n  }\n\n  .md\\:rounded-tl-full {\n    border-top-left-radius: 9999px;\n  }\n\n  .md\\:rounded-tr-full {\n    border-top-right-radius: 9999px;\n  }\n\n  .md\\:rounded-br-full {\n    border-bottom-right-radius: 9999px;\n  }\n\n  .md\\:rounded-bl-full {\n    border-bottom-left-radius: 9999px;\n  }\n\n  .md\\:border-solid {\n    border-style: solid;\n  }\n\n  .md\\:border-dashed {\n    border-style: dashed;\n  }\n\n  .md\\:border-dotted {\n    border-style: dotted;\n  }\n\n  .md\\:border-none {\n    border-style: none;\n  }\n\n  .md\\:border-0 {\n    border-width: 0;\n  }\n\n  .md\\:border-2 {\n    border-width: 2px;\n  }\n\n  .md\\:border-4 {\n    border-width: 4px;\n  }\n\n  .md\\:border-8 {\n    border-width: 8px;\n  }\n\n  .md\\:border {\n    border-width: 1px;\n  }\n\n  .md\\:border-t-0 {\n    border-top-width: 0;\n  }\n\n  .md\\:border-r-0 {\n    border-right-width: 0;\n  }\n\n  .md\\:border-b-0 {\n    border-bottom-width: 0;\n  }\n\n  .md\\:border-l-0 {\n    border-left-width: 0;\n  }\n\n  .md\\:border-t-2 {\n    border-top-width: 2px;\n  }\n\n  .md\\:border-r-2 {\n    border-right-width: 2px;\n  }\n\n  .md\\:border-b-2 {\n    border-bottom-width: 2px;\n  }\n\n  .md\\:border-l-2 {\n    border-left-width: 2px;\n  }\n\n  .md\\:border-t-4 {\n    border-top-width: 4px;\n  }\n\n  .md\\:border-r-4 {\n    border-right-width: 4px;\n  }\n\n  .md\\:border-b-4 {\n    border-bottom-width: 4px;\n  }\n\n  .md\\:border-l-4 {\n    border-left-width: 4px;\n  }\n\n  .md\\:border-t-8 {\n    border-top-width: 8px;\n  }\n\n  .md\\:border-r-8 {\n    border-right-width: 8px;\n  }\n\n  .md\\:border-b-8 {\n    border-bottom-width: 8px;\n  }\n\n  .md\\:border-l-8 {\n    border-left-width: 8px;\n  }\n\n  .md\\:border-t {\n    border-top-width: 1px;\n  }\n\n  .md\\:border-r {\n    border-right-width: 1px;\n  }\n\n  .md\\:border-b {\n    border-bottom-width: 1px;\n  }\n\n  .md\\:border-l {\n    border-left-width: 1px;\n  }\n\n  .md\\:cursor-auto {\n    cursor: auto;\n  }\n\n  .md\\:cursor-default {\n    cursor: default;\n  }\n\n  .md\\:cursor-pointer {\n    cursor: pointer;\n  }\n\n  .md\\:cursor-wait {\n    cursor: wait;\n  }\n\n  .md\\:cursor-move {\n    cursor: move;\n  }\n\n  .md\\:cursor-not-allowed {\n    cursor: not-allowed;\n  }\n\n  .md\\:block {\n    display: block;\n  }\n\n  .md\\:inline-block {\n    display: inline-block;\n  }\n\n  .md\\:inline {\n    display: inline;\n  }\n\n  .md\\:table {\n    display: table;\n  }\n\n  .md\\:table-row {\n    display: table-row;\n  }\n\n  .md\\:table-cell {\n    display: table-cell;\n  }\n\n  .md\\:hidden {\n    display: none;\n  }\n\n  .md\\:flex {\n    display: flex;\n  }\n\n  .md\\:inline-flex {\n    display: inline-flex;\n  }\n\n  .md\\:flex-row {\n    flex-direction: row;\n  }\n\n  .md\\:flex-row-reverse {\n    flex-direction: row-reverse;\n  }\n\n  .md\\:flex-col {\n    flex-direction: column;\n  }\n\n  .md\\:flex-col-reverse {\n    flex-direction: column-reverse;\n  }\n\n  .md\\:flex-wrap {\n    flex-wrap: wrap;\n  }\n\n  .md\\:flex-wrap-reverse {\n    flex-wrap: wrap-reverse;\n  }\n\n  .md\\:flex-no-wrap {\n    flex-wrap: nowrap;\n  }\n\n  .md\\:items-start {\n    align-items: flex-start;\n  }\n\n  .md\\:items-end {\n    align-items: flex-end;\n  }\n\n  .md\\:items-center {\n    align-items: center;\n  }\n\n  .md\\:items-baseline {\n    align-items: baseline;\n  }\n\n  .md\\:items-stretch {\n    align-items: stretch;\n  }\n\n  .md\\:self-auto {\n    align-self: auto;\n  }\n\n  .md\\:self-start {\n    align-self: flex-start;\n  }\n\n  .md\\:self-end {\n    align-self: flex-end;\n  }\n\n  .md\\:self-center {\n    align-self: center;\n  }\n\n  .md\\:self-stretch {\n    align-self: stretch;\n  }\n\n  .md\\:justify-start {\n    justify-content: flex-start;\n  }\n\n  .md\\:justify-end {\n    justify-content: flex-end;\n  }\n\n  .md\\:justify-center {\n    justify-content: center;\n  }\n\n  .md\\:justify-between {\n    justify-content: space-between;\n  }\n\n  .md\\:justify-around {\n    justify-content: space-around;\n  }\n\n  .md\\:content-center {\n    align-content: center;\n  }\n\n  .md\\:content-start {\n    align-content: flex-start;\n  }\n\n  .md\\:content-end {\n    align-content: flex-end;\n  }\n\n  .md\\:content-between {\n    align-content: space-between;\n  }\n\n  .md\\:content-around {\n    align-content: space-around;\n  }\n\n  .md\\:flex-1 {\n    flex: 1;\n  }\n\n  .md\\:flex-auto {\n    flex: auto;\n  }\n\n  .md\\:flex-initial {\n    flex: initial;\n  }\n\n  .md\\:flex-none {\n    flex: none;\n  }\n\n  .md\\:flex-grow {\n    flex-grow: 1;\n  }\n\n  .md\\:flex-shrink {\n    flex-shrink: 1;\n  }\n\n  .md\\:flex-no-grow {\n    flex-grow: 0;\n  }\n\n  .md\\:flex-no-shrink {\n    flex-shrink: 0;\n  }\n\n  .md\\:float-right {\n    float: right;\n  }\n\n  .md\\:float-left {\n    float: left;\n  }\n\n  .md\\:float-none {\n    float: none;\n  }\n\n  .md\\:clearfix:after {\n    content: \"\";\n    display: table;\n    clear: both;\n  }\n\n  .md\\:font-sans {\n    font-family: system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;\n  }\n\n  .md\\:font-serif {\n    font-family: Constantia, Lucida Bright, Lucidabright, Lucida Serif, Lucida, DejaVu Serif, Bitstream Vera Serif, Liberation Serif, Georgia, serif;\n  }\n\n  .md\\:font-mono {\n    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;\n  }\n\n  .md\\:font-hairline {\n    font-weight: 100;\n  }\n\n  .md\\:font-thin {\n    font-weight: 200;\n  }\n\n  .md\\:font-light {\n    font-weight: 300;\n  }\n\n  .md\\:font-normal {\n    font-weight: 400;\n  }\n\n  .md\\:font-medium {\n    font-weight: 500;\n  }\n\n  .md\\:font-semibold {\n    font-weight: 600;\n  }\n\n  .md\\:font-bold {\n    font-weight: 700;\n  }\n\n  .md\\:font-extrabold {\n    font-weight: 800;\n  }\n\n  .md\\:font-black {\n    font-weight: 900;\n  }\n\n  .md\\:hover\\:font-hairline:hover {\n    font-weight: 100;\n  }\n\n  .md\\:hover\\:font-thin:hover {\n    font-weight: 200;\n  }\n\n  .md\\:hover\\:font-light:hover {\n    font-weight: 300;\n  }\n\n  .md\\:hover\\:font-normal:hover {\n    font-weight: 400;\n  }\n\n  .md\\:hover\\:font-medium:hover {\n    font-weight: 500;\n  }\n\n  .md\\:hover\\:font-semibold:hover {\n    font-weight: 600;\n  }\n\n  .md\\:hover\\:font-bold:hover {\n    font-weight: 700;\n  }\n\n  .md\\:hover\\:font-extrabold:hover {\n    font-weight: 800;\n  }\n\n  .md\\:hover\\:font-black:hover {\n    font-weight: 900;\n  }\n\n  .md\\:h-1 {\n    height: .25rem;\n  }\n\n  .md\\:h-2 {\n    height: .5rem;\n  }\n\n  .md\\:h-3 {\n    height: .75rem;\n  }\n\n  .md\\:h-4 {\n    height: 1rem;\n  }\n\n  .md\\:h-6 {\n    height: 1.5rem;\n  }\n\n  .md\\:h-8 {\n    height: 2rem;\n  }\n\n  .md\\:h-10 {\n    height: 2.5rem;\n  }\n\n  .md\\:h-12 {\n    height: 3rem;\n  }\n\n  .md\\:h-16 {\n    height: 4rem;\n  }\n\n  .md\\:h-24 {\n    height: 6rem;\n  }\n\n  .md\\:h-32 {\n    height: 8rem;\n  }\n\n  .md\\:h-48 {\n    height: 12rem;\n  }\n\n  .md\\:h-64 {\n    height: 16rem;\n  }\n\n  .md\\:h-auto {\n    height: auto;\n  }\n\n  .md\\:h-px {\n    height: 1px;\n  }\n\n  .md\\:h-full {\n    height: 100%;\n  }\n\n  .md\\:h-screen {\n    height: 100vh;\n  }\n\n  .md\\:leading-none {\n    line-height: 1;\n  }\n\n  .md\\:leading-tight {\n    line-height: 1.25;\n  }\n\n  .md\\:leading-normal {\n    line-height: 1.5;\n  }\n\n  .md\\:leading-loose {\n    line-height: 2;\n  }\n\n  .md\\:m-0 {\n    margin: 0;\n  }\n\n  .md\\:m-1 {\n    margin: .25rem;\n  }\n\n  .md\\:m-2 {\n    margin: .5rem;\n  }\n\n  .md\\:m-3 {\n    margin: .75rem;\n  }\n\n  .md\\:m-4 {\n    margin: 1rem;\n  }\n\n  .md\\:m-6 {\n    margin: 1.5rem;\n  }\n\n  .md\\:m-8 {\n    margin: 2rem;\n  }\n\n  .md\\:m-auto {\n    margin: auto;\n  }\n\n  .md\\:m-px {\n    margin: 1px;\n  }\n\n  .md\\:my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .md\\:mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .md\\:my-1 {\n    margin-top: .25rem;\n    margin-bottom: .25rem;\n  }\n\n  .md\\:mx-1 {\n    margin-left: .25rem;\n    margin-right: .25rem;\n  }\n\n  .md\\:my-2 {\n    margin-top: .5rem;\n    margin-bottom: .5rem;\n  }\n\n  .md\\:mx-2 {\n    margin-left: .5rem;\n    margin-right: .5rem;\n  }\n\n  .md\\:my-3 {\n    margin-top: .75rem;\n    margin-bottom: .75rem;\n  }\n\n  .md\\:mx-3 {\n    margin-left: .75rem;\n    margin-right: .75rem;\n  }\n\n  .md\\:my-4 {\n    margin-top: 1rem;\n    margin-bottom: 1rem;\n  }\n\n  .md\\:mx-4 {\n    margin-left: 1rem;\n    margin-right: 1rem;\n  }\n\n  .md\\:my-6 {\n    margin-top: 1.5rem;\n    margin-bottom: 1.5rem;\n  }\n\n  .md\\:mx-6 {\n    margin-left: 1.5rem;\n    margin-right: 1.5rem;\n  }\n\n  .md\\:my-8 {\n    margin-top: 2rem;\n    margin-bottom: 2rem;\n  }\n\n  .md\\:mx-8 {\n    margin-left: 2rem;\n    margin-right: 2rem;\n  }\n\n  .md\\:my-auto {\n    margin-top: auto;\n    margin-bottom: auto;\n  }\n\n  .md\\:mx-auto {\n    margin-left: auto;\n    margin-right: auto;\n  }\n\n  .md\\:my-px {\n    margin-top: 1px;\n    margin-bottom: 1px;\n  }\n\n  .md\\:mx-px {\n    margin-left: 1px;\n    margin-right: 1px;\n  }\n\n  .md\\:mt-0 {\n    margin-top: 0;\n  }\n\n  .md\\:mr-0 {\n    margin-right: 0;\n  }\n\n  .md\\:mb-0 {\n    margin-bottom: 0;\n  }\n\n  .md\\:ml-0 {\n    margin-left: 0;\n  }\n\n  .md\\:mt-1 {\n    margin-top: .25rem;\n  }\n\n  .md\\:mr-1 {\n    margin-right: .25rem;\n  }\n\n  .md\\:mb-1 {\n    margin-bottom: .25rem;\n  }\n\n  .md\\:ml-1 {\n    margin-left: .25rem;\n  }\n\n  .md\\:mt-2 {\n    margin-top: .5rem;\n  }\n\n  .md\\:mr-2 {\n    margin-right: .5rem;\n  }\n\n  .md\\:mb-2 {\n    margin-bottom: .5rem;\n  }\n\n  .md\\:ml-2 {\n    margin-left: .5rem;\n  }\n\n  .md\\:mt-3 {\n    margin-top: .75rem;\n  }\n\n  .md\\:mr-3 {\n    margin-right: .75rem;\n  }\n\n  .md\\:mb-3 {\n    margin-bottom: .75rem;\n  }\n\n  .md\\:ml-3 {\n    margin-left: .75rem;\n  }\n\n  .md\\:mt-4 {\n    margin-top: 1rem;\n  }\n\n  .md\\:mr-4 {\n    margin-right: 1rem;\n  }\n\n  .md\\:mb-4 {\n    margin-bottom: 1rem;\n  }\n\n  .md\\:ml-4 {\n    margin-left: 1rem;\n  }\n\n  .md\\:mt-6 {\n    margin-top: 1.5rem;\n  }\n\n  .md\\:mr-6 {\n    margin-right: 1.5rem;\n  }\n\n  .md\\:mb-6 {\n    margin-bottom: 1.5rem;\n  }\n\n  .md\\:ml-6 {\n    margin-left: 1.5rem;\n  }\n\n  .md\\:mt-8 {\n    margin-top: 2rem;\n  }\n\n  .md\\:mr-8 {\n    margin-right: 2rem;\n  }\n\n  .md\\:mb-8 {\n    margin-bottom: 2rem;\n  }\n\n  .md\\:ml-8 {\n    margin-left: 2rem;\n  }\n\n  .md\\:mt-auto {\n    margin-top: auto;\n  }\n\n  .md\\:mr-auto {\n    margin-right: auto;\n  }\n\n  .md\\:mb-auto {\n    margin-bottom: auto;\n  }\n\n  .md\\:ml-auto {\n    margin-left: auto;\n  }\n\n  .md\\:mt-px {\n    margin-top: 1px;\n  }\n\n  .md\\:mr-px {\n    margin-right: 1px;\n  }\n\n  .md\\:mb-px {\n    margin-bottom: 1px;\n  }\n\n  .md\\:ml-px {\n    margin-left: 1px;\n  }\n\n  .md\\:max-h-full {\n    max-height: 100%;\n  }\n\n  .md\\:max-h-screen {\n    max-height: 100vh;\n  }\n\n  .md\\:max-w-xs {\n    max-width: 20rem;\n  }\n\n  .md\\:max-w-sm {\n    max-width: 30rem;\n  }\n\n  .md\\:max-w-md {\n    max-width: 40rem;\n  }\n\n  .md\\:max-w-lg {\n    max-width: 50rem;\n  }\n\n  .md\\:max-w-xl {\n    max-width: 60rem;\n  }\n\n  .md\\:max-w-2xl {\n    max-width: 70rem;\n  }\n\n  .md\\:max-w-3xl {\n    max-width: 80rem;\n  }\n\n  .md\\:max-w-4xl {\n    max-width: 90rem;\n  }\n\n  .md\\:max-w-5xl {\n    max-width: 100rem;\n  }\n\n  .md\\:max-w-full {\n    max-width: 100%;\n  }\n\n  .md\\:min-h-0 {\n    min-height: 0;\n  }\n\n  .md\\:min-h-full {\n    min-height: 100%;\n  }\n\n  .md\\:min-h-screen {\n    min-height: 100vh;\n  }\n\n  .md\\:min-w-0 {\n    min-width: 0;\n  }\n\n  .md\\:min-w-full {\n    min-width: 100%;\n  }\n\n  .md\\:-m-0 {\n    margin: 0;\n  }\n\n  .md\\:-m-1 {\n    margin: -0.25rem;\n  }\n\n  .md\\:-m-2 {\n    margin: -0.5rem;\n  }\n\n  .md\\:-m-3 {\n    margin: -0.75rem;\n  }\n\n  .md\\:-m-4 {\n    margin: -1rem;\n  }\n\n  .md\\:-m-6 {\n    margin: -1.5rem;\n  }\n\n  .md\\:-m-8 {\n    margin: -2rem;\n  }\n\n  .md\\:-m-px {\n    margin: -1px;\n  }\n\n  .md\\:-my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .md\\:-mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .md\\:-my-1 {\n    margin-top: -0.25rem;\n    margin-bottom: -0.25rem;\n  }\n\n  .md\\:-mx-1 {\n    margin-left: -0.25rem;\n    margin-right: -0.25rem;\n  }\n\n  .md\\:-my-2 {\n    margin-top: -0.5rem;\n    margin-bottom: -0.5rem;\n  }\n\n  .md\\:-mx-2 {\n    margin-left: -0.5rem;\n    margin-right: -0.5rem;\n  }\n\n  .md\\:-my-3 {\n    margin-top: -0.75rem;\n    margin-bottom: -0.75rem;\n  }\n\n  .md\\:-mx-3 {\n    margin-left: -0.75rem;\n    margin-right: -0.75rem;\n  }\n\n  .md\\:-my-4 {\n    margin-top: -1rem;\n    margin-bottom: -1rem;\n  }\n\n  .md\\:-mx-4 {\n    margin-left: -1rem;\n    margin-right: -1rem;\n  }\n\n  .md\\:-my-6 {\n    margin-top: -1.5rem;\n    margin-bottom: -1.5rem;\n  }\n\n  .md\\:-mx-6 {\n    margin-left: -1.5rem;\n    margin-right: -1.5rem;\n  }\n\n  .md\\:-my-8 {\n    margin-top: -2rem;\n    margin-bottom: -2rem;\n  }\n\n  .md\\:-mx-8 {\n    margin-left: -2rem;\n    margin-right: -2rem;\n  }\n\n  .md\\:-my-px {\n    margin-top: -1px;\n    margin-bottom: -1px;\n  }\n\n  .md\\:-mx-px {\n    margin-left: -1px;\n    margin-right: -1px;\n  }\n\n  .md\\:-mt-0 {\n    margin-top: 0;\n  }\n\n  .md\\:-mr-0 {\n    margin-right: 0;\n  }\n\n  .md\\:-mb-0 {\n    margin-bottom: 0;\n  }\n\n  .md\\:-ml-0 {\n    margin-left: 0;\n  }\n\n  .md\\:-mt-1 {\n    margin-top: -0.25rem;\n  }\n\n  .md\\:-mr-1 {\n    margin-right: -0.25rem;\n  }\n\n  .md\\:-mb-1 {\n    margin-bottom: -0.25rem;\n  }\n\n  .md\\:-ml-1 {\n    margin-left: -0.25rem;\n  }\n\n  .md\\:-mt-2 {\n    margin-top: -0.5rem;\n  }\n\n  .md\\:-mr-2 {\n    margin-right: -0.5rem;\n  }\n\n  .md\\:-mb-2 {\n    margin-bottom: -0.5rem;\n  }\n\n  .md\\:-ml-2 {\n    margin-left: -0.5rem;\n  }\n\n  .md\\:-mt-3 {\n    margin-top: -0.75rem;\n  }\n\n  .md\\:-mr-3 {\n    margin-right: -0.75rem;\n  }\n\n  .md\\:-mb-3 {\n    margin-bottom: -0.75rem;\n  }\n\n  .md\\:-ml-3 {\n    margin-left: -0.75rem;\n  }\n\n  .md\\:-mt-4 {\n    margin-top: -1rem;\n  }\n\n  .md\\:-mr-4 {\n    margin-right: -1rem;\n  }\n\n  .md\\:-mb-4 {\n    margin-bottom: -1rem;\n  }\n\n  .md\\:-ml-4 {\n    margin-left: -1rem;\n  }\n\n  .md\\:-mt-6 {\n    margin-top: -1.5rem;\n  }\n\n  .md\\:-mr-6 {\n    margin-right: -1.5rem;\n  }\n\n  .md\\:-mb-6 {\n    margin-bottom: -1.5rem;\n  }\n\n  .md\\:-ml-6 {\n    margin-left: -1.5rem;\n  }\n\n  .md\\:-mt-8 {\n    margin-top: -2rem;\n  }\n\n  .md\\:-mr-8 {\n    margin-right: -2rem;\n  }\n\n  .md\\:-mb-8 {\n    margin-bottom: -2rem;\n  }\n\n  .md\\:-ml-8 {\n    margin-left: -2rem;\n  }\n\n  .md\\:-mt-px {\n    margin-top: -1px;\n  }\n\n  .md\\:-mr-px {\n    margin-right: -1px;\n  }\n\n  .md\\:-mb-px {\n    margin-bottom: -1px;\n  }\n\n  .md\\:-ml-px {\n    margin-left: -1px;\n  }\n\n  .md\\:opacity-0 {\n    opacity: 0;\n  }\n\n  .md\\:opacity-25 {\n    opacity: .25;\n  }\n\n  .md\\:opacity-50 {\n    opacity: .5;\n  }\n\n  .md\\:opacity-75 {\n    opacity: .75;\n  }\n\n  .md\\:opacity-100 {\n    opacity: 1;\n  }\n\n  .md\\:overflow-auto {\n    overflow: auto;\n  }\n\n  .md\\:overflow-hidden {\n    overflow: hidden;\n  }\n\n  .md\\:overflow-visible {\n    overflow: visible;\n  }\n\n  .md\\:overflow-scroll {\n    overflow: scroll;\n  }\n\n  .md\\:overflow-x-auto {\n    overflow-x: auto;\n  }\n\n  .md\\:overflow-y-auto {\n    overflow-y: auto;\n  }\n\n  .md\\:overflow-x-scroll {\n    overflow-x: scroll;\n  }\n\n  .md\\:overflow-y-scroll {\n    overflow-y: scroll;\n  }\n\n  .md\\:scrolling-touch {\n    -webkit-overflow-scrolling: touch;\n  }\n\n  .md\\:scrolling-auto {\n    -webkit-overflow-scrolling: auto;\n  }\n\n  .md\\:p-0 {\n    padding: 0;\n  }\n\n  .md\\:p-1 {\n    padding: .25rem;\n  }\n\n  .md\\:p-2 {\n    padding: .5rem;\n  }\n\n  .md\\:p-3 {\n    padding: .75rem;\n  }\n\n  .md\\:p-4 {\n    padding: 1rem;\n  }\n\n  .md\\:p-6 {\n    padding: 1.5rem;\n  }\n\n  .md\\:p-8 {\n    padding: 2rem;\n  }\n\n  .md\\:p-px {\n    padding: 1px;\n  }\n\n  .md\\:py-0 {\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n\n  .md\\:px-0 {\n    padding-left: 0;\n    padding-right: 0;\n  }\n\n  .md\\:py-1 {\n    padding-top: .25rem;\n    padding-bottom: .25rem;\n  }\n\n  .md\\:px-1 {\n    padding-left: .25rem;\n    padding-right: .25rem;\n  }\n\n  .md\\:py-2 {\n    padding-top: .5rem;\n    padding-bottom: .5rem;\n  }\n\n  .md\\:px-2 {\n    padding-left: .5rem;\n    padding-right: .5rem;\n  }\n\n  .md\\:py-3 {\n    padding-top: .75rem;\n    padding-bottom: .75rem;\n  }\n\n  .md\\:px-3 {\n    padding-left: .75rem;\n    padding-right: .75rem;\n  }\n\n  .md\\:py-4 {\n    padding-top: 1rem;\n    padding-bottom: 1rem;\n  }\n\n  .md\\:px-4 {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n\n  .md\\:py-6 {\n    padding-top: 1.5rem;\n    padding-bottom: 1.5rem;\n  }\n\n  .md\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .md\\:py-8 {\n    padding-top: 2rem;\n    padding-bottom: 2rem;\n  }\n\n  .md\\:px-8 {\n    padding-left: 2rem;\n    padding-right: 2rem;\n  }\n\n  .md\\:py-px {\n    padding-top: 1px;\n    padding-bottom: 1px;\n  }\n\n  .md\\:px-px {\n    padding-left: 1px;\n    padding-right: 1px;\n  }\n\n  .md\\:pt-0 {\n    padding-top: 0;\n  }\n\n  .md\\:pr-0 {\n    padding-right: 0;\n  }\n\n  .md\\:pb-0 {\n    padding-bottom: 0;\n  }\n\n  .md\\:pl-0 {\n    padding-left: 0;\n  }\n\n  .md\\:pt-1 {\n    padding-top: .25rem;\n  }\n\n  .md\\:pr-1 {\n    padding-right: .25rem;\n  }\n\n  .md\\:pb-1 {\n    padding-bottom: .25rem;\n  }\n\n  .md\\:pl-1 {\n    padding-left: .25rem;\n  }\n\n  .md\\:pt-2 {\n    padding-top: .5rem;\n  }\n\n  .md\\:pr-2 {\n    padding-right: .5rem;\n  }\n\n  .md\\:pb-2 {\n    padding-bottom: .5rem;\n  }\n\n  .md\\:pl-2 {\n    padding-left: .5rem;\n  }\n\n  .md\\:pt-3 {\n    padding-top: .75rem;\n  }\n\n  .md\\:pr-3 {\n    padding-right: .75rem;\n  }\n\n  .md\\:pb-3 {\n    padding-bottom: .75rem;\n  }\n\n  .md\\:pl-3 {\n    padding-left: .75rem;\n  }\n\n  .md\\:pt-4 {\n    padding-top: 1rem;\n  }\n\n  .md\\:pr-4 {\n    padding-right: 1rem;\n  }\n\n  .md\\:pb-4 {\n    padding-bottom: 1rem;\n  }\n\n  .md\\:pl-4 {\n    padding-left: 1rem;\n  }\n\n  .md\\:pt-6 {\n    padding-top: 1.5rem;\n  }\n\n  .md\\:pr-6 {\n    padding-right: 1.5rem;\n  }\n\n  .md\\:pb-6 {\n    padding-bottom: 1.5rem;\n  }\n\n  .md\\:pl-6 {\n    padding-left: 1.5rem;\n  }\n\n  .md\\:pt-8 {\n    padding-top: 2rem;\n  }\n\n  .md\\:pr-8 {\n    padding-right: 2rem;\n  }\n\n  .md\\:pb-8 {\n    padding-bottom: 2rem;\n  }\n\n  .md\\:pl-8 {\n    padding-left: 2rem;\n  }\n\n  .md\\:pt-px {\n    padding-top: 1px;\n  }\n\n  .md\\:pr-px {\n    padding-right: 1px;\n  }\n\n  .md\\:pb-px {\n    padding-bottom: 1px;\n  }\n\n  .md\\:pl-px {\n    padding-left: 1px;\n  }\n\n  .md\\:pointer-events-none {\n    pointer-events: none;\n  }\n\n  .md\\:pointer-events-auto {\n    pointer-events: auto;\n  }\n\n  .md\\:static {\n    position: static;\n  }\n\n  .md\\:fixed {\n    position: fixed;\n  }\n\n  .md\\:absolute {\n    position: absolute;\n  }\n\n  .md\\:relative {\n    position: relative;\n  }\n\n  .md\\:sticky {\n    position: -webkit-sticky;\n    position: sticky;\n  }\n\n  .md\\:pin-none {\n    top: auto;\n    right: auto;\n    bottom: auto;\n    left: auto;\n  }\n\n  .md\\:pin {\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n  }\n\n  .md\\:pin-y {\n    top: 0;\n    bottom: 0;\n  }\n\n  .md\\:pin-x {\n    right: 0;\n    left: 0;\n  }\n\n  .md\\:pin-t {\n    top: 0;\n  }\n\n  .md\\:pin-r {\n    right: 0;\n  }\n\n  .md\\:pin-b {\n    bottom: 0;\n  }\n\n  .md\\:pin-l {\n    left: 0;\n  }\n\n  .md\\:resize-none {\n    resize: none;\n  }\n\n  .md\\:resize-y {\n    resize: vertical;\n  }\n\n  .md\\:resize-x {\n    resize: horizontal;\n  }\n\n  .md\\:resize {\n    resize: both;\n  }\n\n  .md\\:shadow {\n    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);\n  }\n\n  .md\\:shadow-md {\n    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);\n  }\n\n  .md\\:shadow-lg {\n    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, .11), 0 5px 15px 0 rgba(0, 0, 0, .08);\n  }\n\n  .md\\:shadow-inner {\n    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);\n  }\n\n  .md\\:shadow-none {\n    box-shadow: none;\n  }\n\n  .md\\:text-left {\n    text-align: left;\n  }\n\n  .md\\:text-center {\n    text-align: center;\n  }\n\n  .md\\:text-right {\n    text-align: right;\n  }\n\n  .md\\:text-justify {\n    text-align: justify;\n  }\n\n  .md\\:text-transparent {\n    color: transparent;\n  }\n\n  .md\\:text-black {\n    color: #22292f;\n  }\n\n  .md\\:text-grey-darkest {\n    color: #3d4852;\n  }\n\n  .md\\:text-grey-darker {\n    color: #606f7b;\n  }\n\n  .md\\:text-grey-dark {\n    color: #8795a1;\n  }\n\n  .md\\:text-grey {\n    color: #b8c2cc;\n  }\n\n  .md\\:text-grey-light {\n    color: #dae1e7;\n  }\n\n  .md\\:text-grey-lighter {\n    color: #f1f5f8;\n  }\n\n  .md\\:text-grey-lightest {\n    color: #f8fafc;\n  }\n\n  .md\\:text-white {\n    color: #fff;\n  }\n\n  .md\\:text-red-darkest {\n    color: #3b0d0c;\n  }\n\n  .md\\:text-red-darker {\n    color: #621b18;\n  }\n\n  .md\\:text-red-dark {\n    color: #cc1f1a;\n  }\n\n  .md\\:text-red {\n    color: #e3342f;\n  }\n\n  .md\\:text-red-light {\n    color: #ef5753;\n  }\n\n  .md\\:text-red-lighter {\n    color: #f9acaa;\n  }\n\n  .md\\:text-red-lightest {\n    color: #fcebea;\n  }\n\n  .md\\:text-orange-darkest {\n    color: #462a16;\n  }\n\n  .md\\:text-orange-darker {\n    color: #613b1f;\n  }\n\n  .md\\:text-orange-dark {\n    color: #de751f;\n  }\n\n  .md\\:text-orange {\n    color: #f6993f;\n  }\n\n  .md\\:text-orange-light {\n    color: #faad63;\n  }\n\n  .md\\:text-orange-lighter {\n    color: #fcd9b6;\n  }\n\n  .md\\:text-orange-lightest {\n    color: #fff5eb;\n  }\n\n  .md\\:text-yellow-darkest {\n    color: #453411;\n  }\n\n  .md\\:text-yellow-darker {\n    color: #684f1d;\n  }\n\n  .md\\:text-yellow-dark {\n    color: #f2d024;\n  }\n\n  .md\\:text-yellow {\n    color: #ffed4a;\n  }\n\n  .md\\:text-yellow-light {\n    color: #fff382;\n  }\n\n  .md\\:text-yellow-lighter {\n    color: #fff9c2;\n  }\n\n  .md\\:text-yellow-lightest {\n    color: #fcfbeb;\n  }\n\n  .md\\:text-green-darkest {\n    color: #0f2f21;\n  }\n\n  .md\\:text-green-darker {\n    color: #1a4731;\n  }\n\n  .md\\:text-green-dark {\n    color: #1f9d55;\n  }\n\n  .md\\:text-green {\n    color: #38c172;\n  }\n\n  .md\\:text-green-light {\n    color: #51d88a;\n  }\n\n  .md\\:text-green-lighter {\n    color: #a2f5bf;\n  }\n\n  .md\\:text-green-lightest {\n    color: #e3fcec;\n  }\n\n  .md\\:text-teal-darkest {\n    color: #0d3331;\n  }\n\n  .md\\:text-teal-darker {\n    color: #20504f;\n  }\n\n  .md\\:text-teal-dark {\n    color: #38a89d;\n  }\n\n  .md\\:text-teal {\n    color: #4dc0b5;\n  }\n\n  .md\\:text-teal-light {\n    color: #64d5ca;\n  }\n\n  .md\\:text-teal-lighter {\n    color: #a0f0ed;\n  }\n\n  .md\\:text-teal-lightest {\n    color: #e8fffe;\n  }\n\n  .md\\:text-blue-darkest {\n    color: #12283a;\n  }\n\n  .md\\:text-blue-darker {\n    color: #1c3d5a;\n  }\n\n  .md\\:text-blue-dark {\n    color: #2779bd;\n  }\n\n  .md\\:text-blue {\n    color: #3490dc;\n  }\n\n  .md\\:text-blue-light {\n    color: #6cb2eb;\n  }\n\n  .md\\:text-blue-lighter {\n    color: #bcdefa;\n  }\n\n  .md\\:text-blue-lightest {\n    color: #eff8ff;\n  }\n\n  .md\\:text-indigo-darkest {\n    color: #191e38;\n  }\n\n  .md\\:text-indigo-darker {\n    color: #2f365f;\n  }\n\n  .md\\:text-indigo-dark {\n    color: #5661b3;\n  }\n\n  .md\\:text-indigo {\n    color: #6574cd;\n  }\n\n  .md\\:text-indigo-light {\n    color: #7886d7;\n  }\n\n  .md\\:text-indigo-lighter {\n    color: #b2b7ff;\n  }\n\n  .md\\:text-indigo-lightest {\n    color: #e6e8ff;\n  }\n\n  .md\\:text-purple-darkest {\n    color: #21183c;\n  }\n\n  .md\\:text-purple-darker {\n    color: #382b5f;\n  }\n\n  .md\\:text-purple-dark {\n    color: #794acf;\n  }\n\n  .md\\:text-purple {\n    color: #9561e2;\n  }\n\n  .md\\:text-purple-light {\n    color: #a779e9;\n  }\n\n  .md\\:text-purple-lighter {\n    color: #d6bbfc;\n  }\n\n  .md\\:text-purple-lightest {\n    color: #f3ebff;\n  }\n\n  .md\\:text-pink-darkest {\n    color: #451225;\n  }\n\n  .md\\:text-pink-darker {\n    color: #6f213f;\n  }\n\n  .md\\:text-pink-dark {\n    color: #eb5286;\n  }\n\n  .md\\:text-pink {\n    color: #f66d9b;\n  }\n\n  .md\\:text-pink-light {\n    color: #fa7ea8;\n  }\n\n  .md\\:text-pink-lighter {\n    color: #ffbbca;\n  }\n\n  .md\\:text-pink-lightest {\n    color: #ffebef;\n  }\n\n  .md\\:hover\\:text-transparent:hover {\n    color: transparent;\n  }\n\n  .md\\:hover\\:text-black:hover {\n    color: #22292f;\n  }\n\n  .md\\:hover\\:text-grey-darkest:hover {\n    color: #3d4852;\n  }\n\n  .md\\:hover\\:text-grey-darker:hover {\n    color: #606f7b;\n  }\n\n  .md\\:hover\\:text-grey-dark:hover {\n    color: #8795a1;\n  }\n\n  .md\\:hover\\:text-grey:hover {\n    color: #b8c2cc;\n  }\n\n  .md\\:hover\\:text-grey-light:hover {\n    color: #dae1e7;\n  }\n\n  .md\\:hover\\:text-grey-lighter:hover {\n    color: #f1f5f8;\n  }\n\n  .md\\:hover\\:text-grey-lightest:hover {\n    color: #f8fafc;\n  }\n\n  .md\\:hover\\:text-white:hover {\n    color: #fff;\n  }\n\n  .md\\:hover\\:text-red-darkest:hover {\n    color: #3b0d0c;\n  }\n\n  .md\\:hover\\:text-red-darker:hover {\n    color: #621b18;\n  }\n\n  .md\\:hover\\:text-red-dark:hover {\n    color: #cc1f1a;\n  }\n\n  .md\\:hover\\:text-red:hover {\n    color: #e3342f;\n  }\n\n  .md\\:hover\\:text-red-light:hover {\n    color: #ef5753;\n  }\n\n  .md\\:hover\\:text-red-lighter:hover {\n    color: #f9acaa;\n  }\n\n  .md\\:hover\\:text-red-lightest:hover {\n    color: #fcebea;\n  }\n\n  .md\\:hover\\:text-orange-darkest:hover {\n    color: #462a16;\n  }\n\n  .md\\:hover\\:text-orange-darker:hover {\n    color: #613b1f;\n  }\n\n  .md\\:hover\\:text-orange-dark:hover {\n    color: #de751f;\n  }\n\n  .md\\:hover\\:text-orange:hover {\n    color: #f6993f;\n  }\n\n  .md\\:hover\\:text-orange-light:hover {\n    color: #faad63;\n  }\n\n  .md\\:hover\\:text-orange-lighter:hover {\n    color: #fcd9b6;\n  }\n\n  .md\\:hover\\:text-orange-lightest:hover {\n    color: #fff5eb;\n  }\n\n  .md\\:hover\\:text-yellow-darkest:hover {\n    color: #453411;\n  }\n\n  .md\\:hover\\:text-yellow-darker:hover {\n    color: #684f1d;\n  }\n\n  .md\\:hover\\:text-yellow-dark:hover {\n    color: #f2d024;\n  }\n\n  .md\\:hover\\:text-yellow:hover {\n    color: #ffed4a;\n  }\n\n  .md\\:hover\\:text-yellow-light:hover {\n    color: #fff382;\n  }\n\n  .md\\:hover\\:text-yellow-lighter:hover {\n    color: #fff9c2;\n  }\n\n  .md\\:hover\\:text-yellow-lightest:hover {\n    color: #fcfbeb;\n  }\n\n  .md\\:hover\\:text-green-darkest:hover {\n    color: #0f2f21;\n  }\n\n  .md\\:hover\\:text-green-darker:hover {\n    color: #1a4731;\n  }\n\n  .md\\:hover\\:text-green-dark:hover {\n    color: #1f9d55;\n  }\n\n  .md\\:hover\\:text-green:hover {\n    color: #38c172;\n  }\n\n  .md\\:hover\\:text-green-light:hover {\n    color: #51d88a;\n  }\n\n  .md\\:hover\\:text-green-lighter:hover {\n    color: #a2f5bf;\n  }\n\n  .md\\:hover\\:text-green-lightest:hover {\n    color: #e3fcec;\n  }\n\n  .md\\:hover\\:text-teal-darkest:hover {\n    color: #0d3331;\n  }\n\n  .md\\:hover\\:text-teal-darker:hover {\n    color: #20504f;\n  }\n\n  .md\\:hover\\:text-teal-dark:hover {\n    color: #38a89d;\n  }\n\n  .md\\:hover\\:text-teal:hover {\n    color: #4dc0b5;\n  }\n\n  .md\\:hover\\:text-teal-light:hover {\n    color: #64d5ca;\n  }\n\n  .md\\:hover\\:text-teal-lighter:hover {\n    color: #a0f0ed;\n  }\n\n  .md\\:hover\\:text-teal-lightest:hover {\n    color: #e8fffe;\n  }\n\n  .md\\:hover\\:text-blue-darkest:hover {\n    color: #12283a;\n  }\n\n  .md\\:hover\\:text-blue-darker:hover {\n    color: #1c3d5a;\n  }\n\n  .md\\:hover\\:text-blue-dark:hover {\n    color: #2779bd;\n  }\n\n  .md\\:hover\\:text-blue:hover {\n    color: #3490dc;\n  }\n\n  .md\\:hover\\:text-blue-light:hover {\n    color: #6cb2eb;\n  }\n\n  .md\\:hover\\:text-blue-lighter:hover {\n    color: #bcdefa;\n  }\n\n  .md\\:hover\\:text-blue-lightest:hover {\n    color: #eff8ff;\n  }\n\n  .md\\:hover\\:text-indigo-darkest:hover {\n    color: #191e38;\n  }\n\n  .md\\:hover\\:text-indigo-darker:hover {\n    color: #2f365f;\n  }\n\n  .md\\:hover\\:text-indigo-dark:hover {\n    color: #5661b3;\n  }\n\n  .md\\:hover\\:text-indigo:hover {\n    color: #6574cd;\n  }\n\n  .md\\:hover\\:text-indigo-light:hover {\n    color: #7886d7;\n  }\n\n  .md\\:hover\\:text-indigo-lighter:hover {\n    color: #b2b7ff;\n  }\n\n  .md\\:hover\\:text-indigo-lightest:hover {\n    color: #e6e8ff;\n  }\n\n  .md\\:hover\\:text-purple-darkest:hover {\n    color: #21183c;\n  }\n\n  .md\\:hover\\:text-purple-darker:hover {\n    color: #382b5f;\n  }\n\n  .md\\:hover\\:text-purple-dark:hover {\n    color: #794acf;\n  }\n\n  .md\\:hover\\:text-purple:hover {\n    color: #9561e2;\n  }\n\n  .md\\:hover\\:text-purple-light:hover {\n    color: #a779e9;\n  }\n\n  .md\\:hover\\:text-purple-lighter:hover {\n    color: #d6bbfc;\n  }\n\n  .md\\:hover\\:text-purple-lightest:hover {\n    color: #f3ebff;\n  }\n\n  .md\\:hover\\:text-pink-darkest:hover {\n    color: #451225;\n  }\n\n  .md\\:hover\\:text-pink-darker:hover {\n    color: #6f213f;\n  }\n\n  .md\\:hover\\:text-pink-dark:hover {\n    color: #eb5286;\n  }\n\n  .md\\:hover\\:text-pink:hover {\n    color: #f66d9b;\n  }\n\n  .md\\:hover\\:text-pink-light:hover {\n    color: #fa7ea8;\n  }\n\n  .md\\:hover\\:text-pink-lighter:hover {\n    color: #ffbbca;\n  }\n\n  .md\\:hover\\:text-pink-lightest:hover {\n    color: #ffebef;\n  }\n\n  .md\\:text-xs {\n    font-size: .75rem;\n  }\n\n  .md\\:text-sm {\n    font-size: .875rem;\n  }\n\n  .md\\:text-base {\n    font-size: 1rem;\n  }\n\n  .md\\:text-lg {\n    font-size: 1.125rem;\n  }\n\n  .md\\:text-xl {\n    font-size: 1.25rem;\n  }\n\n  .md\\:text-2xl {\n    font-size: 1.5rem;\n  }\n\n  .md\\:text-3xl {\n    font-size: 1.875rem;\n  }\n\n  .md\\:text-4xl {\n    font-size: 2.25rem;\n  }\n\n  .md\\:text-5xl {\n    font-size: 3rem;\n  }\n\n  .md\\:italic {\n    font-style: italic;\n  }\n\n  .md\\:roman {\n    font-style: normal;\n  }\n\n  .md\\:uppercase {\n    text-transform: uppercase;\n  }\n\n  .md\\:lowercase {\n    text-transform: lowercase;\n  }\n\n  .md\\:capitalize {\n    text-transform: capitalize;\n  }\n\n  .md\\:normal-case {\n    text-transform: none;\n  }\n\n  .md\\:underline {\n    text-decoration: underline;\n  }\n\n  .md\\:line-through {\n    text-decoration: line-through;\n  }\n\n  .md\\:no-underline {\n    text-decoration: none;\n  }\n\n  .md\\:antialiased {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .md\\:subpixel-antialiased {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .md\\:hover\\:italic:hover {\n    font-style: italic;\n  }\n\n  .md\\:hover\\:roman:hover {\n    font-style: normal;\n  }\n\n  .md\\:hover\\:uppercase:hover {\n    text-transform: uppercase;\n  }\n\n  .md\\:hover\\:lowercase:hover {\n    text-transform: lowercase;\n  }\n\n  .md\\:hover\\:capitalize:hover {\n    text-transform: capitalize;\n  }\n\n  .md\\:hover\\:normal-case:hover {\n    text-transform: none;\n  }\n\n  .md\\:hover\\:underline:hover {\n    text-decoration: underline;\n  }\n\n  .md\\:hover\\:line-through:hover {\n    text-decoration: line-through;\n  }\n\n  .md\\:hover\\:no-underline:hover {\n    text-decoration: none;\n  }\n\n  .md\\:hover\\:antialiased:hover {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .md\\:hover\\:subpixel-antialiased:hover {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .md\\:tracking-tight {\n    letter-spacing: -0.05em;\n  }\n\n  .md\\:tracking-normal {\n    letter-spacing: 0;\n  }\n\n  .md\\:tracking-wide {\n    letter-spacing: .05em;\n  }\n\n  .md\\:select-none {\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n  }\n\n  .md\\:select-text {\n    -webkit-user-select: text;\n       -moz-user-select: text;\n        -ms-user-select: text;\n            user-select: text;\n  }\n\n  .md\\:align-baseline {\n    vertical-align: baseline;\n  }\n\n  .md\\:align-top {\n    vertical-align: top;\n  }\n\n  .md\\:align-middle {\n    vertical-align: middle;\n  }\n\n  .md\\:align-bottom {\n    vertical-align: bottom;\n  }\n\n  .md\\:align-text-top {\n    vertical-align: text-top;\n  }\n\n  .md\\:align-text-bottom {\n    vertical-align: text-bottom;\n  }\n\n  .md\\:visible {\n    visibility: visible;\n  }\n\n  .md\\:invisible {\n    visibility: hidden;\n  }\n\n  .md\\:whitespace-normal {\n    white-space: normal;\n  }\n\n  .md\\:whitespace-no-wrap {\n    white-space: nowrap;\n  }\n\n  .md\\:whitespace-pre {\n    white-space: pre;\n  }\n\n  .md\\:whitespace-pre-line {\n    white-space: pre-line;\n  }\n\n  .md\\:whitespace-pre-wrap {\n    white-space: pre-wrap;\n  }\n\n  .md\\:break-words {\n    word-wrap: break-word;\n  }\n\n  .md\\:break-normal {\n    word-wrap: normal;\n  }\n\n  .md\\:truncate {\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n\n  .md\\:w-1 {\n    width: .25rem;\n  }\n\n  .md\\:w-2 {\n    width: .5rem;\n  }\n\n  .md\\:w-3 {\n    width: .75rem;\n  }\n\n  .md\\:w-4 {\n    width: 1rem;\n  }\n\n  .md\\:w-6 {\n    width: 1.5rem;\n  }\n\n  .md\\:w-8 {\n    width: 2rem;\n  }\n\n  .md\\:w-10 {\n    width: 2.5rem;\n  }\n\n  .md\\:w-12 {\n    width: 3rem;\n  }\n\n  .md\\:w-16 {\n    width: 4rem;\n  }\n\n  .md\\:w-24 {\n    width: 6rem;\n  }\n\n  .md\\:w-32 {\n    width: 8rem;\n  }\n\n  .md\\:w-48 {\n    width: 12rem;\n  }\n\n  .md\\:w-64 {\n    width: 16rem;\n  }\n\n  .md\\:w-auto {\n    width: auto;\n  }\n\n  .md\\:w-px {\n    width: 1px;\n  }\n\n  .md\\:w-1\\/2 {\n    width: 50%;\n  }\n\n  .md\\:w-1\\/3 {\n    width: 33.33333%;\n  }\n\n  .md\\:w-2\\/3 {\n    width: 66.66667%;\n  }\n\n  .md\\:w-1\\/4 {\n    width: 25%;\n  }\n\n  .md\\:w-3\\/4 {\n    width: 75%;\n  }\n\n  .md\\:w-1\\/5 {\n    width: 20%;\n  }\n\n  .md\\:w-2\\/5 {\n    width: 40%;\n  }\n\n  .md\\:w-3\\/5 {\n    width: 60%;\n  }\n\n  .md\\:w-4\\/5 {\n    width: 80%;\n  }\n\n  .md\\:w-1\\/6 {\n    width: 16.66667%;\n  }\n\n  .md\\:w-5\\/6 {\n    width: 83.33333%;\n  }\n\n  .md\\:w-full {\n    width: 100%;\n  }\n\n  .md\\:w-screen {\n    width: 100vw;\n  }\n\n  .md\\:z-0 {\n    z-index: 0;\n  }\n\n  .md\\:z-10 {\n    z-index: 10;\n  }\n\n  .md\\:z-20 {\n    z-index: 20;\n  }\n\n  .md\\:z-30 {\n    z-index: 30;\n  }\n\n  .md\\:z-40 {\n    z-index: 40;\n  }\n\n  .md\\:z-50 {\n    z-index: 50;\n  }\n\n  .md\\:z-auto {\n    z-index: auto;\n  }\n}\n\n@media (min-width: 992px) {\n  .lg\\:list-reset {\n    list-style: none;\n    padding: 0;\n  }\n\n  .lg\\:appearance-none {\n    -webkit-appearance: none;\n       -moz-appearance: none;\n            appearance: none;\n  }\n\n  .lg\\:bg-fixed {\n    background-attachment: fixed;\n  }\n\n  .lg\\:bg-local {\n    background-attachment: local;\n  }\n\n  .lg\\:bg-scroll {\n    background-attachment: scroll;\n  }\n\n  .lg\\:bg-transparent {\n    background-color: transparent;\n  }\n\n  .lg\\:bg-black {\n    background-color: #22292f;\n  }\n\n  .lg\\:bg-grey-darkest {\n    background-color: #3d4852;\n  }\n\n  .lg\\:bg-grey-darker {\n    background-color: #606f7b;\n  }\n\n  .lg\\:bg-grey-dark {\n    background-color: #8795a1;\n  }\n\n  .lg\\:bg-grey {\n    background-color: #b8c2cc;\n  }\n\n  .lg\\:bg-grey-light {\n    background-color: #dae1e7;\n  }\n\n  .lg\\:bg-grey-lighter {\n    background-color: #f1f5f8;\n  }\n\n  .lg\\:bg-grey-lightest {\n    background-color: #f8fafc;\n  }\n\n  .lg\\:bg-white {\n    background-color: #fff;\n  }\n\n  .lg\\:bg-red-darkest {\n    background-color: #3b0d0c;\n  }\n\n  .lg\\:bg-red-darker {\n    background-color: #621b18;\n  }\n\n  .lg\\:bg-red-dark {\n    background-color: #cc1f1a;\n  }\n\n  .lg\\:bg-red {\n    background-color: #e3342f;\n  }\n\n  .lg\\:bg-red-light {\n    background-color: #ef5753;\n  }\n\n  .lg\\:bg-red-lighter {\n    background-color: #f9acaa;\n  }\n\n  .lg\\:bg-red-lightest {\n    background-color: #fcebea;\n  }\n\n  .lg\\:bg-orange-darkest {\n    background-color: #462a16;\n  }\n\n  .lg\\:bg-orange-darker {\n    background-color: #613b1f;\n  }\n\n  .lg\\:bg-orange-dark {\n    background-color: #de751f;\n  }\n\n  .lg\\:bg-orange {\n    background-color: #f6993f;\n  }\n\n  .lg\\:bg-orange-light {\n    background-color: #faad63;\n  }\n\n  .lg\\:bg-orange-lighter {\n    background-color: #fcd9b6;\n  }\n\n  .lg\\:bg-orange-lightest {\n    background-color: #fff5eb;\n  }\n\n  .lg\\:bg-yellow-darkest {\n    background-color: #453411;\n  }\n\n  .lg\\:bg-yellow-darker {\n    background-color: #684f1d;\n  }\n\n  .lg\\:bg-yellow-dark {\n    background-color: #f2d024;\n  }\n\n  .lg\\:bg-yellow {\n    background-color: #ffed4a;\n  }\n\n  .lg\\:bg-yellow-light {\n    background-color: #fff382;\n  }\n\n  .lg\\:bg-yellow-lighter {\n    background-color: #fff9c2;\n  }\n\n  .lg\\:bg-yellow-lightest {\n    background-color: #fcfbeb;\n  }\n\n  .lg\\:bg-green-darkest {\n    background-color: #0f2f21;\n  }\n\n  .lg\\:bg-green-darker {\n    background-color: #1a4731;\n  }\n\n  .lg\\:bg-green-dark {\n    background-color: #1f9d55;\n  }\n\n  .lg\\:bg-green {\n    background-color: #38c172;\n  }\n\n  .lg\\:bg-green-light {\n    background-color: #51d88a;\n  }\n\n  .lg\\:bg-green-lighter {\n    background-color: #a2f5bf;\n  }\n\n  .lg\\:bg-green-lightest {\n    background-color: #e3fcec;\n  }\n\n  .lg\\:bg-teal-darkest {\n    background-color: #0d3331;\n  }\n\n  .lg\\:bg-teal-darker {\n    background-color: #20504f;\n  }\n\n  .lg\\:bg-teal-dark {\n    background-color: #38a89d;\n  }\n\n  .lg\\:bg-teal {\n    background-color: #4dc0b5;\n  }\n\n  .lg\\:bg-teal-light {\n    background-color: #64d5ca;\n  }\n\n  .lg\\:bg-teal-lighter {\n    background-color: #a0f0ed;\n  }\n\n  .lg\\:bg-teal-lightest {\n    background-color: #e8fffe;\n  }\n\n  .lg\\:bg-blue-darkest {\n    background-color: #12283a;\n  }\n\n  .lg\\:bg-blue-darker {\n    background-color: #1c3d5a;\n  }\n\n  .lg\\:bg-blue-dark {\n    background-color: #2779bd;\n  }\n\n  .lg\\:bg-blue {\n    background-color: #3490dc;\n  }\n\n  .lg\\:bg-blue-light {\n    background-color: #6cb2eb;\n  }\n\n  .lg\\:bg-blue-lighter {\n    background-color: #bcdefa;\n  }\n\n  .lg\\:bg-blue-lightest {\n    background-color: #eff8ff;\n  }\n\n  .lg\\:bg-indigo-darkest {\n    background-color: #191e38;\n  }\n\n  .lg\\:bg-indigo-darker {\n    background-color: #2f365f;\n  }\n\n  .lg\\:bg-indigo-dark {\n    background-color: #5661b3;\n  }\n\n  .lg\\:bg-indigo {\n    background-color: #6574cd;\n  }\n\n  .lg\\:bg-indigo-light {\n    background-color: #7886d7;\n  }\n\n  .lg\\:bg-indigo-lighter {\n    background-color: #b2b7ff;\n  }\n\n  .lg\\:bg-indigo-lightest {\n    background-color: #e6e8ff;\n  }\n\n  .lg\\:bg-purple-darkest {\n    background-color: #21183c;\n  }\n\n  .lg\\:bg-purple-darker {\n    background-color: #382b5f;\n  }\n\n  .lg\\:bg-purple-dark {\n    background-color: #794acf;\n  }\n\n  .lg\\:bg-purple {\n    background-color: #9561e2;\n  }\n\n  .lg\\:bg-purple-light {\n    background-color: #a779e9;\n  }\n\n  .lg\\:bg-purple-lighter {\n    background-color: #d6bbfc;\n  }\n\n  .lg\\:bg-purple-lightest {\n    background-color: #f3ebff;\n  }\n\n  .lg\\:bg-pink-darkest {\n    background-color: #451225;\n  }\n\n  .lg\\:bg-pink-darker {\n    background-color: #6f213f;\n  }\n\n  .lg\\:bg-pink-dark {\n    background-color: #eb5286;\n  }\n\n  .lg\\:bg-pink {\n    background-color: #f66d9b;\n  }\n\n  .lg\\:bg-pink-light {\n    background-color: #fa7ea8;\n  }\n\n  .lg\\:bg-pink-lighter {\n    background-color: #ffbbca;\n  }\n\n  .lg\\:bg-pink-lightest {\n    background-color: #ffebef;\n  }\n\n  .lg\\:hover\\:bg-transparent:hover {\n    background-color: transparent;\n  }\n\n  .lg\\:hover\\:bg-black:hover {\n    background-color: #22292f;\n  }\n\n  .lg\\:hover\\:bg-grey-darkest:hover {\n    background-color: #3d4852;\n  }\n\n  .lg\\:hover\\:bg-grey-darker:hover {\n    background-color: #606f7b;\n  }\n\n  .lg\\:hover\\:bg-grey-dark:hover {\n    background-color: #8795a1;\n  }\n\n  .lg\\:hover\\:bg-grey:hover {\n    background-color: #b8c2cc;\n  }\n\n  .lg\\:hover\\:bg-grey-light:hover {\n    background-color: #dae1e7;\n  }\n\n  .lg\\:hover\\:bg-grey-lighter:hover {\n    background-color: #f1f5f8;\n  }\n\n  .lg\\:hover\\:bg-grey-lightest:hover {\n    background-color: #f8fafc;\n  }\n\n  .lg\\:hover\\:bg-white:hover {\n    background-color: #fff;\n  }\n\n  .lg\\:hover\\:bg-red-darkest:hover {\n    background-color: #3b0d0c;\n  }\n\n  .lg\\:hover\\:bg-red-darker:hover {\n    background-color: #621b18;\n  }\n\n  .lg\\:hover\\:bg-red-dark:hover {\n    background-color: #cc1f1a;\n  }\n\n  .lg\\:hover\\:bg-red:hover {\n    background-color: #e3342f;\n  }\n\n  .lg\\:hover\\:bg-red-light:hover {\n    background-color: #ef5753;\n  }\n\n  .lg\\:hover\\:bg-red-lighter:hover {\n    background-color: #f9acaa;\n  }\n\n  .lg\\:hover\\:bg-red-lightest:hover {\n    background-color: #fcebea;\n  }\n\n  .lg\\:hover\\:bg-orange-darkest:hover {\n    background-color: #462a16;\n  }\n\n  .lg\\:hover\\:bg-orange-darker:hover {\n    background-color: #613b1f;\n  }\n\n  .lg\\:hover\\:bg-orange-dark:hover {\n    background-color: #de751f;\n  }\n\n  .lg\\:hover\\:bg-orange:hover {\n    background-color: #f6993f;\n  }\n\n  .lg\\:hover\\:bg-orange-light:hover {\n    background-color: #faad63;\n  }\n\n  .lg\\:hover\\:bg-orange-lighter:hover {\n    background-color: #fcd9b6;\n  }\n\n  .lg\\:hover\\:bg-orange-lightest:hover {\n    background-color: #fff5eb;\n  }\n\n  .lg\\:hover\\:bg-yellow-darkest:hover {\n    background-color: #453411;\n  }\n\n  .lg\\:hover\\:bg-yellow-darker:hover {\n    background-color: #684f1d;\n  }\n\n  .lg\\:hover\\:bg-yellow-dark:hover {\n    background-color: #f2d024;\n  }\n\n  .lg\\:hover\\:bg-yellow:hover {\n    background-color: #ffed4a;\n  }\n\n  .lg\\:hover\\:bg-yellow-light:hover {\n    background-color: #fff382;\n  }\n\n  .lg\\:hover\\:bg-yellow-lighter:hover {\n    background-color: #fff9c2;\n  }\n\n  .lg\\:hover\\:bg-yellow-lightest:hover {\n    background-color: #fcfbeb;\n  }\n\n  .lg\\:hover\\:bg-green-darkest:hover {\n    background-color: #0f2f21;\n  }\n\n  .lg\\:hover\\:bg-green-darker:hover {\n    background-color: #1a4731;\n  }\n\n  .lg\\:hover\\:bg-green-dark:hover {\n    background-color: #1f9d55;\n  }\n\n  .lg\\:hover\\:bg-green:hover {\n    background-color: #38c172;\n  }\n\n  .lg\\:hover\\:bg-green-light:hover {\n    background-color: #51d88a;\n  }\n\n  .lg\\:hover\\:bg-green-lighter:hover {\n    background-color: #a2f5bf;\n  }\n\n  .lg\\:hover\\:bg-green-lightest:hover {\n    background-color: #e3fcec;\n  }\n\n  .lg\\:hover\\:bg-teal-darkest:hover {\n    background-color: #0d3331;\n  }\n\n  .lg\\:hover\\:bg-teal-darker:hover {\n    background-color: #20504f;\n  }\n\n  .lg\\:hover\\:bg-teal-dark:hover {\n    background-color: #38a89d;\n  }\n\n  .lg\\:hover\\:bg-teal:hover {\n    background-color: #4dc0b5;\n  }\n\n  .lg\\:hover\\:bg-teal-light:hover {\n    background-color: #64d5ca;\n  }\n\n  .lg\\:hover\\:bg-teal-lighter:hover {\n    background-color: #a0f0ed;\n  }\n\n  .lg\\:hover\\:bg-teal-lightest:hover {\n    background-color: #e8fffe;\n  }\n\n  .lg\\:hover\\:bg-blue-darkest:hover {\n    background-color: #12283a;\n  }\n\n  .lg\\:hover\\:bg-blue-darker:hover {\n    background-color: #1c3d5a;\n  }\n\n  .lg\\:hover\\:bg-blue-dark:hover {\n    background-color: #2779bd;\n  }\n\n  .lg\\:hover\\:bg-blue:hover {\n    background-color: #3490dc;\n  }\n\n  .lg\\:hover\\:bg-blue-light:hover {\n    background-color: #6cb2eb;\n  }\n\n  .lg\\:hover\\:bg-blue-lighter:hover {\n    background-color: #bcdefa;\n  }\n\n  .lg\\:hover\\:bg-blue-lightest:hover {\n    background-color: #eff8ff;\n  }\n\n  .lg\\:hover\\:bg-indigo-darkest:hover {\n    background-color: #191e38;\n  }\n\n  .lg\\:hover\\:bg-indigo-darker:hover {\n    background-color: #2f365f;\n  }\n\n  .lg\\:hover\\:bg-indigo-dark:hover {\n    background-color: #5661b3;\n  }\n\n  .lg\\:hover\\:bg-indigo:hover {\n    background-color: #6574cd;\n  }\n\n  .lg\\:hover\\:bg-indigo-light:hover {\n    background-color: #7886d7;\n  }\n\n  .lg\\:hover\\:bg-indigo-lighter:hover {\n    background-color: #b2b7ff;\n  }\n\n  .lg\\:hover\\:bg-indigo-lightest:hover {\n    background-color: #e6e8ff;\n  }\n\n  .lg\\:hover\\:bg-purple-darkest:hover {\n    background-color: #21183c;\n  }\n\n  .lg\\:hover\\:bg-purple-darker:hover {\n    background-color: #382b5f;\n  }\n\n  .lg\\:hover\\:bg-purple-dark:hover {\n    background-color: #794acf;\n  }\n\n  .lg\\:hover\\:bg-purple:hover {\n    background-color: #9561e2;\n  }\n\n  .lg\\:hover\\:bg-purple-light:hover {\n    background-color: #a779e9;\n  }\n\n  .lg\\:hover\\:bg-purple-lighter:hover {\n    background-color: #d6bbfc;\n  }\n\n  .lg\\:hover\\:bg-purple-lightest:hover {\n    background-color: #f3ebff;\n  }\n\n  .lg\\:hover\\:bg-pink-darkest:hover {\n    background-color: #451225;\n  }\n\n  .lg\\:hover\\:bg-pink-darker:hover {\n    background-color: #6f213f;\n  }\n\n  .lg\\:hover\\:bg-pink-dark:hover {\n    background-color: #eb5286;\n  }\n\n  .lg\\:hover\\:bg-pink:hover {\n    background-color: #f66d9b;\n  }\n\n  .lg\\:hover\\:bg-pink-light:hover {\n    background-color: #fa7ea8;\n  }\n\n  .lg\\:hover\\:bg-pink-lighter:hover {\n    background-color: #ffbbca;\n  }\n\n  .lg\\:hover\\:bg-pink-lightest:hover {\n    background-color: #ffebef;\n  }\n\n  .lg\\:bg-bottom {\n    background-position: bottom;\n  }\n\n  .lg\\:bg-center {\n    background-position: center;\n  }\n\n  .lg\\:bg-left {\n    background-position: left;\n  }\n\n  .lg\\:bg-left-bottom {\n    background-position: left bottom;\n  }\n\n  .lg\\:bg-left-top {\n    background-position: left top;\n  }\n\n  .lg\\:bg-right {\n    background-position: right;\n  }\n\n  .lg\\:bg-right-bottom {\n    background-position: right bottom;\n  }\n\n  .lg\\:bg-right-top {\n    background-position: right top;\n  }\n\n  .lg\\:bg-top {\n    background-position: top;\n  }\n\n  .lg\\:bg-repeat {\n    background-repeat: repeat;\n  }\n\n  .lg\\:bg-no-repeat {\n    background-repeat: no-repeat;\n  }\n\n  .lg\\:bg-repeat-x {\n    background-repeat: repeat-x;\n  }\n\n  .lg\\:bg-repeat-y {\n    background-repeat: repeat-y;\n  }\n\n  .lg\\:bg-auto {\n    background-size: auto;\n  }\n\n  .lg\\:bg-cover {\n    background-size: cover;\n  }\n\n  .lg\\:bg-contain {\n    background-size: contain;\n  }\n\n  .lg\\:border-transparent {\n    border-color: transparent;\n  }\n\n  .lg\\:border-black {\n    border-color: #22292f;\n  }\n\n  .lg\\:border-grey-darkest {\n    border-color: #3d4852;\n  }\n\n  .lg\\:border-grey-darker {\n    border-color: #606f7b;\n  }\n\n  .lg\\:border-grey-dark {\n    border-color: #8795a1;\n  }\n\n  .lg\\:border-grey {\n    border-color: #b8c2cc;\n  }\n\n  .lg\\:border-grey-light {\n    border-color: #dae1e7;\n  }\n\n  .lg\\:border-grey-lighter {\n    border-color: #f1f5f8;\n  }\n\n  .lg\\:border-grey-lightest {\n    border-color: #f8fafc;\n  }\n\n  .lg\\:border-white {\n    border-color: #fff;\n  }\n\n  .lg\\:border-red-darkest {\n    border-color: #3b0d0c;\n  }\n\n  .lg\\:border-red-darker {\n    border-color: #621b18;\n  }\n\n  .lg\\:border-red-dark {\n    border-color: #cc1f1a;\n  }\n\n  .lg\\:border-red {\n    border-color: #e3342f;\n  }\n\n  .lg\\:border-red-light {\n    border-color: #ef5753;\n  }\n\n  .lg\\:border-red-lighter {\n    border-color: #f9acaa;\n  }\n\n  .lg\\:border-red-lightest {\n    border-color: #fcebea;\n  }\n\n  .lg\\:border-orange-darkest {\n    border-color: #462a16;\n  }\n\n  .lg\\:border-orange-darker {\n    border-color: #613b1f;\n  }\n\n  .lg\\:border-orange-dark {\n    border-color: #de751f;\n  }\n\n  .lg\\:border-orange {\n    border-color: #f6993f;\n  }\n\n  .lg\\:border-orange-light {\n    border-color: #faad63;\n  }\n\n  .lg\\:border-orange-lighter {\n    border-color: #fcd9b6;\n  }\n\n  .lg\\:border-orange-lightest {\n    border-color: #fff5eb;\n  }\n\n  .lg\\:border-yellow-darkest {\n    border-color: #453411;\n  }\n\n  .lg\\:border-yellow-darker {\n    border-color: #684f1d;\n  }\n\n  .lg\\:border-yellow-dark {\n    border-color: #f2d024;\n  }\n\n  .lg\\:border-yellow {\n    border-color: #ffed4a;\n  }\n\n  .lg\\:border-yellow-light {\n    border-color: #fff382;\n  }\n\n  .lg\\:border-yellow-lighter {\n    border-color: #fff9c2;\n  }\n\n  .lg\\:border-yellow-lightest {\n    border-color: #fcfbeb;\n  }\n\n  .lg\\:border-green-darkest {\n    border-color: #0f2f21;\n  }\n\n  .lg\\:border-green-darker {\n    border-color: #1a4731;\n  }\n\n  .lg\\:border-green-dark {\n    border-color: #1f9d55;\n  }\n\n  .lg\\:border-green {\n    border-color: #38c172;\n  }\n\n  .lg\\:border-green-light {\n    border-color: #51d88a;\n  }\n\n  .lg\\:border-green-lighter {\n    border-color: #a2f5bf;\n  }\n\n  .lg\\:border-green-lightest {\n    border-color: #e3fcec;\n  }\n\n  .lg\\:border-teal-darkest {\n    border-color: #0d3331;\n  }\n\n  .lg\\:border-teal-darker {\n    border-color: #20504f;\n  }\n\n  .lg\\:border-teal-dark {\n    border-color: #38a89d;\n  }\n\n  .lg\\:border-teal {\n    border-color: #4dc0b5;\n  }\n\n  .lg\\:border-teal-light {\n    border-color: #64d5ca;\n  }\n\n  .lg\\:border-teal-lighter {\n    border-color: #a0f0ed;\n  }\n\n  .lg\\:border-teal-lightest {\n    border-color: #e8fffe;\n  }\n\n  .lg\\:border-blue-darkest {\n    border-color: #12283a;\n  }\n\n  .lg\\:border-blue-darker {\n    border-color: #1c3d5a;\n  }\n\n  .lg\\:border-blue-dark {\n    border-color: #2779bd;\n  }\n\n  .lg\\:border-blue {\n    border-color: #3490dc;\n  }\n\n  .lg\\:border-blue-light {\n    border-color: #6cb2eb;\n  }\n\n  .lg\\:border-blue-lighter {\n    border-color: #bcdefa;\n  }\n\n  .lg\\:border-blue-lightest {\n    border-color: #eff8ff;\n  }\n\n  .lg\\:border-indigo-darkest {\n    border-color: #191e38;\n  }\n\n  .lg\\:border-indigo-darker {\n    border-color: #2f365f;\n  }\n\n  .lg\\:border-indigo-dark {\n    border-color: #5661b3;\n  }\n\n  .lg\\:border-indigo {\n    border-color: #6574cd;\n  }\n\n  .lg\\:border-indigo-light {\n    border-color: #7886d7;\n  }\n\n  .lg\\:border-indigo-lighter {\n    border-color: #b2b7ff;\n  }\n\n  .lg\\:border-indigo-lightest {\n    border-color: #e6e8ff;\n  }\n\n  .lg\\:border-purple-darkest {\n    border-color: #21183c;\n  }\n\n  .lg\\:border-purple-darker {\n    border-color: #382b5f;\n  }\n\n  .lg\\:border-purple-dark {\n    border-color: #794acf;\n  }\n\n  .lg\\:border-purple {\n    border-color: #9561e2;\n  }\n\n  .lg\\:border-purple-light {\n    border-color: #a779e9;\n  }\n\n  .lg\\:border-purple-lighter {\n    border-color: #d6bbfc;\n  }\n\n  .lg\\:border-purple-lightest {\n    border-color: #f3ebff;\n  }\n\n  .lg\\:border-pink-darkest {\n    border-color: #451225;\n  }\n\n  .lg\\:border-pink-darker {\n    border-color: #6f213f;\n  }\n\n  .lg\\:border-pink-dark {\n    border-color: #eb5286;\n  }\n\n  .lg\\:border-pink {\n    border-color: #f66d9b;\n  }\n\n  .lg\\:border-pink-light {\n    border-color: #fa7ea8;\n  }\n\n  .lg\\:border-pink-lighter {\n    border-color: #ffbbca;\n  }\n\n  .lg\\:border-pink-lightest {\n    border-color: #ffebef;\n  }\n\n  .lg\\:hover\\:border-transparent:hover {\n    border-color: transparent;\n  }\n\n  .lg\\:hover\\:border-black:hover {\n    border-color: #22292f;\n  }\n\n  .lg\\:hover\\:border-grey-darkest:hover {\n    border-color: #3d4852;\n  }\n\n  .lg\\:hover\\:border-grey-darker:hover {\n    border-color: #606f7b;\n  }\n\n  .lg\\:hover\\:border-grey-dark:hover {\n    border-color: #8795a1;\n  }\n\n  .lg\\:hover\\:border-grey:hover {\n    border-color: #b8c2cc;\n  }\n\n  .lg\\:hover\\:border-grey-light:hover {\n    border-color: #dae1e7;\n  }\n\n  .lg\\:hover\\:border-grey-lighter:hover {\n    border-color: #f1f5f8;\n  }\n\n  .lg\\:hover\\:border-grey-lightest:hover {\n    border-color: #f8fafc;\n  }\n\n  .lg\\:hover\\:border-white:hover {\n    border-color: #fff;\n  }\n\n  .lg\\:hover\\:border-red-darkest:hover {\n    border-color: #3b0d0c;\n  }\n\n  .lg\\:hover\\:border-red-darker:hover {\n    border-color: #621b18;\n  }\n\n  .lg\\:hover\\:border-red-dark:hover {\n    border-color: #cc1f1a;\n  }\n\n  .lg\\:hover\\:border-red:hover {\n    border-color: #e3342f;\n  }\n\n  .lg\\:hover\\:border-red-light:hover {\n    border-color: #ef5753;\n  }\n\n  .lg\\:hover\\:border-red-lighter:hover {\n    border-color: #f9acaa;\n  }\n\n  .lg\\:hover\\:border-red-lightest:hover {\n    border-color: #fcebea;\n  }\n\n  .lg\\:hover\\:border-orange-darkest:hover {\n    border-color: #462a16;\n  }\n\n  .lg\\:hover\\:border-orange-darker:hover {\n    border-color: #613b1f;\n  }\n\n  .lg\\:hover\\:border-orange-dark:hover {\n    border-color: #de751f;\n  }\n\n  .lg\\:hover\\:border-orange:hover {\n    border-color: #f6993f;\n  }\n\n  .lg\\:hover\\:border-orange-light:hover {\n    border-color: #faad63;\n  }\n\n  .lg\\:hover\\:border-orange-lighter:hover {\n    border-color: #fcd9b6;\n  }\n\n  .lg\\:hover\\:border-orange-lightest:hover {\n    border-color: #fff5eb;\n  }\n\n  .lg\\:hover\\:border-yellow-darkest:hover {\n    border-color: #453411;\n  }\n\n  .lg\\:hover\\:border-yellow-darker:hover {\n    border-color: #684f1d;\n  }\n\n  .lg\\:hover\\:border-yellow-dark:hover {\n    border-color: #f2d024;\n  }\n\n  .lg\\:hover\\:border-yellow:hover {\n    border-color: #ffed4a;\n  }\n\n  .lg\\:hover\\:border-yellow-light:hover {\n    border-color: #fff382;\n  }\n\n  .lg\\:hover\\:border-yellow-lighter:hover {\n    border-color: #fff9c2;\n  }\n\n  .lg\\:hover\\:border-yellow-lightest:hover {\n    border-color: #fcfbeb;\n  }\n\n  .lg\\:hover\\:border-green-darkest:hover {\n    border-color: #0f2f21;\n  }\n\n  .lg\\:hover\\:border-green-darker:hover {\n    border-color: #1a4731;\n  }\n\n  .lg\\:hover\\:border-green-dark:hover {\n    border-color: #1f9d55;\n  }\n\n  .lg\\:hover\\:border-green:hover {\n    border-color: #38c172;\n  }\n\n  .lg\\:hover\\:border-green-light:hover {\n    border-color: #51d88a;\n  }\n\n  .lg\\:hover\\:border-green-lighter:hover {\n    border-color: #a2f5bf;\n  }\n\n  .lg\\:hover\\:border-green-lightest:hover {\n    border-color: #e3fcec;\n  }\n\n  .lg\\:hover\\:border-teal-darkest:hover {\n    border-color: #0d3331;\n  }\n\n  .lg\\:hover\\:border-teal-darker:hover {\n    border-color: #20504f;\n  }\n\n  .lg\\:hover\\:border-teal-dark:hover {\n    border-color: #38a89d;\n  }\n\n  .lg\\:hover\\:border-teal:hover {\n    border-color: #4dc0b5;\n  }\n\n  .lg\\:hover\\:border-teal-light:hover {\n    border-color: #64d5ca;\n  }\n\n  .lg\\:hover\\:border-teal-lighter:hover {\n    border-color: #a0f0ed;\n  }\n\n  .lg\\:hover\\:border-teal-lightest:hover {\n    border-color: #e8fffe;\n  }\n\n  .lg\\:hover\\:border-blue-darkest:hover {\n    border-color: #12283a;\n  }\n\n  .lg\\:hover\\:border-blue-darker:hover {\n    border-color: #1c3d5a;\n  }\n\n  .lg\\:hover\\:border-blue-dark:hover {\n    border-color: #2779bd;\n  }\n\n  .lg\\:hover\\:border-blue:hover {\n    border-color: #3490dc;\n  }\n\n  .lg\\:hover\\:border-blue-light:hover {\n    border-color: #6cb2eb;\n  }\n\n  .lg\\:hover\\:border-blue-lighter:hover {\n    border-color: #bcdefa;\n  }\n\n  .lg\\:hover\\:border-blue-lightest:hover {\n    border-color: #eff8ff;\n  }\n\n  .lg\\:hover\\:border-indigo-darkest:hover {\n    border-color: #191e38;\n  }\n\n  .lg\\:hover\\:border-indigo-darker:hover {\n    border-color: #2f365f;\n  }\n\n  .lg\\:hover\\:border-indigo-dark:hover {\n    border-color: #5661b3;\n  }\n\n  .lg\\:hover\\:border-indigo:hover {\n    border-color: #6574cd;\n  }\n\n  .lg\\:hover\\:border-indigo-light:hover {\n    border-color: #7886d7;\n  }\n\n  .lg\\:hover\\:border-indigo-lighter:hover {\n    border-color: #b2b7ff;\n  }\n\n  .lg\\:hover\\:border-indigo-lightest:hover {\n    border-color: #e6e8ff;\n  }\n\n  .lg\\:hover\\:border-purple-darkest:hover {\n    border-color: #21183c;\n  }\n\n  .lg\\:hover\\:border-purple-darker:hover {\n    border-color: #382b5f;\n  }\n\n  .lg\\:hover\\:border-purple-dark:hover {\n    border-color: #794acf;\n  }\n\n  .lg\\:hover\\:border-purple:hover {\n    border-color: #9561e2;\n  }\n\n  .lg\\:hover\\:border-purple-light:hover {\n    border-color: #a779e9;\n  }\n\n  .lg\\:hover\\:border-purple-lighter:hover {\n    border-color: #d6bbfc;\n  }\n\n  .lg\\:hover\\:border-purple-lightest:hover {\n    border-color: #f3ebff;\n  }\n\n  .lg\\:hover\\:border-pink-darkest:hover {\n    border-color: #451225;\n  }\n\n  .lg\\:hover\\:border-pink-darker:hover {\n    border-color: #6f213f;\n  }\n\n  .lg\\:hover\\:border-pink-dark:hover {\n    border-color: #eb5286;\n  }\n\n  .lg\\:hover\\:border-pink:hover {\n    border-color: #f66d9b;\n  }\n\n  .lg\\:hover\\:border-pink-light:hover {\n    border-color: #fa7ea8;\n  }\n\n  .lg\\:hover\\:border-pink-lighter:hover {\n    border-color: #ffbbca;\n  }\n\n  .lg\\:hover\\:border-pink-lightest:hover {\n    border-color: #ffebef;\n  }\n\n  .lg\\:rounded-none {\n    border-radius: 0;\n  }\n\n  .lg\\:rounded-sm {\n    border-radius: .125rem;\n  }\n\n  .lg\\:rounded {\n    border-radius: .25rem;\n  }\n\n  .lg\\:rounded-lg {\n    border-radius: .5rem;\n  }\n\n  .lg\\:rounded-full {\n    border-radius: 9999px;\n  }\n\n  .lg\\:rounded-t-none {\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n  }\n\n  .lg\\:rounded-r-none {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n\n  .lg\\:rounded-b-none {\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .lg\\:rounded-l-none {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .lg\\:rounded-t-sm {\n    border-top-left-radius: .125rem;\n    border-top-right-radius: .125rem;\n  }\n\n  .lg\\:rounded-r-sm {\n    border-top-right-radius: .125rem;\n    border-bottom-right-radius: .125rem;\n  }\n\n  .lg\\:rounded-b-sm {\n    border-bottom-right-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .lg\\:rounded-l-sm {\n    border-top-left-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .lg\\:rounded-t {\n    border-top-left-radius: .25rem;\n    border-top-right-radius: .25rem;\n  }\n\n  .lg\\:rounded-r {\n    border-top-right-radius: .25rem;\n    border-bottom-right-radius: .25rem;\n  }\n\n  .lg\\:rounded-b {\n    border-bottom-right-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .lg\\:rounded-l {\n    border-top-left-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .lg\\:rounded-t-lg {\n    border-top-left-radius: .5rem;\n    border-top-right-radius: .5rem;\n  }\n\n  .lg\\:rounded-r-lg {\n    border-top-right-radius: .5rem;\n    border-bottom-right-radius: .5rem;\n  }\n\n  .lg\\:rounded-b-lg {\n    border-bottom-right-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .lg\\:rounded-l-lg {\n    border-top-left-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .lg\\:rounded-t-full {\n    border-top-left-radius: 9999px;\n    border-top-right-radius: 9999px;\n  }\n\n  .lg\\:rounded-r-full {\n    border-top-right-radius: 9999px;\n    border-bottom-right-radius: 9999px;\n  }\n\n  .lg\\:rounded-b-full {\n    border-bottom-right-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .lg\\:rounded-l-full {\n    border-top-left-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .lg\\:rounded-tl-none {\n    border-top-left-radius: 0;\n  }\n\n  .lg\\:rounded-tr-none {\n    border-top-right-radius: 0;\n  }\n\n  .lg\\:rounded-br-none {\n    border-bottom-right-radius: 0;\n  }\n\n  .lg\\:rounded-bl-none {\n    border-bottom-left-radius: 0;\n  }\n\n  .lg\\:rounded-tl-sm {\n    border-top-left-radius: .125rem;\n  }\n\n  .lg\\:rounded-tr-sm {\n    border-top-right-radius: .125rem;\n  }\n\n  .lg\\:rounded-br-sm {\n    border-bottom-right-radius: .125rem;\n  }\n\n  .lg\\:rounded-bl-sm {\n    border-bottom-left-radius: .125rem;\n  }\n\n  .lg\\:rounded-tl {\n    border-top-left-radius: .25rem;\n  }\n\n  .lg\\:rounded-tr {\n    border-top-right-radius: .25rem;\n  }\n\n  .lg\\:rounded-br {\n    border-bottom-right-radius: .25rem;\n  }\n\n  .lg\\:rounded-bl {\n    border-bottom-left-radius: .25rem;\n  }\n\n  .lg\\:rounded-tl-lg {\n    border-top-left-radius: .5rem;\n  }\n\n  .lg\\:rounded-tr-lg {\n    border-top-right-radius: .5rem;\n  }\n\n  .lg\\:rounded-br-lg {\n    border-bottom-right-radius: .5rem;\n  }\n\n  .lg\\:rounded-bl-lg {\n    border-bottom-left-radius: .5rem;\n  }\n\n  .lg\\:rounded-tl-full {\n    border-top-left-radius: 9999px;\n  }\n\n  .lg\\:rounded-tr-full {\n    border-top-right-radius: 9999px;\n  }\n\n  .lg\\:rounded-br-full {\n    border-bottom-right-radius: 9999px;\n  }\n\n  .lg\\:rounded-bl-full {\n    border-bottom-left-radius: 9999px;\n  }\n\n  .lg\\:border-solid {\n    border-style: solid;\n  }\n\n  .lg\\:border-dashed {\n    border-style: dashed;\n  }\n\n  .lg\\:border-dotted {\n    border-style: dotted;\n  }\n\n  .lg\\:border-none {\n    border-style: none;\n  }\n\n  .lg\\:border-0 {\n    border-width: 0;\n  }\n\n  .lg\\:border-2 {\n    border-width: 2px;\n  }\n\n  .lg\\:border-4 {\n    border-width: 4px;\n  }\n\n  .lg\\:border-8 {\n    border-width: 8px;\n  }\n\n  .lg\\:border {\n    border-width: 1px;\n  }\n\n  .lg\\:border-t-0 {\n    border-top-width: 0;\n  }\n\n  .lg\\:border-r-0 {\n    border-right-width: 0;\n  }\n\n  .lg\\:border-b-0 {\n    border-bottom-width: 0;\n  }\n\n  .lg\\:border-l-0 {\n    border-left-width: 0;\n  }\n\n  .lg\\:border-t-2 {\n    border-top-width: 2px;\n  }\n\n  .lg\\:border-r-2 {\n    border-right-width: 2px;\n  }\n\n  .lg\\:border-b-2 {\n    border-bottom-width: 2px;\n  }\n\n  .lg\\:border-l-2 {\n    border-left-width: 2px;\n  }\n\n  .lg\\:border-t-4 {\n    border-top-width: 4px;\n  }\n\n  .lg\\:border-r-4 {\n    border-right-width: 4px;\n  }\n\n  .lg\\:border-b-4 {\n    border-bottom-width: 4px;\n  }\n\n  .lg\\:border-l-4 {\n    border-left-width: 4px;\n  }\n\n  .lg\\:border-t-8 {\n    border-top-width: 8px;\n  }\n\n  .lg\\:border-r-8 {\n    border-right-width: 8px;\n  }\n\n  .lg\\:border-b-8 {\n    border-bottom-width: 8px;\n  }\n\n  .lg\\:border-l-8 {\n    border-left-width: 8px;\n  }\n\n  .lg\\:border-t {\n    border-top-width: 1px;\n  }\n\n  .lg\\:border-r {\n    border-right-width: 1px;\n  }\n\n  .lg\\:border-b {\n    border-bottom-width: 1px;\n  }\n\n  .lg\\:border-l {\n    border-left-width: 1px;\n  }\n\n  .lg\\:cursor-auto {\n    cursor: auto;\n  }\n\n  .lg\\:cursor-default {\n    cursor: default;\n  }\n\n  .lg\\:cursor-pointer {\n    cursor: pointer;\n  }\n\n  .lg\\:cursor-wait {\n    cursor: wait;\n  }\n\n  .lg\\:cursor-move {\n    cursor: move;\n  }\n\n  .lg\\:cursor-not-allowed {\n    cursor: not-allowed;\n  }\n\n  .lg\\:block {\n    display: block;\n  }\n\n  .lg\\:inline-block {\n    display: inline-block;\n  }\n\n  .lg\\:inline {\n    display: inline;\n  }\n\n  .lg\\:table {\n    display: table;\n  }\n\n  .lg\\:table-row {\n    display: table-row;\n  }\n\n  .lg\\:table-cell {\n    display: table-cell;\n  }\n\n  .lg\\:hidden {\n    display: none;\n  }\n\n  .lg\\:flex {\n    display: flex;\n  }\n\n  .lg\\:inline-flex {\n    display: inline-flex;\n  }\n\n  .lg\\:flex-row {\n    flex-direction: row;\n  }\n\n  .lg\\:flex-row-reverse {\n    flex-direction: row-reverse;\n  }\n\n  .lg\\:flex-col {\n    flex-direction: column;\n  }\n\n  .lg\\:flex-col-reverse {\n    flex-direction: column-reverse;\n  }\n\n  .lg\\:flex-wrap {\n    flex-wrap: wrap;\n  }\n\n  .lg\\:flex-wrap-reverse {\n    flex-wrap: wrap-reverse;\n  }\n\n  .lg\\:flex-no-wrap {\n    flex-wrap: nowrap;\n  }\n\n  .lg\\:items-start {\n    align-items: flex-start;\n  }\n\n  .lg\\:items-end {\n    align-items: flex-end;\n  }\n\n  .lg\\:items-center {\n    align-items: center;\n  }\n\n  .lg\\:items-baseline {\n    align-items: baseline;\n  }\n\n  .lg\\:items-stretch {\n    align-items: stretch;\n  }\n\n  .lg\\:self-auto {\n    align-self: auto;\n  }\n\n  .lg\\:self-start {\n    align-self: flex-start;\n  }\n\n  .lg\\:self-end {\n    align-self: flex-end;\n  }\n\n  .lg\\:self-center {\n    align-self: center;\n  }\n\n  .lg\\:self-stretch {\n    align-self: stretch;\n  }\n\n  .lg\\:justify-start {\n    justify-content: flex-start;\n  }\n\n  .lg\\:justify-end {\n    justify-content: flex-end;\n  }\n\n  .lg\\:justify-center {\n    justify-content: center;\n  }\n\n  .lg\\:justify-between {\n    justify-content: space-between;\n  }\n\n  .lg\\:justify-around {\n    justify-content: space-around;\n  }\n\n  .lg\\:content-center {\n    align-content: center;\n  }\n\n  .lg\\:content-start {\n    align-content: flex-start;\n  }\n\n  .lg\\:content-end {\n    align-content: flex-end;\n  }\n\n  .lg\\:content-between {\n    align-content: space-between;\n  }\n\n  .lg\\:content-around {\n    align-content: space-around;\n  }\n\n  .lg\\:flex-1 {\n    flex: 1;\n  }\n\n  .lg\\:flex-auto {\n    flex: auto;\n  }\n\n  .lg\\:flex-initial {\n    flex: initial;\n  }\n\n  .lg\\:flex-none {\n    flex: none;\n  }\n\n  .lg\\:flex-grow {\n    flex-grow: 1;\n  }\n\n  .lg\\:flex-shrink {\n    flex-shrink: 1;\n  }\n\n  .lg\\:flex-no-grow {\n    flex-grow: 0;\n  }\n\n  .lg\\:flex-no-shrink {\n    flex-shrink: 0;\n  }\n\n  .lg\\:float-right {\n    float: right;\n  }\n\n  .lg\\:float-left {\n    float: left;\n  }\n\n  .lg\\:float-none {\n    float: none;\n  }\n\n  .lg\\:clearfix:after {\n    content: \"\";\n    display: table;\n    clear: both;\n  }\n\n  .lg\\:font-sans {\n    font-family: system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;\n  }\n\n  .lg\\:font-serif {\n    font-family: Constantia, Lucida Bright, Lucidabright, Lucida Serif, Lucida, DejaVu Serif, Bitstream Vera Serif, Liberation Serif, Georgia, serif;\n  }\n\n  .lg\\:font-mono {\n    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;\n  }\n\n  .lg\\:font-hairline {\n    font-weight: 100;\n  }\n\n  .lg\\:font-thin {\n    font-weight: 200;\n  }\n\n  .lg\\:font-light {\n    font-weight: 300;\n  }\n\n  .lg\\:font-normal {\n    font-weight: 400;\n  }\n\n  .lg\\:font-medium {\n    font-weight: 500;\n  }\n\n  .lg\\:font-semibold {\n    font-weight: 600;\n  }\n\n  .lg\\:font-bold {\n    font-weight: 700;\n  }\n\n  .lg\\:font-extrabold {\n    font-weight: 800;\n  }\n\n  .lg\\:font-black {\n    font-weight: 900;\n  }\n\n  .lg\\:hover\\:font-hairline:hover {\n    font-weight: 100;\n  }\n\n  .lg\\:hover\\:font-thin:hover {\n    font-weight: 200;\n  }\n\n  .lg\\:hover\\:font-light:hover {\n    font-weight: 300;\n  }\n\n  .lg\\:hover\\:font-normal:hover {\n    font-weight: 400;\n  }\n\n  .lg\\:hover\\:font-medium:hover {\n    font-weight: 500;\n  }\n\n  .lg\\:hover\\:font-semibold:hover {\n    font-weight: 600;\n  }\n\n  .lg\\:hover\\:font-bold:hover {\n    font-weight: 700;\n  }\n\n  .lg\\:hover\\:font-extrabold:hover {\n    font-weight: 800;\n  }\n\n  .lg\\:hover\\:font-black:hover {\n    font-weight: 900;\n  }\n\n  .lg\\:h-1 {\n    height: .25rem;\n  }\n\n  .lg\\:h-2 {\n    height: .5rem;\n  }\n\n  .lg\\:h-3 {\n    height: .75rem;\n  }\n\n  .lg\\:h-4 {\n    height: 1rem;\n  }\n\n  .lg\\:h-6 {\n    height: 1.5rem;\n  }\n\n  .lg\\:h-8 {\n    height: 2rem;\n  }\n\n  .lg\\:h-10 {\n    height: 2.5rem;\n  }\n\n  .lg\\:h-12 {\n    height: 3rem;\n  }\n\n  .lg\\:h-16 {\n    height: 4rem;\n  }\n\n  .lg\\:h-24 {\n    height: 6rem;\n  }\n\n  .lg\\:h-32 {\n    height: 8rem;\n  }\n\n  .lg\\:h-48 {\n    height: 12rem;\n  }\n\n  .lg\\:h-64 {\n    height: 16rem;\n  }\n\n  .lg\\:h-auto {\n    height: auto;\n  }\n\n  .lg\\:h-px {\n    height: 1px;\n  }\n\n  .lg\\:h-full {\n    height: 100%;\n  }\n\n  .lg\\:h-screen {\n    height: 100vh;\n  }\n\n  .lg\\:leading-none {\n    line-height: 1;\n  }\n\n  .lg\\:leading-tight {\n    line-height: 1.25;\n  }\n\n  .lg\\:leading-normal {\n    line-height: 1.5;\n  }\n\n  .lg\\:leading-loose {\n    line-height: 2;\n  }\n\n  .lg\\:m-0 {\n    margin: 0;\n  }\n\n  .lg\\:m-1 {\n    margin: .25rem;\n  }\n\n  .lg\\:m-2 {\n    margin: .5rem;\n  }\n\n  .lg\\:m-3 {\n    margin: .75rem;\n  }\n\n  .lg\\:m-4 {\n    margin: 1rem;\n  }\n\n  .lg\\:m-6 {\n    margin: 1.5rem;\n  }\n\n  .lg\\:m-8 {\n    margin: 2rem;\n  }\n\n  .lg\\:m-auto {\n    margin: auto;\n  }\n\n  .lg\\:m-px {\n    margin: 1px;\n  }\n\n  .lg\\:my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .lg\\:mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .lg\\:my-1 {\n    margin-top: .25rem;\n    margin-bottom: .25rem;\n  }\n\n  .lg\\:mx-1 {\n    margin-left: .25rem;\n    margin-right: .25rem;\n  }\n\n  .lg\\:my-2 {\n    margin-top: .5rem;\n    margin-bottom: .5rem;\n  }\n\n  .lg\\:mx-2 {\n    margin-left: .5rem;\n    margin-right: .5rem;\n  }\n\n  .lg\\:my-3 {\n    margin-top: .75rem;\n    margin-bottom: .75rem;\n  }\n\n  .lg\\:mx-3 {\n    margin-left: .75rem;\n    margin-right: .75rem;\n  }\n\n  .lg\\:my-4 {\n    margin-top: 1rem;\n    margin-bottom: 1rem;\n  }\n\n  .lg\\:mx-4 {\n    margin-left: 1rem;\n    margin-right: 1rem;\n  }\n\n  .lg\\:my-6 {\n    margin-top: 1.5rem;\n    margin-bottom: 1.5rem;\n  }\n\n  .lg\\:mx-6 {\n    margin-left: 1.5rem;\n    margin-right: 1.5rem;\n  }\n\n  .lg\\:my-8 {\n    margin-top: 2rem;\n    margin-bottom: 2rem;\n  }\n\n  .lg\\:mx-8 {\n    margin-left: 2rem;\n    margin-right: 2rem;\n  }\n\n  .lg\\:my-auto {\n    margin-top: auto;\n    margin-bottom: auto;\n  }\n\n  .lg\\:mx-auto {\n    margin-left: auto;\n    margin-right: auto;\n  }\n\n  .lg\\:my-px {\n    margin-top: 1px;\n    margin-bottom: 1px;\n  }\n\n  .lg\\:mx-px {\n    margin-left: 1px;\n    margin-right: 1px;\n  }\n\n  .lg\\:mt-0 {\n    margin-top: 0;\n  }\n\n  .lg\\:mr-0 {\n    margin-right: 0;\n  }\n\n  .lg\\:mb-0 {\n    margin-bottom: 0;\n  }\n\n  .lg\\:ml-0 {\n    margin-left: 0;\n  }\n\n  .lg\\:mt-1 {\n    margin-top: .25rem;\n  }\n\n  .lg\\:mr-1 {\n    margin-right: .25rem;\n  }\n\n  .lg\\:mb-1 {\n    margin-bottom: .25rem;\n  }\n\n  .lg\\:ml-1 {\n    margin-left: .25rem;\n  }\n\n  .lg\\:mt-2 {\n    margin-top: .5rem;\n  }\n\n  .lg\\:mr-2 {\n    margin-right: .5rem;\n  }\n\n  .lg\\:mb-2 {\n    margin-bottom: .5rem;\n  }\n\n  .lg\\:ml-2 {\n    margin-left: .5rem;\n  }\n\n  .lg\\:mt-3 {\n    margin-top: .75rem;\n  }\n\n  .lg\\:mr-3 {\n    margin-right: .75rem;\n  }\n\n  .lg\\:mb-3 {\n    margin-bottom: .75rem;\n  }\n\n  .lg\\:ml-3 {\n    margin-left: .75rem;\n  }\n\n  .lg\\:mt-4 {\n    margin-top: 1rem;\n  }\n\n  .lg\\:mr-4 {\n    margin-right: 1rem;\n  }\n\n  .lg\\:mb-4 {\n    margin-bottom: 1rem;\n  }\n\n  .lg\\:ml-4 {\n    margin-left: 1rem;\n  }\n\n  .lg\\:mt-6 {\n    margin-top: 1.5rem;\n  }\n\n  .lg\\:mr-6 {\n    margin-right: 1.5rem;\n  }\n\n  .lg\\:mb-6 {\n    margin-bottom: 1.5rem;\n  }\n\n  .lg\\:ml-6 {\n    margin-left: 1.5rem;\n  }\n\n  .lg\\:mt-8 {\n    margin-top: 2rem;\n  }\n\n  .lg\\:mr-8 {\n    margin-right: 2rem;\n  }\n\n  .lg\\:mb-8 {\n    margin-bottom: 2rem;\n  }\n\n  .lg\\:ml-8 {\n    margin-left: 2rem;\n  }\n\n  .lg\\:mt-auto {\n    margin-top: auto;\n  }\n\n  .lg\\:mr-auto {\n    margin-right: auto;\n  }\n\n  .lg\\:mb-auto {\n    margin-bottom: auto;\n  }\n\n  .lg\\:ml-auto {\n    margin-left: auto;\n  }\n\n  .lg\\:mt-px {\n    margin-top: 1px;\n  }\n\n  .lg\\:mr-px {\n    margin-right: 1px;\n  }\n\n  .lg\\:mb-px {\n    margin-bottom: 1px;\n  }\n\n  .lg\\:ml-px {\n    margin-left: 1px;\n  }\n\n  .lg\\:max-h-full {\n    max-height: 100%;\n  }\n\n  .lg\\:max-h-screen {\n    max-height: 100vh;\n  }\n\n  .lg\\:max-w-xs {\n    max-width: 20rem;\n  }\n\n  .lg\\:max-w-sm {\n    max-width: 30rem;\n  }\n\n  .lg\\:max-w-md {\n    max-width: 40rem;\n  }\n\n  .lg\\:max-w-lg {\n    max-width: 50rem;\n  }\n\n  .lg\\:max-w-xl {\n    max-width: 60rem;\n  }\n\n  .lg\\:max-w-2xl {\n    max-width: 70rem;\n  }\n\n  .lg\\:max-w-3xl {\n    max-width: 80rem;\n  }\n\n  .lg\\:max-w-4xl {\n    max-width: 90rem;\n  }\n\n  .lg\\:max-w-5xl {\n    max-width: 100rem;\n  }\n\n  .lg\\:max-w-full {\n    max-width: 100%;\n  }\n\n  .lg\\:min-h-0 {\n    min-height: 0;\n  }\n\n  .lg\\:min-h-full {\n    min-height: 100%;\n  }\n\n  .lg\\:min-h-screen {\n    min-height: 100vh;\n  }\n\n  .lg\\:min-w-0 {\n    min-width: 0;\n  }\n\n  .lg\\:min-w-full {\n    min-width: 100%;\n  }\n\n  .lg\\:-m-0 {\n    margin: 0;\n  }\n\n  .lg\\:-m-1 {\n    margin: -0.25rem;\n  }\n\n  .lg\\:-m-2 {\n    margin: -0.5rem;\n  }\n\n  .lg\\:-m-3 {\n    margin: -0.75rem;\n  }\n\n  .lg\\:-m-4 {\n    margin: -1rem;\n  }\n\n  .lg\\:-m-6 {\n    margin: -1.5rem;\n  }\n\n  .lg\\:-m-8 {\n    margin: -2rem;\n  }\n\n  .lg\\:-m-px {\n    margin: -1px;\n  }\n\n  .lg\\:-my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .lg\\:-mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .lg\\:-my-1 {\n    margin-top: -0.25rem;\n    margin-bottom: -0.25rem;\n  }\n\n  .lg\\:-mx-1 {\n    margin-left: -0.25rem;\n    margin-right: -0.25rem;\n  }\n\n  .lg\\:-my-2 {\n    margin-top: -0.5rem;\n    margin-bottom: -0.5rem;\n  }\n\n  .lg\\:-mx-2 {\n    margin-left: -0.5rem;\n    margin-right: -0.5rem;\n  }\n\n  .lg\\:-my-3 {\n    margin-top: -0.75rem;\n    margin-bottom: -0.75rem;\n  }\n\n  .lg\\:-mx-3 {\n    margin-left: -0.75rem;\n    margin-right: -0.75rem;\n  }\n\n  .lg\\:-my-4 {\n    margin-top: -1rem;\n    margin-bottom: -1rem;\n  }\n\n  .lg\\:-mx-4 {\n    margin-left: -1rem;\n    margin-right: -1rem;\n  }\n\n  .lg\\:-my-6 {\n    margin-top: -1.5rem;\n    margin-bottom: -1.5rem;\n  }\n\n  .lg\\:-mx-6 {\n    margin-left: -1.5rem;\n    margin-right: -1.5rem;\n  }\n\n  .lg\\:-my-8 {\n    margin-top: -2rem;\n    margin-bottom: -2rem;\n  }\n\n  .lg\\:-mx-8 {\n    margin-left: -2rem;\n    margin-right: -2rem;\n  }\n\n  .lg\\:-my-px {\n    margin-top: -1px;\n    margin-bottom: -1px;\n  }\n\n  .lg\\:-mx-px {\n    margin-left: -1px;\n    margin-right: -1px;\n  }\n\n  .lg\\:-mt-0 {\n    margin-top: 0;\n  }\n\n  .lg\\:-mr-0 {\n    margin-right: 0;\n  }\n\n  .lg\\:-mb-0 {\n    margin-bottom: 0;\n  }\n\n  .lg\\:-ml-0 {\n    margin-left: 0;\n  }\n\n  .lg\\:-mt-1 {\n    margin-top: -0.25rem;\n  }\n\n  .lg\\:-mr-1 {\n    margin-right: -0.25rem;\n  }\n\n  .lg\\:-mb-1 {\n    margin-bottom: -0.25rem;\n  }\n\n  .lg\\:-ml-1 {\n    margin-left: -0.25rem;\n  }\n\n  .lg\\:-mt-2 {\n    margin-top: -0.5rem;\n  }\n\n  .lg\\:-mr-2 {\n    margin-right: -0.5rem;\n  }\n\n  .lg\\:-mb-2 {\n    margin-bottom: -0.5rem;\n  }\n\n  .lg\\:-ml-2 {\n    margin-left: -0.5rem;\n  }\n\n  .lg\\:-mt-3 {\n    margin-top: -0.75rem;\n  }\n\n  .lg\\:-mr-3 {\n    margin-right: -0.75rem;\n  }\n\n  .lg\\:-mb-3 {\n    margin-bottom: -0.75rem;\n  }\n\n  .lg\\:-ml-3 {\n    margin-left: -0.75rem;\n  }\n\n  .lg\\:-mt-4 {\n    margin-top: -1rem;\n  }\n\n  .lg\\:-mr-4 {\n    margin-right: -1rem;\n  }\n\n  .lg\\:-mb-4 {\n    margin-bottom: -1rem;\n  }\n\n  .lg\\:-ml-4 {\n    margin-left: -1rem;\n  }\n\n  .lg\\:-mt-6 {\n    margin-top: -1.5rem;\n  }\n\n  .lg\\:-mr-6 {\n    margin-right: -1.5rem;\n  }\n\n  .lg\\:-mb-6 {\n    margin-bottom: -1.5rem;\n  }\n\n  .lg\\:-ml-6 {\n    margin-left: -1.5rem;\n  }\n\n  .lg\\:-mt-8 {\n    margin-top: -2rem;\n  }\n\n  .lg\\:-mr-8 {\n    margin-right: -2rem;\n  }\n\n  .lg\\:-mb-8 {\n    margin-bottom: -2rem;\n  }\n\n  .lg\\:-ml-8 {\n    margin-left: -2rem;\n  }\n\n  .lg\\:-mt-px {\n    margin-top: -1px;\n  }\n\n  .lg\\:-mr-px {\n    margin-right: -1px;\n  }\n\n  .lg\\:-mb-px {\n    margin-bottom: -1px;\n  }\n\n  .lg\\:-ml-px {\n    margin-left: -1px;\n  }\n\n  .lg\\:opacity-0 {\n    opacity: 0;\n  }\n\n  .lg\\:opacity-25 {\n    opacity: .25;\n  }\n\n  .lg\\:opacity-50 {\n    opacity: .5;\n  }\n\n  .lg\\:opacity-75 {\n    opacity: .75;\n  }\n\n  .lg\\:opacity-100 {\n    opacity: 1;\n  }\n\n  .lg\\:overflow-auto {\n    overflow: auto;\n  }\n\n  .lg\\:overflow-hidden {\n    overflow: hidden;\n  }\n\n  .lg\\:overflow-visible {\n    overflow: visible;\n  }\n\n  .lg\\:overflow-scroll {\n    overflow: scroll;\n  }\n\n  .lg\\:overflow-x-auto {\n    overflow-x: auto;\n  }\n\n  .lg\\:overflow-y-auto {\n    overflow-y: auto;\n  }\n\n  .lg\\:overflow-x-scroll {\n    overflow-x: scroll;\n  }\n\n  .lg\\:overflow-y-scroll {\n    overflow-y: scroll;\n  }\n\n  .lg\\:scrolling-touch {\n    -webkit-overflow-scrolling: touch;\n  }\n\n  .lg\\:scrolling-auto {\n    -webkit-overflow-scrolling: auto;\n  }\n\n  .lg\\:p-0 {\n    padding: 0;\n  }\n\n  .lg\\:p-1 {\n    padding: .25rem;\n  }\n\n  .lg\\:p-2 {\n    padding: .5rem;\n  }\n\n  .lg\\:p-3 {\n    padding: .75rem;\n  }\n\n  .lg\\:p-4 {\n    padding: 1rem;\n  }\n\n  .lg\\:p-6 {\n    padding: 1.5rem;\n  }\n\n  .lg\\:p-8 {\n    padding: 2rem;\n  }\n\n  .lg\\:p-px {\n    padding: 1px;\n  }\n\n  .lg\\:py-0 {\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n\n  .lg\\:px-0 {\n    padding-left: 0;\n    padding-right: 0;\n  }\n\n  .lg\\:py-1 {\n    padding-top: .25rem;\n    padding-bottom: .25rem;\n  }\n\n  .lg\\:px-1 {\n    padding-left: .25rem;\n    padding-right: .25rem;\n  }\n\n  .lg\\:py-2 {\n    padding-top: .5rem;\n    padding-bottom: .5rem;\n  }\n\n  .lg\\:px-2 {\n    padding-left: .5rem;\n    padding-right: .5rem;\n  }\n\n  .lg\\:py-3 {\n    padding-top: .75rem;\n    padding-bottom: .75rem;\n  }\n\n  .lg\\:px-3 {\n    padding-left: .75rem;\n    padding-right: .75rem;\n  }\n\n  .lg\\:py-4 {\n    padding-top: 1rem;\n    padding-bottom: 1rem;\n  }\n\n  .lg\\:px-4 {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n\n  .lg\\:py-6 {\n    padding-top: 1.5rem;\n    padding-bottom: 1.5rem;\n  }\n\n  .lg\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .lg\\:py-8 {\n    padding-top: 2rem;\n    padding-bottom: 2rem;\n  }\n\n  .lg\\:px-8 {\n    padding-left: 2rem;\n    padding-right: 2rem;\n  }\n\n  .lg\\:py-px {\n    padding-top: 1px;\n    padding-bottom: 1px;\n  }\n\n  .lg\\:px-px {\n    padding-left: 1px;\n    padding-right: 1px;\n  }\n\n  .lg\\:pt-0 {\n    padding-top: 0;\n  }\n\n  .lg\\:pr-0 {\n    padding-right: 0;\n  }\n\n  .lg\\:pb-0 {\n    padding-bottom: 0;\n  }\n\n  .lg\\:pl-0 {\n    padding-left: 0;\n  }\n\n  .lg\\:pt-1 {\n    padding-top: .25rem;\n  }\n\n  .lg\\:pr-1 {\n    padding-right: .25rem;\n  }\n\n  .lg\\:pb-1 {\n    padding-bottom: .25rem;\n  }\n\n  .lg\\:pl-1 {\n    padding-left: .25rem;\n  }\n\n  .lg\\:pt-2 {\n    padding-top: .5rem;\n  }\n\n  .lg\\:pr-2 {\n    padding-right: .5rem;\n  }\n\n  .lg\\:pb-2 {\n    padding-bottom: .5rem;\n  }\n\n  .lg\\:pl-2 {\n    padding-left: .5rem;\n  }\n\n  .lg\\:pt-3 {\n    padding-top: .75rem;\n  }\n\n  .lg\\:pr-3 {\n    padding-right: .75rem;\n  }\n\n  .lg\\:pb-3 {\n    padding-bottom: .75rem;\n  }\n\n  .lg\\:pl-3 {\n    padding-left: .75rem;\n  }\n\n  .lg\\:pt-4 {\n    padding-top: 1rem;\n  }\n\n  .lg\\:pr-4 {\n    padding-right: 1rem;\n  }\n\n  .lg\\:pb-4 {\n    padding-bottom: 1rem;\n  }\n\n  .lg\\:pl-4 {\n    padding-left: 1rem;\n  }\n\n  .lg\\:pt-6 {\n    padding-top: 1.5rem;\n  }\n\n  .lg\\:pr-6 {\n    padding-right: 1.5rem;\n  }\n\n  .lg\\:pb-6 {\n    padding-bottom: 1.5rem;\n  }\n\n  .lg\\:pl-6 {\n    padding-left: 1.5rem;\n  }\n\n  .lg\\:pt-8 {\n    padding-top: 2rem;\n  }\n\n  .lg\\:pr-8 {\n    padding-right: 2rem;\n  }\n\n  .lg\\:pb-8 {\n    padding-bottom: 2rem;\n  }\n\n  .lg\\:pl-8 {\n    padding-left: 2rem;\n  }\n\n  .lg\\:pt-px {\n    padding-top: 1px;\n  }\n\n  .lg\\:pr-px {\n    padding-right: 1px;\n  }\n\n  .lg\\:pb-px {\n    padding-bottom: 1px;\n  }\n\n  .lg\\:pl-px {\n    padding-left: 1px;\n  }\n\n  .lg\\:pointer-events-none {\n    pointer-events: none;\n  }\n\n  .lg\\:pointer-events-auto {\n    pointer-events: auto;\n  }\n\n  .lg\\:static {\n    position: static;\n  }\n\n  .lg\\:fixed {\n    position: fixed;\n  }\n\n  .lg\\:absolute {\n    position: absolute;\n  }\n\n  .lg\\:relative {\n    position: relative;\n  }\n\n  .lg\\:sticky {\n    position: -webkit-sticky;\n    position: sticky;\n  }\n\n  .lg\\:pin-none {\n    top: auto;\n    right: auto;\n    bottom: auto;\n    left: auto;\n  }\n\n  .lg\\:pin {\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n  }\n\n  .lg\\:pin-y {\n    top: 0;\n    bottom: 0;\n  }\n\n  .lg\\:pin-x {\n    right: 0;\n    left: 0;\n  }\n\n  .lg\\:pin-t {\n    top: 0;\n  }\n\n  .lg\\:pin-r {\n    right: 0;\n  }\n\n  .lg\\:pin-b {\n    bottom: 0;\n  }\n\n  .lg\\:pin-l {\n    left: 0;\n  }\n\n  .lg\\:resize-none {\n    resize: none;\n  }\n\n  .lg\\:resize-y {\n    resize: vertical;\n  }\n\n  .lg\\:resize-x {\n    resize: horizontal;\n  }\n\n  .lg\\:resize {\n    resize: both;\n  }\n\n  .lg\\:shadow {\n    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);\n  }\n\n  .lg\\:shadow-md {\n    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);\n  }\n\n  .lg\\:shadow-lg {\n    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, .11), 0 5px 15px 0 rgba(0, 0, 0, .08);\n  }\n\n  .lg\\:shadow-inner {\n    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);\n  }\n\n  .lg\\:shadow-none {\n    box-shadow: none;\n  }\n\n  .lg\\:text-left {\n    text-align: left;\n  }\n\n  .lg\\:text-center {\n    text-align: center;\n  }\n\n  .lg\\:text-right {\n    text-align: right;\n  }\n\n  .lg\\:text-justify {\n    text-align: justify;\n  }\n\n  .lg\\:text-transparent {\n    color: transparent;\n  }\n\n  .lg\\:text-black {\n    color: #22292f;\n  }\n\n  .lg\\:text-grey-darkest {\n    color: #3d4852;\n  }\n\n  .lg\\:text-grey-darker {\n    color: #606f7b;\n  }\n\n  .lg\\:text-grey-dark {\n    color: #8795a1;\n  }\n\n  .lg\\:text-grey {\n    color: #b8c2cc;\n  }\n\n  .lg\\:text-grey-light {\n    color: #dae1e7;\n  }\n\n  .lg\\:text-grey-lighter {\n    color: #f1f5f8;\n  }\n\n  .lg\\:text-grey-lightest {\n    color: #f8fafc;\n  }\n\n  .lg\\:text-white {\n    color: #fff;\n  }\n\n  .lg\\:text-red-darkest {\n    color: #3b0d0c;\n  }\n\n  .lg\\:text-red-darker {\n    color: #621b18;\n  }\n\n  .lg\\:text-red-dark {\n    color: #cc1f1a;\n  }\n\n  .lg\\:text-red {\n    color: #e3342f;\n  }\n\n  .lg\\:text-red-light {\n    color: #ef5753;\n  }\n\n  .lg\\:text-red-lighter {\n    color: #f9acaa;\n  }\n\n  .lg\\:text-red-lightest {\n    color: #fcebea;\n  }\n\n  .lg\\:text-orange-darkest {\n    color: #462a16;\n  }\n\n  .lg\\:text-orange-darker {\n    color: #613b1f;\n  }\n\n  .lg\\:text-orange-dark {\n    color: #de751f;\n  }\n\n  .lg\\:text-orange {\n    color: #f6993f;\n  }\n\n  .lg\\:text-orange-light {\n    color: #faad63;\n  }\n\n  .lg\\:text-orange-lighter {\n    color: #fcd9b6;\n  }\n\n  .lg\\:text-orange-lightest {\n    color: #fff5eb;\n  }\n\n  .lg\\:text-yellow-darkest {\n    color: #453411;\n  }\n\n  .lg\\:text-yellow-darker {\n    color: #684f1d;\n  }\n\n  .lg\\:text-yellow-dark {\n    color: #f2d024;\n  }\n\n  .lg\\:text-yellow {\n    color: #ffed4a;\n  }\n\n  .lg\\:text-yellow-light {\n    color: #fff382;\n  }\n\n  .lg\\:text-yellow-lighter {\n    color: #fff9c2;\n  }\n\n  .lg\\:text-yellow-lightest {\n    color: #fcfbeb;\n  }\n\n  .lg\\:text-green-darkest {\n    color: #0f2f21;\n  }\n\n  .lg\\:text-green-darker {\n    color: #1a4731;\n  }\n\n  .lg\\:text-green-dark {\n    color: #1f9d55;\n  }\n\n  .lg\\:text-green {\n    color: #38c172;\n  }\n\n  .lg\\:text-green-light {\n    color: #51d88a;\n  }\n\n  .lg\\:text-green-lighter {\n    color: #a2f5bf;\n  }\n\n  .lg\\:text-green-lightest {\n    color: #e3fcec;\n  }\n\n  .lg\\:text-teal-darkest {\n    color: #0d3331;\n  }\n\n  .lg\\:text-teal-darker {\n    color: #20504f;\n  }\n\n  .lg\\:text-teal-dark {\n    color: #38a89d;\n  }\n\n  .lg\\:text-teal {\n    color: #4dc0b5;\n  }\n\n  .lg\\:text-teal-light {\n    color: #64d5ca;\n  }\n\n  .lg\\:text-teal-lighter {\n    color: #a0f0ed;\n  }\n\n  .lg\\:text-teal-lightest {\n    color: #e8fffe;\n  }\n\n  .lg\\:text-blue-darkest {\n    color: #12283a;\n  }\n\n  .lg\\:text-blue-darker {\n    color: #1c3d5a;\n  }\n\n  .lg\\:text-blue-dark {\n    color: #2779bd;\n  }\n\n  .lg\\:text-blue {\n    color: #3490dc;\n  }\n\n  .lg\\:text-blue-light {\n    color: #6cb2eb;\n  }\n\n  .lg\\:text-blue-lighter {\n    color: #bcdefa;\n  }\n\n  .lg\\:text-blue-lightest {\n    color: #eff8ff;\n  }\n\n  .lg\\:text-indigo-darkest {\n    color: #191e38;\n  }\n\n  .lg\\:text-indigo-darker {\n    color: #2f365f;\n  }\n\n  .lg\\:text-indigo-dark {\n    color: #5661b3;\n  }\n\n  .lg\\:text-indigo {\n    color: #6574cd;\n  }\n\n  .lg\\:text-indigo-light {\n    color: #7886d7;\n  }\n\n  .lg\\:text-indigo-lighter {\n    color: #b2b7ff;\n  }\n\n  .lg\\:text-indigo-lightest {\n    color: #e6e8ff;\n  }\n\n  .lg\\:text-purple-darkest {\n    color: #21183c;\n  }\n\n  .lg\\:text-purple-darker {\n    color: #382b5f;\n  }\n\n  .lg\\:text-purple-dark {\n    color: #794acf;\n  }\n\n  .lg\\:text-purple {\n    color: #9561e2;\n  }\n\n  .lg\\:text-purple-light {\n    color: #a779e9;\n  }\n\n  .lg\\:text-purple-lighter {\n    color: #d6bbfc;\n  }\n\n  .lg\\:text-purple-lightest {\n    color: #f3ebff;\n  }\n\n  .lg\\:text-pink-darkest {\n    color: #451225;\n  }\n\n  .lg\\:text-pink-darker {\n    color: #6f213f;\n  }\n\n  .lg\\:text-pink-dark {\n    color: #eb5286;\n  }\n\n  .lg\\:text-pink {\n    color: #f66d9b;\n  }\n\n  .lg\\:text-pink-light {\n    color: #fa7ea8;\n  }\n\n  .lg\\:text-pink-lighter {\n    color: #ffbbca;\n  }\n\n  .lg\\:text-pink-lightest {\n    color: #ffebef;\n  }\n\n  .lg\\:hover\\:text-transparent:hover {\n    color: transparent;\n  }\n\n  .lg\\:hover\\:text-black:hover {\n    color: #22292f;\n  }\n\n  .lg\\:hover\\:text-grey-darkest:hover {\n    color: #3d4852;\n  }\n\n  .lg\\:hover\\:text-grey-darker:hover {\n    color: #606f7b;\n  }\n\n  .lg\\:hover\\:text-grey-dark:hover {\n    color: #8795a1;\n  }\n\n  .lg\\:hover\\:text-grey:hover {\n    color: #b8c2cc;\n  }\n\n  .lg\\:hover\\:text-grey-light:hover {\n    color: #dae1e7;\n  }\n\n  .lg\\:hover\\:text-grey-lighter:hover {\n    color: #f1f5f8;\n  }\n\n  .lg\\:hover\\:text-grey-lightest:hover {\n    color: #f8fafc;\n  }\n\n  .lg\\:hover\\:text-white:hover {\n    color: #fff;\n  }\n\n  .lg\\:hover\\:text-red-darkest:hover {\n    color: #3b0d0c;\n  }\n\n  .lg\\:hover\\:text-red-darker:hover {\n    color: #621b18;\n  }\n\n  .lg\\:hover\\:text-red-dark:hover {\n    color: #cc1f1a;\n  }\n\n  .lg\\:hover\\:text-red:hover {\n    color: #e3342f;\n  }\n\n  .lg\\:hover\\:text-red-light:hover {\n    color: #ef5753;\n  }\n\n  .lg\\:hover\\:text-red-lighter:hover {\n    color: #f9acaa;\n  }\n\n  .lg\\:hover\\:text-red-lightest:hover {\n    color: #fcebea;\n  }\n\n  .lg\\:hover\\:text-orange-darkest:hover {\n    color: #462a16;\n  }\n\n  .lg\\:hover\\:text-orange-darker:hover {\n    color: #613b1f;\n  }\n\n  .lg\\:hover\\:text-orange-dark:hover {\n    color: #de751f;\n  }\n\n  .lg\\:hover\\:text-orange:hover {\n    color: #f6993f;\n  }\n\n  .lg\\:hover\\:text-orange-light:hover {\n    color: #faad63;\n  }\n\n  .lg\\:hover\\:text-orange-lighter:hover {\n    color: #fcd9b6;\n  }\n\n  .lg\\:hover\\:text-orange-lightest:hover {\n    color: #fff5eb;\n  }\n\n  .lg\\:hover\\:text-yellow-darkest:hover {\n    color: #453411;\n  }\n\n  .lg\\:hover\\:text-yellow-darker:hover {\n    color: #684f1d;\n  }\n\n  .lg\\:hover\\:text-yellow-dark:hover {\n    color: #f2d024;\n  }\n\n  .lg\\:hover\\:text-yellow:hover {\n    color: #ffed4a;\n  }\n\n  .lg\\:hover\\:text-yellow-light:hover {\n    color: #fff382;\n  }\n\n  .lg\\:hover\\:text-yellow-lighter:hover {\n    color: #fff9c2;\n  }\n\n  .lg\\:hover\\:text-yellow-lightest:hover {\n    color: #fcfbeb;\n  }\n\n  .lg\\:hover\\:text-green-darkest:hover {\n    color: #0f2f21;\n  }\n\n  .lg\\:hover\\:text-green-darker:hover {\n    color: #1a4731;\n  }\n\n  .lg\\:hover\\:text-green-dark:hover {\n    color: #1f9d55;\n  }\n\n  .lg\\:hover\\:text-green:hover {\n    color: #38c172;\n  }\n\n  .lg\\:hover\\:text-green-light:hover {\n    color: #51d88a;\n  }\n\n  .lg\\:hover\\:text-green-lighter:hover {\n    color: #a2f5bf;\n  }\n\n  .lg\\:hover\\:text-green-lightest:hover {\n    color: #e3fcec;\n  }\n\n  .lg\\:hover\\:text-teal-darkest:hover {\n    color: #0d3331;\n  }\n\n  .lg\\:hover\\:text-teal-darker:hover {\n    color: #20504f;\n  }\n\n  .lg\\:hover\\:text-teal-dark:hover {\n    color: #38a89d;\n  }\n\n  .lg\\:hover\\:text-teal:hover {\n    color: #4dc0b5;\n  }\n\n  .lg\\:hover\\:text-teal-light:hover {\n    color: #64d5ca;\n  }\n\n  .lg\\:hover\\:text-teal-lighter:hover {\n    color: #a0f0ed;\n  }\n\n  .lg\\:hover\\:text-teal-lightest:hover {\n    color: #e8fffe;\n  }\n\n  .lg\\:hover\\:text-blue-darkest:hover {\n    color: #12283a;\n  }\n\n  .lg\\:hover\\:text-blue-darker:hover {\n    color: #1c3d5a;\n  }\n\n  .lg\\:hover\\:text-blue-dark:hover {\n    color: #2779bd;\n  }\n\n  .lg\\:hover\\:text-blue:hover {\n    color: #3490dc;\n  }\n\n  .lg\\:hover\\:text-blue-light:hover {\n    color: #6cb2eb;\n  }\n\n  .lg\\:hover\\:text-blue-lighter:hover {\n    color: #bcdefa;\n  }\n\n  .lg\\:hover\\:text-blue-lightest:hover {\n    color: #eff8ff;\n  }\n\n  .lg\\:hover\\:text-indigo-darkest:hover {\n    color: #191e38;\n  }\n\n  .lg\\:hover\\:text-indigo-darker:hover {\n    color: #2f365f;\n  }\n\n  .lg\\:hover\\:text-indigo-dark:hover {\n    color: #5661b3;\n  }\n\n  .lg\\:hover\\:text-indigo:hover {\n    color: #6574cd;\n  }\n\n  .lg\\:hover\\:text-indigo-light:hover {\n    color: #7886d7;\n  }\n\n  .lg\\:hover\\:text-indigo-lighter:hover {\n    color: #b2b7ff;\n  }\n\n  .lg\\:hover\\:text-indigo-lightest:hover {\n    color: #e6e8ff;\n  }\n\n  .lg\\:hover\\:text-purple-darkest:hover {\n    color: #21183c;\n  }\n\n  .lg\\:hover\\:text-purple-darker:hover {\n    color: #382b5f;\n  }\n\n  .lg\\:hover\\:text-purple-dark:hover {\n    color: #794acf;\n  }\n\n  .lg\\:hover\\:text-purple:hover {\n    color: #9561e2;\n  }\n\n  .lg\\:hover\\:text-purple-light:hover {\n    color: #a779e9;\n  }\n\n  .lg\\:hover\\:text-purple-lighter:hover {\n    color: #d6bbfc;\n  }\n\n  .lg\\:hover\\:text-purple-lightest:hover {\n    color: #f3ebff;\n  }\n\n  .lg\\:hover\\:text-pink-darkest:hover {\n    color: #451225;\n  }\n\n  .lg\\:hover\\:text-pink-darker:hover {\n    color: #6f213f;\n  }\n\n  .lg\\:hover\\:text-pink-dark:hover {\n    color: #eb5286;\n  }\n\n  .lg\\:hover\\:text-pink:hover {\n    color: #f66d9b;\n  }\n\n  .lg\\:hover\\:text-pink-light:hover {\n    color: #fa7ea8;\n  }\n\n  .lg\\:hover\\:text-pink-lighter:hover {\n    color: #ffbbca;\n  }\n\n  .lg\\:hover\\:text-pink-lightest:hover {\n    color: #ffebef;\n  }\n\n  .lg\\:text-xs {\n    font-size: .75rem;\n  }\n\n  .lg\\:text-sm {\n    font-size: .875rem;\n  }\n\n  .lg\\:text-base {\n    font-size: 1rem;\n  }\n\n  .lg\\:text-lg {\n    font-size: 1.125rem;\n  }\n\n  .lg\\:text-xl {\n    font-size: 1.25rem;\n  }\n\n  .lg\\:text-2xl {\n    font-size: 1.5rem;\n  }\n\n  .lg\\:text-3xl {\n    font-size: 1.875rem;\n  }\n\n  .lg\\:text-4xl {\n    font-size: 2.25rem;\n  }\n\n  .lg\\:text-5xl {\n    font-size: 3rem;\n  }\n\n  .lg\\:italic {\n    font-style: italic;\n  }\n\n  .lg\\:roman {\n    font-style: normal;\n  }\n\n  .lg\\:uppercase {\n    text-transform: uppercase;\n  }\n\n  .lg\\:lowercase {\n    text-transform: lowercase;\n  }\n\n  .lg\\:capitalize {\n    text-transform: capitalize;\n  }\n\n  .lg\\:normal-case {\n    text-transform: none;\n  }\n\n  .lg\\:underline {\n    text-decoration: underline;\n  }\n\n  .lg\\:line-through {\n    text-decoration: line-through;\n  }\n\n  .lg\\:no-underline {\n    text-decoration: none;\n  }\n\n  .lg\\:antialiased {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .lg\\:subpixel-antialiased {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .lg\\:hover\\:italic:hover {\n    font-style: italic;\n  }\n\n  .lg\\:hover\\:roman:hover {\n    font-style: normal;\n  }\n\n  .lg\\:hover\\:uppercase:hover {\n    text-transform: uppercase;\n  }\n\n  .lg\\:hover\\:lowercase:hover {\n    text-transform: lowercase;\n  }\n\n  .lg\\:hover\\:capitalize:hover {\n    text-transform: capitalize;\n  }\n\n  .lg\\:hover\\:normal-case:hover {\n    text-transform: none;\n  }\n\n  .lg\\:hover\\:underline:hover {\n    text-decoration: underline;\n  }\n\n  .lg\\:hover\\:line-through:hover {\n    text-decoration: line-through;\n  }\n\n  .lg\\:hover\\:no-underline:hover {\n    text-decoration: none;\n  }\n\n  .lg\\:hover\\:antialiased:hover {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .lg\\:hover\\:subpixel-antialiased:hover {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .lg\\:tracking-tight {\n    letter-spacing: -0.05em;\n  }\n\n  .lg\\:tracking-normal {\n    letter-spacing: 0;\n  }\n\n  .lg\\:tracking-wide {\n    letter-spacing: .05em;\n  }\n\n  .lg\\:select-none {\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n  }\n\n  .lg\\:select-text {\n    -webkit-user-select: text;\n       -moz-user-select: text;\n        -ms-user-select: text;\n            user-select: text;\n  }\n\n  .lg\\:align-baseline {\n    vertical-align: baseline;\n  }\n\n  .lg\\:align-top {\n    vertical-align: top;\n  }\n\n  .lg\\:align-middle {\n    vertical-align: middle;\n  }\n\n  .lg\\:align-bottom {\n    vertical-align: bottom;\n  }\n\n  .lg\\:align-text-top {\n    vertical-align: text-top;\n  }\n\n  .lg\\:align-text-bottom {\n    vertical-align: text-bottom;\n  }\n\n  .lg\\:visible {\n    visibility: visible;\n  }\n\n  .lg\\:invisible {\n    visibility: hidden;\n  }\n\n  .lg\\:whitespace-normal {\n    white-space: normal;\n  }\n\n  .lg\\:whitespace-no-wrap {\n    white-space: nowrap;\n  }\n\n  .lg\\:whitespace-pre {\n    white-space: pre;\n  }\n\n  .lg\\:whitespace-pre-line {\n    white-space: pre-line;\n  }\n\n  .lg\\:whitespace-pre-wrap {\n    white-space: pre-wrap;\n  }\n\n  .lg\\:break-words {\n    word-wrap: break-word;\n  }\n\n  .lg\\:break-normal {\n    word-wrap: normal;\n  }\n\n  .lg\\:truncate {\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n\n  .lg\\:w-1 {\n    width: .25rem;\n  }\n\n  .lg\\:w-2 {\n    width: .5rem;\n  }\n\n  .lg\\:w-3 {\n    width: .75rem;\n  }\n\n  .lg\\:w-4 {\n    width: 1rem;\n  }\n\n  .lg\\:w-6 {\n    width: 1.5rem;\n  }\n\n  .lg\\:w-8 {\n    width: 2rem;\n  }\n\n  .lg\\:w-10 {\n    width: 2.5rem;\n  }\n\n  .lg\\:w-12 {\n    width: 3rem;\n  }\n\n  .lg\\:w-16 {\n    width: 4rem;\n  }\n\n  .lg\\:w-24 {\n    width: 6rem;\n  }\n\n  .lg\\:w-32 {\n    width: 8rem;\n  }\n\n  .lg\\:w-48 {\n    width: 12rem;\n  }\n\n  .lg\\:w-64 {\n    width: 16rem;\n  }\n\n  .lg\\:w-auto {\n    width: auto;\n  }\n\n  .lg\\:w-px {\n    width: 1px;\n  }\n\n  .lg\\:w-1\\/2 {\n    width: 50%;\n  }\n\n  .lg\\:w-1\\/3 {\n    width: 33.33333%;\n  }\n\n  .lg\\:w-2\\/3 {\n    width: 66.66667%;\n  }\n\n  .lg\\:w-1\\/4 {\n    width: 25%;\n  }\n\n  .lg\\:w-3\\/4 {\n    width: 75%;\n  }\n\n  .lg\\:w-1\\/5 {\n    width: 20%;\n  }\n\n  .lg\\:w-2\\/5 {\n    width: 40%;\n  }\n\n  .lg\\:w-3\\/5 {\n    width: 60%;\n  }\n\n  .lg\\:w-4\\/5 {\n    width: 80%;\n  }\n\n  .lg\\:w-1\\/6 {\n    width: 16.66667%;\n  }\n\n  .lg\\:w-5\\/6 {\n    width: 83.33333%;\n  }\n\n  .lg\\:w-full {\n    width: 100%;\n  }\n\n  .lg\\:w-screen {\n    width: 100vw;\n  }\n\n  .lg\\:z-0 {\n    z-index: 0;\n  }\n\n  .lg\\:z-10 {\n    z-index: 10;\n  }\n\n  .lg\\:z-20 {\n    z-index: 20;\n  }\n\n  .lg\\:z-30 {\n    z-index: 30;\n  }\n\n  .lg\\:z-40 {\n    z-index: 40;\n  }\n\n  .lg\\:z-50 {\n    z-index: 50;\n  }\n\n  .lg\\:z-auto {\n    z-index: auto;\n  }\n}\n\n@media (min-width: 1200px) {\n  .xl\\:list-reset {\n    list-style: none;\n    padding: 0;\n  }\n\n  .xl\\:appearance-none {\n    -webkit-appearance: none;\n       -moz-appearance: none;\n            appearance: none;\n  }\n\n  .xl\\:bg-fixed {\n    background-attachment: fixed;\n  }\n\n  .xl\\:bg-local {\n    background-attachment: local;\n  }\n\n  .xl\\:bg-scroll {\n    background-attachment: scroll;\n  }\n\n  .xl\\:bg-transparent {\n    background-color: transparent;\n  }\n\n  .xl\\:bg-black {\n    background-color: #22292f;\n  }\n\n  .xl\\:bg-grey-darkest {\n    background-color: #3d4852;\n  }\n\n  .xl\\:bg-grey-darker {\n    background-color: #606f7b;\n  }\n\n  .xl\\:bg-grey-dark {\n    background-color: #8795a1;\n  }\n\n  .xl\\:bg-grey {\n    background-color: #b8c2cc;\n  }\n\n  .xl\\:bg-grey-light {\n    background-color: #dae1e7;\n  }\n\n  .xl\\:bg-grey-lighter {\n    background-color: #f1f5f8;\n  }\n\n  .xl\\:bg-grey-lightest {\n    background-color: #f8fafc;\n  }\n\n  .xl\\:bg-white {\n    background-color: #fff;\n  }\n\n  .xl\\:bg-red-darkest {\n    background-color: #3b0d0c;\n  }\n\n  .xl\\:bg-red-darker {\n    background-color: #621b18;\n  }\n\n  .xl\\:bg-red-dark {\n    background-color: #cc1f1a;\n  }\n\n  .xl\\:bg-red {\n    background-color: #e3342f;\n  }\n\n  .xl\\:bg-red-light {\n    background-color: #ef5753;\n  }\n\n  .xl\\:bg-red-lighter {\n    background-color: #f9acaa;\n  }\n\n  .xl\\:bg-red-lightest {\n    background-color: #fcebea;\n  }\n\n  .xl\\:bg-orange-darkest {\n    background-color: #462a16;\n  }\n\n  .xl\\:bg-orange-darker {\n    background-color: #613b1f;\n  }\n\n  .xl\\:bg-orange-dark {\n    background-color: #de751f;\n  }\n\n  .xl\\:bg-orange {\n    background-color: #f6993f;\n  }\n\n  .xl\\:bg-orange-light {\n    background-color: #faad63;\n  }\n\n  .xl\\:bg-orange-lighter {\n    background-color: #fcd9b6;\n  }\n\n  .xl\\:bg-orange-lightest {\n    background-color: #fff5eb;\n  }\n\n  .xl\\:bg-yellow-darkest {\n    background-color: #453411;\n  }\n\n  .xl\\:bg-yellow-darker {\n    background-color: #684f1d;\n  }\n\n  .xl\\:bg-yellow-dark {\n    background-color: #f2d024;\n  }\n\n  .xl\\:bg-yellow {\n    background-color: #ffed4a;\n  }\n\n  .xl\\:bg-yellow-light {\n    background-color: #fff382;\n  }\n\n  .xl\\:bg-yellow-lighter {\n    background-color: #fff9c2;\n  }\n\n  .xl\\:bg-yellow-lightest {\n    background-color: #fcfbeb;\n  }\n\n  .xl\\:bg-green-darkest {\n    background-color: #0f2f21;\n  }\n\n  .xl\\:bg-green-darker {\n    background-color: #1a4731;\n  }\n\n  .xl\\:bg-green-dark {\n    background-color: #1f9d55;\n  }\n\n  .xl\\:bg-green {\n    background-color: #38c172;\n  }\n\n  .xl\\:bg-green-light {\n    background-color: #51d88a;\n  }\n\n  .xl\\:bg-green-lighter {\n    background-color: #a2f5bf;\n  }\n\n  .xl\\:bg-green-lightest {\n    background-color: #e3fcec;\n  }\n\n  .xl\\:bg-teal-darkest {\n    background-color: #0d3331;\n  }\n\n  .xl\\:bg-teal-darker {\n    background-color: #20504f;\n  }\n\n  .xl\\:bg-teal-dark {\n    background-color: #38a89d;\n  }\n\n  .xl\\:bg-teal {\n    background-color: #4dc0b5;\n  }\n\n  .xl\\:bg-teal-light {\n    background-color: #64d5ca;\n  }\n\n  .xl\\:bg-teal-lighter {\n    background-color: #a0f0ed;\n  }\n\n  .xl\\:bg-teal-lightest {\n    background-color: #e8fffe;\n  }\n\n  .xl\\:bg-blue-darkest {\n    background-color: #12283a;\n  }\n\n  .xl\\:bg-blue-darker {\n    background-color: #1c3d5a;\n  }\n\n  .xl\\:bg-blue-dark {\n    background-color: #2779bd;\n  }\n\n  .xl\\:bg-blue {\n    background-color: #3490dc;\n  }\n\n  .xl\\:bg-blue-light {\n    background-color: #6cb2eb;\n  }\n\n  .xl\\:bg-blue-lighter {\n    background-color: #bcdefa;\n  }\n\n  .xl\\:bg-blue-lightest {\n    background-color: #eff8ff;\n  }\n\n  .xl\\:bg-indigo-darkest {\n    background-color: #191e38;\n  }\n\n  .xl\\:bg-indigo-darker {\n    background-color: #2f365f;\n  }\n\n  .xl\\:bg-indigo-dark {\n    background-color: #5661b3;\n  }\n\n  .xl\\:bg-indigo {\n    background-color: #6574cd;\n  }\n\n  .xl\\:bg-indigo-light {\n    background-color: #7886d7;\n  }\n\n  .xl\\:bg-indigo-lighter {\n    background-color: #b2b7ff;\n  }\n\n  .xl\\:bg-indigo-lightest {\n    background-color: #e6e8ff;\n  }\n\n  .xl\\:bg-purple-darkest {\n    background-color: #21183c;\n  }\n\n  .xl\\:bg-purple-darker {\n    background-color: #382b5f;\n  }\n\n  .xl\\:bg-purple-dark {\n    background-color: #794acf;\n  }\n\n  .xl\\:bg-purple {\n    background-color: #9561e2;\n  }\n\n  .xl\\:bg-purple-light {\n    background-color: #a779e9;\n  }\n\n  .xl\\:bg-purple-lighter {\n    background-color: #d6bbfc;\n  }\n\n  .xl\\:bg-purple-lightest {\n    background-color: #f3ebff;\n  }\n\n  .xl\\:bg-pink-darkest {\n    background-color: #451225;\n  }\n\n  .xl\\:bg-pink-darker {\n    background-color: #6f213f;\n  }\n\n  .xl\\:bg-pink-dark {\n    background-color: #eb5286;\n  }\n\n  .xl\\:bg-pink {\n    background-color: #f66d9b;\n  }\n\n  .xl\\:bg-pink-light {\n    background-color: #fa7ea8;\n  }\n\n  .xl\\:bg-pink-lighter {\n    background-color: #ffbbca;\n  }\n\n  .xl\\:bg-pink-lightest {\n    background-color: #ffebef;\n  }\n\n  .xl\\:hover\\:bg-transparent:hover {\n    background-color: transparent;\n  }\n\n  .xl\\:hover\\:bg-black:hover {\n    background-color: #22292f;\n  }\n\n  .xl\\:hover\\:bg-grey-darkest:hover {\n    background-color: #3d4852;\n  }\n\n  .xl\\:hover\\:bg-grey-darker:hover {\n    background-color: #606f7b;\n  }\n\n  .xl\\:hover\\:bg-grey-dark:hover {\n    background-color: #8795a1;\n  }\n\n  .xl\\:hover\\:bg-grey:hover {\n    background-color: #b8c2cc;\n  }\n\n  .xl\\:hover\\:bg-grey-light:hover {\n    background-color: #dae1e7;\n  }\n\n  .xl\\:hover\\:bg-grey-lighter:hover {\n    background-color: #f1f5f8;\n  }\n\n  .xl\\:hover\\:bg-grey-lightest:hover {\n    background-color: #f8fafc;\n  }\n\n  .xl\\:hover\\:bg-white:hover {\n    background-color: #fff;\n  }\n\n  .xl\\:hover\\:bg-red-darkest:hover {\n    background-color: #3b0d0c;\n  }\n\n  .xl\\:hover\\:bg-red-darker:hover {\n    background-color: #621b18;\n  }\n\n  .xl\\:hover\\:bg-red-dark:hover {\n    background-color: #cc1f1a;\n  }\n\n  .xl\\:hover\\:bg-red:hover {\n    background-color: #e3342f;\n  }\n\n  .xl\\:hover\\:bg-red-light:hover {\n    background-color: #ef5753;\n  }\n\n  .xl\\:hover\\:bg-red-lighter:hover {\n    background-color: #f9acaa;\n  }\n\n  .xl\\:hover\\:bg-red-lightest:hover {\n    background-color: #fcebea;\n  }\n\n  .xl\\:hover\\:bg-orange-darkest:hover {\n    background-color: #462a16;\n  }\n\n  .xl\\:hover\\:bg-orange-darker:hover {\n    background-color: #613b1f;\n  }\n\n  .xl\\:hover\\:bg-orange-dark:hover {\n    background-color: #de751f;\n  }\n\n  .xl\\:hover\\:bg-orange:hover {\n    background-color: #f6993f;\n  }\n\n  .xl\\:hover\\:bg-orange-light:hover {\n    background-color: #faad63;\n  }\n\n  .xl\\:hover\\:bg-orange-lighter:hover {\n    background-color: #fcd9b6;\n  }\n\n  .xl\\:hover\\:bg-orange-lightest:hover {\n    background-color: #fff5eb;\n  }\n\n  .xl\\:hover\\:bg-yellow-darkest:hover {\n    background-color: #453411;\n  }\n\n  .xl\\:hover\\:bg-yellow-darker:hover {\n    background-color: #684f1d;\n  }\n\n  .xl\\:hover\\:bg-yellow-dark:hover {\n    background-color: #f2d024;\n  }\n\n  .xl\\:hover\\:bg-yellow:hover {\n    background-color: #ffed4a;\n  }\n\n  .xl\\:hover\\:bg-yellow-light:hover {\n    background-color: #fff382;\n  }\n\n  .xl\\:hover\\:bg-yellow-lighter:hover {\n    background-color: #fff9c2;\n  }\n\n  .xl\\:hover\\:bg-yellow-lightest:hover {\n    background-color: #fcfbeb;\n  }\n\n  .xl\\:hover\\:bg-green-darkest:hover {\n    background-color: #0f2f21;\n  }\n\n  .xl\\:hover\\:bg-green-darker:hover {\n    background-color: #1a4731;\n  }\n\n  .xl\\:hover\\:bg-green-dark:hover {\n    background-color: #1f9d55;\n  }\n\n  .xl\\:hover\\:bg-green:hover {\n    background-color: #38c172;\n  }\n\n  .xl\\:hover\\:bg-green-light:hover {\n    background-color: #51d88a;\n  }\n\n  .xl\\:hover\\:bg-green-lighter:hover {\n    background-color: #a2f5bf;\n  }\n\n  .xl\\:hover\\:bg-green-lightest:hover {\n    background-color: #e3fcec;\n  }\n\n  .xl\\:hover\\:bg-teal-darkest:hover {\n    background-color: #0d3331;\n  }\n\n  .xl\\:hover\\:bg-teal-darker:hover {\n    background-color: #20504f;\n  }\n\n  .xl\\:hover\\:bg-teal-dark:hover {\n    background-color: #38a89d;\n  }\n\n  .xl\\:hover\\:bg-teal:hover {\n    background-color: #4dc0b5;\n  }\n\n  .xl\\:hover\\:bg-teal-light:hover {\n    background-color: #64d5ca;\n  }\n\n  .xl\\:hover\\:bg-teal-lighter:hover {\n    background-color: #a0f0ed;\n  }\n\n  .xl\\:hover\\:bg-teal-lightest:hover {\n    background-color: #e8fffe;\n  }\n\n  .xl\\:hover\\:bg-blue-darkest:hover {\n    background-color: #12283a;\n  }\n\n  .xl\\:hover\\:bg-blue-darker:hover {\n    background-color: #1c3d5a;\n  }\n\n  .xl\\:hover\\:bg-blue-dark:hover {\n    background-color: #2779bd;\n  }\n\n  .xl\\:hover\\:bg-blue:hover {\n    background-color: #3490dc;\n  }\n\n  .xl\\:hover\\:bg-blue-light:hover {\n    background-color: #6cb2eb;\n  }\n\n  .xl\\:hover\\:bg-blue-lighter:hover {\n    background-color: #bcdefa;\n  }\n\n  .xl\\:hover\\:bg-blue-lightest:hover {\n    background-color: #eff8ff;\n  }\n\n  .xl\\:hover\\:bg-indigo-darkest:hover {\n    background-color: #191e38;\n  }\n\n  .xl\\:hover\\:bg-indigo-darker:hover {\n    background-color: #2f365f;\n  }\n\n  .xl\\:hover\\:bg-indigo-dark:hover {\n    background-color: #5661b3;\n  }\n\n  .xl\\:hover\\:bg-indigo:hover {\n    background-color: #6574cd;\n  }\n\n  .xl\\:hover\\:bg-indigo-light:hover {\n    background-color: #7886d7;\n  }\n\n  .xl\\:hover\\:bg-indigo-lighter:hover {\n    background-color: #b2b7ff;\n  }\n\n  .xl\\:hover\\:bg-indigo-lightest:hover {\n    background-color: #e6e8ff;\n  }\n\n  .xl\\:hover\\:bg-purple-darkest:hover {\n    background-color: #21183c;\n  }\n\n  .xl\\:hover\\:bg-purple-darker:hover {\n    background-color: #382b5f;\n  }\n\n  .xl\\:hover\\:bg-purple-dark:hover {\n    background-color: #794acf;\n  }\n\n  .xl\\:hover\\:bg-purple:hover {\n    background-color: #9561e2;\n  }\n\n  .xl\\:hover\\:bg-purple-light:hover {\n    background-color: #a779e9;\n  }\n\n  .xl\\:hover\\:bg-purple-lighter:hover {\n    background-color: #d6bbfc;\n  }\n\n  .xl\\:hover\\:bg-purple-lightest:hover {\n    background-color: #f3ebff;\n  }\n\n  .xl\\:hover\\:bg-pink-darkest:hover {\n    background-color: #451225;\n  }\n\n  .xl\\:hover\\:bg-pink-darker:hover {\n    background-color: #6f213f;\n  }\n\n  .xl\\:hover\\:bg-pink-dark:hover {\n    background-color: #eb5286;\n  }\n\n  .xl\\:hover\\:bg-pink:hover {\n    background-color: #f66d9b;\n  }\n\n  .xl\\:hover\\:bg-pink-light:hover {\n    background-color: #fa7ea8;\n  }\n\n  .xl\\:hover\\:bg-pink-lighter:hover {\n    background-color: #ffbbca;\n  }\n\n  .xl\\:hover\\:bg-pink-lightest:hover {\n    background-color: #ffebef;\n  }\n\n  .xl\\:bg-bottom {\n    background-position: bottom;\n  }\n\n  .xl\\:bg-center {\n    background-position: center;\n  }\n\n  .xl\\:bg-left {\n    background-position: left;\n  }\n\n  .xl\\:bg-left-bottom {\n    background-position: left bottom;\n  }\n\n  .xl\\:bg-left-top {\n    background-position: left top;\n  }\n\n  .xl\\:bg-right {\n    background-position: right;\n  }\n\n  .xl\\:bg-right-bottom {\n    background-position: right bottom;\n  }\n\n  .xl\\:bg-right-top {\n    background-position: right top;\n  }\n\n  .xl\\:bg-top {\n    background-position: top;\n  }\n\n  .xl\\:bg-repeat {\n    background-repeat: repeat;\n  }\n\n  .xl\\:bg-no-repeat {\n    background-repeat: no-repeat;\n  }\n\n  .xl\\:bg-repeat-x {\n    background-repeat: repeat-x;\n  }\n\n  .xl\\:bg-repeat-y {\n    background-repeat: repeat-y;\n  }\n\n  .xl\\:bg-auto {\n    background-size: auto;\n  }\n\n  .xl\\:bg-cover {\n    background-size: cover;\n  }\n\n  .xl\\:bg-contain {\n    background-size: contain;\n  }\n\n  .xl\\:border-transparent {\n    border-color: transparent;\n  }\n\n  .xl\\:border-black {\n    border-color: #22292f;\n  }\n\n  .xl\\:border-grey-darkest {\n    border-color: #3d4852;\n  }\n\n  .xl\\:border-grey-darker {\n    border-color: #606f7b;\n  }\n\n  .xl\\:border-grey-dark {\n    border-color: #8795a1;\n  }\n\n  .xl\\:border-grey {\n    border-color: #b8c2cc;\n  }\n\n  .xl\\:border-grey-light {\n    border-color: #dae1e7;\n  }\n\n  .xl\\:border-grey-lighter {\n    border-color: #f1f5f8;\n  }\n\n  .xl\\:border-grey-lightest {\n    border-color: #f8fafc;\n  }\n\n  .xl\\:border-white {\n    border-color: #fff;\n  }\n\n  .xl\\:border-red-darkest {\n    border-color: #3b0d0c;\n  }\n\n  .xl\\:border-red-darker {\n    border-color: #621b18;\n  }\n\n  .xl\\:border-red-dark {\n    border-color: #cc1f1a;\n  }\n\n  .xl\\:border-red {\n    border-color: #e3342f;\n  }\n\n  .xl\\:border-red-light {\n    border-color: #ef5753;\n  }\n\n  .xl\\:border-red-lighter {\n    border-color: #f9acaa;\n  }\n\n  .xl\\:border-red-lightest {\n    border-color: #fcebea;\n  }\n\n  .xl\\:border-orange-darkest {\n    border-color: #462a16;\n  }\n\n  .xl\\:border-orange-darker {\n    border-color: #613b1f;\n  }\n\n  .xl\\:border-orange-dark {\n    border-color: #de751f;\n  }\n\n  .xl\\:border-orange {\n    border-color: #f6993f;\n  }\n\n  .xl\\:border-orange-light {\n    border-color: #faad63;\n  }\n\n  .xl\\:border-orange-lighter {\n    border-color: #fcd9b6;\n  }\n\n  .xl\\:border-orange-lightest {\n    border-color: #fff5eb;\n  }\n\n  .xl\\:border-yellow-darkest {\n    border-color: #453411;\n  }\n\n  .xl\\:border-yellow-darker {\n    border-color: #684f1d;\n  }\n\n  .xl\\:border-yellow-dark {\n    border-color: #f2d024;\n  }\n\n  .xl\\:border-yellow {\n    border-color: #ffed4a;\n  }\n\n  .xl\\:border-yellow-light {\n    border-color: #fff382;\n  }\n\n  .xl\\:border-yellow-lighter {\n    border-color: #fff9c2;\n  }\n\n  .xl\\:border-yellow-lightest {\n    border-color: #fcfbeb;\n  }\n\n  .xl\\:border-green-darkest {\n    border-color: #0f2f21;\n  }\n\n  .xl\\:border-green-darker {\n    border-color: #1a4731;\n  }\n\n  .xl\\:border-green-dark {\n    border-color: #1f9d55;\n  }\n\n  .xl\\:border-green {\n    border-color: #38c172;\n  }\n\n  .xl\\:border-green-light {\n    border-color: #51d88a;\n  }\n\n  .xl\\:border-green-lighter {\n    border-color: #a2f5bf;\n  }\n\n  .xl\\:border-green-lightest {\n    border-color: #e3fcec;\n  }\n\n  .xl\\:border-teal-darkest {\n    border-color: #0d3331;\n  }\n\n  .xl\\:border-teal-darker {\n    border-color: #20504f;\n  }\n\n  .xl\\:border-teal-dark {\n    border-color: #38a89d;\n  }\n\n  .xl\\:border-teal {\n    border-color: #4dc0b5;\n  }\n\n  .xl\\:border-teal-light {\n    border-color: #64d5ca;\n  }\n\n  .xl\\:border-teal-lighter {\n    border-color: #a0f0ed;\n  }\n\n  .xl\\:border-teal-lightest {\n    border-color: #e8fffe;\n  }\n\n  .xl\\:border-blue-darkest {\n    border-color: #12283a;\n  }\n\n  .xl\\:border-blue-darker {\n    border-color: #1c3d5a;\n  }\n\n  .xl\\:border-blue-dark {\n    border-color: #2779bd;\n  }\n\n  .xl\\:border-blue {\n    border-color: #3490dc;\n  }\n\n  .xl\\:border-blue-light {\n    border-color: #6cb2eb;\n  }\n\n  .xl\\:border-blue-lighter {\n    border-color: #bcdefa;\n  }\n\n  .xl\\:border-blue-lightest {\n    border-color: #eff8ff;\n  }\n\n  .xl\\:border-indigo-darkest {\n    border-color: #191e38;\n  }\n\n  .xl\\:border-indigo-darker {\n    border-color: #2f365f;\n  }\n\n  .xl\\:border-indigo-dark {\n    border-color: #5661b3;\n  }\n\n  .xl\\:border-indigo {\n    border-color: #6574cd;\n  }\n\n  .xl\\:border-indigo-light {\n    border-color: #7886d7;\n  }\n\n  .xl\\:border-indigo-lighter {\n    border-color: #b2b7ff;\n  }\n\n  .xl\\:border-indigo-lightest {\n    border-color: #e6e8ff;\n  }\n\n  .xl\\:border-purple-darkest {\n    border-color: #21183c;\n  }\n\n  .xl\\:border-purple-darker {\n    border-color: #382b5f;\n  }\n\n  .xl\\:border-purple-dark {\n    border-color: #794acf;\n  }\n\n  .xl\\:border-purple {\n    border-color: #9561e2;\n  }\n\n  .xl\\:border-purple-light {\n    border-color: #a779e9;\n  }\n\n  .xl\\:border-purple-lighter {\n    border-color: #d6bbfc;\n  }\n\n  .xl\\:border-purple-lightest {\n    border-color: #f3ebff;\n  }\n\n  .xl\\:border-pink-darkest {\n    border-color: #451225;\n  }\n\n  .xl\\:border-pink-darker {\n    border-color: #6f213f;\n  }\n\n  .xl\\:border-pink-dark {\n    border-color: #eb5286;\n  }\n\n  .xl\\:border-pink {\n    border-color: #f66d9b;\n  }\n\n  .xl\\:border-pink-light {\n    border-color: #fa7ea8;\n  }\n\n  .xl\\:border-pink-lighter {\n    border-color: #ffbbca;\n  }\n\n  .xl\\:border-pink-lightest {\n    border-color: #ffebef;\n  }\n\n  .xl\\:hover\\:border-transparent:hover {\n    border-color: transparent;\n  }\n\n  .xl\\:hover\\:border-black:hover {\n    border-color: #22292f;\n  }\n\n  .xl\\:hover\\:border-grey-darkest:hover {\n    border-color: #3d4852;\n  }\n\n  .xl\\:hover\\:border-grey-darker:hover {\n    border-color: #606f7b;\n  }\n\n  .xl\\:hover\\:border-grey-dark:hover {\n    border-color: #8795a1;\n  }\n\n  .xl\\:hover\\:border-grey:hover {\n    border-color: #b8c2cc;\n  }\n\n  .xl\\:hover\\:border-grey-light:hover {\n    border-color: #dae1e7;\n  }\n\n  .xl\\:hover\\:border-grey-lighter:hover {\n    border-color: #f1f5f8;\n  }\n\n  .xl\\:hover\\:border-grey-lightest:hover {\n    border-color: #f8fafc;\n  }\n\n  .xl\\:hover\\:border-white:hover {\n    border-color: #fff;\n  }\n\n  .xl\\:hover\\:border-red-darkest:hover {\n    border-color: #3b0d0c;\n  }\n\n  .xl\\:hover\\:border-red-darker:hover {\n    border-color: #621b18;\n  }\n\n  .xl\\:hover\\:border-red-dark:hover {\n    border-color: #cc1f1a;\n  }\n\n  .xl\\:hover\\:border-red:hover {\n    border-color: #e3342f;\n  }\n\n  .xl\\:hover\\:border-red-light:hover {\n    border-color: #ef5753;\n  }\n\n  .xl\\:hover\\:border-red-lighter:hover {\n    border-color: #f9acaa;\n  }\n\n  .xl\\:hover\\:border-red-lightest:hover {\n    border-color: #fcebea;\n  }\n\n  .xl\\:hover\\:border-orange-darkest:hover {\n    border-color: #462a16;\n  }\n\n  .xl\\:hover\\:border-orange-darker:hover {\n    border-color: #613b1f;\n  }\n\n  .xl\\:hover\\:border-orange-dark:hover {\n    border-color: #de751f;\n  }\n\n  .xl\\:hover\\:border-orange:hover {\n    border-color: #f6993f;\n  }\n\n  .xl\\:hover\\:border-orange-light:hover {\n    border-color: #faad63;\n  }\n\n  .xl\\:hover\\:border-orange-lighter:hover {\n    border-color: #fcd9b6;\n  }\n\n  .xl\\:hover\\:border-orange-lightest:hover {\n    border-color: #fff5eb;\n  }\n\n  .xl\\:hover\\:border-yellow-darkest:hover {\n    border-color: #453411;\n  }\n\n  .xl\\:hover\\:border-yellow-darker:hover {\n    border-color: #684f1d;\n  }\n\n  .xl\\:hover\\:border-yellow-dark:hover {\n    border-color: #f2d024;\n  }\n\n  .xl\\:hover\\:border-yellow:hover {\n    border-color: #ffed4a;\n  }\n\n  .xl\\:hover\\:border-yellow-light:hover {\n    border-color: #fff382;\n  }\n\n  .xl\\:hover\\:border-yellow-lighter:hover {\n    border-color: #fff9c2;\n  }\n\n  .xl\\:hover\\:border-yellow-lightest:hover {\n    border-color: #fcfbeb;\n  }\n\n  .xl\\:hover\\:border-green-darkest:hover {\n    border-color: #0f2f21;\n  }\n\n  .xl\\:hover\\:border-green-darker:hover {\n    border-color: #1a4731;\n  }\n\n  .xl\\:hover\\:border-green-dark:hover {\n    border-color: #1f9d55;\n  }\n\n  .xl\\:hover\\:border-green:hover {\n    border-color: #38c172;\n  }\n\n  .xl\\:hover\\:border-green-light:hover {\n    border-color: #51d88a;\n  }\n\n  .xl\\:hover\\:border-green-lighter:hover {\n    border-color: #a2f5bf;\n  }\n\n  .xl\\:hover\\:border-green-lightest:hover {\n    border-color: #e3fcec;\n  }\n\n  .xl\\:hover\\:border-teal-darkest:hover {\n    border-color: #0d3331;\n  }\n\n  .xl\\:hover\\:border-teal-darker:hover {\n    border-color: #20504f;\n  }\n\n  .xl\\:hover\\:border-teal-dark:hover {\n    border-color: #38a89d;\n  }\n\n  .xl\\:hover\\:border-teal:hover {\n    border-color: #4dc0b5;\n  }\n\n  .xl\\:hover\\:border-teal-light:hover {\n    border-color: #64d5ca;\n  }\n\n  .xl\\:hover\\:border-teal-lighter:hover {\n    border-color: #a0f0ed;\n  }\n\n  .xl\\:hover\\:border-teal-lightest:hover {\n    border-color: #e8fffe;\n  }\n\n  .xl\\:hover\\:border-blue-darkest:hover {\n    border-color: #12283a;\n  }\n\n  .xl\\:hover\\:border-blue-darker:hover {\n    border-color: #1c3d5a;\n  }\n\n  .xl\\:hover\\:border-blue-dark:hover {\n    border-color: #2779bd;\n  }\n\n  .xl\\:hover\\:border-blue:hover {\n    border-color: #3490dc;\n  }\n\n  .xl\\:hover\\:border-blue-light:hover {\n    border-color: #6cb2eb;\n  }\n\n  .xl\\:hover\\:border-blue-lighter:hover {\n    border-color: #bcdefa;\n  }\n\n  .xl\\:hover\\:border-blue-lightest:hover {\n    border-color: #eff8ff;\n  }\n\n  .xl\\:hover\\:border-indigo-darkest:hover {\n    border-color: #191e38;\n  }\n\n  .xl\\:hover\\:border-indigo-darker:hover {\n    border-color: #2f365f;\n  }\n\n  .xl\\:hover\\:border-indigo-dark:hover {\n    border-color: #5661b3;\n  }\n\n  .xl\\:hover\\:border-indigo:hover {\n    border-color: #6574cd;\n  }\n\n  .xl\\:hover\\:border-indigo-light:hover {\n    border-color: #7886d7;\n  }\n\n  .xl\\:hover\\:border-indigo-lighter:hover {\n    border-color: #b2b7ff;\n  }\n\n  .xl\\:hover\\:border-indigo-lightest:hover {\n    border-color: #e6e8ff;\n  }\n\n  .xl\\:hover\\:border-purple-darkest:hover {\n    border-color: #21183c;\n  }\n\n  .xl\\:hover\\:border-purple-darker:hover {\n    border-color: #382b5f;\n  }\n\n  .xl\\:hover\\:border-purple-dark:hover {\n    border-color: #794acf;\n  }\n\n  .xl\\:hover\\:border-purple:hover {\n    border-color: #9561e2;\n  }\n\n  .xl\\:hover\\:border-purple-light:hover {\n    border-color: #a779e9;\n  }\n\n  .xl\\:hover\\:border-purple-lighter:hover {\n    border-color: #d6bbfc;\n  }\n\n  .xl\\:hover\\:border-purple-lightest:hover {\n    border-color: #f3ebff;\n  }\n\n  .xl\\:hover\\:border-pink-darkest:hover {\n    border-color: #451225;\n  }\n\n  .xl\\:hover\\:border-pink-darker:hover {\n    border-color: #6f213f;\n  }\n\n  .xl\\:hover\\:border-pink-dark:hover {\n    border-color: #eb5286;\n  }\n\n  .xl\\:hover\\:border-pink:hover {\n    border-color: #f66d9b;\n  }\n\n  .xl\\:hover\\:border-pink-light:hover {\n    border-color: #fa7ea8;\n  }\n\n  .xl\\:hover\\:border-pink-lighter:hover {\n    border-color: #ffbbca;\n  }\n\n  .xl\\:hover\\:border-pink-lightest:hover {\n    border-color: #ffebef;\n  }\n\n  .xl\\:rounded-none {\n    border-radius: 0;\n  }\n\n  .xl\\:rounded-sm {\n    border-radius: .125rem;\n  }\n\n  .xl\\:rounded {\n    border-radius: .25rem;\n  }\n\n  .xl\\:rounded-lg {\n    border-radius: .5rem;\n  }\n\n  .xl\\:rounded-full {\n    border-radius: 9999px;\n  }\n\n  .xl\\:rounded-t-none {\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n  }\n\n  .xl\\:rounded-r-none {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n\n  .xl\\:rounded-b-none {\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .xl\\:rounded-l-none {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  .xl\\:rounded-t-sm {\n    border-top-left-radius: .125rem;\n    border-top-right-radius: .125rem;\n  }\n\n  .xl\\:rounded-r-sm {\n    border-top-right-radius: .125rem;\n    border-bottom-right-radius: .125rem;\n  }\n\n  .xl\\:rounded-b-sm {\n    border-bottom-right-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .xl\\:rounded-l-sm {\n    border-top-left-radius: .125rem;\n    border-bottom-left-radius: .125rem;\n  }\n\n  .xl\\:rounded-t {\n    border-top-left-radius: .25rem;\n    border-top-right-radius: .25rem;\n  }\n\n  .xl\\:rounded-r {\n    border-top-right-radius: .25rem;\n    border-bottom-right-radius: .25rem;\n  }\n\n  .xl\\:rounded-b {\n    border-bottom-right-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .xl\\:rounded-l {\n    border-top-left-radius: .25rem;\n    border-bottom-left-radius: .25rem;\n  }\n\n  .xl\\:rounded-t-lg {\n    border-top-left-radius: .5rem;\n    border-top-right-radius: .5rem;\n  }\n\n  .xl\\:rounded-r-lg {\n    border-top-right-radius: .5rem;\n    border-bottom-right-radius: .5rem;\n  }\n\n  .xl\\:rounded-b-lg {\n    border-bottom-right-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .xl\\:rounded-l-lg {\n    border-top-left-radius: .5rem;\n    border-bottom-left-radius: .5rem;\n  }\n\n  .xl\\:rounded-t-full {\n    border-top-left-radius: 9999px;\n    border-top-right-radius: 9999px;\n  }\n\n  .xl\\:rounded-r-full {\n    border-top-right-radius: 9999px;\n    border-bottom-right-radius: 9999px;\n  }\n\n  .xl\\:rounded-b-full {\n    border-bottom-right-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .xl\\:rounded-l-full {\n    border-top-left-radius: 9999px;\n    border-bottom-left-radius: 9999px;\n  }\n\n  .xl\\:rounded-tl-none {\n    border-top-left-radius: 0;\n  }\n\n  .xl\\:rounded-tr-none {\n    border-top-right-radius: 0;\n  }\n\n  .xl\\:rounded-br-none {\n    border-bottom-right-radius: 0;\n  }\n\n  .xl\\:rounded-bl-none {\n    border-bottom-left-radius: 0;\n  }\n\n  .xl\\:rounded-tl-sm {\n    border-top-left-radius: .125rem;\n  }\n\n  .xl\\:rounded-tr-sm {\n    border-top-right-radius: .125rem;\n  }\n\n  .xl\\:rounded-br-sm {\n    border-bottom-right-radius: .125rem;\n  }\n\n  .xl\\:rounded-bl-sm {\n    border-bottom-left-radius: .125rem;\n  }\n\n  .xl\\:rounded-tl {\n    border-top-left-radius: .25rem;\n  }\n\n  .xl\\:rounded-tr {\n    border-top-right-radius: .25rem;\n  }\n\n  .xl\\:rounded-br {\n    border-bottom-right-radius: .25rem;\n  }\n\n  .xl\\:rounded-bl {\n    border-bottom-left-radius: .25rem;\n  }\n\n  .xl\\:rounded-tl-lg {\n    border-top-left-radius: .5rem;\n  }\n\n  .xl\\:rounded-tr-lg {\n    border-top-right-radius: .5rem;\n  }\n\n  .xl\\:rounded-br-lg {\n    border-bottom-right-radius: .5rem;\n  }\n\n  .xl\\:rounded-bl-lg {\n    border-bottom-left-radius: .5rem;\n  }\n\n  .xl\\:rounded-tl-full {\n    border-top-left-radius: 9999px;\n  }\n\n  .xl\\:rounded-tr-full {\n    border-top-right-radius: 9999px;\n  }\n\n  .xl\\:rounded-br-full {\n    border-bottom-right-radius: 9999px;\n  }\n\n  .xl\\:rounded-bl-full {\n    border-bottom-left-radius: 9999px;\n  }\n\n  .xl\\:border-solid {\n    border-style: solid;\n  }\n\n  .xl\\:border-dashed {\n    border-style: dashed;\n  }\n\n  .xl\\:border-dotted {\n    border-style: dotted;\n  }\n\n  .xl\\:border-none {\n    border-style: none;\n  }\n\n  .xl\\:border-0 {\n    border-width: 0;\n  }\n\n  .xl\\:border-2 {\n    border-width: 2px;\n  }\n\n  .xl\\:border-4 {\n    border-width: 4px;\n  }\n\n  .xl\\:border-8 {\n    border-width: 8px;\n  }\n\n  .xl\\:border {\n    border-width: 1px;\n  }\n\n  .xl\\:border-t-0 {\n    border-top-width: 0;\n  }\n\n  .xl\\:border-r-0 {\n    border-right-width: 0;\n  }\n\n  .xl\\:border-b-0 {\n    border-bottom-width: 0;\n  }\n\n  .xl\\:border-l-0 {\n    border-left-width: 0;\n  }\n\n  .xl\\:border-t-2 {\n    border-top-width: 2px;\n  }\n\n  .xl\\:border-r-2 {\n    border-right-width: 2px;\n  }\n\n  .xl\\:border-b-2 {\n    border-bottom-width: 2px;\n  }\n\n  .xl\\:border-l-2 {\n    border-left-width: 2px;\n  }\n\n  .xl\\:border-t-4 {\n    border-top-width: 4px;\n  }\n\n  .xl\\:border-r-4 {\n    border-right-width: 4px;\n  }\n\n  .xl\\:border-b-4 {\n    border-bottom-width: 4px;\n  }\n\n  .xl\\:border-l-4 {\n    border-left-width: 4px;\n  }\n\n  .xl\\:border-t-8 {\n    border-top-width: 8px;\n  }\n\n  .xl\\:border-r-8 {\n    border-right-width: 8px;\n  }\n\n  .xl\\:border-b-8 {\n    border-bottom-width: 8px;\n  }\n\n  .xl\\:border-l-8 {\n    border-left-width: 8px;\n  }\n\n  .xl\\:border-t {\n    border-top-width: 1px;\n  }\n\n  .xl\\:border-r {\n    border-right-width: 1px;\n  }\n\n  .xl\\:border-b {\n    border-bottom-width: 1px;\n  }\n\n  .xl\\:border-l {\n    border-left-width: 1px;\n  }\n\n  .xl\\:cursor-auto {\n    cursor: auto;\n  }\n\n  .xl\\:cursor-default {\n    cursor: default;\n  }\n\n  .xl\\:cursor-pointer {\n    cursor: pointer;\n  }\n\n  .xl\\:cursor-wait {\n    cursor: wait;\n  }\n\n  .xl\\:cursor-move {\n    cursor: move;\n  }\n\n  .xl\\:cursor-not-allowed {\n    cursor: not-allowed;\n  }\n\n  .xl\\:block {\n    display: block;\n  }\n\n  .xl\\:inline-block {\n    display: inline-block;\n  }\n\n  .xl\\:inline {\n    display: inline;\n  }\n\n  .xl\\:table {\n    display: table;\n  }\n\n  .xl\\:table-row {\n    display: table-row;\n  }\n\n  .xl\\:table-cell {\n    display: table-cell;\n  }\n\n  .xl\\:hidden {\n    display: none;\n  }\n\n  .xl\\:flex {\n    display: flex;\n  }\n\n  .xl\\:inline-flex {\n    display: inline-flex;\n  }\n\n  .xl\\:flex-row {\n    flex-direction: row;\n  }\n\n  .xl\\:flex-row-reverse {\n    flex-direction: row-reverse;\n  }\n\n  .xl\\:flex-col {\n    flex-direction: column;\n  }\n\n  .xl\\:flex-col-reverse {\n    flex-direction: column-reverse;\n  }\n\n  .xl\\:flex-wrap {\n    flex-wrap: wrap;\n  }\n\n  .xl\\:flex-wrap-reverse {\n    flex-wrap: wrap-reverse;\n  }\n\n  .xl\\:flex-no-wrap {\n    flex-wrap: nowrap;\n  }\n\n  .xl\\:items-start {\n    align-items: flex-start;\n  }\n\n  .xl\\:items-end {\n    align-items: flex-end;\n  }\n\n  .xl\\:items-center {\n    align-items: center;\n  }\n\n  .xl\\:items-baseline {\n    align-items: baseline;\n  }\n\n  .xl\\:items-stretch {\n    align-items: stretch;\n  }\n\n  .xl\\:self-auto {\n    align-self: auto;\n  }\n\n  .xl\\:self-start {\n    align-self: flex-start;\n  }\n\n  .xl\\:self-end {\n    align-self: flex-end;\n  }\n\n  .xl\\:self-center {\n    align-self: center;\n  }\n\n  .xl\\:self-stretch {\n    align-self: stretch;\n  }\n\n  .xl\\:justify-start {\n    justify-content: flex-start;\n  }\n\n  .xl\\:justify-end {\n    justify-content: flex-end;\n  }\n\n  .xl\\:justify-center {\n    justify-content: center;\n  }\n\n  .xl\\:justify-between {\n    justify-content: space-between;\n  }\n\n  .xl\\:justify-around {\n    justify-content: space-around;\n  }\n\n  .xl\\:content-center {\n    align-content: center;\n  }\n\n  .xl\\:content-start {\n    align-content: flex-start;\n  }\n\n  .xl\\:content-end {\n    align-content: flex-end;\n  }\n\n  .xl\\:content-between {\n    align-content: space-between;\n  }\n\n  .xl\\:content-around {\n    align-content: space-around;\n  }\n\n  .xl\\:flex-1 {\n    flex: 1;\n  }\n\n  .xl\\:flex-auto {\n    flex: auto;\n  }\n\n  .xl\\:flex-initial {\n    flex: initial;\n  }\n\n  .xl\\:flex-none {\n    flex: none;\n  }\n\n  .xl\\:flex-grow {\n    flex-grow: 1;\n  }\n\n  .xl\\:flex-shrink {\n    flex-shrink: 1;\n  }\n\n  .xl\\:flex-no-grow {\n    flex-grow: 0;\n  }\n\n  .xl\\:flex-no-shrink {\n    flex-shrink: 0;\n  }\n\n  .xl\\:float-right {\n    float: right;\n  }\n\n  .xl\\:float-left {\n    float: left;\n  }\n\n  .xl\\:float-none {\n    float: none;\n  }\n\n  .xl\\:clearfix:after {\n    content: \"\";\n    display: table;\n    clear: both;\n  }\n\n  .xl\\:font-sans {\n    font-family: system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;\n  }\n\n  .xl\\:font-serif {\n    font-family: Constantia, Lucida Bright, Lucidabright, Lucida Serif, Lucida, DejaVu Serif, Bitstream Vera Serif, Liberation Serif, Georgia, serif;\n  }\n\n  .xl\\:font-mono {\n    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;\n  }\n\n  .xl\\:font-hairline {\n    font-weight: 100;\n  }\n\n  .xl\\:font-thin {\n    font-weight: 200;\n  }\n\n  .xl\\:font-light {\n    font-weight: 300;\n  }\n\n  .xl\\:font-normal {\n    font-weight: 400;\n  }\n\n  .xl\\:font-medium {\n    font-weight: 500;\n  }\n\n  .xl\\:font-semibold {\n    font-weight: 600;\n  }\n\n  .xl\\:font-bold {\n    font-weight: 700;\n  }\n\n  .xl\\:font-extrabold {\n    font-weight: 800;\n  }\n\n  .xl\\:font-black {\n    font-weight: 900;\n  }\n\n  .xl\\:hover\\:font-hairline:hover {\n    font-weight: 100;\n  }\n\n  .xl\\:hover\\:font-thin:hover {\n    font-weight: 200;\n  }\n\n  .xl\\:hover\\:font-light:hover {\n    font-weight: 300;\n  }\n\n  .xl\\:hover\\:font-normal:hover {\n    font-weight: 400;\n  }\n\n  .xl\\:hover\\:font-medium:hover {\n    font-weight: 500;\n  }\n\n  .xl\\:hover\\:font-semibold:hover {\n    font-weight: 600;\n  }\n\n  .xl\\:hover\\:font-bold:hover {\n    font-weight: 700;\n  }\n\n  .xl\\:hover\\:font-extrabold:hover {\n    font-weight: 800;\n  }\n\n  .xl\\:hover\\:font-black:hover {\n    font-weight: 900;\n  }\n\n  .xl\\:h-1 {\n    height: .25rem;\n  }\n\n  .xl\\:h-2 {\n    height: .5rem;\n  }\n\n  .xl\\:h-3 {\n    height: .75rem;\n  }\n\n  .xl\\:h-4 {\n    height: 1rem;\n  }\n\n  .xl\\:h-6 {\n    height: 1.5rem;\n  }\n\n  .xl\\:h-8 {\n    height: 2rem;\n  }\n\n  .xl\\:h-10 {\n    height: 2.5rem;\n  }\n\n  .xl\\:h-12 {\n    height: 3rem;\n  }\n\n  .xl\\:h-16 {\n    height: 4rem;\n  }\n\n  .xl\\:h-24 {\n    height: 6rem;\n  }\n\n  .xl\\:h-32 {\n    height: 8rem;\n  }\n\n  .xl\\:h-48 {\n    height: 12rem;\n  }\n\n  .xl\\:h-64 {\n    height: 16rem;\n  }\n\n  .xl\\:h-auto {\n    height: auto;\n  }\n\n  .xl\\:h-px {\n    height: 1px;\n  }\n\n  .xl\\:h-full {\n    height: 100%;\n  }\n\n  .xl\\:h-screen {\n    height: 100vh;\n  }\n\n  .xl\\:leading-none {\n    line-height: 1;\n  }\n\n  .xl\\:leading-tight {\n    line-height: 1.25;\n  }\n\n  .xl\\:leading-normal {\n    line-height: 1.5;\n  }\n\n  .xl\\:leading-loose {\n    line-height: 2;\n  }\n\n  .xl\\:m-0 {\n    margin: 0;\n  }\n\n  .xl\\:m-1 {\n    margin: .25rem;\n  }\n\n  .xl\\:m-2 {\n    margin: .5rem;\n  }\n\n  .xl\\:m-3 {\n    margin: .75rem;\n  }\n\n  .xl\\:m-4 {\n    margin: 1rem;\n  }\n\n  .xl\\:m-6 {\n    margin: 1.5rem;\n  }\n\n  .xl\\:m-8 {\n    margin: 2rem;\n  }\n\n  .xl\\:m-auto {\n    margin: auto;\n  }\n\n  .xl\\:m-px {\n    margin: 1px;\n  }\n\n  .xl\\:my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .xl\\:mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .xl\\:my-1 {\n    margin-top: .25rem;\n    margin-bottom: .25rem;\n  }\n\n  .xl\\:mx-1 {\n    margin-left: .25rem;\n    margin-right: .25rem;\n  }\n\n  .xl\\:my-2 {\n    margin-top: .5rem;\n    margin-bottom: .5rem;\n  }\n\n  .xl\\:mx-2 {\n    margin-left: .5rem;\n    margin-right: .5rem;\n  }\n\n  .xl\\:my-3 {\n    margin-top: .75rem;\n    margin-bottom: .75rem;\n  }\n\n  .xl\\:mx-3 {\n    margin-left: .75rem;\n    margin-right: .75rem;\n  }\n\n  .xl\\:my-4 {\n    margin-top: 1rem;\n    margin-bottom: 1rem;\n  }\n\n  .xl\\:mx-4 {\n    margin-left: 1rem;\n    margin-right: 1rem;\n  }\n\n  .xl\\:my-6 {\n    margin-top: 1.5rem;\n    margin-bottom: 1.5rem;\n  }\n\n  .xl\\:mx-6 {\n    margin-left: 1.5rem;\n    margin-right: 1.5rem;\n  }\n\n  .xl\\:my-8 {\n    margin-top: 2rem;\n    margin-bottom: 2rem;\n  }\n\n  .xl\\:mx-8 {\n    margin-left: 2rem;\n    margin-right: 2rem;\n  }\n\n  .xl\\:my-auto {\n    margin-top: auto;\n    margin-bottom: auto;\n  }\n\n  .xl\\:mx-auto {\n    margin-left: auto;\n    margin-right: auto;\n  }\n\n  .xl\\:my-px {\n    margin-top: 1px;\n    margin-bottom: 1px;\n  }\n\n  .xl\\:mx-px {\n    margin-left: 1px;\n    margin-right: 1px;\n  }\n\n  .xl\\:mt-0 {\n    margin-top: 0;\n  }\n\n  .xl\\:mr-0 {\n    margin-right: 0;\n  }\n\n  .xl\\:mb-0 {\n    margin-bottom: 0;\n  }\n\n  .xl\\:ml-0 {\n    margin-left: 0;\n  }\n\n  .xl\\:mt-1 {\n    margin-top: .25rem;\n  }\n\n  .xl\\:mr-1 {\n    margin-right: .25rem;\n  }\n\n  .xl\\:mb-1 {\n    margin-bottom: .25rem;\n  }\n\n  .xl\\:ml-1 {\n    margin-left: .25rem;\n  }\n\n  .xl\\:mt-2 {\n    margin-top: .5rem;\n  }\n\n  .xl\\:mr-2 {\n    margin-right: .5rem;\n  }\n\n  .xl\\:mb-2 {\n    margin-bottom: .5rem;\n  }\n\n  .xl\\:ml-2 {\n    margin-left: .5rem;\n  }\n\n  .xl\\:mt-3 {\n    margin-top: .75rem;\n  }\n\n  .xl\\:mr-3 {\n    margin-right: .75rem;\n  }\n\n  .xl\\:mb-3 {\n    margin-bottom: .75rem;\n  }\n\n  .xl\\:ml-3 {\n    margin-left: .75rem;\n  }\n\n  .xl\\:mt-4 {\n    margin-top: 1rem;\n  }\n\n  .xl\\:mr-4 {\n    margin-right: 1rem;\n  }\n\n  .xl\\:mb-4 {\n    margin-bottom: 1rem;\n  }\n\n  .xl\\:ml-4 {\n    margin-left: 1rem;\n  }\n\n  .xl\\:mt-6 {\n    margin-top: 1.5rem;\n  }\n\n  .xl\\:mr-6 {\n    margin-right: 1.5rem;\n  }\n\n  .xl\\:mb-6 {\n    margin-bottom: 1.5rem;\n  }\n\n  .xl\\:ml-6 {\n    margin-left: 1.5rem;\n  }\n\n  .xl\\:mt-8 {\n    margin-top: 2rem;\n  }\n\n  .xl\\:mr-8 {\n    margin-right: 2rem;\n  }\n\n  .xl\\:mb-8 {\n    margin-bottom: 2rem;\n  }\n\n  .xl\\:ml-8 {\n    margin-left: 2rem;\n  }\n\n  .xl\\:mt-auto {\n    margin-top: auto;\n  }\n\n  .xl\\:mr-auto {\n    margin-right: auto;\n  }\n\n  .xl\\:mb-auto {\n    margin-bottom: auto;\n  }\n\n  .xl\\:ml-auto {\n    margin-left: auto;\n  }\n\n  .xl\\:mt-px {\n    margin-top: 1px;\n  }\n\n  .xl\\:mr-px {\n    margin-right: 1px;\n  }\n\n  .xl\\:mb-px {\n    margin-bottom: 1px;\n  }\n\n  .xl\\:ml-px {\n    margin-left: 1px;\n  }\n\n  .xl\\:max-h-full {\n    max-height: 100%;\n  }\n\n  .xl\\:max-h-screen {\n    max-height: 100vh;\n  }\n\n  .xl\\:max-w-xs {\n    max-width: 20rem;\n  }\n\n  .xl\\:max-w-sm {\n    max-width: 30rem;\n  }\n\n  .xl\\:max-w-md {\n    max-width: 40rem;\n  }\n\n  .xl\\:max-w-lg {\n    max-width: 50rem;\n  }\n\n  .xl\\:max-w-xl {\n    max-width: 60rem;\n  }\n\n  .xl\\:max-w-2xl {\n    max-width: 70rem;\n  }\n\n  .xl\\:max-w-3xl {\n    max-width: 80rem;\n  }\n\n  .xl\\:max-w-4xl {\n    max-width: 90rem;\n  }\n\n  .xl\\:max-w-5xl {\n    max-width: 100rem;\n  }\n\n  .xl\\:max-w-full {\n    max-width: 100%;\n  }\n\n  .xl\\:min-h-0 {\n    min-height: 0;\n  }\n\n  .xl\\:min-h-full {\n    min-height: 100%;\n  }\n\n  .xl\\:min-h-screen {\n    min-height: 100vh;\n  }\n\n  .xl\\:min-w-0 {\n    min-width: 0;\n  }\n\n  .xl\\:min-w-full {\n    min-width: 100%;\n  }\n\n  .xl\\:-m-0 {\n    margin: 0;\n  }\n\n  .xl\\:-m-1 {\n    margin: -0.25rem;\n  }\n\n  .xl\\:-m-2 {\n    margin: -0.5rem;\n  }\n\n  .xl\\:-m-3 {\n    margin: -0.75rem;\n  }\n\n  .xl\\:-m-4 {\n    margin: -1rem;\n  }\n\n  .xl\\:-m-6 {\n    margin: -1.5rem;\n  }\n\n  .xl\\:-m-8 {\n    margin: -2rem;\n  }\n\n  .xl\\:-m-px {\n    margin: -1px;\n  }\n\n  .xl\\:-my-0 {\n    margin-top: 0;\n    margin-bottom: 0;\n  }\n\n  .xl\\:-mx-0 {\n    margin-left: 0;\n    margin-right: 0;\n  }\n\n  .xl\\:-my-1 {\n    margin-top: -0.25rem;\n    margin-bottom: -0.25rem;\n  }\n\n  .xl\\:-mx-1 {\n    margin-left: -0.25rem;\n    margin-right: -0.25rem;\n  }\n\n  .xl\\:-my-2 {\n    margin-top: -0.5rem;\n    margin-bottom: -0.5rem;\n  }\n\n  .xl\\:-mx-2 {\n    margin-left: -0.5rem;\n    margin-right: -0.5rem;\n  }\n\n  .xl\\:-my-3 {\n    margin-top: -0.75rem;\n    margin-bottom: -0.75rem;\n  }\n\n  .xl\\:-mx-3 {\n    margin-left: -0.75rem;\n    margin-right: -0.75rem;\n  }\n\n  .xl\\:-my-4 {\n    margin-top: -1rem;\n    margin-bottom: -1rem;\n  }\n\n  .xl\\:-mx-4 {\n    margin-left: -1rem;\n    margin-right: -1rem;\n  }\n\n  .xl\\:-my-6 {\n    margin-top: -1.5rem;\n    margin-bottom: -1.5rem;\n  }\n\n  .xl\\:-mx-6 {\n    margin-left: -1.5rem;\n    margin-right: -1.5rem;\n  }\n\n  .xl\\:-my-8 {\n    margin-top: -2rem;\n    margin-bottom: -2rem;\n  }\n\n  .xl\\:-mx-8 {\n    margin-left: -2rem;\n    margin-right: -2rem;\n  }\n\n  .xl\\:-my-px {\n    margin-top: -1px;\n    margin-bottom: -1px;\n  }\n\n  .xl\\:-mx-px {\n    margin-left: -1px;\n    margin-right: -1px;\n  }\n\n  .xl\\:-mt-0 {\n    margin-top: 0;\n  }\n\n  .xl\\:-mr-0 {\n    margin-right: 0;\n  }\n\n  .xl\\:-mb-0 {\n    margin-bottom: 0;\n  }\n\n  .xl\\:-ml-0 {\n    margin-left: 0;\n  }\n\n  .xl\\:-mt-1 {\n    margin-top: -0.25rem;\n  }\n\n  .xl\\:-mr-1 {\n    margin-right: -0.25rem;\n  }\n\n  .xl\\:-mb-1 {\n    margin-bottom: -0.25rem;\n  }\n\n  .xl\\:-ml-1 {\n    margin-left: -0.25rem;\n  }\n\n  .xl\\:-mt-2 {\n    margin-top: -0.5rem;\n  }\n\n  .xl\\:-mr-2 {\n    margin-right: -0.5rem;\n  }\n\n  .xl\\:-mb-2 {\n    margin-bottom: -0.5rem;\n  }\n\n  .xl\\:-ml-2 {\n    margin-left: -0.5rem;\n  }\n\n  .xl\\:-mt-3 {\n    margin-top: -0.75rem;\n  }\n\n  .xl\\:-mr-3 {\n    margin-right: -0.75rem;\n  }\n\n  .xl\\:-mb-3 {\n    margin-bottom: -0.75rem;\n  }\n\n  .xl\\:-ml-3 {\n    margin-left: -0.75rem;\n  }\n\n  .xl\\:-mt-4 {\n    margin-top: -1rem;\n  }\n\n  .xl\\:-mr-4 {\n    margin-right: -1rem;\n  }\n\n  .xl\\:-mb-4 {\n    margin-bottom: -1rem;\n  }\n\n  .xl\\:-ml-4 {\n    margin-left: -1rem;\n  }\n\n  .xl\\:-mt-6 {\n    margin-top: -1.5rem;\n  }\n\n  .xl\\:-mr-6 {\n    margin-right: -1.5rem;\n  }\n\n  .xl\\:-mb-6 {\n    margin-bottom: -1.5rem;\n  }\n\n  .xl\\:-ml-6 {\n    margin-left: -1.5rem;\n  }\n\n  .xl\\:-mt-8 {\n    margin-top: -2rem;\n  }\n\n  .xl\\:-mr-8 {\n    margin-right: -2rem;\n  }\n\n  .xl\\:-mb-8 {\n    margin-bottom: -2rem;\n  }\n\n  .xl\\:-ml-8 {\n    margin-left: -2rem;\n  }\n\n  .xl\\:-mt-px {\n    margin-top: -1px;\n  }\n\n  .xl\\:-mr-px {\n    margin-right: -1px;\n  }\n\n  .xl\\:-mb-px {\n    margin-bottom: -1px;\n  }\n\n  .xl\\:-ml-px {\n    margin-left: -1px;\n  }\n\n  .xl\\:opacity-0 {\n    opacity: 0;\n  }\n\n  .xl\\:opacity-25 {\n    opacity: .25;\n  }\n\n  .xl\\:opacity-50 {\n    opacity: .5;\n  }\n\n  .xl\\:opacity-75 {\n    opacity: .75;\n  }\n\n  .xl\\:opacity-100 {\n    opacity: 1;\n  }\n\n  .xl\\:overflow-auto {\n    overflow: auto;\n  }\n\n  .xl\\:overflow-hidden {\n    overflow: hidden;\n  }\n\n  .xl\\:overflow-visible {\n    overflow: visible;\n  }\n\n  .xl\\:overflow-scroll {\n    overflow: scroll;\n  }\n\n  .xl\\:overflow-x-auto {\n    overflow-x: auto;\n  }\n\n  .xl\\:overflow-y-auto {\n    overflow-y: auto;\n  }\n\n  .xl\\:overflow-x-scroll {\n    overflow-x: scroll;\n  }\n\n  .xl\\:overflow-y-scroll {\n    overflow-y: scroll;\n  }\n\n  .xl\\:scrolling-touch {\n    -webkit-overflow-scrolling: touch;\n  }\n\n  .xl\\:scrolling-auto {\n    -webkit-overflow-scrolling: auto;\n  }\n\n  .xl\\:p-0 {\n    padding: 0;\n  }\n\n  .xl\\:p-1 {\n    padding: .25rem;\n  }\n\n  .xl\\:p-2 {\n    padding: .5rem;\n  }\n\n  .xl\\:p-3 {\n    padding: .75rem;\n  }\n\n  .xl\\:p-4 {\n    padding: 1rem;\n  }\n\n  .xl\\:p-6 {\n    padding: 1.5rem;\n  }\n\n  .xl\\:p-8 {\n    padding: 2rem;\n  }\n\n  .xl\\:p-px {\n    padding: 1px;\n  }\n\n  .xl\\:py-0 {\n    padding-top: 0;\n    padding-bottom: 0;\n  }\n\n  .xl\\:px-0 {\n    padding-left: 0;\n    padding-right: 0;\n  }\n\n  .xl\\:py-1 {\n    padding-top: .25rem;\n    padding-bottom: .25rem;\n  }\n\n  .xl\\:px-1 {\n    padding-left: .25rem;\n    padding-right: .25rem;\n  }\n\n  .xl\\:py-2 {\n    padding-top: .5rem;\n    padding-bottom: .5rem;\n  }\n\n  .xl\\:px-2 {\n    padding-left: .5rem;\n    padding-right: .5rem;\n  }\n\n  .xl\\:py-3 {\n    padding-top: .75rem;\n    padding-bottom: .75rem;\n  }\n\n  .xl\\:px-3 {\n    padding-left: .75rem;\n    padding-right: .75rem;\n  }\n\n  .xl\\:py-4 {\n    padding-top: 1rem;\n    padding-bottom: 1rem;\n  }\n\n  .xl\\:px-4 {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n\n  .xl\\:py-6 {\n    padding-top: 1.5rem;\n    padding-bottom: 1.5rem;\n  }\n\n  .xl\\:px-6 {\n    padding-left: 1.5rem;\n    padding-right: 1.5rem;\n  }\n\n  .xl\\:py-8 {\n    padding-top: 2rem;\n    padding-bottom: 2rem;\n  }\n\n  .xl\\:px-8 {\n    padding-left: 2rem;\n    padding-right: 2rem;\n  }\n\n  .xl\\:py-px {\n    padding-top: 1px;\n    padding-bottom: 1px;\n  }\n\n  .xl\\:px-px {\n    padding-left: 1px;\n    padding-right: 1px;\n  }\n\n  .xl\\:pt-0 {\n    padding-top: 0;\n  }\n\n  .xl\\:pr-0 {\n    padding-right: 0;\n  }\n\n  .xl\\:pb-0 {\n    padding-bottom: 0;\n  }\n\n  .xl\\:pl-0 {\n    padding-left: 0;\n  }\n\n  .xl\\:pt-1 {\n    padding-top: .25rem;\n  }\n\n  .xl\\:pr-1 {\n    padding-right: .25rem;\n  }\n\n  .xl\\:pb-1 {\n    padding-bottom: .25rem;\n  }\n\n  .xl\\:pl-1 {\n    padding-left: .25rem;\n  }\n\n  .xl\\:pt-2 {\n    padding-top: .5rem;\n  }\n\n  .xl\\:pr-2 {\n    padding-right: .5rem;\n  }\n\n  .xl\\:pb-2 {\n    padding-bottom: .5rem;\n  }\n\n  .xl\\:pl-2 {\n    padding-left: .5rem;\n  }\n\n  .xl\\:pt-3 {\n    padding-top: .75rem;\n  }\n\n  .xl\\:pr-3 {\n    padding-right: .75rem;\n  }\n\n  .xl\\:pb-3 {\n    padding-bottom: .75rem;\n  }\n\n  .xl\\:pl-3 {\n    padding-left: .75rem;\n  }\n\n  .xl\\:pt-4 {\n    padding-top: 1rem;\n  }\n\n  .xl\\:pr-4 {\n    padding-right: 1rem;\n  }\n\n  .xl\\:pb-4 {\n    padding-bottom: 1rem;\n  }\n\n  .xl\\:pl-4 {\n    padding-left: 1rem;\n  }\n\n  .xl\\:pt-6 {\n    padding-top: 1.5rem;\n  }\n\n  .xl\\:pr-6 {\n    padding-right: 1.5rem;\n  }\n\n  .xl\\:pb-6 {\n    padding-bottom: 1.5rem;\n  }\n\n  .xl\\:pl-6 {\n    padding-left: 1.5rem;\n  }\n\n  .xl\\:pt-8 {\n    padding-top: 2rem;\n  }\n\n  .xl\\:pr-8 {\n    padding-right: 2rem;\n  }\n\n  .xl\\:pb-8 {\n    padding-bottom: 2rem;\n  }\n\n  .xl\\:pl-8 {\n    padding-left: 2rem;\n  }\n\n  .xl\\:pt-px {\n    padding-top: 1px;\n  }\n\n  .xl\\:pr-px {\n    padding-right: 1px;\n  }\n\n  .xl\\:pb-px {\n    padding-bottom: 1px;\n  }\n\n  .xl\\:pl-px {\n    padding-left: 1px;\n  }\n\n  .xl\\:pointer-events-none {\n    pointer-events: none;\n  }\n\n  .xl\\:pointer-events-auto {\n    pointer-events: auto;\n  }\n\n  .xl\\:static {\n    position: static;\n  }\n\n  .xl\\:fixed {\n    position: fixed;\n  }\n\n  .xl\\:absolute {\n    position: absolute;\n  }\n\n  .xl\\:relative {\n    position: relative;\n  }\n\n  .xl\\:sticky {\n    position: -webkit-sticky;\n    position: sticky;\n  }\n\n  .xl\\:pin-none {\n    top: auto;\n    right: auto;\n    bottom: auto;\n    left: auto;\n  }\n\n  .xl\\:pin {\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n  }\n\n  .xl\\:pin-y {\n    top: 0;\n    bottom: 0;\n  }\n\n  .xl\\:pin-x {\n    right: 0;\n    left: 0;\n  }\n\n  .xl\\:pin-t {\n    top: 0;\n  }\n\n  .xl\\:pin-r {\n    right: 0;\n  }\n\n  .xl\\:pin-b {\n    bottom: 0;\n  }\n\n  .xl\\:pin-l {\n    left: 0;\n  }\n\n  .xl\\:resize-none {\n    resize: none;\n  }\n\n  .xl\\:resize-y {\n    resize: vertical;\n  }\n\n  .xl\\:resize-x {\n    resize: horizontal;\n  }\n\n  .xl\\:resize {\n    resize: both;\n  }\n\n  .xl\\:shadow {\n    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);\n  }\n\n  .xl\\:shadow-md {\n    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .12), 0 2px 4px 0 rgba(0, 0, 0, .08);\n  }\n\n  .xl\\:shadow-lg {\n    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, .11), 0 5px 15px 0 rgba(0, 0, 0, .08);\n  }\n\n  .xl\\:shadow-inner {\n    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);\n  }\n\n  .xl\\:shadow-none {\n    box-shadow: none;\n  }\n\n  .xl\\:text-left {\n    text-align: left;\n  }\n\n  .xl\\:text-center {\n    text-align: center;\n  }\n\n  .xl\\:text-right {\n    text-align: right;\n  }\n\n  .xl\\:text-justify {\n    text-align: justify;\n  }\n\n  .xl\\:text-transparent {\n    color: transparent;\n  }\n\n  .xl\\:text-black {\n    color: #22292f;\n  }\n\n  .xl\\:text-grey-darkest {\n    color: #3d4852;\n  }\n\n  .xl\\:text-grey-darker {\n    color: #606f7b;\n  }\n\n  .xl\\:text-grey-dark {\n    color: #8795a1;\n  }\n\n  .xl\\:text-grey {\n    color: #b8c2cc;\n  }\n\n  .xl\\:text-grey-light {\n    color: #dae1e7;\n  }\n\n  .xl\\:text-grey-lighter {\n    color: #f1f5f8;\n  }\n\n  .xl\\:text-grey-lightest {\n    color: #f8fafc;\n  }\n\n  .xl\\:text-white {\n    color: #fff;\n  }\n\n  .xl\\:text-red-darkest {\n    color: #3b0d0c;\n  }\n\n  .xl\\:text-red-darker {\n    color: #621b18;\n  }\n\n  .xl\\:text-red-dark {\n    color: #cc1f1a;\n  }\n\n  .xl\\:text-red {\n    color: #e3342f;\n  }\n\n  .xl\\:text-red-light {\n    color: #ef5753;\n  }\n\n  .xl\\:text-red-lighter {\n    color: #f9acaa;\n  }\n\n  .xl\\:text-red-lightest {\n    color: #fcebea;\n  }\n\n  .xl\\:text-orange-darkest {\n    color: #462a16;\n  }\n\n  .xl\\:text-orange-darker {\n    color: #613b1f;\n  }\n\n  .xl\\:text-orange-dark {\n    color: #de751f;\n  }\n\n  .xl\\:text-orange {\n    color: #f6993f;\n  }\n\n  .xl\\:text-orange-light {\n    color: #faad63;\n  }\n\n  .xl\\:text-orange-lighter {\n    color: #fcd9b6;\n  }\n\n  .xl\\:text-orange-lightest {\n    color: #fff5eb;\n  }\n\n  .xl\\:text-yellow-darkest {\n    color: #453411;\n  }\n\n  .xl\\:text-yellow-darker {\n    color: #684f1d;\n  }\n\n  .xl\\:text-yellow-dark {\n    color: #f2d024;\n  }\n\n  .xl\\:text-yellow {\n    color: #ffed4a;\n  }\n\n  .xl\\:text-yellow-light {\n    color: #fff382;\n  }\n\n  .xl\\:text-yellow-lighter {\n    color: #fff9c2;\n  }\n\n  .xl\\:text-yellow-lightest {\n    color: #fcfbeb;\n  }\n\n  .xl\\:text-green-darkest {\n    color: #0f2f21;\n  }\n\n  .xl\\:text-green-darker {\n    color: #1a4731;\n  }\n\n  .xl\\:text-green-dark {\n    color: #1f9d55;\n  }\n\n  .xl\\:text-green {\n    color: #38c172;\n  }\n\n  .xl\\:text-green-light {\n    color: #51d88a;\n  }\n\n  .xl\\:text-green-lighter {\n    color: #a2f5bf;\n  }\n\n  .xl\\:text-green-lightest {\n    color: #e3fcec;\n  }\n\n  .xl\\:text-teal-darkest {\n    color: #0d3331;\n  }\n\n  .xl\\:text-teal-darker {\n    color: #20504f;\n  }\n\n  .xl\\:text-teal-dark {\n    color: #38a89d;\n  }\n\n  .xl\\:text-teal {\n    color: #4dc0b5;\n  }\n\n  .xl\\:text-teal-light {\n    color: #64d5ca;\n  }\n\n  .xl\\:text-teal-lighter {\n    color: #a0f0ed;\n  }\n\n  .xl\\:text-teal-lightest {\n    color: #e8fffe;\n  }\n\n  .xl\\:text-blue-darkest {\n    color: #12283a;\n  }\n\n  .xl\\:text-blue-darker {\n    color: #1c3d5a;\n  }\n\n  .xl\\:text-blue-dark {\n    color: #2779bd;\n  }\n\n  .xl\\:text-blue {\n    color: #3490dc;\n  }\n\n  .xl\\:text-blue-light {\n    color: #6cb2eb;\n  }\n\n  .xl\\:text-blue-lighter {\n    color: #bcdefa;\n  }\n\n  .xl\\:text-blue-lightest {\n    color: #eff8ff;\n  }\n\n  .xl\\:text-indigo-darkest {\n    color: #191e38;\n  }\n\n  .xl\\:text-indigo-darker {\n    color: #2f365f;\n  }\n\n  .xl\\:text-indigo-dark {\n    color: #5661b3;\n  }\n\n  .xl\\:text-indigo {\n    color: #6574cd;\n  }\n\n  .xl\\:text-indigo-light {\n    color: #7886d7;\n  }\n\n  .xl\\:text-indigo-lighter {\n    color: #b2b7ff;\n  }\n\n  .xl\\:text-indigo-lightest {\n    color: #e6e8ff;\n  }\n\n  .xl\\:text-purple-darkest {\n    color: #21183c;\n  }\n\n  .xl\\:text-purple-darker {\n    color: #382b5f;\n  }\n\n  .xl\\:text-purple-dark {\n    color: #794acf;\n  }\n\n  .xl\\:text-purple {\n    color: #9561e2;\n  }\n\n  .xl\\:text-purple-light {\n    color: #a779e9;\n  }\n\n  .xl\\:text-purple-lighter {\n    color: #d6bbfc;\n  }\n\n  .xl\\:text-purple-lightest {\n    color: #f3ebff;\n  }\n\n  .xl\\:text-pink-darkest {\n    color: #451225;\n  }\n\n  .xl\\:text-pink-darker {\n    color: #6f213f;\n  }\n\n  .xl\\:text-pink-dark {\n    color: #eb5286;\n  }\n\n  .xl\\:text-pink {\n    color: #f66d9b;\n  }\n\n  .xl\\:text-pink-light {\n    color: #fa7ea8;\n  }\n\n  .xl\\:text-pink-lighter {\n    color: #ffbbca;\n  }\n\n  .xl\\:text-pink-lightest {\n    color: #ffebef;\n  }\n\n  .xl\\:hover\\:text-transparent:hover {\n    color: transparent;\n  }\n\n  .xl\\:hover\\:text-black:hover {\n    color: #22292f;\n  }\n\n  .xl\\:hover\\:text-grey-darkest:hover {\n    color: #3d4852;\n  }\n\n  .xl\\:hover\\:text-grey-darker:hover {\n    color: #606f7b;\n  }\n\n  .xl\\:hover\\:text-grey-dark:hover {\n    color: #8795a1;\n  }\n\n  .xl\\:hover\\:text-grey:hover {\n    color: #b8c2cc;\n  }\n\n  .xl\\:hover\\:text-grey-light:hover {\n    color: #dae1e7;\n  }\n\n  .xl\\:hover\\:text-grey-lighter:hover {\n    color: #f1f5f8;\n  }\n\n  .xl\\:hover\\:text-grey-lightest:hover {\n    color: #f8fafc;\n  }\n\n  .xl\\:hover\\:text-white:hover {\n    color: #fff;\n  }\n\n  .xl\\:hover\\:text-red-darkest:hover {\n    color: #3b0d0c;\n  }\n\n  .xl\\:hover\\:text-red-darker:hover {\n    color: #621b18;\n  }\n\n  .xl\\:hover\\:text-red-dark:hover {\n    color: #cc1f1a;\n  }\n\n  .xl\\:hover\\:text-red:hover {\n    color: #e3342f;\n  }\n\n  .xl\\:hover\\:text-red-light:hover {\n    color: #ef5753;\n  }\n\n  .xl\\:hover\\:text-red-lighter:hover {\n    color: #f9acaa;\n  }\n\n  .xl\\:hover\\:text-red-lightest:hover {\n    color: #fcebea;\n  }\n\n  .xl\\:hover\\:text-orange-darkest:hover {\n    color: #462a16;\n  }\n\n  .xl\\:hover\\:text-orange-darker:hover {\n    color: #613b1f;\n  }\n\n  .xl\\:hover\\:text-orange-dark:hover {\n    color: #de751f;\n  }\n\n  .xl\\:hover\\:text-orange:hover {\n    color: #f6993f;\n  }\n\n  .xl\\:hover\\:text-orange-light:hover {\n    color: #faad63;\n  }\n\n  .xl\\:hover\\:text-orange-lighter:hover {\n    color: #fcd9b6;\n  }\n\n  .xl\\:hover\\:text-orange-lightest:hover {\n    color: #fff5eb;\n  }\n\n  .xl\\:hover\\:text-yellow-darkest:hover {\n    color: #453411;\n  }\n\n  .xl\\:hover\\:text-yellow-darker:hover {\n    color: #684f1d;\n  }\n\n  .xl\\:hover\\:text-yellow-dark:hover {\n    color: #f2d024;\n  }\n\n  .xl\\:hover\\:text-yellow:hover {\n    color: #ffed4a;\n  }\n\n  .xl\\:hover\\:text-yellow-light:hover {\n    color: #fff382;\n  }\n\n  .xl\\:hover\\:text-yellow-lighter:hover {\n    color: #fff9c2;\n  }\n\n  .xl\\:hover\\:text-yellow-lightest:hover {\n    color: #fcfbeb;\n  }\n\n  .xl\\:hover\\:text-green-darkest:hover {\n    color: #0f2f21;\n  }\n\n  .xl\\:hover\\:text-green-darker:hover {\n    color: #1a4731;\n  }\n\n  .xl\\:hover\\:text-green-dark:hover {\n    color: #1f9d55;\n  }\n\n  .xl\\:hover\\:text-green:hover {\n    color: #38c172;\n  }\n\n  .xl\\:hover\\:text-green-light:hover {\n    color: #51d88a;\n  }\n\n  .xl\\:hover\\:text-green-lighter:hover {\n    color: #a2f5bf;\n  }\n\n  .xl\\:hover\\:text-green-lightest:hover {\n    color: #e3fcec;\n  }\n\n  .xl\\:hover\\:text-teal-darkest:hover {\n    color: #0d3331;\n  }\n\n  .xl\\:hover\\:text-teal-darker:hover {\n    color: #20504f;\n  }\n\n  .xl\\:hover\\:text-teal-dark:hover {\n    color: #38a89d;\n  }\n\n  .xl\\:hover\\:text-teal:hover {\n    color: #4dc0b5;\n  }\n\n  .xl\\:hover\\:text-teal-light:hover {\n    color: #64d5ca;\n  }\n\n  .xl\\:hover\\:text-teal-lighter:hover {\n    color: #a0f0ed;\n  }\n\n  .xl\\:hover\\:text-teal-lightest:hover {\n    color: #e8fffe;\n  }\n\n  .xl\\:hover\\:text-blue-darkest:hover {\n    color: #12283a;\n  }\n\n  .xl\\:hover\\:text-blue-darker:hover {\n    color: #1c3d5a;\n  }\n\n  .xl\\:hover\\:text-blue-dark:hover {\n    color: #2779bd;\n  }\n\n  .xl\\:hover\\:text-blue:hover {\n    color: #3490dc;\n  }\n\n  .xl\\:hover\\:text-blue-light:hover {\n    color: #6cb2eb;\n  }\n\n  .xl\\:hover\\:text-blue-lighter:hover {\n    color: #bcdefa;\n  }\n\n  .xl\\:hover\\:text-blue-lightest:hover {\n    color: #eff8ff;\n  }\n\n  .xl\\:hover\\:text-indigo-darkest:hover {\n    color: #191e38;\n  }\n\n  .xl\\:hover\\:text-indigo-darker:hover {\n    color: #2f365f;\n  }\n\n  .xl\\:hover\\:text-indigo-dark:hover {\n    color: #5661b3;\n  }\n\n  .xl\\:hover\\:text-indigo:hover {\n    color: #6574cd;\n  }\n\n  .xl\\:hover\\:text-indigo-light:hover {\n    color: #7886d7;\n  }\n\n  .xl\\:hover\\:text-indigo-lighter:hover {\n    color: #b2b7ff;\n  }\n\n  .xl\\:hover\\:text-indigo-lightest:hover {\n    color: #e6e8ff;\n  }\n\n  .xl\\:hover\\:text-purple-darkest:hover {\n    color: #21183c;\n  }\n\n  .xl\\:hover\\:text-purple-darker:hover {\n    color: #382b5f;\n  }\n\n  .xl\\:hover\\:text-purple-dark:hover {\n    color: #794acf;\n  }\n\n  .xl\\:hover\\:text-purple:hover {\n    color: #9561e2;\n  }\n\n  .xl\\:hover\\:text-purple-light:hover {\n    color: #a779e9;\n  }\n\n  .xl\\:hover\\:text-purple-lighter:hover {\n    color: #d6bbfc;\n  }\n\n  .xl\\:hover\\:text-purple-lightest:hover {\n    color: #f3ebff;\n  }\n\n  .xl\\:hover\\:text-pink-darkest:hover {\n    color: #451225;\n  }\n\n  .xl\\:hover\\:text-pink-darker:hover {\n    color: #6f213f;\n  }\n\n  .xl\\:hover\\:text-pink-dark:hover {\n    color: #eb5286;\n  }\n\n  .xl\\:hover\\:text-pink:hover {\n    color: #f66d9b;\n  }\n\n  .xl\\:hover\\:text-pink-light:hover {\n    color: #fa7ea8;\n  }\n\n  .xl\\:hover\\:text-pink-lighter:hover {\n    color: #ffbbca;\n  }\n\n  .xl\\:hover\\:text-pink-lightest:hover {\n    color: #ffebef;\n  }\n\n  .xl\\:text-xs {\n    font-size: .75rem;\n  }\n\n  .xl\\:text-sm {\n    font-size: .875rem;\n  }\n\n  .xl\\:text-base {\n    font-size: 1rem;\n  }\n\n  .xl\\:text-lg {\n    font-size: 1.125rem;\n  }\n\n  .xl\\:text-xl {\n    font-size: 1.25rem;\n  }\n\n  .xl\\:text-2xl {\n    font-size: 1.5rem;\n  }\n\n  .xl\\:text-3xl {\n    font-size: 1.875rem;\n  }\n\n  .xl\\:text-4xl {\n    font-size: 2.25rem;\n  }\n\n  .xl\\:text-5xl {\n    font-size: 3rem;\n  }\n\n  .xl\\:italic {\n    font-style: italic;\n  }\n\n  .xl\\:roman {\n    font-style: normal;\n  }\n\n  .xl\\:uppercase {\n    text-transform: uppercase;\n  }\n\n  .xl\\:lowercase {\n    text-transform: lowercase;\n  }\n\n  .xl\\:capitalize {\n    text-transform: capitalize;\n  }\n\n  .xl\\:normal-case {\n    text-transform: none;\n  }\n\n  .xl\\:underline {\n    text-decoration: underline;\n  }\n\n  .xl\\:line-through {\n    text-decoration: line-through;\n  }\n\n  .xl\\:no-underline {\n    text-decoration: none;\n  }\n\n  .xl\\:antialiased {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .xl\\:subpixel-antialiased {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .xl\\:hover\\:italic:hover {\n    font-style: italic;\n  }\n\n  .xl\\:hover\\:roman:hover {\n    font-style: normal;\n  }\n\n  .xl\\:hover\\:uppercase:hover {\n    text-transform: uppercase;\n  }\n\n  .xl\\:hover\\:lowercase:hover {\n    text-transform: lowercase;\n  }\n\n  .xl\\:hover\\:capitalize:hover {\n    text-transform: capitalize;\n  }\n\n  .xl\\:hover\\:normal-case:hover {\n    text-transform: none;\n  }\n\n  .xl\\:hover\\:underline:hover {\n    text-decoration: underline;\n  }\n\n  .xl\\:hover\\:line-through:hover {\n    text-decoration: line-through;\n  }\n\n  .xl\\:hover\\:no-underline:hover {\n    text-decoration: none;\n  }\n\n  .xl\\:hover\\:antialiased:hover {\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n  }\n\n  .xl\\:hover\\:subpixel-antialiased:hover {\n    -webkit-font-smoothing: auto;\n    -moz-osx-font-smoothing: auto;\n  }\n\n  .xl\\:tracking-tight {\n    letter-spacing: -0.05em;\n  }\n\n  .xl\\:tracking-normal {\n    letter-spacing: 0;\n  }\n\n  .xl\\:tracking-wide {\n    letter-spacing: .05em;\n  }\n\n  .xl\\:select-none {\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n  }\n\n  .xl\\:select-text {\n    -webkit-user-select: text;\n       -moz-user-select: text;\n        -ms-user-select: text;\n            user-select: text;\n  }\n\n  .xl\\:align-baseline {\n    vertical-align: baseline;\n  }\n\n  .xl\\:align-top {\n    vertical-align: top;\n  }\n\n  .xl\\:align-middle {\n    vertical-align: middle;\n  }\n\n  .xl\\:align-bottom {\n    vertical-align: bottom;\n  }\n\n  .xl\\:align-text-top {\n    vertical-align: text-top;\n  }\n\n  .xl\\:align-text-bottom {\n    vertical-align: text-bottom;\n  }\n\n  .xl\\:visible {\n    visibility: visible;\n  }\n\n  .xl\\:invisible {\n    visibility: hidden;\n  }\n\n  .xl\\:whitespace-normal {\n    white-space: normal;\n  }\n\n  .xl\\:whitespace-no-wrap {\n    white-space: nowrap;\n  }\n\n  .xl\\:whitespace-pre {\n    white-space: pre;\n  }\n\n  .xl\\:whitespace-pre-line {\n    white-space: pre-line;\n  }\n\n  .xl\\:whitespace-pre-wrap {\n    white-space: pre-wrap;\n  }\n\n  .xl\\:break-words {\n    word-wrap: break-word;\n  }\n\n  .xl\\:break-normal {\n    word-wrap: normal;\n  }\n\n  .xl\\:truncate {\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n\n  .xl\\:w-1 {\n    width: .25rem;\n  }\n\n  .xl\\:w-2 {\n    width: .5rem;\n  }\n\n  .xl\\:w-3 {\n    width: .75rem;\n  }\n\n  .xl\\:w-4 {\n    width: 1rem;\n  }\n\n  .xl\\:w-6 {\n    width: 1.5rem;\n  }\n\n  .xl\\:w-8 {\n    width: 2rem;\n  }\n\n  .xl\\:w-10 {\n    width: 2.5rem;\n  }\n\n  .xl\\:w-12 {\n    width: 3rem;\n  }\n\n  .xl\\:w-16 {\n    width: 4rem;\n  }\n\n  .xl\\:w-24 {\n    width: 6rem;\n  }\n\n  .xl\\:w-32 {\n    width: 8rem;\n  }\n\n  .xl\\:w-48 {\n    width: 12rem;\n  }\n\n  .xl\\:w-64 {\n    width: 16rem;\n  }\n\n  .xl\\:w-auto {\n    width: auto;\n  }\n\n  .xl\\:w-px {\n    width: 1px;\n  }\n\n  .xl\\:w-1\\/2 {\n    width: 50%;\n  }\n\n  .xl\\:w-1\\/3 {\n    width: 33.33333%;\n  }\n\n  .xl\\:w-2\\/3 {\n    width: 66.66667%;\n  }\n\n  .xl\\:w-1\\/4 {\n    width: 25%;\n  }\n\n  .xl\\:w-3\\/4 {\n    width: 75%;\n  }\n\n  .xl\\:w-1\\/5 {\n    width: 20%;\n  }\n\n  .xl\\:w-2\\/5 {\n    width: 40%;\n  }\n\n  .xl\\:w-3\\/5 {\n    width: 60%;\n  }\n\n  .xl\\:w-4\\/5 {\n    width: 80%;\n  }\n\n  .xl\\:w-1\\/6 {\n    width: 16.66667%;\n  }\n\n  .xl\\:w-5\\/6 {\n    width: 83.33333%;\n  }\n\n  .xl\\:w-full {\n    width: 100%;\n  }\n\n  .xl\\:w-screen {\n    width: 100vw;\n  }\n\n  .xl\\:z-0 {\n    z-index: 0;\n  }\n\n  .xl\\:z-10 {\n    z-index: 10;\n  }\n\n  .xl\\:z-20 {\n    z-index: 20;\n  }\n\n  .xl\\:z-30 {\n    z-index: 30;\n  }\n\n  .xl\\:z-40 {\n    z-index: 40;\n  }\n\n  .xl\\:z-50 {\n    z-index: 50;\n  }\n\n  .xl\\:z-auto {\n    z-index: auto;\n  }\n}\n")
 });
-___scope___.file("modules/lab/App.css", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/tabs/DataTab.scss", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("modules/lab/App.css", "\r\n.grid {\r\n    display: grid;\r\n    grid-template-columns: repeat(4, 1fr);\r\n    grid-gap: .5rem;\r\n}\r\n\r\n.span-col-2 {\r\n    grid-column: span 2 / auto;\r\n}\r\n\r\n.span-row-2 {\r\n    grid-row: span 2 / auto;\r\n}\r\n\r\n/*@media screen and (min-width: 768px) {*/\r\n    /*.grid {*/\r\n        /*grid-template-columns: repeat(2, 1fr);*/\r\n    /*}*/\r\n/*}*/\r\n\r\n@media screen and (min-width: 768px) {\r\n    .grid {\r\n        grid-template-columns: repeat(3, 1fr);\r\n    }\r\n}\r\n\r\n@media screen and (min-width: 1024px) {\r\n    .grid {\r\n        grid-template-columns: repeat(4, 1fr);\r\n    }\r\n}\r\n\r\n.grid a img {\r\n    transition: all .2s ease-in;\r\n    filter: grayscale(100%);\r\n}\r\n\r\n.grid a:hover img {\r\n    filter: grayscale(0);\r\n}")
+require("fuse-box-css")("modules/som-designer/tabs/DataTab.scss", ":local(.tab) {\n  padding: 10px 16px; }\n  :local(.tab) hr {\n    border: none;\n    border-top: 1px solid #ccc;\n    margin: 20px -16px; }\n  :local(.tab) h2 {\n    color: rgba(0, 0, 0, 0.54);\n    font-weight: 500;\n    font-size: 14px;\n    line-height: 1em; }\n\n:local(.datasource) {\n  position: relative;\n  border-bottom: 1px solid #ddd;\n  min-height: 48px; }\n  :local(.datasource) span.js-label {\n    position: absolute;\n    display: block;\n    width: 40px;\n    text-align: center;\n    line-height: 48px;\n    color: #ccc;\n    font-weight: bold;\n    font-size: 1.4em;\n    transition: 0.3s ease all; }\n    :local(.datasource) span.js-label:hover {\n      color: #888; }\n  :local(.datasource) div.content {\n    padding: 6px 0 2px 50px; }\n    :local(.datasource) div.content span.title {\n      font-size: .8em; }\n      :local(.datasource) div.content span.title span.cluster-type {\n        font-weight: bold;\n        text-transform: uppercase; }\n      :local(.datasource) div.content span.title input {\n        outline: none;\n        font: inherit;\n        border: none;\n        border-bottom: 1px solid #e0e0e0;\n        width: 30px;\n        line-height: 1em;\n        text-align: center;\n        margin: 0 2px;\n        /* Make this look like an ordinary text field */\n        -moz-appearance: textfield; }\n        :local(.datasource) div.content span.title input::-webkit-outer-spin-button, :local(.datasource) div.content span.title input::-webkit-inner-spin-button {\n          -webkit-appearance: none; }\n        :local(.datasource) div.content span.title input:focus {\n          border-bottom-color: #00bcd4; }\n\n:local(.weight-editor) div.color {\n  position: absolute;\n  top: 20px;\n  left: 14px;\n  width: 24px;\n  height: 24px;\n  border-radius: 100%;\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4); }\n\n:local(.we-popover-content) span.title {\n  display: block;\n  text-align: center;\n  margin: 4px 0; }\n\n:local(.we-popover-content) div.coordinate b.caption {\n  display: inline-block;\n  width: 20px; }\n\n/*# sourceMappingURL=DataTab.scss.map */")
 });
-___scope___.file("modules/lab/toolbar.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("modules/som-designer/tabs/ModelTab.jsx", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-//import {observer, inject} from 'mobx-react'
-//import styled, { StyledFunction } from 'styled-components';
-const core_1 = require("@blueprintjs/core");
-const icons_1 = require("@blueprintjs/icons");
-exports.LabToolbar = () => (React.createElement(core_1.ButtonGroup, { large: true, fill: true },
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.CODE }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.SCATTER_PLOT }),
-    React.createElement(core_1.Button, { icon: icons_1.IconNames.GRAPH })));
+const NumberInput_1 = require("../NumberInput");
+const LearningRatePreview_1 = require("../LearningRatePreview");
+const lib_1 = require("../../../lib");
+const style = require("./ModelTab.scss");
+const SelectField_1 = require("material-ui/SelectField");
+const MenuItem_1 = require("material-ui/MenuItem");
+class ModelTab extends React.Component {
+    constructor() {
+        super(...arguments);
+        this.resizeHandler = () => {
+            this.forceUpdate();
+        };
+    }
+    renderModelControls() {
+        return React.createElement("div", null,
+            React.createElement("div", { className: style["control-with-label"] },
+                React.createElement("span", null, "Size"),
+                React.createElement(NumberInput_1.NumberInput, { min: 1, step: 1, onChange: width => {
+                        this.props.model.setDimensions(width, this.props.model.height);
+                        this.props.onUpdateModel();
+                    }, value: this.props.model.width }),
+                "\u00D7",
+                React.createElement(NumberInput_1.NumberInput, { min: 1, step: 1, onChange: height => {
+                        this.props.model.setDimensions(this.props.model.width, height);
+                        this.props.onUpdateModel();
+                    }, value: this.props.model.height })));
+    }
+    renderInitializationControls() {
+        return React.createElement(SelectField_1.default, { floatingLabelText: "Method", value: this.props.initializer.constructor, onChange: (e, index, klass) => {
+                this.props.onChangeInitializer(new klass());
+            }, style: {
+                marginTop: -20
+            } },
+            React.createElement(MenuItem_1.default, { value: lib_1.RandomInitializer, primaryText: "Random" }),
+            React.createElement(MenuItem_1.default, { value: lib_1.PCAInitializer, primaryText: "PCA" }));
+    }
+    renderTrainingControls() {
+        let parentWidth = this.refs["tab"] ? this.refs["tab"].clientWidth - 30 : 200;
+        return React.createElement("div", null,
+            React.createElement("div", { className: style["control-with-label"] },
+                React.createElement("span", null, "# iterations"),
+                React.createElement(NumberInput_1.NumberInput, { min: 0, step: 1000, value: this.props.trainer.maxIteration, onChange: v => {
+                        this.props.trainer.maxIteration = v;
+                        this.props.onUpdateTrainer();
+                    } })),
+            React.createElement("div", { className: style["control-with-label"] },
+                React.createElement("span", null, "Learning rate"),
+                React.createElement(NumberInput_1.NumberInput, { step: 0.01, value: this.props.trainer.learningRateBounds.start, onChange: v => {
+                        this.props.trainer.learningRateBounds.start = v;
+                        this.props.onUpdateTrainer();
+                    } }),
+                " to",
+                React.createElement(NumberInput_1.NumberInput, { step: 0.001, value: this.props.trainer.learningRateBounds.end, onChange: v => {
+                        this.props.trainer.learningRateBounds.end = v;
+                        this.props.onUpdateTrainer();
+                    } })),
+            React.createElement("div", { className: style["control-with-label"] },
+                React.createElement("span", null, "Neighbor size"),
+                React.createElement(NumberInput_1.NumberInput, { step: 1, value: this.props.trainer.neighborSizeBounds.start, onChange: v => {
+                        this.props.trainer.neighborSizeBounds.start = v;
+                        this.props.onUpdateTrainer();
+                    } }),
+                " to",
+                React.createElement(NumberInput_1.NumberInput, { step: 0.01, value: this.props.trainer.neighborSizeBounds.end, onChange: v => {
+                        this.props.trainer.neighborSizeBounds.end = v;
+                        this.props.onUpdateTrainer();
+                    } })),
+            React.createElement(LearningRatePreview_1.LearningRatePreview, { learningRate: this.props.trainer.learningRate, neighborSize: this.props.trainer.neighborSize, width: parentWidth, height: 150, style: {
+                    marginTop: 30
+                } }));
+    }
+    componentDidMount() {
+        window.addEventListener("resize", this.resizeHandler);
+    }
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.resizeHandler);
+    }
+    render() {
+        return React.createElement("div", { className: style["tab"], ref: "tab" },
+            React.createElement("h2", null, "Model"),
+            this.renderModelControls(),
+            React.createElement("hr", null),
+            React.createElement("h2", null, "Initialization"),
+            this.renderInitializationControls(),
+            React.createElement("hr", null),
+            React.createElement("h2", null, "Training"),
+            this.renderTrainingControls());
+    }
+}
+exports.ModelTab = ModelTab;
 
+});
+___scope___.file("modules/som-designer/LearningRatePreview.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const lib_1 = require("../../lib");
+class SimpleDatasetSampler extends lib_1.DatasetSampler {
+    constructor() {
+        super(null);
+    }
+    nextSample() {
+        return [0.5, 1, 0.5];
+    }
+}
+class LearningRatePreview extends React.Component {
+    constructor(props) {
+        super(props);
+        // setup model and trainer
+        this.model = new lib_1.Model(15, 15, new lib_1.SquareLattice());
+        this.trainer = new lib_1.Trainer(this.model, new SimpleDatasetSampler());
+        this.trainer.maxIteration = 1;
+        // initialize model to square
+        for (let i = 0; i < this.model.neuronCount; ++i) {
+            let [x, z] = this.model.neuronPositionInLattice(i);
+            this.model.weightMatrix.set(i, 0, x / (this.model.width - 1));
+            // dim 1 stays zero
+            this.model.weightMatrix.set(i, 2, z / (this.model.height - 1));
+        }
+        // clone weight matrix
+        this.weightMatrix = this.model.weightMatrix.clone();
+    }
+    updateWeightMatrix() {
+        // setup trainer
+        this.trainer.learningRateBounds = { start: this.props.learningRate, end: 0 };
+        this.trainer.neighborSizeBounds = { start: this.props.neighborSize, end: 0 };
+        // iterate
+        this.trainer.currentIteration = 0;
+        this.trainer.iterate(1, this.weightMatrix);
+    }
+    project(vec) {
+        let x = (vec[0] + (vec[2] - 0.5) * 0.5) * 0.8 + 0.1;
+        let y = 0.8 - (vec[1] + vec[2] * 0.5) * 0.6;
+        return [
+            x * this.props.height + (this.props.width - this.props.height) / 2,
+            y * this.props.height
+        ];
+    }
+    render() {
+        this.updateWeightMatrix();
+        let projections = new Map();
+        let interior = [];
+        // add dataset circle and dashed line
+        {
+            let [cx, cy] = this.project([0.5, 1, 0.5]);
+            let [cx2, cy2] = this.project([0.5, 0, 0.5]);
+            interior.push(React.createElement("circle", { cx: cx, cy: cy, r: 1, fill: "#000" }), React.createElement("line", { x1: cx, y1: cy, x2: cx2, y2: cy2, strokeDasharray: "5, 5", style: {
+                    stroke: "#ccc",
+                    strokeWidth: 1
+                } }));
+        }
+        // add model grid
+        for (let i = 0; i < this.weightMatrix.rows; ++i) {
+            let projection = this.project(this.weightMatrix.getRow(i));
+            let [x, y] = projection;
+            projections.set(i, [x, y]);
+            // find connections to previous neurons
+            for (let j = 0; j < i; ++j)
+                if (this.model.distanceMatrix.get(i, j) <= 1) {
+                    // connect these neighboring neurons
+                    let [x2, y2] = projections.get(j);
+                    interior.push(React.createElement("line", { x1: x, y1: y, x2: x2, y2: y2, style: {
+                            stroke: `rgb(255, 0, 0)`,
+                            strokeWidth: 1
+                        } }));
+                }
+        }
+        // render
+        return React.createElement("svg", { width: this.props.width, height: this.props.height, style: this.props.style },
+            React.createElement("text", { x: "0", y: "15", fill: "#333" },
+                "LR: ",
+                this.props.learningRate.toFixed(3)),
+            React.createElement("text", { x: "0", y: "30", fill: "#333" },
+                "NS: ",
+                this.props.neighborSize.toFixed(3)),
+            interior);
+    }
+}
+exports.LearningRatePreview = LearningRatePreview;
+
+});
+___scope___.file("modules/som-designer/tabs/ModelTab.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/som-designer/tabs/ModelTab.scss", ":local(.tab) {\n  padding: 10px 16px; }\n  :local(.tab) hr {\n    border: none;\n    border-top: 1px solid #ccc;\n    margin: 20px -16px; }\n  :local(.tab) h2 {\n    color: rgba(0, 0, 0, 0.54);\n    font-weight: 500;\n    font-size: 14px;\n    line-height: 1em; }\n\n:local(.tab) input[type=\"number\"] {\n  outline: none;\n  font: inherit;\n  border: none;\n  border-bottom: 1px solid #e0e0e0;\n  width: 30px;\n  line-height: 1em;\n  text-align: center;\n  margin: 0 2px;\n  /* Make this look like an ordinary text field */\n  -moz-appearance: textfield; }\n  :local(.tab) input[type=\"number\"]::-webkit-outer-spin-button, :local(.tab) input[type=\"number\"]::-webkit-inner-spin-button {\n    -webkit-appearance: none; }\n  :local(.tab) input[type=\"number\"]:focus {\n    border-bottom-color: #00bcd4; }\n\n:local(.control-with-label) span {\n  display: inline-block;\n  width: 80px; }\n\n:local(.control-with-label) input[type=\"number\"] {\n  width: 40px; }\n\n/*# sourceMappingURL=ModelTab.scss.map */")
+});
+___scope___.file("modules/som-designer/tabs/TrainTab.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const LogSlider_1 = require("../LogSlider");
+const IterationPlot_1 = require("../IterationPlot");
+const LearningRatePreview_1 = require("../LearningRatePreview");
+const style = require("./TrainTab.scss");
+const IconButton_1 = require("material-ui/IconButton");
+const LinearProgress_1 = require("material-ui/LinearProgress");
+class TrainTab extends React.Component {
+    constructor() {
+        super(...arguments);
+        this.resizeHandler = () => {
+            this.forceUpdate();
+        };
+    }
+    renderProgress() {
+        let percentCompleted = Math.round(this.props.trainer.progress * 100);
+        return React.createElement("div", { className: "progress" },
+            React.createElement(LinearProgress_1.default, { mode: "determinate", value: percentCompleted }),
+            React.createElement("div", { style: {
+                    marginTop: 5,
+                    textAlign: "center"
+                } },
+                "#",
+                this.props.trainer.currentIteration,
+                React.createElement("span", { style: {
+                        paddingLeft: 5,
+                        opacity: 0.5
+                    } },
+                    "(",
+                    percentCompleted,
+                    " %)")));
+    }
+    renderControls() {
+        let toggleTraining = this.props.isTraining ? this.props.endTraining : this.props.startTraining;
+        return React.createElement("div", { className: "controls" },
+            React.createElement(IconButton_1.default, { iconClassName: "material-icons", tooltip: this.props.isTraining ? "Stop training" : "Start training", onClick: toggleTraining, disabled: this.props.trainer.hasFinished }, this.props.isTraining ? "pause" : "play_arrow"),
+            React.createElement(IconButton_1.default, { iconClassName: "material-icons", tooltip: "One iteration", onClick: this.props.iterateSingle, disabled: this.props.trainer.hasFinished }, "skip_next"),
+            React.createElement(IconButton_1.default, { iconClassName: "material-icons", tooltip: "Reset", onClick: this.props.reset }, "replay"));
+    }
+    renderSpeedControl() {
+        return React.createElement("div", { className: "speed-control" },
+            React.createElement(LogSlider_1.LogSlider, { step: 1, min: -1, max: 3, value: this.props.animationSpeed, sliderStyle: {
+                    margin: 0
+                }, onChange: (event, animationSpeed) => this.props.setAnimationSpeed(animationSpeed) }),
+            React.createElement("b", null, "Speed:"),
+            " ",
+            this.props.animationSpeed,
+            "\u00D7");
+    }
+    renderStatus() {
+        let parentWidth = this.refs["tab"] ? this.refs["tab"].clientWidth - 30 : 200;
+        return React.createElement("div", { className: "status" },
+            React.createElement(IterationPlot_1.IterationPlot, { width: parentWidth, height: 50, min: 0, max: 0.2, iteration: this.props.trainer.currentIteration, maxIteration: this.props.trainer.maxIteration, title: "Eq", value: this.props.quantizationError }),
+            React.createElement(IterationPlot_1.IterationPlot, { width: parentWidth, height: 50, min: 0, max: 0.5, iteration: this.props.trainer.currentIteration, maxIteration: this.props.trainer.maxIteration, title: "Et", value: this.props.topographicError }),
+            React.createElement(LearningRatePreview_1.LearningRatePreview, { learningRate: this.props.trainer.learningRate, neighborSize: this.props.trainer.neighborSize, width: parentWidth, height: 150 }));
+    }
+    componentDidMount() {
+        window.addEventListener("resize", this.resizeHandler);
+    }
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.resizeHandler);
+    }
+    render() {
+        return React.createElement("div", { className: style["tab"], ref: "tab" },
+            this.renderControls(),
+            this.renderSpeedControl(),
+            this.renderProgress(),
+            React.createElement("hr", null),
+            React.createElement("h2", null, "Status"),
+            this.renderStatus());
+    }
+}
+exports.TrainTab = TrainTab;
+
+});
+___scope___.file("modules/som-designer/IterationPlot.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class IterationPlot extends React.Component {
+    constructor() {
+        super(...arguments);
+        this.points = [];
+    }
+    redraw(props) {
+        let canvas = this.refs["canvas"];
+        canvas.width = props.width * 2;
+        canvas.height = props.height * 2;
+        canvas.style.width = props.width + "px";
+        canvas.style.height = props.height + "px";
+        let ctx = canvas.getContext("2d");
+        ctx.scale(2, 2);
+        const x = (iteration) => iteration / props.maxIteration * props.width;
+        const y = (value) => (1 - (value - props.min) / (props.max - props.min)) * props.height;
+        // redraw canvas
+        // draw text
+        ctx.fillText(`${props.title}: ${props.value.toFixed(3)}`, 10, 10);
+        // draw plot
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, props.height);
+        ctx.lineTo(props.width, props.height);
+        ctx.stroke();
+        ctx.closePath();
+        if (this.points.length > 1) {
+            ctx.beginPath();
+            this.points.reduce((lastPoint, point) => {
+                if (lastPoint) {
+                    ctx.moveTo(x(lastPoint.iteration), y(lastPoint.value));
+                    ctx.lineTo(x(point.iteration), y(point.value));
+                }
+                return point;
+            }, undefined);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+    componentDidMount() {
+        this.redraw(this.props);
+    }
+    componentWillReceiveProps(props) {
+        this.points = this.points.filter(point => point.iteration < props.iteration);
+        this.points.push({
+            iteration: props.iteration,
+            value: props.value
+        });
+        this.redraw(props);
+    }
+    shouldComponentUpdate() {
+        return false;
+    }
+    render() {
+        return React.createElement("canvas", { ref: "canvas" });
+    }
+}
+exports.IterationPlot = IterationPlot;
+
+});
+___scope___.file("modules/som-designer/tabs/TrainTab.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/som-designer/tabs/TrainTab.scss", ":local(.tab) {\n  padding: 10px 16px; }\n  :local(.tab) hr {\n    border: none;\n    border-top: 1px solid #ccc;\n    margin: 20px -16px; }\n  :local(.tab) h2 {\n    color: rgba(0, 0, 0, 0.54);\n    font-weight: 500;\n    font-size: 14px;\n    line-height: 1em; }\n\n:local(.tab) div.controls {\n  text-align: center; }\n\n:local(.tab) div.speed-control {\n  margin: 10px 0 20px; }\n\n:local(.tab) div.status {\n  text-align: center; }\n  :local(.tab) div.status * {\n    margin-top: 20px; }\n\n/*# sourceMappingURL=TrainTab.scss.map */")
+});
+___scope___.file("modules/som-designer/tabs/SettingsTab.jsx", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const material_ui_1 = require("material-ui");
+const style = require("./SettingsTab.scss");
+class SettingsTab extends React.Component {
+    renderSettings() {
+        return (React.createElement(material_ui_1.List, { style: {
+                padding: 0
+            } },
+            React.createElement(material_ui_1.ListItem, { style: {
+                    padding: "10px 0 10px 60px"
+                }, leftCheckbox: React.createElement(material_ui_1.Checkbox, { style: { top: 14 }, checked: this.props.displayMap, onCheck: (e, checked) => this.props.onUpdateDisplayMap(checked) }), primaryText: "Display color-coded map", secondaryText: "Visualizes positions of neurons" }),
+            React.createElement(material_ui_1.ListItem, { style: {
+                    padding: "10px 0 10px 60px"
+                }, leftCheckbox: React.createElement(material_ui_1.Checkbox, { style: { top: 14 }, checked: this.props.displayUMatrix, onCheck: (e, checked) => this.props.onUpdateDisplayUMatrix(checked) }), primaryText: "Display U-Matrix", secondaryText: "Visualizes weight distance of adjacent neurons" })));
+    }
+    renderAbout() {
+        return (React.createElement("div", null,
+            "TODO: add infos.",
+            React.createElement("br", null)));
+    }
+    render() {
+        return React.createElement("div", { className: style["tab"] },
+            React.createElement("h2", null, "Settings"),
+            this.renderSettings(),
+            React.createElement("hr", null),
+            React.createElement("h2", null, "Guide"),
+            this.renderAbout());
+    }
+}
+exports.SettingsTab = SettingsTab;
+
+});
+___scope___.file("modules/som-designer/tabs/SettingsTab.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/som-designer/tabs/SettingsTab.scss", ":local(.tab) {\n  padding: 10px 16px; }\n  :local(.tab) hr {\n    border: none;\n    border-top: 1px solid #ccc;\n    margin: 20px -16px; }\n  :local(.tab) h2 {\n    color: rgba(0, 0, 0, 0.54);\n    font-weight: 500;\n    font-size: 14px;\n    line-height: 1em; }\n\n/*# sourceMappingURL=SettingsTab.scss.map */")
+});
+___scope___.file("modules/som-designer/App.scss", function(exports, require, module, __filename, __dirname){
+
+
+require("fuse-box-css")("modules/som-designer/App.scss", ":local .main-view {\n  position: absolute;\n  z-index: 90;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 25%; }\n  :local .main-view canvas {\n    width: 100%;\n    height: 100%; }\n\n:local .grid-plot {\n  position: absolute;\n  z-index: 100;\n  bottom: 10px;\n  right: calc(25% + 10px); }\n\n:local .sidebar {\n  position: absolute;\n  z-index: 200;\n  background-color: white;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  width: 25%; }\n\n/*# sourceMappingURL=App.scss.map */")
 });
 ___scope___.file("stores/index.js", function(exports, require, module, __filename, __dirname){
 
@@ -7847,6 +10805,7 @@ class NavStore {
     constructor() {
         this.goTo = (inputRoute) => this.route = inputRoute;
         this.goToChartDrawer = (inputRoute) => this.chartDrawerRoute = inputRoute;
+        this.goToMlDrawer = (inputRoute) => this.mlDrawerRoute = inputRoute;
         this.route = 'home';
     }
     ;
@@ -7860,6 +10819,10 @@ __decorate([
     __metadata("design:type", String)
 ], NavStore.prototype, "chartDrawerRoute", void 0);
 __decorate([
+    mobx_1.observable,
+    __metadata("design:type", String)
+], NavStore.prototype, "mlDrawerRoute", void 0);
+__decorate([
     mobx_1.action.bound,
     __metadata("design:type", Object)
 ], NavStore.prototype, "goTo", void 0);
@@ -7867,6 +10830,10 @@ __decorate([
     mobx_1.action.bound,
     __metadata("design:type", Object)
 ], NavStore.prototype, "goToChartDrawer", void 0);
+__decorate([
+    mobx_1.action.bound,
+    __metadata("design:type", Object)
+], NavStore.prototype, "goToMlDrawer", void 0);
 exports.NavStore = NavStore;
 /*
 import {observable, action} from 'mobx';
@@ -8086,10 +11053,10 @@ exports.palette = {
 };
 
 });
-___scope___.file("assets/scss/main.scss", function(exports, require, module, __filename, __dirname){
+___scope___.file("base.css", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("assets/scss/main.scss", ".srd-diagram {\n  position: relative;\n  flex-grow: 1;\n  display: flex;\n  cursor: move;\n  overflow: hidden; }\n  .srd-diagram__selector {\n    position: absolute;\n    background-color: rgba(0, 192, 255, 0.2);\n    border: solid 2px #00c0ff; }\n\n.srd-link-layer {\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  transform-origin: 0 0;\n  overflow: visible !important;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0; }\n\n.srd-node-layer {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  pointer-events: none;\n  transform-origin: 0 0;\n  width: 100%;\n  height: 100%; }\n\n.srd-node {\n  position: absolute;\n  -webkit-touch-callout: none;\n  /* iOS Safari */\n  -webkit-user-select: none;\n  /* Chrome/Safari/Opera */\n  user-select: none;\n  cursor: move;\n  pointer-events: all; }\n  .srd-node--selected > * {\n    border-color: #00c0ff !important; }\n\n.srd-port {\n  width: 15px;\n  height: 15px;\n  background: rgba(128, 128, 128, 0.1); }\n  .srd-port:hover, .srd-port.selected {\n    background: #c0ff00; }\n\n.srd-default-node {\n  background-color: #1e1e1e;\n  border-radius: 5px;\n  font-family: sans-serif;\n  color: white;\n  border: solid 2px black;\n  overflow: visible;\n  font-size: 11px; }\n  .srd-default-node__title {\n    background: rgba(0, 0, 0, 0.3);\n    display: flex;\n    white-space: nowrap; }\n    .srd-default-node__title > * {\n      align-self: center; }\n    .srd-default-node__title .fa {\n      padding: 5px;\n      opacity: 0.2;\n      cursor: pointer; }\n      .srd-default-node__title .fa:hover {\n        opacity: 1.0; }\n  .srd-default-node__name {\n    flex-grow: 1;\n    padding: 5px 5px; }\n  .srd-default-node__ports {\n    display: flex;\n    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)); }\n  .srd-default-node__in, .srd-default-node__out {\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column; }\n\n.srd-default-port {\n  display: flex;\n  margin-top: 1px; }\n  .srd-default-port > * {\n    align-self: center; }\n  .srd-default-port__name {\n    padding: 0 5px; }\n  .srd-default-port--out {\n    justify-content: flex-end; }\n    .srd-default-port--out .srd-default-port__name {\n      justify-content: flex-end;\n      text-align: right; }\n\n.srd-default-label {\n  background: rgba(70, 70, 70, 0.8);\n  border: 1px solid #333;\n  border-radius: 4px;\n  color: #fff;\n  display: inline-block;\n  font-size: smaller;\n  padding: 5px; }\n\n@keyframes dash {\n  from {\n    stroke-dashoffset: 24; }\n  to {\n    stroke-dashoffset: 0; } }\n\n.srd-default-link path {\n  fill: none;\n  pointer-events: all; }\n\n.srd-default-link--path-selected {\n  stroke: #00c0ff !important;\n  stroke-dasharray: 10,2;\n  animation: dash 1s linear infinite; }\n\n.srd-default-link__label {\n  pointer-events: none; }\n  .srd-default-link__label > div {\n    display: inline-block;\n    position: absolute; }\n\n.srd-default-link__point {\n  fill: rgba(0, 0, 0, 0.5); }\n\n.srd-default-link--point-selected {\n  fill: #00c0ff; }\n\n.srd-coglite-canvas {\n  height: 100%;\n  min-height: 600px;\n  background-color: #F7F7F7 !important;\n  background-image: linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 0.1) 25%, rgba(0, 0, 0, 0.1) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.1) 75%, rgba(0, 0, 0, 0.1) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 0.1) 25%, rgba(0, 0, 0, 0.1) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.1) 75%, rgba(0, 0, 0, 0.1) 76%, transparent 77%, transparent);\n  background-size: 50px 50px; }\n  .srd-coglite-canvas .pointui {\n    fill: rgba(255, 255, 255, 0.5); }\n\n.diagram-layer {\n  position: relative;\n  height: 100%;\n  flex: 1; }\n\n/*# sourceMappingURL=main.scss.map */")
+require("fuse-box-css")("base.css", "@import url(https://fonts.googleapis.com/css?family=Roboto:400,500&subset=latin-ext);\r\n@import url(https://fonts.googleapis.com/css?family=Roboto+Mono:400,500&subset=latin-ext);\r\n@import url(https://fonts.googleapis.com/icon?family=Material+Icons);\r\n\r\n/******************************* Basic elements *******************************/\r\n::selection {\r\n  background: #43464b;\r\n}\r\n\r\na,\r\na:active,\r\na.alt:hover {\r\n  color: #b60127;\r\n}\r\n\r\na:hover,\r\na.alt,\r\na.alt:active {\r\n  color: #43464b;\r\n}\r\n\r\nbody {\r\n  font-family: 'Roboto', sans-serif;\r\n  font-size: 13px;\r\n  line-height: 1.3;\r\n}\r\n\r\nhr {\r\n  border: 0;\r\n  border-top: 1px solid #e9e9e9;\r\n  margin: 10px 0 10px 0;\r\n}\r\n\r\n/************************************ Misc ************************************/\r\n.mono {\r\n  font-family: 'Roboto Mono';\r\n}\r\n\r\n/************************* Success, warning and error *************************/\r\n.green > .ant-input-sm, /** Recipient list address coloring */\r\n.green {\r\n  color: #4fb71c;\r\n}\r\n\r\n.orange {\r\n  color: #ff7200;\r\n}\r\n\r\n.red > .ant-input-sm, /** Recipient list address coloring */\r\n.red {\r\n  color: #b60127;\r\n}\r\n\r\n/******************************** Flex aliases ********************************/\r\n.flex,\r\n.flex-center,\r\n.flex-sb {\r\n  align-items: center;\r\n  display: flex;\r\n}\r\n\r\n.flex-center {\r\n  justify-content: center;\r\n}\r\n\r\n.flex-sb {\r\n  justify-content: space-between; /** Align elements left and right */\r\n  width: 100%;\r\n}\r\n\r\n/******************************** Grid aliases ********************************/\r\n.grid-lc {\r\n  display: grid;\r\n  grid-gap: 5px 50px;\r\n  grid-template-columns: auto 1fr; /** Labels and content perfectly aligned */\r\n}\r\n\r\n.grid-lc.gap-5-30 {\r\n  grid-gap: 5px 30px;\r\n}\r\n\r\n.grid-tb {\r\n  display: grid;\r\n  grid-template-rows: 1fr auto; /** Align elements top and bottom */\r\n  height: 100%;\r\n}\r\n\r\n/******* React \"infinite\" list, limited by browser max scrolling height *******/\r\n.list,\r\n.list-plain {\r\n  overflow: auto;\r\n  z-index: 10;\r\n}\r\n\r\n.list {\r\n  background: #fafafa;\r\n  box-shadow: 1px 0px 5px 0px #888888;\r\n}\r\n\r\n.list-header {\r\n  border-bottom: 1px solid #d5d5d5;\r\n  font-weight: 500;\r\n  padding: 0 5px 3px 5px;\r\n}\r\n\r\n.list-item {\r\n  border-right: 1px solid #d5d5d5;\r\n  border-bottom: 1px solid #d5d5d5;\r\n  border-left: 1px solid #d5d5d5;\r\n  cursor: pointer;\r\n}\r\n\r\n.list-item > div,\r\n.list-item-plain > div {\r\n  padding: 3px 5px;\r\n}\r\n\r\n.list-item.even,\r\n.list-item-plain.even {\r\n  background: #ededed;\r\n}\r\n\r\n.list-item:hover,\r\n.list-item-plain:hover {\r\n  background: #dddddd;\r\n}\r\n\r\n.list-item.selected,\r\n.list-item-plain.selected {\r\n  background: #cdcdcd;\r\n}\r\n\r\n/******************************* Material icons *******************************/\r\n.material-icons.md-40 {\r\n  font-size: 40px;\r\n}\r\n\r\n.material-icons.md-22 {\r\n  font-size: 22px;\r\n}\r\n\r\n.material-icons.md-20 {\r\n  font-size: 20px;\r\n}\r\n\r\n.material-icons.md-19 {\r\n  font-size: 19px;\r\n}\r\n\r\n.material-icons.md-18 {\r\n  font-size: 18px;\r\n}\r\n\r\n.material-icons.md-16 {\r\n  font-size: 16px;\r\n}\r\n\r\n.material-icons.md-14 {\r\n  font-size: 14px;\r\n}\r\n\r\n.material-icons + p {\r\n  margin: 0 0 0 5px;\r\n}\r\n\r\n/****************************** Recharts tooltip ******************************/\r\n.chartTooltip {\r\n  background-color: rgba(255, 255, 255, 0.85);\r\n  border: 1px solid #f5f5f5;\r\n  margin: 0;\r\n  padding: 10px;\r\n}\r\n\r\n.chartTooltip .label {\r\n  border-bottom: 1px solid #cccccc;\r\n  font-weight: 500;\r\n  margin: 0;\r\n}\r\n\r\n/******************************** Application *********************************/\r\n#App {\r\n  display: grid;\r\n  grid-template-columns: 40px 1fr; /** Main menu, right-side content */\r\n  height: 100vh;\r\n}\r\n\r\n#App > div:first-child {\r\n  z-index: 2; /** Main menu shadow is always above content */\r\n}\r\n\r\n#App > div:last-child {\r\n  z-index: 1; /** Content is always below main menu shadow */\r\n}\r\n\r\n#AppHeaderFooter {\r\n  display: grid;\r\n  grid-template-rows: 30px 1fr 25px; /** Header, content, footer */\r\n}\r\n\r\n#AppHeaderFooter > div,\r\n#Connection > div {\r\n  padding: 10px 10px 10px 11px; /** 1px extra on left to offset the shadow */\r\n}\r\n\r\n#AppListContent {\r\n  display: grid;\r\n  grid-template-columns: 300px 1fr; /** List / page-menu, right-side content */\r\n  height: 100vh;\r\n}\r\n\r\n#AppListContent .ant-menu-item:not(.ant-menu-item-selected) {\r\n  background-color: #fafafa; /** Background of non-selected menu items */\r\n}\r\n\r\n#AppListContent .ant-menu > li {\r\n  padding: 0 10px !important; /** Left and right menu item padding */\r\n}\r\n\r\n#Connection {\r\n  display: grid;\r\n  grid-template-rows: 30px 1fr 32px; /** Header, connection, add / remove */\r\n}\r\n\r\n#Connection .labels > p {\r\n  line-height: 22px; /** Same height as .inputs below */\r\n  margin: 0 20px 5px 0;\r\n}\r\n\r\n#Connection .labels > p:last-child {\r\n  margin: 0 20px 0 0; /** Last label has no bottom 5px margin */\r\n}\r\n\r\n#Connection .inputs {\r\n  align-items: flex-start;\r\n  flex-direction: column;\r\n}\r\n\r\n#Console {\r\n  display: grid;\r\n  grid-template-rows: 1fr auto; /** RPC results, RPC input */\r\n  height: 100%;\r\n}\r\n\r\n#Console > div:first-child {\r\n  font-size: 11px;\r\n}\r\n\r\n#Console > div:last-child {\r\n  padding: 5px 0 9px 0;\r\n}\r\n\r\n#Console .ant-input {\r\n  height: 22px; /** Same autocomplete height as buttons  */\r\n}\r\n\r\n#Footer {\r\n  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),\r\n              0 3px 1px -2px rgba(0, 0, 0, 0.2),\r\n              0 1px 5px 0 rgba(0, 0, 0, 0.12);\r\n}\r\n\r\n#Header {\r\n  background: #b60127;\r\n  box-shadow: 0px 2px 5px 0px #888888;\r\n  color: #ffffff;\r\n  height: 30px;\r\n}\r\n\r\n#Header p > span {\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n  margin: 0 4px 0 2px;\r\n}\r\n\r\n#Header .ant-btn {\r\n  background-color: #43464b;\r\n  border-color: #43464b;\r\n  color: #ffffff;\r\n  padding: 0 5px;\r\n  height: 24px;\r\n}\r\n\r\n#Header .ant-btn:hover,\r\n#Header .ant-btn:focus {\r\n  background-color: #43464b;\r\n  border-color: #43464b;\r\n  color: #b60127;\r\n}\r\n\r\n#InfoBlocks {\r\n  display: grid;\r\n  grid-gap: 50px;\r\n  grid-template-columns: auto 1fr; /** Network info, recent blocks */\r\n}\r\n\r\n#MainMenu {\r\n  background-color: #b60127;\r\n  box-shadow: 1px 0px 5px 0px #888888;\r\n  display: grid;\r\n  grid-template-rows: 1fr auto; /** Logo, main menu */\r\n}\r\n\r\n#MainMenu .logo {\r\n  align-items: center;\r\n  display: flex;\r\n  height: 40px;\r\n  justify-content: center;\r\n}\r\n\r\n#MainMenu .logo img {\r\n  height: 28px;\r\n  width: 28px;\r\n}\r\n\r\n#MainMenu .ant-menu {\r\n  background: inherit; /** Ant Menu inherits main menu color */\r\n}\r\n\r\n#MainMenu .ant-menu-inline-collapsed {\r\n  width: 40px;\r\n}\r\n\r\n#MainMenu .ant-menu-inline-collapsed > .ant-menu-item {\r\n  padding: 0 10px !important;\r\n}\r\n\r\n#MainMenu .ant-menu-item {\r\n  line-height: 42px;\r\n  color: #35000b;\r\n}\r\n\r\n#MainMenu .ant-menu-item:active {\r\n  background: #89011d;\r\n}\r\n\r\n#MainMenu .ant-menu-item-selected {\r\n  background: #89011d;\r\n  border-right: none;\r\n  color: #ffffff;\r\n}\r\n\r\n#MainMenu .ant-menu-vertical {\r\n  border-right: none;\r\n}\r\n\r\n#OutputsRecipients {\r\n  display: grid;\r\n  grid-gap: 20px;\r\n  grid-template-columns: 250px 1fr; /** UTXO selection, sending recipients */\r\n}\r\n\r\n#OutputsRecipients > div:first-child > div:nth-child(1) {\r\n  margin: 0 0 40px 0; /** Address outputs bottom margin */\r\n}\r\n\r\n#OutputsRecipients > div:first-child > div:nth-child(2) {\r\n  margin: 0 0 20px 0; /** Selected outputs bottom margin */\r\n}\r\n\r\n/********************************* Ant Design *********************************/\r\n.ant-btn:hover,\r\n.ant-btn:focus {\r\n  border-color: #b60127;\r\n  color: #b60127;\r\n}\r\n\r\n.ant-btn-clicked:after {\r\n  border: 0 solid #b60127;\r\n}\r\n\r\n.ant-btn-primary {\r\n  background-color: #b60127;\r\n  border-color: #b60127;\r\n}\r\n\r\n.ant-btn-primary:hover,\r\n.ant-btn-primary:focus {\r\n  background-color: #43464b;\r\n  border-color: #43464b;\r\n  color: #ffffff;\r\n}\r\n\r\n.ant-btn-primary:active,\r\n.ant-btn-primary.active {\r\n  background-color: #b60127;\r\n  border-color: #b60127;\r\n}\r\n\r\n.ant-checkbox-wrapper:hover .ant-checkbox-inner,\r\n.ant-checkbox:hover .ant-checkbox-inner,\r\n.ant-checkbox-input:focus + .ant-checkbox-inner {\r\n  border-color: #b60127;\r\n}\r\n\r\n.ant-checkbox-checked:after {\r\n  border: 1px solid #b60127;\r\n}\r\n\r\n.ant-checkbox-checked .ant-checkbox-inner,\r\n.ant-checkbox-indeterminate .ant-checkbox-inner {\r\n  background-color: #b60127;\r\n  border-color: #b60127;\r\n}\r\n\r\n.ant-input:hover:not(.ant-input-disabled),\r\n.ant-input:focus {\r\n  border-color: #808080;\r\n  box-shadow: 0 0 0 1px rgba(80, 80, 80, 0.2);\r\n}\r\n\r\n.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {\r\n  border-color: #808080;\r\n}\r\n\r\n.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {\r\n  background-color: #efefef;\r\n}\r\n\r\n.ant-menu-inline .ant-menu-item:after,\r\n.ant-menu-vertical .ant-menu-item:after {\r\n  border-right: none;\r\n}\r\n\r\n.ant-menu-inline .ant-menu-item {\r\n  line-height: 40px;\r\n  height: 40px; /** Same as logo on the left with 6px padding on top / bottom */\r\n}\r\n\r\n.ant-menu-item-selected,\r\n.ant-menu-item-selected > a,\r\n.ant-menu-item-selected > a:hover {\r\n  color: #35000b;\r\n}\r\n\r\n.ant-menu-item:hover,\r\n.ant-menu-item-active,\r\n.ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,\r\n.ant-menu-submenu-active,\r\n.ant-menu-submenu-title:hover {\r\n  color: #35000b;\r\n}\r\n\r\n.ant-progress-bg {\r\n  background-color: #b60127;\r\n}\r\n\r\n.ant-select-auto-complete.ant-select .ant-input:focus,\r\n.ant-select-auto-complete.ant-select .ant-input:hover,\r\n.ant-select-focused .ant-select-selection,\r\n.ant-select-selection:focus,\r\n.ant-select-selection:hover,\r\n.ant-select-selection:active {\r\n  border-color: #808080;\r\n  box-shadow: 0 0 0 1px rgba(80, 80, 80, 0.2);\r\n}\r\n\r\n.ant-select-dropdown-menu-item:hover,\r\n.ant-select-dropdown-menu-item-active {\r\n  background-color: #f1f1f1;\r\n}\r\n\r\n.ant-switch-checked {\r\n  background-color: #b60127;\r\n  border-color: #b60127;\r\n}\r\n\r\n.ant-table-small .ant-table-thead > tr > th {\r\n  background: #fafafa;\r\n}\r\n\r\n.ant-table-fixed-header .ant-table-scroll .ant-table-header {\r\n  background: #fafafa;\r\n  margin: 0 !important;\r\n  overflow: auto;\r\n}\r\n\r\n.ant-table-small .ant-table-tbody > tr > td {\r\n  padding: 2px 8px;\r\n}\r\n\r\n.ant-table-small .ant-table-title,\r\n.ant-table-small .ant-table-footer,\r\n.ant-table-small .ant-table-thead > tr > th:not(.ant-table-selection-column) {\r\n  padding: 4px 8px;\r\n}\r\n\r\n.ant-table-thead > tr.ant-table-row-hover > td,\r\n.ant-table-tbody > tr.ant-table-row-hover > td,\r\n.ant-table-thead > tr:hover > td,\r\n.ant-table-tbody > tr:hover > td {\r\n  background: #efefef;\r\n}\r\n")
 });
 return ___scope___.entry = "index.jsx";
 });

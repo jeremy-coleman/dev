@@ -1,10 +1,7 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react';
 import { NavStore } from '../stores/NavStore';
-import { ButtonGroup, Button, Classes, IButtonProps } from "@blueprintjs/core";
-import {IconNames} from '@blueprintjs/icons'
-
-//import styled, { StyledFunction } from 'styled-components';
+import { Button, IButtonProps } from "@blueprintjs/core";
 
 type LinkProps = {
   route: string
@@ -20,6 +17,8 @@ export const Link: React.SFC<LinkProps & IButtonProps> = inject('nav')(observer(
     {(props as React.Props<any>).children}
   </Button>
 )))
+
+
 
 /*
 const LinkStyle = style({

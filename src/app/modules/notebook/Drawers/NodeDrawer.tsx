@@ -1,19 +1,22 @@
 import * as React from "react"
-import {Card, Icon  }from "@blueprintjs/core"
-import { observer, inject } from "mobx-react"
-import styled from 'styled-components'
-import { VerticalStretch } from "../../../design";
-//import { UiStore } from "../../../stores/UiStore"
+import {Card }from "@blueprintjs/core"
+import { observer } from "mobx-react"
+import styled from 'styled-jss'
 
-const NodeDrawerDimensions = styled(Card)`
-    max-width: 180px;
-    min-height: 100%;
-    flex: 1 1 auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    alignment-baseline: central;
-`
+import { VerticalStretch } from "../../../design";
+
+
+
+const NodeDrawerDimensions = styled(Card)({
+    maxWidth: 180,
+    minHeight: "100%",
+    flex: "1 1 auto",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    alignmentBaseline: "central"
+  })
+
 
 
 @observer
@@ -31,3 +34,14 @@ export class NodeDrawer extends React.Component<any, any> {
 }
 
 
+/*
+const NodeDrawerDimensions = styled(Card)`
+    max-width: 180px;
+    min-height: 100%;
+    flex: 1 1 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    alignment-baseline: central;
+`
+*/

@@ -1,0 +1,204 @@
+import * as React from 'react';
+import * as Icons from '../icons';
+import { remote } from 'electron';
+const { Menu } = remote;
+import { IContextualMenuItem } from "office-ui-fabric-react/lib/ContextualMenu";
+//import { NodeJSMainProxy } from '../node-main-proxy';
+
+interface thing {
+    componentRef?: (component: IContextualMenuRenderItem | null) => void;
+    key: string;
+    name?: string;
+    secondaryText?: string;
+    itemType?: ContextualMenuItemType;
+    iconProps?: IIconProps;
+    onRenderIcon?: IRenderFunction<IContextualMenuItemProps>;
+    submenuIconProps?: IIconProps;
+    icon?: string;
+    disabled?: boolean;
+    primaryDisabled?: boolean;
+    isDisabled?: boolean;
+    shortCut?: string;
+    canCheck?: boolean;
+    checked?: boolean;
+    isChecked?: boolean;
+    split?: boolean;
+    data?: any;
+    onClick?: (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem) => boolean | void;
+    href?: string;
+    target?: string;
+    rel?: string;
+    items?: IContextualMenuItem[];
+    subMenuProps?: IContextualMenuProps;
+    getItemClassNames?: (theme: ITheme, disabled: boolean, expanded: boolean, checked: boolean, isAnchorLink: boolean, knownIcon: boolean, itemClassName?: string, dividerClassName?: string, iconClassName?: string, subMenuClassName?: string, primaryDisabled?: boolean) => IMenuItemClassNames;
+    getSplitButtonVerticalDividerClassNames?: (theme: ITheme) => IVerticalDividerClassNames;
+    sectionProps?: IContextualMenuSection;
+    className?: string;
+    style?: React.CSSProperties;
+    ariaLabel?: string;
+    title?: string;
+    onRender?: (item: any, dismissMenu: (ev?: any, dismissAll?: boolean) => void) => React.ReactNode;
+    onMouseDown?: (item: IContextualMenuItem, event: any) => void;
+    role?: string;
+    customOnRenderListLength?: number;
+    keytipProps?: IKeytipProps;
+    [propertyName: string]: any;
+    inactive?: boolean;
+}
+
+export class AddressBarMenu extends React.Component<any, any> {
+
+showMenu() {
+        const settings = null
+        const kernelActive = true;
+        const kernelInstalled = true;
+        const template: IContextualMenuItem[] = [
+            {
+                name: 'New Service',
+                onClick: () => {},
+                inactive: !kernelInstalled
+            },
+
+            {
+                label: 'Execute Service',
+                type: 'submenu',
+                enabled: kernelActive,
+                subMenuProps: [
+                    {
+                        label: 'Send System Event',
+                        type: 'submenu',
+                        enabled: true,
+                        submenu: [
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'TODO: send event to main process',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'infos and things',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'ping',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            },
+                            {
+                                label: 'delete Data',
+                                click: () => {
+                                    /*NodeJSMainProxy.ping();*/
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        type: 'separator'
+                    },
+                    {
+                        label: 'Leave',
+                        click: () => {  }
+                    }
+                ]
+            },
+
+            {
+                type: 'separator'
+            },
+            {
+                label: 'App Settings TODO: add back modal',
+                click: () => {}
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Zoom',
+                type: 'submenu',
+                enabled: true,
+                submenu: [
+                    {
+                        label: 'Zoom In',
+                        accelerator: 'CommandOrControl+=',
+                        click: () => { /*NodeJSMainProxy.zoomIn();*/}
+                    },
+                    {
+                        label: 'Zoom Out',
+                        accelerator: 'CommandOrControl+-',
+                        click: () => {/*NodeJSMainProxy.zoomOut();*/ }
+                    },
+                    {
+                        label: 'Reset Zoom',
+                        accelerator: 'CommandOrControl+0',
+                        click: () => {/*NodeJSMainProxy.zoomReset();*/}
+                    },
+                ]
+            },
+            {
+                type: 'separator'
+            },
+
+
+            
+            {
+                label: 'About',
+                click: () => {}
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Legal',
+                click: () => window.open('https://google.com')
+            },
+            {
+                label: 'Privacy',
+                click: () => window.open('https://google.com')
+            },
+            {
+                label: 'Credits',
+                click: () => window.open('https://google.com')
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Report issues',
+                click: () => window.open('https://coglite.com')
+            },
+        ];
+
+        const menu = Menu.buildFromTemplate(template);
+        menu.popup();
+    }
+
+    render() {
+        return (
+            <a className='undecorated-text' href='javascript:void(0)' title='Settings'>
+                <div className="addressbar-menu" dangerouslySetInnerHTML={{ __html: Icons.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
+            </a>
+        );
+    }
+}
+

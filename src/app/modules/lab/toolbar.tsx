@@ -1,13 +1,12 @@
 
 import * as React from 'react';
-//import {observer, inject} from 'mobx-react'
-//import styled, { StyledFunction } from 'styled-components';
-import { ButtonGroup, Button, Classes } from "@blueprintjs/core";
+import { ButtonGroup, Button } from "@blueprintjs/core";
 import {IconNames} from '@blueprintjs/icons'
+import { observer } from 'mobx-react';
 
 
 
-export const LabToolbar  = () => (
+export const LabToolbar  = observer((props: any) => (
             <ButtonGroup large={true} fill={true}>
                 <Button icon={IconNames.CODE}  />
                 <Button icon={IconNames.GRAPH}/>
@@ -15,4 +14,4 @@ export const LabToolbar  = () => (
                 <Button icon={IconNames.GRAPH}/>
             </ButtonGroup >
           
-)
+))

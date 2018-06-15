@@ -10,9 +10,10 @@
       "noUnusedLocals": true,
       "strictNullChecks": false,
       "noImplicitReturns": true,
-      "outDir": "dist"
+      "outDir": "dist",
+      "lib":["dom","dom.iterable", "esnext", "es2017.object"]
     },
-    "include": ["src"],
-    "exclude": ["node_modules"]
+    "include": ["src", "typings"],
+    "exclude": ["node_modules", "wip", "tools", "dist"]
   }
   

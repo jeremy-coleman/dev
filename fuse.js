@@ -1,6 +1,6 @@
 const { spawn } = require('child_process');
 const { CSSResourcePlugin, LESSPlugin, CSSPlugin, EnvPlugin, FuseBox, QuantumPlugin, SassPlugin,
-    Sparky, CopyPlugin, SVGPlugin, ImageBase64Plugin, JSONPlugin } = require('fuse-box');
+    Sparky, CopyPlugin, SVGPlugin, ImageBase64Plugin, JSONPlugin, CSSModules } = require('fuse-box');
 
 
 //let isProduction = false;
@@ -16,7 +16,8 @@ Sparky.task("copy-html", () => Sparky.src("src/app/index.html").dest("dist/app/$
 Sparky.task("copy-external-css", () => Sparky.src(VENDOR_CSS).dest("dist/app/assets/css/$name"));
 Sparky.task("copy-fonts", () => Sparky.src("**/*.ttf", { base: "src/app/assets" }).dest("dist/app/assets"));
 
-const ASSETS = ["*.jpg", "*.png", "*.jpeg", "*.gif", "*.svg"]
+const ASSETS = ["*.jpg", "*.png", "*.jpeg", "*.gif", "*.svg"];
+const DESKTOP_ASSETS = ["*.ico"]
 
 Sparky.task("build:app", ["copy-html", "copy-external-css", "copy-fonts"], () => {
     const fuse = FuseBox.init({
@@ -26,7 +27,9 @@ Sparky.task("build:app", ["copy-html", "copy-external-css", "copy-fonts"], () =>
         cache: true,
         plugins: [
             [SassPlugin({importer: true}), CSSResourcePlugin(), CSSPlugin()],
+            [SassPlugin(), CSSModules(), CSSPlugin()],
             [LESSPlugin(), CSSPlugin()],
+            [LESSPlugin({paths: ["node_modules", "src/app/styles"], javascriptEnabled: true}),CSSPlugin()],
             CSSPlugin(),
             SVGPlugin(),
             ImageBase64Plugin(),
@@ -58,7 +61,8 @@ Sparky.task("build:desktop", () => {
             target: "server",
             cache: true,
             plugins: [
-                EnvPlugin({ NODE_ENV: "development" })
+                EnvPlugin({ NODE_ENV: "development" }),
+                CopyPlugin({ useDefault: false, files: DESKTOP_ASSETS, dest: "assets", resolve: "assets/" }),
             ],
         });
 

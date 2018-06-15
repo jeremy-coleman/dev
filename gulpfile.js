@@ -1,32 +1,39 @@
+var path = require('path')
+var fs = require('fs')
 var gulp = require('gulp')
-const fs = require('fs')
-//var transform = require("vinyl-transform");
-//var source = require('vinyl-source-stream');
-//var buffer = require('vinyl-buffer');
-//var log = require('gulplog');
-//var sourcemaps = require('gulp-sourcemaps');
-var runSequence = require('run-sequence')
-var ts = require('gulp-typescript')
-var tscConfig = ts.createProject("tsconfig.json");
+const webpackStream = require('webpack-stream')
+const webpack = require('webpack')
+var webpackConfig = require('./tasks/webpack.config')
 
 
 
-gulp.task("ts", () => {
-  return tscConfig.src()
-    .pipe(tscConfig()).js
-    .pipe(gulp.dest('dist'));
+gulp.task('webpack1', async () => {
+  return gulp.src(["src/app/app.tsx"])
+  .pipe(webpackStream(webpackConfig.appConfig, webpack))
+    .pipe(gulp.dest('dist/app'))
+})
+
+gulp.task('webpack2', async () => {
+  return gulp.src(["src/desktop/main.ts"])
+  .pipe(webpackStream(webpackConfig.desktopConfig, webpack))
+    .pipe(gulp.dest('dist/desktop'))
+})
+
+gulp.task("static", async () => {
+    return gulp.src(["src/**/*.ttf",
+                    "src/**/*.svg",
+                    "src/**/*.jpg",
+                    "src/**/*.html",
+                    "src/**/*.eot",
+                    "src/**/*.woff",
+                    "src/**/*.woff2",
+                    "src/**/*.png"])
+        .pipe(gulp.dest("dist"))})
+
+gulp.task('webpack', gulp.parallel('webpack1', 'webpack2', 'static'))
+
+
+gulp.task('watch', () => {
+  gulp.watch(['src/app**/*.ts'], gulp.parallel('webpack1'));
+  gulp.watch(['src/app**/*.tsx'], gulp.parallel('webpack1'));
 });
-
-
-
-
-
-gulp.task("vs", function () {
-    return gulp.src(["node_modules/monaco-editor/min/vs/**/*"])
-        .pipe(gulp.dest("dist/client/vs"))})
-
-
-
-
-
-gulp.task('default', async () => gulp.series('tscompile'));

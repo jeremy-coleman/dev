@@ -15,24 +15,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
+const url_1 = require("url");
+const path_1 = require("path");
 const electron_1 = require("electron");
+electron_1.app.disableDomainBlockingFor3DAPIs();
+var DESKTOP_ICON_URL = 'static/resources/icon.ico';
+let basePath = electron_1.app.getAppPath();
 let mainWindow;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
         width: 960,
         height: 640,
+        icon: DESKTOP_ICON_URL,
         webPreferences: {
             webSecurity: false,
+            backgroundThrottling: false,
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
             nodeIntegrationInWorker: true,
             plugins: true
         }
     });
-    mainWindow.loadURL(`file:///${electron_1.app.getAppPath()}/dist/app/index.html`);
+    //mainWindow.loadURL(`file:///${app.getAppPath()}/dist/app/index.html`);
     mainWindow.on("close", () => {
         mainWindow = null;
     });
+    let queryString = '';
+    let page = url_1.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: path_1.join(basePath, 'dist/app/index.html')
+    });
+    if (queryString) {
+        page = page + queryString;
+    }
+    mainWindow.loadURL(page);
     const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS, MOBX_DEVTOOLS } = require('electron-devtools-installer');
     installExtension(REACT_DEVELOPER_TOOLS);
     installExtension(MOBX_DEVTOOLS);

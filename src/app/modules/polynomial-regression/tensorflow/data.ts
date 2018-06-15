@@ -1,0 +1,41 @@
+import * as tf from '@tensorflow/tfjs';
+
+export function generateData(coeff, sigma = 0.04) {
+  const numPoints = 120;
+  return tf.tidy(() => {
+    const [a, b, c, d] = [
+      tf.scalar(coeff.a), tf.scalar(coeff.b), tf.scalar(coeff.c),
+      tf.scalar(coeff.d)
+    ];
+
+    const xs = tf.randomUniform([numPoints], -1, 1);
+
+    // Generate polynomial data
+    const three = tf.scalar(3, 'int32');
+    const ys = a.mul(xs.pow(three))
+      .add(b.mul(xs.square()))
+      .add(c.mul(xs))
+      .add(d)
+      // Add random noise to the generated data
+      // to make the problem a bit more interesting
+      .add(tf.randomNormal([numPoints], 0, sigma));
+
+    // Normalize the y values to the range 0 to 1.
+    const ymin = ys.min();
+    const ymax = ys.max();
+    const yrange = ymax.sub(ymin);
+    const ysNormalized = ys.sub(ymin).div(yrange);
+
+    const trainXs = xs.slice(0, 100);
+    const testXs  = xs.slice(100);
+    const trainYs = ysNormalized.slice(0, 100);
+    const testYs  = ysNormalized.slice(100);
+
+    return {
+      trainXs,
+      trainYs,
+      testXs,
+      testYs
+    };
+  })
+}

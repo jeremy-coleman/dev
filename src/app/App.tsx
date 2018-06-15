@@ -1,14 +1,11 @@
 import 'reflect-metadata'
 import * as React from "react"
 import { Provider as MobxProvider, observer } from 'mobx-react';
-import { observable } from 'mobx';
-import {ThemeProvider as JssThemeProvider} from 'theming'
-
-import {ThemeProvider, injectGlobal} from 'styled-components'
-import {theme} from './theme';
+import {ThemeProvider} from 'theming'
+import {injectGlobal} from 'styled-components'
 
 
-import { AppLayout } from './layout/AppLayout';
+import { AppLayout } from './modules/layout/AppLayout';
 import AppRouter from './Router';
 import {cogliteState, ICogliteState} from './stores'
 
@@ -17,21 +14,21 @@ export const CogliteAppRoot = observer((props: ICogliteState) => {
   const muiTheme = cogliteState.uiStore.muiTheme
     return(
       <MobxProvider {...cogliteState}>
-        <JssThemeProvider theme={muiTheme}>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={muiTheme}>
           <div style={{height: '100vh', width: '100vw'}}>
               <AppLayout>
                 <AppRouter/>
               </AppLayout>
           </div>
           </ThemeProvider>
-          </JssThemeProvider>
       </MobxProvider>
   )
 })
 
-// body > font-size: ${theme.fontSizes[1]}px;
 
+
+
+// body > font-size: ${theme.fontSizes[1]}px;
 injectGlobal`
 * {
   box-sizing: border-box;
