@@ -1,0 +1,26 @@
+                    <Navbar>
+                        <NavbarGroup align={Alignment.LEFT}>
+                            <NavbarHeading>Untitled Lab</NavbarHeading>
+                            <NavbarDivider/>
+                            <InputGroup>
+                                <Icon icon={'search'}/>
+                                <input
+                                    type="search"
+                                    className="pt-input pt-small"
+                                    placeholder="Search groups..."
+                                />
+                            </InputGroup>
+
+                        </NavbarGroup>
+                        <div className="pt-navbar-group pt-align-right">
+                            <button className="pt-button pt-minimal pt-icon-control"><span>Configure Workspace</span></button>
+                            <div className="pt-button-group pt-minimal">
+                                <Button icon={'undo'}/>
+                                <Button icon={'redo'}/>
+                            </div>
+                            <span className="pt-navbar-divider"/>
+                            <Button icon={'user'} minimal/>
+                            <Button icon={'help'} minimal/>
+                            <Button icon={'cog'} minimal/>
+                        </div>
+                    </Navbar>

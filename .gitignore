@@ -6,3 +6,4 @@ dist
 out
 wip
 tools
+_dev/**/*

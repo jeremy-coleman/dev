@@ -4,6 +4,8 @@
       "module": "commonjs",
       "moduleResolution": "node",
       "jsx": "react",
+      "sourceMap": true,
+      "importHelpers": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
       "allowSyntheticDefaultImports": false,
@@ -11,9 +13,12 @@
       "strictNullChecks": false,
       "noImplicitReturns": true,
       "outDir": "dist",
-      "lib":["dom","dom.iterable", "esnext", "es2017.object"]
+      "lib":["dom","dom.iterable", "esnext", "es2017.object"],
+      "skipDefaultLibCheck": true,
+      "skipLibCheck": true,
+      "allowJs": true
     },
-    "include": ["src", "typings"],
-    "exclude": ["node_modules", "wip", "tools", "dist"]
+    "include": ["src", "typings", "tasks/definitions",],
+    "exclude": ["node_modules", "wip", "tools", "dist", "_dev"]
   }
   
