@@ -1,0 +1,108 @@
+const {app, BrowserWindow, Tray, Menu} = require('electron')
+const path = require('path')
+const url = require('url')
+
+//const imgDirectory = path.join(__dirname)
+
+let basePath = app.getAppPath()
+
+let tray = undefined
+let mainWindow = undefined
+
+
+/*
+const createTray = () => {
+  tray = new Tray(path.join(basePath, 'favicon.png'))
+  tray.on('double-click', toggleWindow)
+
+  const contextMenu = Menu.buildFromTemplate([
+      {label: 'Toggle JupyterMate', click () {
+        toggleWindow()
+      }},
+      {label: 'Quit', click() {
+        app.isQuiting = true
+        app.quit()
+      }}
+    ])
+    contextMenu.items[0].checked = false
+    tray.setContextMenu(contextMenu)
+}
+*/
+
+const createWindow = () => {
+  mainWindow = new BrowserWindow({
+    title: "JupyterMate version " + app.getVersion(),
+    icon: path.join(basePath, 'favicon.png'),
+    width: 900,
+    height: 850,
+    show: false,
+    frame: true,
+    fullscreenable: true,
+    resizable: true,
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: true,
+      plugins: true,
+      backgroundThrottling: false
+    }
+  })
+
+  //mainWindow.setMenu(null)
+
+  let page = url.format({ 
+    protocol: 'file',
+    slashes: true,
+    pathname: path.join(basePath, 'dist/index.html')});
+
+    /*
+  const startUrl = process.env.ELECTRON_START_URL || url.format({
+              pathname: path.join(__dirname, '/../build/index.html'),
+              protocol: 'file:',
+              slashes: true
+          });
+*/
+  mainWindow.loadURL(page)
+
+
+  mainWindow.on('close', function(event) {
+    event.preventDefault();
+    toggleWindow();
+  });
+
+  app.on('before-quit', () => {
+    mainWindow.toggleDevTools();
+    mainWindow.removeAllListeners('close');
+    mainWindow.close();
+    
+    mainWindow = null;
+    tray = null;
+  });
+  
+  toggleWindow();
+}
+
+const toggleWindow = () => {
+  if(mainWindow === null) {
+    return
+  }
+  if (mainWindow.isVisible()) {
+    mainWindow.hide()
+  } else {
+    showWindow()
+  }
+}
+
+const showWindow = () => {
+  mainWindow.show()
+  mainWindow.focus()
+}
+
+app.on('ready', () => {
+  //createTray();
+  createWindow();
+});
+
+app.on('window-all-closed',  () => {
+  app.quit();
+});
+

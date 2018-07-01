@@ -28,7 +28,7 @@ let createMainWindow = async () => {
             webSecurity: false,
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
-            //nodeIntegrationInWorker: true,
+            nodeIntegrationInWorker: true,
             plugins: true
         }
     });

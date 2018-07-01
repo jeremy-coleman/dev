@@ -1,24 +1,36 @@
-import 'reflect-metadata'
-import * as ReactDOM from 'react-dom'
-import * as React from 'react'
-import {createComponent} from './core/createComponent'
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-// import the component View and ViewModel
-import {view} from './TodoView'
-import {TodoViewModel} from './TodoViewModel'
+//import 'typeface-roboto'
 
-// create the todo editor component
-const TodoEditor: any = createComponent({
-    displayName: 'TodoEditor',
-    view
-})(TodoViewModel)
+import App from './App';
 
-// render the app
+import {CssBaseline} from '@material-ui/core';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#ffa852',
+      main: '#ff7720',
+      dark: '#c54700',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#c3fdff',
+      main: '#90caf9',
+      dark: '#5d99c6',
+      contrastText: '#000',
+    },
+  },
+});
+
 ReactDOM.render(
-    <TodoEditor 
-        user="mattiamanzati" 
-        onTodoSaved={() => alert('Todos saved!')} 
-        onTodoAdded={(todo) => console.log('New todo:', todo)}
-         />, 
-    document.getElementById('app')
-)
+	<div>
+    <CssBaseline />
+    <MuiThemeProvider theme={theme}>
+      <App />
+    </MuiThemeProvider>
+  </div>,
+  document.getElementById('root')
+);
