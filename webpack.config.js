@@ -12,7 +12,7 @@ const nodeExternals = require("webpack-node-externals");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname);
 const getRoot = path.join.bind(path, ROOT);
 
 //Html-webpack-plugin configuration
