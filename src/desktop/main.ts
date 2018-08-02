@@ -12,7 +12,7 @@ let mainWindow: electron.BrowserWindow;
 const args = process.argv.slice(1);
 let dev = args.some(arg => arg === '--dev');
 
-//mainWindow.loadURL('http://127.0.0.1:4200');
+
 
 let createMainWindow = async () => {   
 	mainWindow = new BrowserWindow({ 
@@ -26,14 +26,17 @@ let createMainWindow = async () => {
 	}
 	});
 
+		mainWindow.loadFile(path.resolve(app.getAppPath(), 'dist/index.html'));
 
+/*
 		mainWindow.loadURL(url.format({
-			pathname: path.join(app.getAppPath(), 'dist/index.html'),
+			pathname: path.resolve(app.getAppPath(), 'dist/index.html'),
 			protocol: 'file:',
 			slashes: true
 		}));
+*/
 
-	mainWindow.on('closed', function() {
+	mainWindow.on('close', function() {
 		mainWindow = null;
 	})
 
@@ -56,7 +59,7 @@ return mainWindow
 }
 
 app.on("ready", async () => {
-await createMainWindow()
+	await createMainWindow()
 });
 
 
