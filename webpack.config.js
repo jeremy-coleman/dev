@@ -7,15 +7,20 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const nodeExternals = require("webpack-node-externals");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+
+
+//const PurifyCSSPlugin = require("purifycss-webpack");
 //const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const ROOT = path.resolve(__dirname);
 const getRoot = path.join.bind(path, ROOT);
 
+
+
 //Html-webpack-plugin configuration
 const indexConfig = {
     template: getRoot('src/app/index.hbs'),
-    excludeChunks: ['desktop'],
+    excludeChunks: ['desktop/main'],
     baseHref: './',
     chunksSortMode: (chunk1, chunk2) => {
         let orders = ['corejs', 'zonejs', 'app'];
@@ -37,10 +42,10 @@ const createConfig = (env) => {
     devtool: ifDev('eval-cheap-module-source-map'),
 
     entry: {
-        'desktop': getRoot('src/desktop/main.ts'),
-        'corejs': 'core-js/client/shim',
-        'zonejs': 'zone.js/dist/zone',
-        'app': getRoot('src/app/main.tsx')
+        'desktop/main': getRoot('src/desktop/main.ts'),
+        'app/vendor/corejs': 'core-js/client/shim',
+        'app/vendor/zonejs': 'zone.js/dist/zone',
+        'app/coglite': getRoot('src/app/main.tsx')
     },
     
     output: {
@@ -54,7 +59,7 @@ const createConfig = (env) => {
             
             {test: /\.s?css$/,
               use: [
-                {loader: 'file-loader', options: {name: '[name].css'}}, //name: '[name].[hash:10].css'
+                {loader: 'file-loader', options: {name: 'app/styles/[name].css'}}, //name: '[name].[hash:10].css'
                 {loader: 'extract-loader'},
                 {loader: 'css-loader', options: {minimize: true}},
                 {loader: 'postcss-loader', options: {sourceMap: true }},
@@ -65,7 +70,7 @@ const createConfig = (env) => {
 
             {test: /\.html$/, exclude: /node_modules/,
               use: [
-                {loader: 'file-loader',options: {name: '[name].html'}}, //'[name].[hash:10].html'
+                {loader: 'file-loader',options: {name: 'app/[name].html'}}, //'[name].[hash:10].html'
                 {loader: 'extract-loader'},
                 {loader: 'html-loader'}
                ]
@@ -74,7 +79,7 @@ const createConfig = (env) => {
             // All images and fonts will be optimized and their paths will be solved
             {enforce: 'pre',test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf|wav)(\?.*)?$/,
               use: [
-                {loader: 'url-loader',options: {name: 'assets/[name].[ext]',limit: 8192 } }, //'[name].[hash:10].[ext]'
+                {loader: 'url-loader',options: {name: 'app/assets/[name].[ext]',limit: 8192 } }, //'[name].[hash:10].[ext]'
                 {loader: 'img-loader'}
                ]
             },
@@ -92,9 +97,7 @@ const createConfig = (env) => {
         extensions: [".ts", ".js", ".tsx", ".jsx"]
     },
 
-    stats: {
-        warnings: false
-    },
+    stats: "minimal",
 
     target: 'node',
    
@@ -112,8 +115,7 @@ const createConfig = (env) => {
         new FriendlyErrorsWebpackPlugin({ clearConsole: true }),
         new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
         ifProd(new UglifyJsPlugin())
-    ]),
-    
+    ])
 };
 
     return config
@@ -137,3 +139,19 @@ module.exports = createConfig
     //    historyApiFallback: true,
     //    before() {cp.exec('electron . --dev', { stdio: "inherit" }).on("close", () => {process.exit(0)})}
    // }, 
+   
+    //        new PurifyCSSPlugin({
+    //         paths: glob.sync([
+    //             path.join(__dirname, "src/app/**/*.html"),
+    //             path.join(__dirname, "src/app/**/*.hbs"),
+    //             path.join(__dirname, "src/app/**/*.tsx"),
+    //             path.join(__dirname, "src/app/**/*.ts")
+    //           ]),
+    //           styleExtensions: ['.css', '.less', '.scss'],
+    //           purifyOptions: {
+    //             minify: true,
+    //             info: true,
+    //             rejected: true
+    //           }
+    //        }),
+    // ,
