@@ -5,9 +5,7 @@
 	"license": "MIT",
 	"main": "dist/desktop/main.js",
 	"scripts": {
-		"start": "run-p build:*",
-		"build:desktop": "webpack --config=webpack.desktop.js --env.prod",
-		"build:client": "webpack --env.prod && electron ."
+		"start": "webpack --env.prod && electron ."
 	},
 	"dependencies": {
 		"mobx": "latest",

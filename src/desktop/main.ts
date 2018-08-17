@@ -22,7 +22,7 @@ let createMainWindow = async () => {
 	});
 
 
-	mainWindow.loadFile(path.join(app.getAppPath(), 'dist/app/index.html'));
+	mainWindow.loadFile(path.join(app.getAppPath(), 'dist/client/index.html'));
 
 	mainWindow.on('close', function() {
 		mainWindow = null;

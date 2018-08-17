@@ -16,19 +16,15 @@ const ROOT = path.resolve(__dirname);
 const getRoot = path.join.bind(path, ROOT);
 
 
-
 const createConfig = (env) => {
-
-    
     const ifDev = plugin => env.dev ? plugin : undefined;
     const ifProd = plugin => env.prod ? plugin : undefined;
     const removeEmpty = array => array.filter(p => !!p);
     const envSetting = env.prod ? 'production' : 'development';
     
     
-    
-    
-    const config = {
+ 
+    const clientConfig = {
         
     mode: 'none',
     
@@ -37,11 +33,11 @@ const createConfig = (env) => {
     entry: {
         'vendor/corejs': 'core-js/client/shim',
         'vendor/zonejs': 'zone.js/dist/zone',
-        'app': getRoot('src/app/main.tsx')
+        'app': getRoot('src/client/main.tsx')
     },
     
     output: {
-        path: getRoot('dist/app'),
+        path: getRoot('dist/client'),
         filename: '[name].js'
     },
 
@@ -101,11 +97,10 @@ const createConfig = (env) => {
     externals: [nodeExternals()],
 
     plugins: removeEmpty([
-        ifDev(new CleanWebpackPlugin('dist', {root: getRoot()})),
         new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(envSetting)}),
         new HtmlWebpackPlugin({
-            template: getRoot('src/app/index.hbs'),
-            baseHref: env.dev ? '/' : '',
+            template: getRoot('src/client/index.hbs'),
+            baseHref: '',
             chunksSortMode: (chunk1, chunk2) => {
             let orders = ['corejs', 'zonejs', 'app'];
             return orders.indexOf(chunk1.names[0]) - orders.indexOf(chunk2.names[0]);
@@ -113,44 +108,55 @@ const createConfig = (env) => {
         }),
         new FriendlyErrorsWebpackPlugin({ clearConsole: true }),
         new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
-        ifProd(new UglifyJsPlugin())
+        new UglifyJsPlugin()
     ])
 };
 
-    return config
+const desktopConfig = {
+        
+    mode: 'none',
+    
+    devtool: ifDev('eval-cheap-module-source-map'),
+
+    entry: {
+        'desktop': getRoot('src/desktop/main.ts')
+    },
+    
+    output: {
+        path: getRoot('dist/desktop'),
+        filename: 'main.js'
+    },
+
+    module: {
+        rules: [
+            {test: /\.tsx?$/,use: {loader: 'ts-loader', options: {transpileOnly: true}}, exclude: /node_modules/}, 
+        ]
+    },
+    resolve: {
+        extensions: [".ts", ".js", ".tsx", ".jsx"]
+    },
+
+    stats: "minimal",
+
+    target: 'node',
+   
+    node: {
+        __dirname: false,
+        __filename: false
+    },
+
+    externals: [nodeExternals()],
+
+    plugins: removeEmpty([
+        new CleanWebpackPlugin('dist', {root: getRoot()}),
+        new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(envSetting)}),
+        new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
+        new UglifyJsPlugin()
+    ])
+};
+
+
+    return [clientConfig, desktopConfig]
 }
 
 module.exports = createConfig
-
-        //new WebpackShellPlugin({onBuildEnd: ['lite-server . --dev']}),//'python script.py && node script.js'
-        //new WriteFilePlugin()
-        //        new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
-        //new webpack.LoaderOptionsPlugin({debug: true}),
-        
-        //        new webpack.DefinePlugin({ __DEVELOPMENT__: Boolean(env.dev) }),
-        
-                //new webpack.LoaderOptionsPlugin({debug: true}),
-        //ifProd(new MiniCssExtractPlugin({filename: '[name].[hash].css'})),
-        
- //ifProd(new CopyWebpackPlugin([getRoot('package.json')])),
- 
-            //devServer: {
-    //    historyApiFallback: true,
-    //    before() {cp.exec('electron . --dev', { stdio: "inherit" }).on("close", () => {process.exit(0)})}
-   // }, 
-   
-    //        new PurifyCSSPlugin({
-    //         paths: glob.sync([
-    //             path.join(__dirname, "src/app/**/*.html"),
-    //             path.join(__dirname, "src/app/**/*.hbs"),
-    //             path.join(__dirname, "src/app/**/*.tsx"),
-    //             path.join(__dirname, "src/app/**/*.ts")
-    //           ]),
-    //           styleExtensions: ['.css', '.less', '.scss'],
-    //           purifyOptions: {
-    //             minify: true,
-    //             info: true,
-    //             rejected: true
-    //           }
-    //        }),
-    // ,
