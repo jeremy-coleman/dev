@@ -17,23 +17,16 @@ const getRoot = path.join.bind(path, ROOT);
 
 
 
-//Html-webpack-plugin configuration
-const indexConfig = {
-    template: getRoot('src/app/index.hbs'),
-    excludeChunks: ['desktop/main'],
-    baseHref: './',
-    chunksSortMode: (chunk1, chunk2) => {
-        let orders = ['corejs', 'zonejs', 'app'];
-        return orders.indexOf(chunk1.names[0]) - orders.indexOf(chunk2.names[0]);
-    }
-};
-
-
 const createConfig = (env) => {
+
+    
     const ifDev = plugin => env.dev ? plugin : undefined;
     const ifProd = plugin => env.prod ? plugin : undefined;
     const removeEmpty = array => array.filter(p => !!p);
     const envSetting = env.prod ? 'production' : 'development';
+    
+    
+    
     
     const config = {
         
@@ -42,14 +35,13 @@ const createConfig = (env) => {
     devtool: ifDev('eval-cheap-module-source-map'),
 
     entry: {
-        'desktop/main': getRoot('src/desktop/main.ts'),
-        'app/vendor/corejs': 'core-js/client/shim',
-        'app/vendor/zonejs': 'zone.js/dist/zone',
-        'app/coglite': getRoot('src/app/main.tsx')
+        'vendor/corejs': 'core-js/client/shim',
+        'vendor/zonejs': 'zone.js/dist/zone',
+        'app': getRoot('src/app/main.tsx')
     },
     
     output: {
-        path: getRoot('dist'),
+        path: getRoot('dist/app'),
         filename: '[name].js'
     },
 
@@ -59,7 +51,7 @@ const createConfig = (env) => {
             
             {test: /\.s?css$/,
               use: [
-                {loader: 'file-loader', options: {name: 'app/styles/[name].css'}}, //name: '[name].[hash:10].css'
+                {loader: 'file-loader', options: {name: 'styles/[name].css'}}, //name: '[name].[hash:10].css'
                 {loader: 'extract-loader'},
                 {loader: 'css-loader', options: {minimize: true}},
                 {loader: 'postcss-loader', options: {sourceMap: true }},
@@ -70,7 +62,7 @@ const createConfig = (env) => {
 
             {test: /\.html$/, exclude: /node_modules/,
               use: [
-                {loader: 'file-loader',options: {name: 'app/[name].html'}}, //'[name].[hash:10].html'
+                {loader: 'file-loader',options: {name: 'templates/[name].html'}}, //'[name].[hash:10].html'
                 {loader: 'extract-loader'},
                 {loader: 'html-loader'}
                ]
@@ -79,7 +71,7 @@ const createConfig = (env) => {
             // All images and fonts will be optimized and their paths will be solved
             {enforce: 'pre',test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf|wav)(\?.*)?$/,
               use: [
-                {loader: 'url-loader',options: {name: 'app/assets/[name].[ext]',limit: 8192 } }, //'[name].[hash:10].[ext]'
+                {loader: 'url-loader',options: {name: 'assets/[name].[ext]',limit: 8192 } }, //'[name].[hash:10].[ext]'
                 {loader: 'img-loader'}
                ]
             },
@@ -109,9 +101,16 @@ const createConfig = (env) => {
     externals: [nodeExternals()],
 
     plugins: removeEmpty([
+        ifDev(new CleanWebpackPlugin('dist', {root: getRoot()})),
         new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(envSetting)}),
-        new CleanWebpackPlugin('dist', {root: getRoot()}),
-        new HtmlWebpackPlugin(indexConfig),
+        new HtmlWebpackPlugin({
+            template: getRoot('src/app/index.hbs'),
+            baseHref: env.dev ? '/' : '',
+            chunksSortMode: (chunk1, chunk2) => {
+            let orders = ['corejs', 'zonejs', 'app'];
+            return orders.indexOf(chunk1.names[0]) - orders.indexOf(chunk2.names[0]);
+            }
+        }),
         new FriendlyErrorsWebpackPlugin({ clearConsole: true }),
         new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
         ifProd(new UglifyJsPlugin())
