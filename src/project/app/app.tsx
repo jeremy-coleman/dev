@@ -4,9 +4,11 @@ import { remote } from 'electron';
 import * as React from 'react';
 import { render } from 'react-dom';
 
-import Button from './components/Button';
+//import Button from './components/Button';
 
-const main = remote.require("./main").FuseBox.main("default/desktop/main.js");
+import {Button} from '@coglite/button';
+
+const main = remote.require("./main").FuseBox.main("default/project/desktop/main.js");
 
 interface Props {
 }

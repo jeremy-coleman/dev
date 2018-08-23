@@ -9,19 +9,24 @@ const ASSETS = ["*.jpg", "*.png", "*.jpeg", "*.gif", "*.svg"]
 
 
 Sparky.task("copy-html", () => {
-  return Sparky.src("./**/*.html", {base: "./src/app"}).dest("./dist/app/");
+  return Sparky.src("./**/*.html", {base: "./src/project/app"}).dest("./dist/app/");
 });
 
 Sparky.task("default", ["copy-html"], () => {
   const fuse = FuseBox.init({
     homeDir: "src",
+    automaticAlias: true,
     sourcemaps: true,
     useTypescriptCompiler: true,
+    allowSyntheticDefaultImports: true,
     output: "dist/$name.js",
     plugins: [
          [SassPlugin({import: true}), CSSResourcePlugin(), CSSPlugin()],
          CSSPlugin(),
-    ]
+    ],
+    alias : {
+   "@coglite" : "~/packages"
+  }
   });
 
   if (isDev) {
@@ -29,18 +34,20 @@ Sparky.task("default", ["copy-html"], () => {
 
     fuse.bundle("desktop/main")
       .target("electron")
-      .instructions(" > [desktop/main.ts]")
+      .instructions(" > [project/desktop/main.ts]")
       .watch();
 
     fuse.bundle("app/app")
       .target("electron")
-      .instructions(" > [app/app.tsx] +fuse-box-css")
+      .instructions(" > [project/app/app.tsx] +fuse-box-css")
       .watch().hmr()
       .plugin(CopyPlugin({ useDefault: false, files: ASSETS, dest: "assets", resolve: "assets/" }));
 
-    fuse.bundle("app/vendor")
-      .target("browser")
-      .instructions(" ~ [app/app.tsx]");
+
+  //fuse.register()
+    //fuse.bundle("app/vendor")
+      //.target("browser")
+      //.instructions(" ~ [app/app.tsx]");
 
   
     return fuse.run().then(() => {

@@ -14,11 +14,12 @@ function createMainWindow () {
     width: 800,
     height: 600,
     webPreferences: {
+      webSecurity: false,
       backgroundThrottling: false,
-      textAreasAreResizable: false,
-      nodeIntegrationInWorker: true,
-      experimentalCanvasFeatures: true,
-      experimentalFeatures: true
+      textAreasAreResizable: false
+      //nodeIntegrationInWorker: true
+      //experimentalCanvasFeatures: true
+      //experimentalFeatures: true
       }
   })
   
