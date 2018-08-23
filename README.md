@@ -15,3 +15,11 @@ project/
 -app
 -desktop
 -packages(monorepo)
+
+
+#yarnrc alternative
+save-exact true
+disturl "https://atom.io/download/electron"
+target "2.0.3"
+runtime "electron"
+build-from-source true

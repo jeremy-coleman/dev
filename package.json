@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node fuse",
     "start:prod": "cross-env NODE_ENV=production node fuse",
+    "force:rebuild":"npm rebuild --runtime=electron --target=3.0.0-beta.5 --disturl=https://atom.io/download/atom-shell --abi=64",
     "clean": "rimraf dist .fusebox",
     "app": "electron .",
     "package": "cross-env NODE_ENV=production node fuse && electron-packager . Release --platform=darwin --arch=x64 --overwrite",
@@ -32,6 +33,7 @@
     "@types/react": "16.4.11",
     "@types/react-dom": "16.0.7",
     "electron": "3.0.0-beta.5",
+    "electron-rebuild": "1.8.2",
     "electron-packager": "12.1.1",
     "node-sass": "4.9.3",
     "typescript": "3.0.1"
