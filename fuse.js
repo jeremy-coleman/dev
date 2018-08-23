@@ -43,12 +43,6 @@ Sparky.task("default", ["copy-html"], () => {
       .watch().hmr()
       .plugin(CopyPlugin({ useDefault: false, files: ASSETS, dest: "assets", resolve: "assets/" }));
 
-
-  //fuse.register()
-    //fuse.bundle("app/vendor")
-      //.target("browser")
-      //.instructions(" ~ [app/app.tsx]");
-
   
     return fuse.run().then(() => {
       const child = execa("node", [`${ __dirname }/node_modules/electron/cli.js`, __dirname ], { stdio: "inherit" })

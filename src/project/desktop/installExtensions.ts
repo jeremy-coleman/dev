@@ -4,7 +4,12 @@ const installer = require('electron-devtools-installer');
 
 
 export const installExtensions = async () => {
-        const extensions = ['REACT_DEVELOPER_TOOLS', 'REACT_PERF', 'REDUX_DEVTOOLS'];
+        const extensions = [
+          'REACT_DEVELOPER_TOOLS',
+          'REACT_PERF',
+          'REDUX_DEVTOOLS',
+          'MOBX_DEVTOOLS'
+          ];
         for (const extension of extensions)
           {
             try {installer.default(installer[extension])} 
