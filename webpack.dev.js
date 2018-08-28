@@ -58,7 +58,11 @@ module: {
           ["mobx-async-action"],
           "@babel/plugin-proposal-pipeline-operator",
           ["@babel/plugin-transform-modules-commonjs", { "noInterop": true }],
-          ["module-resolver",{"extensions": [".js", ".jsx", ".ts", ".tsx"], "root": ["."]}]
+          ["module-resolver",{
+            "extensions": [".js", ".jsx", ".ts", ".tsx"],
+            "root": ["."],
+            "alias": {"@coglite": "./src/@coglite"}
+          }]
         ],
         
         presets: [
@@ -134,7 +138,11 @@ module: {
           ["mobx-async-action"],
           "@babel/plugin-proposal-pipeline-operator",
           ["@babel/plugin-transform-modules-commonjs", { "noInterop": true }],
-          ["module-resolver",{"extensions": [".js", ".jsx", ".ts", ".tsx"], "root": ["."]}]
+          ["module-resolver",{
+            "extensions": [".js", ".jsx", ".ts", ".tsx"],
+            "root": ["."],
+            "alias": {"@coglite": "./src/@coglite"}
+          }]
         ],
         
         presets: [
