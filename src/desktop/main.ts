@@ -8,6 +8,10 @@ import url = require('url');
 const BrowserWindow = electron.BrowserWindow;
 let mainWindow: electron.BrowserWindow;
 
+// Get environment type (dev / prod)
+const args = process.argv.slice(1);
+let dev = args.some(arg => arg === '--dev');
+
 
 let createMainWindow = async () => {   
 	mainWindow = new BrowserWindow({ 
@@ -21,8 +25,19 @@ let createMainWindow = async () => {
 	}
 	});
 
-
-	mainWindow.loadFile(path.join(app.getAppPath(), 'dist/client/index.html'));
+	if (!dev) {
+		// and load the index.html of the app.
+		mainWindow.loadURL(url.format({
+			pathname: path.join(__dirname, 'index.html'),
+			protocol: 'file:',
+			slashes: true
+		}));
+	} else {
+		mainWindow.loadURL('http://127.0.0.1:8080');
+	}
+	
+//	mainWindow.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
+//mainWindow.loadURL('http://localhost:8080')
 
 	mainWindow.on('close', function() {
 		mainWindow = null;

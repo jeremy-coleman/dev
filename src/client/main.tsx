@@ -1,13 +1,13 @@
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import { render } from 'react-dom'
+import {MyAppLoader} from './App'
 
-import "../../node_modules/bootstrap/scss/bootstrap.scss"
+// const root = document.createElement('div')
+// document.body.appendChild(root)
 
+// render(<MyAppLoader />, root)
 
+const root = document.getElementById('coglite-app-root')
+document.body.appendChild(root)
 
-let MyApp: React.SFC<any> = (props) => 
-   <div>hi</div>
-
-let render = () => ReactDOM.render(<MyApp/>, document.getElementById('coglite-app-root'))
-
-render()
+render(<MyAppLoader />, root)

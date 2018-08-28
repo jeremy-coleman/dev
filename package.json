@@ -3,9 +3,13 @@
 	"version": "0.0.1",
 	"author": "d",
 	"license": "MIT",
-	"main": "dist/desktop/main.js",
+	"main": "dist/desktop.js",
 	"scripts": {
-		"start": "webpack --env.prod && electron ."
+		"dev": "webpack --env.prod --watch --hot",
+		"start:reload": "reload -d ./dist/client/",
+		"start1:liteserver": "lite-server --baseDir ./dist/client/",
+		"start:electron": "electron .",
+		"start": "run-p start:*"
 	},
 	"dependencies": {
 		"mobx": "latest",
@@ -51,6 +55,7 @@
 		"img-loader": "3.0.0",
 		"less": "3.8.0",
 		"less-loader": "4.1.0",
+		"lite-server": "2.4.0",
 		"lodash": "4.17.10",
 		"node-sass": "latest",
 		"npm-run-all": "latest",
@@ -69,6 +74,8 @@
 		"purify-css": "1.2.5",
 		"purifycss-webpack": "latest",
 		"raw-loader": "0.5.1",
+		"react-hot-loader": "4.3.4",
+		"reload": "2.3.1",
 		"resolve-url-loader": "2.3.0",
 		"sass-loader": "7.1.0",
 		"ts-loader": "4.4.2",
