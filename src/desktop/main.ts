@@ -1,24 +1,21 @@
 require('dotenv').config()
 import { app, BrowserWindow, Menu } from "electron";
 import * as path from 'path';
-import {format} from 'url';
-import { resolve } from 'app-root-path';
+import * as url from 'url'
+
+//import { resolve } from 'app-root-path';
 
 let mainWindow: BrowserWindow;
 
-var isProd = process.env.NODE_ENV === 'production' ? true : false;
+//var isProd = process.env.NODE_ENV === 'production' ? true : false;
 
-(process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
-    console.error(error);
-    console.log('[err-desktop]', error.message.toString(), JSON.stringify(error.stack));
-});
+// (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
+//     console.error(error);
+//     console.log('[err-desktop]', error.message.toString(), JSON.stringify(error.stack));
+// });
 
-
-  const devPath = format({pathname: '//localhost:8888/',protocol: 'http:', slashes: true});
-  const prodPath = format({pathname: resolve('dist/app/index.html'), protocol: 'file:', slashes: true });
-
-  var url = isProd ? prodPath : devPath;
-
+const args = process.argv.slice(1);
+let dev = args.some(arg => arg === '--dev');
 
 //dont open devtools in this function or u'll get error spam on startup
 
@@ -31,12 +28,22 @@ let createMainWindow = async () => {
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
             nodeIntegrationInWorker: true,
-            nodeIntegration: true,
+            //nodeIntegration: true,
             plugins: true
         }
     });
 
-    mainWindow.loadURL(url);
+    
+	if (!dev) {
+		// and load the index.html of the app.
+		mainWindow.loadURL(url.format({
+			pathname: path.join(app.getAppPath(), 'dist/app/index.html'),
+			protocol: 'file:',
+			slashes: true
+		}));
+	} else {
+		mainWindow.loadURL('http://127.0.0.1:8888');
+	}
 
     mainWindow.webContents.on("context-menu", (e: any, props: any) => {
       Menu.buildFromTemplate([{
@@ -51,7 +58,10 @@ let createMainWindow = async () => {
         installExtension(MOBX_DEVTOOLS);
         installExtension(REDUX_DEVTOOLS);
 
-    mainWindow.on('closed', () => {mainWindow = null, process.kill(process.pid)});
+    mainWindow.on('closed', () => {
+        mainWindow = null
+       // process.kill(process.pid)
+    });
     //mainWindow.on("close", () => {mainWindow = null}); not sure which is better to use here?
 
     return mainWindow

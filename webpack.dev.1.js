@@ -3,6 +3,9 @@ var webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const WriteFilePlugin = require("write-file-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+var nodeExternals = require("webpack-node-externals");
+var CleanWebpackPlugin = require('clean-webpack-plugin');
+
 
 const ROOT = path.resolve(__dirname);
 const getRoot = path.join.bind(path, ROOT);
@@ -24,8 +27,11 @@ const AppConfig = {
         env: defaultAppEnv
 };
 
-//dont target electron-renderer bc it fucks up
-const appWebpackConfig = {
+//target electron-renderer makes it fucks up w/ some configs
+
+const app_config = {
+
+target: 'electron-renderer',
 
 mode: "development",
 
@@ -39,7 +45,30 @@ output: {
 
 module: {
   rules: [
-    {test: /\.tsx?$/, exclude: /node_modules/, use: ['babel-loader']},
+     {
+        test: /\.[tj]sx?$/, exclude: /node_modules/, use: [
+        {loader: "babel-loader", options: { 
+          babelrc: false,
+          plugins: [
+          "react-hot-loader/babel",
+          ["@babel/plugin-proposal-decorators", { "legacy": true }],
+          ["@babel/plugin-proposal-class-properties", { "loose" : true }],
+          ["@babel/plugin-proposal-object-rest-spread", { "useBuiltIns": true }],
+          ["mobx-deep-action"],
+          ["mobx-async-action"],
+          "@babel/plugin-proposal-pipeline-operator",
+          ["@babel/plugin-transform-modules-commonjs", { "noInterop": true }],
+          ["module-resolver",{"extensions": [".js", ".jsx", ".ts", ".tsx"], "root": ["."]}]
+        ],
+        
+        presets: [
+          "@babel/typescript",
+          "@babel/react",
+          ["@babel/env", {"targets": {"browsers": "last 2 Chrome versions","node": "current"}}]
+        ]
+      }
+      }]
+    }, 
     {test: /\.less$/,use: ["style-loader", "css-loader", "less-loader"]},
     {test: /\.scss$/,use: ["style-loader","css-loader","sass-loader"]},
     {test: /\.css$/,use: ["style-loader", "css-loader"]},
@@ -77,4 +106,65 @@ plugins: [
 ]
 }
 
-module.exports = appWebpackConfig
+
+const desktop_config = {
+      
+target: "electron-main",   
+
+mode: 'development',
+
+entry: getRoot('src/desktop/main.ts'),
+
+output: {
+  path: getRoot('dist/desktop'),
+  filename: 'desktop.js'
+},
+
+module: { 
+  rules: [
+     {
+        test: /\.[tj]sx?$/, exclude: /node_modules/, use: [
+        {loader: "babel-loader", options: { 
+          babelrc: false,
+          plugins: [
+          ["@babel/plugin-proposal-decorators", { "legacy": true }],
+          ["@babel/plugin-proposal-class-properties", { "loose" : true }],
+          ["@babel/plugin-proposal-object-rest-spread", { "useBuiltIns": true }],
+          ["mobx-deep-action"],
+          ["mobx-async-action"],
+          "@babel/plugin-proposal-pipeline-operator",
+          ["@babel/plugin-transform-modules-commonjs", { "noInterop": true }],
+          ["module-resolver",{"extensions": [".js", ".jsx", ".ts", ".tsx"], "root": ["."]}]
+        ],
+        
+        presets: [
+          "@babel/typescript",
+          "@babel/react",
+          ["@babel/env", {"targets": {"browsers": "last 2 Chrome versions","node": "current"}}]
+        ]
+      }
+      }]
+    }, 
+  ]
+},
+
+resolve: { 
+      extensions: [".ts", ".js", ".tsx", ".jsx", ".json", ".scss", ".css", ".html"],
+      mainFields: ['browser','module','jsnext:main','main'],
+      modules: [getRoot("src"), getRoot("node_modules")]
+},
+    
+//devtool: "#source-map",
+    
+node: {
+      __dirname: false,
+      __filename: false
+},
+
+externals: [nodeExternals()],
+
+plugins: [new CleanWebpackPlugin('dist')]
+
+}
+
+module.exports = [app_config, desktop_config]
