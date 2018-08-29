@@ -1,0 +1,64 @@
+import * as React from 'react';
+import { observer } from 'mobx-react';
+
+
+
+import {FaInfoCircle} from 'react-icons/fa'
+
+const ReactTooltip = require('react-tooltip');
+let injectSheet = require('react-jss').default;
+
+var tooltipCount = 0;
+
+export interface TooltipProps {
+    onClose?: () => void;
+    className?: string;
+    classes?: any;
+}
+const styles = (theme: any) => ({
+    solid: {
+        composes: 'tooltip',
+        pointerEvents: 'auto !important',
+        '&:hover': {
+            visibility: 'visible !important',
+            opacity: '1 !important'
+        }
+    }
+});
+
+
+@injectSheet(styles)
+@observer
+export class InfoTooltip extends React.Component<TooltipProps, {}> {
+    private tooltipId: string;
+    constructor(props: TooltipProps) {
+        super(props);
+        this.tooltipId = 'InfoTooltip-'+tooltipCount++;
+    }
+
+    componentWillUpdate() {
+        ReactTooltip.rebuild();
+    }
+
+    componentWillMount() {
+        ReactTooltip.rebuild();
+    }
+
+    public render() {
+        let classes = this.props.classes || {};
+        return <span
+            data-tip=""
+            data-for={this.tooltipId}
+            data-delay-hide={300}
+            data-effect={'solid'}
+            data-class={classes.solid}
+            className={this.props.className || ''}>
+            <FaInfoCircle />
+            <ReactTooltip id={this.tooltipId}>
+                {this.props.children}
+            </ReactTooltip>
+        </span>
+    }
+}
+
+//import { computed } from 'mobx';

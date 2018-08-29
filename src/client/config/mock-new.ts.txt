@@ -1,0 +1,22 @@
+import { UserServiceContext } from "../apps/portal/user/service/UserServiceContext";
+import { MockUserService } from "../apps/portal/user/service/MockUserService";
+import { UserDataServiceContext } from "../apps/portal/user/service/UserDataServiceContext";
+import { MockUserDataService } from "../apps/portal/user/service/MockUserDataService";
+import { ListingServiceContext } from "../apps/portal/listing/service/ListingServiceContext";
+import { MockListingService } from "../apps/portal/listing/service/MockListingService";
+import { ImageServiceContext } from "../apps/portal/media/service/ImageServiceContext";
+import { MockImageService } from "../apps/portal/media/service/MockImageService";
+import { MockCategoryService } from "../apps/portal/category/service/MockCategoryService";
+import { CategoryServiceContext } from "../apps/portal/category/service/CategoryServiceContext";
+
+
+const mock = (env : any) => {
+    console.log("-- Applying Mock Configuration");
+    UserServiceContext.value = new MockUserService();
+    UserDataServiceContext.value = new MockUserDataService();
+    ListingServiceContext.value = new MockListingService();
+    ImageServiceContext.value = new MockImageService();
+    CategoryServiceContext.value = new MockCategoryService();
+};
+
+export { mock, mock as default }

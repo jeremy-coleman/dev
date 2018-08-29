@@ -1,0 +1,9 @@
+module.exports = { contents: "\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst tslib_1 = require(\"tslib\");\r\nconst React = require(\"react\");\r\nconst mobx_1 = require(\"mobx\");\r\nconst mobx_react_1 = require(\"mobx-react\");\r\nlet injectSheet = require('react-jss').default;\r\nconst react_codemirror2_1 = require(\"react-codemirror2\");\r\nrequire(\"codemirror/mode/shell/shell\");\r\nconst styles = (theme) => ({\r\n    editor: {\r\n        fontFamily: 'Courier New',\r\n        fontSize: '16px'\r\n    }\r\n});\r\nlet StepCodeEditor = class StepCodeEditor extends React.Component {\r\n    constructor(props) {\r\n        super(props);\r\n    }\r\n    updateCode(newCode) {\r\n        this.props.step[this.props.fieldName] = newCode;\r\n    }\r\n    render() {\r\n        let classes = this.props.classes || {};\r\n        let script = this.props.step[this.props.fieldName];\r\n        return (React.createElement(react_codemirror2_1.Controlled, { className: classes.editor, value: script, onBeforeChange: (_, __, code) => this.updateCode(code), options: { lineNumbers: true, mode: 'shell', theme: 'pastel-on-dark' } }));\r\n    }\r\n};\r\ntslib_1.__decorate([\r\n    mobx_1.action,\r\n    tslib_1.__metadata(\"design:type\", Function),\r\n    tslib_1.__metadata(\"design:paramtypes\", [String]),\r\n    tslib_1.__metadata(\"design:returntype\", void 0)\r\n], StepCodeEditor.prototype, \"updateCode\", null);\r\nStepCodeEditor = tslib_1.__decorate([\r\n    injectSheet(styles),\r\n    mobx_react_1.observer,\r\n    tslib_1.__metadata(\"design:paramtypes\", [Object])\r\n], StepCodeEditor);\r\nexports.StepCodeEditor = StepCodeEditor;\r\n",
+dependencies: ["tslib","react","mobx","mobx-react","react-jss","react-codemirror2","codemirror/mode/shell/shell"],
+sourceMap: {},
+headerContent: undefined,
+mtime: 1535400689853,
+devLibsRequired : undefined,
+ac : undefined,
+_ : {}
+}

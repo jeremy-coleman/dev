@@ -1,0 +1,15 @@
+import { autorun } from "mobx";
+import { RootAppHost } from "../app/RootAppHost";
+import {HandleModel} from "../stores";
+
+const NavToggleStore = new HandleModel<boolean>();
+
+
+autorun(() => {
+    if(RootAppHost.sync.syncing) {
+        NavToggleStore.setValue(false);
+    }
+    else return
+});
+
+export { NavToggleStore as default, NavToggleStore }

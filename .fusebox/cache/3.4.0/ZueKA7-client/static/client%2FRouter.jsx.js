@@ -1,0 +1,9 @@
+module.exports = { contents: "\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst React = require(\"react\");\r\nconst when_switch_1 = require(\"when-switch\");\r\nconst typestyle_1 = require(\"typestyle\");\r\nconst csstips_1 = require(\"csstips\");\r\nconst mobx_react_1 = require(\"mobx-react\");\r\nconst View_1 = require(\"./modules/notebook/View\");\r\nconst modules_1 = require(\"./modules\");\r\nconst designer_screen_1 = require(\"./modules/workflow-designer/components/workflow-toolbar/designer-screen\");\r\nconst AppRouter = mobx_react_1.inject('nav')(mobx_react_1.observer((props) => (React.createElement(\"div\", { className: typestyle_1.style(csstips_1.flex, csstips_1.vertical) }, when_switch_1.default(props.nav.route)\r\n    .is('notebook', () => React.createElement(View_1.NotebookView, null))\r\n    .is('datasets', () => React.createElement(modules_1.DatasetsPage, null))\r\n    .is('charts', () => React.createElement(modules_1.SettingsPage, null))\r\n    .is('dashboard', () => React.createElement(modules_1.DashboardPage, null))\r\n    .is('cloud', () => React.createElement(designer_screen_1.DesignerApp, null))\r\n    .is('catalog', () => React.createElement(modules_1.SettingsPage, null))\r\n    .is('settings', () => React.createElement(modules_1.SettingsPage, null))\r\n    .is('about', () => React.createElement(modules_1.AboutPage, null))\r\n    .else(() => React.createElement(View_1.NotebookView, null))))));\r\nexports.AppRouter = AppRouter;\r\n",
+dependencies: ["react","when-switch","typestyle","csstips","mobx-react","./modules/notebook/View","./modules","./modules/workflow-designer/components/workflow-toolbar/designer-screen"],
+sourceMap: {},
+headerContent: undefined,
+mtime: 1535438832082,
+devLibsRequired : undefined,
+ac : undefined,
+_ : {}
+}

@@ -1,0 +1,195 @@
+.workflow-editor.base-web-style [class*="pure-u"],
+.workflow-editor.base-web-style [class="pure-g"] {
+  font-family: 'Lato' !important;
+}
+.workflow-editor.base-web-style [class*="pure-u"] input,
+.workflow-editor.base-web-style [class="pure-g"] input {
+  box-shadow: none;
+  border-radius: 0;
+}
+.workflow-editor.base-web-style [class*="pure-u"] input.code,
+.workflow-editor.base-web-style [class="pure-g"] input.code {
+  font-family: 'Courier New' !important;
+}
+.workflow-editor.base-ide-style {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+}
+@media screen and (min-width: 64em) {
+  .workflow-editor.base-ide-style {
+    overflow-y: hidden;
+  }
+}
+@media screen and (min-width: 64em) {
+  .workflow-editor.base-ide-style > div {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+.workflow-editor.base-ide-style fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.workflow-editor.base-ide-style label {
+  margin-bottom: 0;
+}
+.select-medium .Select-control {
+  height: 70px;
+}
+.select-medium .Select-control .Select-value:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+}
+.select-medium .Select-control .Select-input input {
+  border: none;
+  box-shadow: none;
+}
+.select-medium .Select-menu-outer {
+  max-height: 400px;
+  z-index: 5;
+}
+.select-medium .Select-menu-outer .Select-menu {
+  max-height: 398px;
+}
+.select-normal .Select-control .Select-input input {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+}
+.select-large .Select-control {
+  height: 100px;
+}
+.select-large .Select-control .Select-value:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+}
+.select-large .Select-control .Select-input input {
+  border: none;
+  box-shadow: none;
+}
+.select-large .Select-menu-outer {
+  max-height: 400px;
+  z-index: 5;
+}
+.select-large .Select-menu-outer .Select-menu {
+  max-height: 398px;
+}
+.block:not(:last-child) {
+  margin-bottom: 10px;
+}
+.block-force {
+  margin-bottom: 10px;
+}
+@media screen and (max-width: 47.99em) {
+  .block-sm:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+.block-md {
+  margin-bottom: 10px;
+}
+@media screen and (min-width: 64em) {
+  .block-md {
+    margin-bottom: 0px;
+  }
+}
+@media screen and (max-width: 63.99em) {
+  .not-block-md {
+    margin-bottom: 0px;
+  }
+  .not-block-md:not(:last-child) {
+    margin-bottom: 0px;
+  }
+}
+.pure-g > div,
+.pure-g > label {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.pure-form label {
+  margin: 0px;
+}
+.tooltip a,
+.tooltip a:hover,
+.tooltip a:active,
+.tooltip a:visited {
+  color: #ddd;
+  text-decoration: none;
+  font-weight: 700;
+}
+.tooltip a:hover,
+.tooltip a:hover:hover,
+.tooltip a:active:hover,
+.tooltip a:visited:hover,
+.tooltip a:active,
+.tooltip a:hover:active,
+.tooltip a:active:active,
+.tooltip a:visited:active {
+  color: #fff;
+}
+body {
+  background-color: transparent;
+  font-family: 'Lato', sans-serif;
+  text-rendering: optimizeLegibility;
+}
+.pure-g [class*="pure-u"] {
+  font-family: 'Lato', sans-serif !important;
+}
+.links a,
+.links a:visited {
+  text-decoration: none;
+  font-weight: 700;
+  color: #4E73BD;
+}
+.links a:hover {
+  color: #34518b;
+}
+code {
+  background-color: #F5EEF9;
+  color: #8824CA;
+  padding: 4px 2px;
+}
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 100%;
+  max-width: 80em;
+  overflow-x: hidden;
+}
+.image {
+  max-width: 100%;
+  padding: 0px 20px;
+  box-sizing: border-box;
+}
+.mobile-menu,
+.pure-menu-horizontal .pure-menu-list.mobile-menu {
+  display: block;
+}
+.mobile-menu .pure-menu-item,
+.pure-menu-horizontal .pure-menu-list.mobile-menu .pure-menu-item {
+  float: left;
+  width: 100%;
+}
+@media screen and (min-width: 48em) {
+  .mobile-menu,
+  .pure-menu-horizontal .pure-menu-list.mobile-menu {
+    display: inline-block;
+  }
+  .mobile-menu .pure-menu-item,
+  .pure-menu-horizontal .pure-menu-list.mobile-menu .pure-menu-item {
+    float: none;
+    width: auto;
+  }
+}

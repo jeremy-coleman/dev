@@ -1,0 +1,64 @@
+import * as React from "react";
+import { IRequest } from "@coglite/framework/common/IRequest";
+import { HomeHostAppView, IAppHostProps } from "./HomeHostAppView";
+import { AppLink } from "@coglite/framework/common/component/AppLink";
+import { Icon } from "office-ui-fabric-react";
+import { getTheme } from "@uifabric/styling";
+import { homeApps } from "../homeRoutes";
+
+interface IHomeAppTileLinkProps extends IAppHostProps {
+    request: IRequest;
+}
+
+class HomeAppTileLink extends React.Component<IHomeAppTileLinkProps, any> {
+    render() {
+        return (
+            <AppLink host={this.props.host} request={this.props.request} style={{ textDecoration: "none" }} title={this.props.request.title}>
+                <div style={{ position: "relative", width: 100, height: 100, margin: 10, boxShadow: "0 0 5px 0px rgba(0,0,0,0.4)" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "absolute", top: 0, right: 0, left: 0, height: 60, backgroundColor: getTheme().palette.neutralLight }}>
+                        <Icon iconName="Puzzle" />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "absolute", fontSize: 10, top: 60, right: 0, bottom: 0, left: 0, backgroundColor: getTheme().palette.themeDark, color: getTheme().palette.white }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 8 }}>
+                            {this.props.request.title}
+                        </div>
+                    </div>
+                </div>
+            </AppLink>
+        );
+    }
+}
+
+class Home extends React.Component<IAppHostProps, any> {
+    render() {
+        return (
+            <HomeHostAppView host={this.props.host} title="Home">
+                <div>
+                    <div style={{ padding: 8 }}>
+                        <h2>Home</h2>
+                        <div>
+                            {homeApps.map(group => {
+                                return (
+                                    <div key={group.key}>
+                                        <h3>{group.title}</h3>
+                                        <div style={{ display: "flex", flexWrap: "wrap", padding: 8 }}>
+                                            {group.items.map(item => {
+                                              return <HomeAppTileLink 
+                                                key={item.path}
+                                                host={this.props.host}
+                                                request={Object.assign({}, item, { replace: true })} 
+                                                />;
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </HomeHostAppView>
+        );
+    }
+}
+
+export { Home }

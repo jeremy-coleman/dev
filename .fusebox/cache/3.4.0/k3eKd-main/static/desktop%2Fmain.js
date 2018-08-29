@@ -1,0 +1,9 @@
+module.exports = { contents: "\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nrequire('dotenv').config();\r\nconst electron_1 = require(\"electron\");\r\nconst server_1 = require(\"./server\");\r\nlet mainWindow;\r\nfunction createWindow() {\r\n    mainWindow = new electron_1.BrowserWindow({\r\n        width: 960,\r\n        height: 640,\r\n        webPreferences: {\r\n            webSecurity: false,\r\n            experimentalFeatures: true,\r\n            experimentalCanvasFeatures: true,\r\n            nodeIntegrationInWorker: true,\r\n            plugins: true\r\n        }\r\n    });\r\n    mainWindow.loadFile(`${electron_1.app.getAppPath()}/dist/client/index.html`);\r\n    mainWindow.on(\"close\", () => {\r\n        mainWindow = null;\r\n    });\r\n    const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS, MOBX_DEVTOOLS } = require('electron-devtools-installer');\r\n    installExtension(REACT_DEVELOPER_TOOLS);\r\n    installExtension(MOBX_DEVTOOLS);\r\n    installExtension(REDUX_DEVTOOLS);\r\n    mainWindow.webContents.on(\"context-menu\", (e, props) => {\r\n        const { x, y } = props;\r\n        electron_1.Menu.buildFromTemplate([{ label: \"Inspect element\", click: () => { mainWindow.webContents.inspectElement(x, y); } }])\r\n            .popup(mainWindow);\r\n    });\r\n    return mainWindow;\r\n}\r\nelectron_1.app.on(\"ready\", async () => {\r\n    createWindow();\r\n    server_1.initiateRpcServer();\r\n});\r\nelectron_1.app.on(\"window-all-closed\", () => {\r\n    if (process.platform !== \"darwin\") {\r\n        electron_1.app.quit();\r\n    }\r\n});\r\nelectron_1.app.on(\"activate\", () => {\r\n    if (mainWindow === null) {\r\n        createWindow();\r\n    }\r\n});\r\n",
+dependencies: ["dotenv","electron","./server","electron-devtools-installer"],
+sourceMap: {},
+headerContent: undefined,
+mtime: 1535438727605,
+devLibsRequired : undefined,
+ac : undefined,
+_ : {}
+}

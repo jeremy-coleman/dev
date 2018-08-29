@@ -1,0 +1,9 @@
+module.exports = { contents: "\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst _ = require(\"lodash\");\r\nconst storm_react_diagrams_1 = require(\"storm-react-diagrams\");\r\nconst CogliteLinkModel_1 = require(\"./CogliteLinkModel\");\r\nclass CoglitePortModel extends storm_react_diagrams_1.PortModel {\r\n    constructor(pos = \"leftCenter\") {\r\n        super(pos, \"coglite\");\r\n        this.position = pos;\r\n        if (this.position === \"leftCenter\")\r\n            this.maximumLinks = 1;\r\n    }\r\n    serialize() {\r\n        return _.merge(super.serialize(), {\r\n            position: this.position,\r\n        });\r\n    }\r\n    link(port) {\r\n        let link = this.createLinkModel();\r\n        link.setSourcePort(this);\r\n        link.setTargetPort(port);\r\n        return link;\r\n    }\r\n    deSerialize(data, engine) {\r\n        super.deSerialize(data, engine);\r\n        this.position = data.position;\r\n    }\r\n    createBaseLinkModel() {\r\n        if (_.isFinite(this.maximumLinks)) {\r\n            var numberOfLinks = _.size(this.links);\r\n            console.log(this);\r\n            console.log(numberOfLinks);\r\n            console.log(this.maximumLinks);\r\n            if (this.maximumLinks === 1 && numberOfLinks >= 1) {\r\n                return _.values(this.links)[0];\r\n            }\r\n            else if (numberOfLinks >= this.maximumLinks) {\r\n                return null;\r\n            }\r\n        }\r\n        return null;\r\n    }\r\n    createLinkModel() {\r\n        return new CogliteLinkModel_1.CogliteLinkModel();\r\n    }\r\n}\r\nexports.CoglitePortModel = CoglitePortModel;\r\n",
+dependencies: ["lodash","storm-react-diagrams","./CogliteLinkModel"],
+sourceMap: {},
+headerContent: undefined,
+mtime: 1535400689182,
+devLibsRequired : undefined,
+ac : undefined,
+_ : {}
+}

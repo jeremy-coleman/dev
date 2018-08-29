@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "declaration": false,
+        "module": "commonjs",
+        "target": "es2017",
+        "sourceMap": false,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+         "*": ["*","src/*"],
+         "@coglite/*": ["src/@coglite/*"]  
+        },
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "removeComments":true,
+        "jsx": "react",
+        "importHelpers":true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "allowSyntheticDefaultImports": true,
+        "lib": ["dom", "es5", "scripthost", "es2017", "esnext", "dom.iterable"],
+        "skipLibCheck":true
+    },
+    "include": ["src", "types/*"],
+    "exclude": ["node_modules", "tests"]
+}

@@ -1,0 +1,9 @@
+module.exports = { contents: "\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst tslib_1 = require(\"tslib\");\r\nconst React = require(\"react\");\r\nconst mobx_react_1 = require(\"mobx-react\");\r\nconst fa_1 = require(\"react-icons/fa\");\r\nconst ReactTooltip = require('react-tooltip');\r\nlet injectSheet = require('react-jss').default;\r\nvar tooltipCount = 0;\r\nconst styles = (theme) => ({\r\n    solid: {\r\n        composes: 'tooltip',\r\n        pointerEvents: 'auto !important',\r\n        '&:hover': {\r\n            visibility: 'visible !important',\r\n            opacity: '1 !important'\r\n        }\r\n    }\r\n});\r\nlet InfoTooltip = class InfoTooltip extends React.Component {\r\n    constructor(props) {\r\n        super(props);\r\n        this.tooltipId = 'InfoTooltip-' + tooltipCount++;\r\n    }\r\n    componentWillUpdate() {\r\n        ReactTooltip.rebuild();\r\n    }\r\n    componentWillMount() {\r\n        ReactTooltip.rebuild();\r\n    }\r\n    render() {\r\n        let classes = this.props.classes || {};\r\n        return React.createElement(\"span\", { \"data-tip\": \"\", \"data-for\": this.tooltipId, \"data-delay-hide\": 300, \"data-effect\": 'solid', \"data-class\": classes.solid, className: this.props.className || '' },\r\n            React.createElement(fa_1.FaInfoCircle, null),\r\n            React.createElement(ReactTooltip, { id: this.tooltipId }, this.props.children));\r\n    }\r\n};\r\nInfoTooltip = tslib_1.__decorate([\r\n    injectSheet(styles),\r\n    mobx_react_1.observer,\r\n    tslib_1.__metadata(\"design:paramtypes\", [Object])\r\n], InfoTooltip);\r\nexports.InfoTooltip = InfoTooltip;\r\n",
+dependencies: ["tslib","react","mobx-react","react-icons/fa","react-tooltip","react-jss"],
+sourceMap: {},
+headerContent: undefined,
+mtime: 1535400690021,
+devLibsRequired : undefined,
+ac : undefined,
+_ : {}
+}
