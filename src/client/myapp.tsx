@@ -3,7 +3,7 @@ import * as React from 'react'
 import { hot } from 'react-hot-loader';
 
 export function Hello(){
- return  <div>hi</div>
+ return  <div>hizz</div>
 }
 
 class _MyAppBase extends React.Component {

@@ -5,7 +5,7 @@
 		"moduleResolution": "node",
 		"allowSyntheticDefaultImports": false,
 		"preserveConstEnums": true,
-		"sourceMap": true,
+		"sourceMap": false,
 		"jsx": "react",
 		"noImplicitAny": false,
 		"suppressImplicitAnyIndexErrors": true,

@@ -76,7 +76,7 @@ let CLIENT_PROD_CONFIG = {
 
     mode: envSetting,
     
-    devtool: ifDev('eval-cheap-module-source-map'),
+    devtool: isProduction ? undefined : 'eval-cheap-module-source-map',
 
     entry: {
         'corejs': 'core-js/client/shim',
@@ -93,13 +93,15 @@ let CLIENT_PROD_CONFIG = {
     
     module: {
         rules: [
-            {test: /\.tsx?$/, use: [
-                {loader: 'ts-loader', options: {transpileOnly: true}}, 
-            ],
-            exclude: /node_modules/
+            {
+                test: /\.tsx?$/,
+                use: [{loader: 'ts-loader', options: {transpileOnly: true}}],
+                exclude: /node_modules/
             },
             
             {test: /\.less$/, use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader','resolve-url-loader','less-loader']},
+            
+            //{test: /\.s?css$/, use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader','resolve-url-loader','sass-loader']},
             
             {test: /\.s?css$/,
               use: [
@@ -154,7 +156,7 @@ let CLIENT_PROD_CONFIG = {
         new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
         StartElectronPlugin,
         new WriteFilePlugin(),
-        new MiniCssExtractPlugin('styles.min.css'),
+        //new MiniCssExtractPlugin(),
         ifProd(new TerserPlugin())
         //new UglifyJsPlugin()
     ])
