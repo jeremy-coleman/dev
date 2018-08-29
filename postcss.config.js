@@ -8,6 +8,6 @@ module.exports = {
         require('postcss-svgo')(),
         purgecss({content: ['src/**/*.html', 'src/**/*.tsx', 'src/**/*.ts', 'src/**/*.hbs', 'src/**/*.js']}),
         require('postcss-discard-duplicates'),
-        //require('postcss-csso')({ restructure: false }),
+        require('postcss-csso')({ restructure: true }),
     ]
 };

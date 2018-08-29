@@ -3,13 +3,12 @@
 	"version": "0.0.1",
 	"author": "d",
 	"license": "MIT",
-	"main": "dist/desktop.js",
+	"main": "dist/desktop/main.js",
 	"scripts": {
-		"dev": "webpack --env.prod --watch --hot",
-		"start:reload": "reload -d ./dist/client/",
-		"start1:liteserver": "lite-server --baseDir ./dist/client/",
-		"start:electron": "electron .",
-		"start": "run-p start:*"
+		"preprod": "cross-env NODE_ENV=production webpack --env.prod -p --config=webpack.node.js",
+		"prod": "cross-env NODE_ENV=production webpack --env.prod --production",
+		"prestart": "cross-env NODE_ENV=development webpack --env.dev --development --config=webpack.node.js",
+		"start": "cross-env NODE_ENV=development webpack-dev-server --env.dev --port=8080"
 	},
 	"dependencies": {
 		"mobx": "latest",
@@ -57,6 +56,7 @@
 		"less-loader": "4.1.0",
 		"lite-server": "2.4.0",
 		"lodash": "4.17.10",
+		"mini-css-extract-plugin": "0.4.2",
 		"node-sass": "latest",
 		"npm-run-all": "latest",
 		"offline-plugin": "5.0.5",
@@ -78,6 +78,7 @@
 		"reload": "2.3.1",
 		"resolve-url-loader": "2.3.0",
 		"sass-loader": "7.1.0",
+		"terser-webpack-plugin": "1.0.2",
 		"ts-loader": "4.4.2",
 		"ts-node": "7.0.0",
 		"typescript": "latest",
@@ -87,7 +88,9 @@
 		"webpack": "4.16.3",
 		"webpack-cli": "3.1.0",
 		"webpack-dev-server": "3.1.5",
+		"webpack-merge": "4.1.4",
 		"webpack-node-externals": "1.7.2",
-		"webpack-serve": "latest"
+		"webpack-serve": "latest",
+		"write-file-webpack-plugin": "4.3.2"
 	}
 }

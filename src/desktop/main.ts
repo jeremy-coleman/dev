@@ -1,17 +1,18 @@
 require('dotenv').config()
-import electron = require('electron');
-const app = electron.app;
-import path = require('path');
-import url = require('url');
+import {BrowserWindow, app, Menu} from 'electron'
+
+import * as path from 'path';
+import * as url from 'url';
 
 
-const BrowserWindow = electron.BrowserWindow;
-let mainWindow: electron.BrowserWindow;
+
+let mainWindow: BrowserWindow;
 
 // Get environment type (dev / prod)
 const args = process.argv.slice(1);
 let dev = args.some(arg => arg === '--dev');
 
+const INDEX_URL = 'http:localhost:8080/'
 
 let createMainWindow = async () => {   
 	mainWindow = new BrowserWindow({ 
@@ -21,19 +22,19 @@ let createMainWindow = async () => {
 			webSecurity: false,
 			experimentalFeatures: true,
 			experimentalCanvasFeatures: true,
-			plugins: true
+			//plugins: true
 	}
 	});
 
 	if (!dev) {
 		// and load the index.html of the app.
 		mainWindow.loadURL(url.format({
-			pathname: path.join(__dirname, 'index.html'),
+			pathname: path.join(app.getAppPath(), 'dist', 'client', 'index.html'),
 			protocol: 'file:',
 			slashes: true
 		}));
 	} else {
-		mainWindow.loadURL('http://127.0.0.1:8080');
+		mainWindow.loadURL(INDEX_URL);
 	}
 	
 //	mainWindow.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
@@ -44,7 +45,7 @@ let createMainWindow = async () => {
 	})
 
 	mainWindow.webContents.on("context-menu", (e: any, props: any) => {
-		electron.Menu.buildFromTemplate([{
+		Menu.buildFromTemplate([{
 				label: "Inspect element",
 				click() { mainWindow.webContents.inspectElement(props.x, props.y)}}])
 		.popup(mainWindow as any);

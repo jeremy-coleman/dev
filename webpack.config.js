@@ -1,89 +1,105 @@
 const isProduction = process.env.NODE_ENV === "production";
-const path = require('path');
-const webpack = require('webpack');
+var path = require('path');
+var fs = require('fs')
+var cp = require('child_process');
+
+var webpack = require('webpack');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const cp = require('child_process');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const nodeExternals = require("webpack-node-externals");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin')
 
 const WebpackShellPlugin = require('./tools/plugins/shell-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin')
+
+
+const merge = require('webpack-merge');
+
+const mergeStrategy = merge.strategy({ entry: "prepend" });
+
 //const PurifyCSSPlugin = require("purifycss-webpack");
-//const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const ROOT = path.resolve(__dirname);
 const getRoot = path.join.bind(path, ROOT);
 
 
 
+
+
+let RUNTIME_APP_CONFIG = {
+      production: isProduction ? 'true' : 'false',
+      publicPath: isProduction ? './' : '/',
+      buildVersion: "DEV",
+      buildDate: new Date().toString(),
+      env: {
+        fabricFontBasePath: isProduction ? './' : '/',
+        fabricIconBasePath: isProduction ? './icons/fabric/' : '/icons/fabric/'
+      }
+    }
+
 // Html-webpack-plugin configuration
 const indexConfig = {
     template: './src/client/index.hbs',
-    excludeChunks: ['desktop'],
-    baseHref: isProduction ? './' : './',
+    baseHref: isProduction ? './' : '/',
     chunksSortMode: (chunk1, chunk2) => {
         let orders = ['corejs', 'zonejs', 'app'];
         return orders.indexOf(chunk1.names[0]) - orders.indexOf(chunk2.names[0]);
     }
 };
 
+let StartElectronPlugin = isProduction ? 
+    new WebpackShellPlugin({onBuildEnd: {scripts: ['electron .']}})
+  : new WebpackShellPlugin({onBuildEnd: {scripts: ['electron . --dev']}});
 
-const createConfig = (env) => {
-    const ifDev = plugin => env.dev ? plugin : undefined;
-    const ifProd = plugin => env.prod ? plugin : undefined;
+
+    const ifDev = plugin => !isProduction ? plugin : undefined;
+    const ifProd = plugin => isProduction ? plugin : undefined;
     const removeEmpty = array => array.filter(p => !!p);
-    const envSetting = env.prod ? 'production' : 'development';
+    const envSetting = isProduction ? 'production' : 'development';
     
+// nodeExternals fucks up hmr
 
- 
- const compilerConfig = {
-    target: 'electron-main',
+let CLIENT_PROD_CONFIG = {
+      //externals: [nodeExternals()], 
+    target: 'electron-renderer',
     
     // Configure whether to polyfill or mock certain Node.js globals and modules
     node: {
-        __dirname: false,
-      //  __filename: false
+    __dirname: false,
+     __filename: false
     },
 
-    
-    devServer: {
-        historyApiFallback: true,
-        // Execute custom middleware after all other middleware internally within the server
-        // after() {
-        //     // Fix whitescreen bug on build with Electron BrowserWindow
-        //     exec('electron . --dev');
-        // }
-    },
-    
-    mode: 'development',
+    mode: envSetting,
     
     devtool: ifDev('eval-cheap-module-source-map'),
 
     entry: {
-        'vendor/corejs': 'core-js/client/shim',
-        'vendor/zonejs': 'zone.js/dist/zone',
-        'app': ['react-hot-loader/patch', './src/client/main.tsx'],
-        'desktop': './src/desktop/main.ts',
+        'corejs': 'core-js/client/shim',
+        'zonejs': 'zone.js/dist/zone',
+        'app': [getRoot('src/client/main.tsx')]
     },
     
     output: {
-        path: path.resolve('./dist'),
+        path: getRoot('dist/client'),
         filename: '[name].js'
     },
     
-    externals: [nodeExternals()],
+   
     
     module: {
         rules: [
             {test: /\.tsx?$/, use: [
-                //{loader: 'react-hot-loader/patch'},
                 {loader: 'ts-loader', options: {transpileOnly: true}}, 
             ],
             exclude: /node_modules/
             },
             
+            {test: /\.less$/, use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader','resolve-url-loader','less-loader']},
             
             {test: /\.s?css$/,
               use: [
@@ -129,20 +145,49 @@ const createConfig = (env) => {
 
     stats: "minimal",
    
-    externals: [nodeExternals()],
 
     plugins: removeEmpty([
         new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(envSetting)}),
+        new webpack.DefinePlugin({'process.env.APP_CONFIG': JSON.stringify(RUNTIME_APP_CONFIG)}),
         new HtmlWebpackPlugin(indexConfig),
         new FriendlyErrorsWebpackPlugin({ clearConsole: true }),
         new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
-        new CleanWebpackPlugin('dist', {root: getRoot()}),
-        new WebpackShellPlugin({onBuildEnd: {scripts: ['electron . --dev']}}),
-        new UglifyJsPlugin()
+        StartElectronPlugin,
+        new WriteFilePlugin(),
+        new MiniCssExtractPlugin('styles.min.css'),
+        ifProd(new TerserPlugin())
+        //new UglifyJsPlugin()
     ])
-};
-
-    return compilerConfig
 }
 
-module.exports = createConfig
+
+
+let CLIENT_DEV_CONFIG = mergeStrategy(CLIENT_PROD_CONFIG, {
+    stats: 'minimal',
+    mode: 'development',
+    
+    entry: Object.keys(CLIENT_PROD_CONFIG.entry).reduce((o, k) => {
+        o[k] = ['react-hot-loader/patch'];
+        return o;
+    }, {}),
+
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin()
+    ],
+    
+    devServer: {
+        contentBase: CLIENT_PROD_CONFIG.output.path,
+        publicPath: '/',
+        historyApiFallback: true,
+        hot: true,
+        stats: 'minimal'
+   
+    }
+});
+
+let clientConfig = isProduction ? 
+    CLIENT_PROD_CONFIG
+  : CLIENT_DEV_CONFIG
+
+module.exports = clientConfig

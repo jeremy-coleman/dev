@@ -1,13 +1,18 @@
 import * as React from 'react'
-import { render } from 'react-dom'
-import {MyAppLoader} from './App'
+import * as ReactDOM from 'react-dom'
+import {MyAppBase} from './myapp'
+
+//@ts-ignore
+
+console.log(process.env.APP_CONFIG)
+
+import "../../node_modules/bootstrap/scss/bootstrap.scss"
 
 // const root = document.createElement('div')
 // document.body.appendChild(root)
-
 // render(<MyAppLoader />, root)
+//document.body.appendChild(root)
 
-const root = document.getElementById('coglite-app-root')
-document.body.appendChild(root)
 
-render(<MyAppLoader />, root)
+//const root = document.getElementById('coglite-app-root')
+ReactDOM.render(<MyAppBase />, document.getElementById("coglite-app-root"))
