@@ -56,7 +56,7 @@ module: {
           ["@babel/plugin-proposal-object-rest-spread", { "useBuiltIns": true }],
           ["mobx-deep-action"],
           ["mobx-async-action"],
-          "@babel/plugin-proposal-pipeline-operator",
+          ["@babel/plugin-proposal-pipeline-operator", {"proposal": "minimal"}],
           ["@babel/plugin-transform-modules-commonjs", { "noInterop": true }],
           ["module-resolver",{
             "extensions": [".js", ".jsx", ".ts", ".tsx"],
@@ -136,7 +136,7 @@ module: {
           ["@babel/plugin-proposal-object-rest-spread", { "useBuiltIns": true }],
           ["mobx-deep-action"],
           ["mobx-async-action"],
-          "@babel/plugin-proposal-pipeline-operator",
+          ["@babel/plugin-proposal-pipeline-operator", {"proposal": "minimal"}],
           ["@babel/plugin-transform-modules-commonjs", { "noInterop": true }],
           ["module-resolver",{
             "extensions": [".js", ".jsx", ".ts", ".tsx"],
