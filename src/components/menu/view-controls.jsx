@@ -2,7 +2,7 @@
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 // import { ToolbarGroup } from '@material-ui/core/Toolbar'
 import HistoryIcon from '@material-ui/icons/History';
-import InfoIcon from '@material-ui/icons/InfoOutline';
+import InfoIcon from '@material-ui/icons/InfoOutlined';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
