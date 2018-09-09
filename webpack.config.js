@@ -27,7 +27,23 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ROOT = path.resolve(__dirname);
 const getRoot = path.join.bind(path, ROOT);
 
+const containsFilter = (...values) => {
+    return (filename) => {
+        return values.some(value => {
+            return filename.indexOf(value) >= 0;
+        });
+    }
+};
 
+const isNodeModuleFile = containsFilter("node_modules");
+
+const endsWithFilter = (...extensions) => {
+    return (filename) => {
+        return extensions.some(ext => {
+            return filename.endsWith(ext);
+        });
+    };
+};
 
 
 
@@ -52,6 +68,7 @@ const indexConfig = {
     }
 };
 
+// sets flag to load html file or websocket in the electron window
 let StartElectronPlugin = isProduction ? 
     new WebpackShellPlugin({onBuildEnd: {scripts: ['electron .']}})
   : new WebpackShellPlugin({onBuildEnd: {scripts: ['electron . --dev']}});
@@ -65,12 +82,13 @@ let StartElectronPlugin = isProduction ?
 // nodeExternals fucks up hmr
 
 let CLIENT_PROD_CONFIG = {
-      //externals: [nodeExternals()], 
+    //externals: [nodeExternals()],
+
     target: 'electron-renderer',
     
     // Configure whether to polyfill or mock certain Node.js globals and modules
     node: {
-    __dirname: false,
+     __dirname: false,
      __filename: false
     },
 
@@ -81,7 +99,9 @@ let CLIENT_PROD_CONFIG = {
     entry: {
         'corejs': 'core-js/client/shim',
         'zonejs': 'zone.js/dist/zone',
-        'app': [getRoot('src/client/main.tsx')]
+        // full path might fuck up client router , not sure yet
+        //'app': [getRoot('src/client/main.tsx')]
+        'app': ['./src/client/main.tsx']
     },
     
     output: {
@@ -98,24 +118,57 @@ let CLIENT_PROD_CONFIG = {
                 use: [{loader: 'ts-loader', options: {transpileOnly: true}}],
                 exclude: /node_modules/
             },
-            
-            {test: /\.less$/, use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader','resolve-url-loader','less-loader']},
-            
-            //{test: /\.s?css$/, use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader','resolve-url-loader','sass-loader']},
-            
-            {test: /\.s?css$/,
-              use: [
-                {loader: 'file-loader', options: {name: '[name].[hash:10].css'}}, //name: '[name].[hash:10].css'
+
+            {
+                test: endsWithFilter('.less'),
+                use: [
+                MiniCssExtractPlugin.loader,
+                {loader: 'css-loader'},
+                {loader: 'postcss-loader', options: {sourceMap: true }},
+                {loader: 'resolve-url-loader'},
+                {loader: 'less-loader', options: {allowJavascript: true}}
+                ]
+            },
+
+            {
+                test: endsWithFilter('.less'),
+                use: [
+                {loader: 'file-loader', options: {name: '[name].[hash:10].css'}}, 
                 {loader: 'extract-loader'},
-                {loader: 'css-loader', options: {minimize: true}},
+                {loader: 'css-loader'},
+                {loader: 'postcss-loader', options: {sourceMap: true }},
+                {loader: 'resolve-url-loader'},
+                {loader: 'less-loader', options: {allowJavascript: true}}
+                ]
+            },
+
+            {
+                test: endsWithFilter('.css'),
+                use: [
+                {loader: 'file-loader', options: {name: '[name].[hash:10].css'}}, 
+                {loader: 'extract-loader'},
+                {loader: 'css-loader'},
+                {loader: 'postcss-loader', options: {sourceMap: true }},
+                {loader: 'resolve-url-loader'}
+                ]
+            },
+
+            {
+                test: endsWithFilter('.scss', '.sass'),
+                use: [
+                {loader: 'file-loader', options: {name: '[name].[hash:10].css'}}, 
+                {loader: 'extract-loader'},
+                {loader: 'css-loader'},
                 {loader: 'postcss-loader', options: {sourceMap: true }},
                 {loader: 'resolve-url-loader'},
                 {loader: 'sass-loader'}
                 ]
             },
 
-            {test: /\.html$/, exclude: /node_modules/,
-              use: [
+            {
+                test: /\.html$/,
+                exclude: /node_modules/,
+                use: [
                 {loader: 'file-loader',options: {name: 'templates/[name].html'}}, //'[name].[hash:10].html'
                 {loader: 'extract-loader'},
                 {loader: 'html-loader'}
@@ -123,20 +176,27 @@ let CLIENT_PROD_CONFIG = {
             },
             
             // All images and fonts will be optimized and their paths will be solved
-            {enforce: 'pre',test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf|wav)(\?.*)?$/,
-              use: [
-                {loader: 'url-loader',options: {name: 'assets/[name].[ext]',limit: 8192 } }, //'[name].[hash:10].[ext]'
+            {
+                enforce: 'pre',
+                test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf|wav)(\?.*)?$/,
+                use: [ //'[name].[hash:10].[ext]'
+                {loader: 'url-loader',options: {name: 'assets/[name].[ext]',limit: 8192 } },
                 {loader: 'img-loader'}
                ]
             },
 
-            {test: /\.hbs$/,exclude: /node_modules/,
-             use: [
+            {
+                test: /\.hbs$/,
+                exclude: /node_modules/,
+                use: [
                 {loader: 'underscore-template-loader', query: {attributes: ['img:src', 'link:href']}}
-             ]
+                ]
             },
             
-             {test: /[\/\\]@angular[\/\\].+\.js$/, parser: {system: true}}
+            {
+                test: /[\/\\]@angular[\/\\].+\.js$/,
+                parser: {system: true}
+            }
            
         ]
     },
@@ -147,21 +207,19 @@ let CLIENT_PROD_CONFIG = {
 
     stats: "minimal",
    
-
     plugins: removeEmpty([
         new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(envSetting)}),
         new webpack.DefinePlugin({'process.env.APP_CONFIG': JSON.stringify(RUNTIME_APP_CONFIG)}),
         new HtmlWebpackPlugin(indexConfig),
         new FriendlyErrorsWebpackPlugin({ clearConsole: true }),
-        new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"}),
+        ifDev(new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"})),
         StartElectronPlugin,
         new WriteFilePlugin(),
-        //new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin(),
         ifProd(new TerserPlugin())
         //new UglifyJsPlugin()
     ])
 }
-
 
 
 let CLIENT_DEV_CONFIG = mergeStrategy(CLIENT_PROD_CONFIG, {
@@ -193,3 +251,6 @@ let clientConfig = isProduction ?
   : CLIENT_DEV_CONFIG
 
 module.exports = clientConfig
+
+
+            //{test: /\.s?css$/, use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader','resolve-url-loader','sass-loader']},

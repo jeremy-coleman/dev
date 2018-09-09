@@ -16,8 +16,10 @@ target: "electron-main",
 mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
 
 stats: 'minimal',
+
 entry: {
-  main: getRoot('src/desktop/main.ts')
+  main: ['./src/desktop/main.ts']
+  //main: getRoot('src/desktop/main.ts')
 },
 
 output: {
