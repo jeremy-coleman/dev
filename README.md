@@ -55,6 +55,15 @@ node packages/server/build/index.js
 
 then open http://localhost:8000
 
+#extras
+in packages/_package_template you will find an excellent rollup starter
+*why its different than others*
+if you run the build and inspect the lib.d.ts, you will see the types don't have definitions like 'namespace/path/path', they are bundled into a single file matching your lib
+this can be good or bad, depending on your needs, but it's often difficult to find this option. 
+-note that on larger project builds, your types may conflict with each other because they're all put into 1 scope for your package. This is the behavior I wanted.
+
+
+
 #credits and other resources
 https://github.com/pnpm/pnpm
 https://github.com/Microsoft/TypeScript
