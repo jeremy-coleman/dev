@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "rootDir": "src",
+    "lib": ["es2018", "dom"]
+  },
+  "references": [{ "path": "../shared" }]
+}

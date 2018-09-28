@@ -1,0 +1,8 @@
+{
+
+    "scripts": {
+        "dts":"dts-generator --name testone --project . --out dist/testone.d.ts",
+        "dts2":"node dtsbundle.js"
+    }
+
+}

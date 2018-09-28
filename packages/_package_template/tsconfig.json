@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    // Always include these settings
+    "composite": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "target": "esnext",
+    "module":"umd",
+    "outDir":"dist",
+    "strict": false,
+    "lib":["dom", "esnext"],
+    "rootDir": "src",
+    "baseUrl": "./src"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "coglite",
+  "private": true,
+  "scripts": {
+    "start":"node packages/server/build/index.js",
+    "install": "pnpm recursive install",
+    "build-all": "pnpm recursive run build",
+    "cleanall": "rimraf ./**/*/node_modules ./**/*/shrinkwrap.yaml"
+  }
+}

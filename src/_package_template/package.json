@@ -1,0 +1,43 @@
+{
+  "name": "template",
+  "version": "0.0.1",
+  "description": "template",
+  "main": "lib/lib.cjs.js",
+  "module": "lib/lib.es.js",
+  "jsnext:main": "lib/lib.es.js",
+  "bin": {
+    "mycli": "lib/mycli.js"
+  },
+  "types": "lib/lib.d.ts",
+  "files": ["lib","README.md"],
+  "keywords": ["test","testing", "--project /path/to/package-directory"],
+  "scripts": {
+    "dts":"dts-generator --name testone --project . --out dist/testone.d.ts",
+    "dts2":"node dtsbundle.js",
+    "dts3":"dts-bundle-generator -o lib/lib.d.ts src/lib.ts",
+    "tsc:testone":" tsc -b tsconfig.json",
+    "prebuild1": "rimraf lib",
+    "btest": "rollup -c rollup.lib.js && pnpm run dts3",
+    "t": "rollup -c rollup.lib.js && pnpm run dts",
+    "build:cli": "rollup -c rollup.cli.js",
+    "build2": "pnpm run build:lib && pnpm run build:cli",
+    "prepublishOnly": "pnpm run build"
+  },
+  "author": "c",
+  "license": "MIT",
+  "homepage": "https://github.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com"
+  },
+  "devDependencies": {
+    "dts-bundle":"0.7.3",
+    "dts-generator":"2.1.0",
+    "dts-bundle-generator":"1.6.1",
+    "@types/node": "10.11.0",
+    "rollup": "0.66.2",
+    "rollup-plugin-tsc": "1.1.11",
+    "rollup-plugin-node-resolve":"3.4.0",
+    "typescript":"3.1.1"
+  }
+}
