@@ -3,15 +3,28 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 
-export default class HistoryItem extends React.Component<any, any> {
-  static propTypes = {
-    cell: PropTypes.shape({
-      // id: PropTypes.number.isRequired,
-      content: PropTypes.string,
-      display: PropTypes.bool,
-      lastRan: PropTypes.instanceOf(Date),
-    }).isRequired,
-  }
+
+type HistoryItemProps = {
+      cell: {
+      id?: any,
+      content: string,
+      display: boolean,
+      lastRan: any,
+      cellType?: any,
+      },
+      display?: boolean,
+      id?: any
+}
+
+export default class HistoryItem extends React.Component<HistoryItemProps, any> {
+  // static propTypes = {
+  //   cell: PropTypes.shape({
+  //     // id: PropTypes.number.isRequired,
+  //     content: PropTypes.string,
+  //     display: PropTypes.bool,
+  //     lastRan: PropTypes.instanceOf(Date),
+  //   }).isRequired,
+  // }
 
   render() {
     const options = {

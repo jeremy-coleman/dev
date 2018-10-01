@@ -18,14 +18,22 @@ const theme = createMuiTheme({
   },
 })
 
-export class SidePaneUnconnected extends React.Component<any,any> {
-    static propTypes = {
-      sidePaneMode: PropTypes.string,
-      title: PropTypes.string,
-      sidePaneWidth: PropTypes.number,
-      openOnMode: PropTypes.string,
-      task: PropTypes.instanceOf(UserTask),
-    }
+type SidePaneProps = {
+      sidePaneMode?: string
+      title?: string,
+      sidePaneWidth?: number,
+      openOnMode?: string,
+      task?: UserTask,
+}
+
+export class SidePaneUnconnected extends React.Component<SidePaneProps, any> {
+    // static propTypes = {
+    //   sidePaneMode: PropTypes.string,
+    //   title: PropTypes.string,
+    //   sidePaneWidth: PropTypes.number,
+    //   openOnMode: PropTypes.string,
+    //   task: PropTypes.instanceOf(UserTask),
+    // }
     static muiName = 'MuiDrawer'
 
     render() {

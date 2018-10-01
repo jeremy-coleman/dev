@@ -3,11 +3,16 @@ import React from 'react';
 import { ValueRenderer } from '../reps/value-renderer';
 
 
-export class DeclaredVariable extends React.Component<any, any>{
-  static propTypes = {
-    value: PropTypes.any,
-    varName: PropTypes.string,
-  }
+type DeclareVariableProps = {
+  value?: any,
+  varName?: string
+}
+
+export class DeclaredVariable extends React.Component<DeclareVariableProps, any>{
+  // static propTypes = {
+  //   value: PropTypes.any,
+  //   varName: PropTypes.string,
+  // }
   render() {
     const r = true
     return (

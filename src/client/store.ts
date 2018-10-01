@@ -39,6 +39,8 @@ if (initialState.viewMode === 'presentation') {
   store.dispatch(evaluateAllCells(store.getState().cells, store)) 
 }
 
+console.log(stateSchema)
+
 const { dispatch } = store
 
 export { store, dispatch };

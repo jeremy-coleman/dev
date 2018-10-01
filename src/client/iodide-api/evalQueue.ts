@@ -2,6 +2,7 @@ import { updateCellProperties } from '../actions/actions';
 import { store } from '../store';
 import { getCellById } from '../tools/notebook-utils';
 
+//@ts-ignore
 export const getRunningCellID = () => store.getState().runningCellID
 
 export const resetAsyncProcessCount = () => {
@@ -13,6 +14,7 @@ export const resetAsyncProcessCount = () => {
 
 export const incrementAsyncProcessCount = (n = 1) => {
   const cellId = getRunningCellID()
+  //@ts-ignore
   const cell = getCellById(store.getState().cells, cellId)
   store.dispatch(updateCellProperties(cellId, {
     asyncProcessCount: cell.asyncProcessCount + n,
@@ -21,6 +23,7 @@ export const incrementAsyncProcessCount = (n = 1) => {
 
 export const getRunningCellAsyncProcessStatus = () => {
   const cellId = getRunningCellID()
+  //@ts-ignore
   const cell = getCellById(store.getState().cells, cellId)
   if (cell !== undefined) {
     return cell.asyncProcessCount
@@ -30,6 +33,7 @@ export const getRunningCellAsyncProcessStatus = () => {
 
 export const getRunningCellEvalStatus = () => {
   const cellId = getRunningCellID()
+  //@ts-ignore
   const cell = getCellById(store.getState().cells, cellId)
   if (cell !== undefined) {
     return cell.evalStatus

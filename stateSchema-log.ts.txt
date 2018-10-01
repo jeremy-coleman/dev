@@ -1,0 +1,28 @@
+let store = {
+    ts:42,
+    appMessages: {
+        type: "array", 
+        items: {…}
+    },
+    autoSave: {type: "string"},
+    cells: {type: "array", items: {…}
+    },
+    executionNumber: {type: "integer", minimum: 0},
+    externalDependencies: {type: "array"},
+    history: {type: "array"},
+    languageLastUsed: {type: "string"},
+    languages: {type: "object", additionalProperties: {…}},
+    lastExport: {},
+    lastSaved: {},
+    locallySaved: {type: "array", items: {…}},
+    mode: {type: "string", enum: Array(3)},
+    runningCellID: {type: "integer"},
+    savedEnvironment: {type: "object", additionalProperties: {…}},
+    sidePaneMode: {},
+    sidePaneWidth: {type: "integer"},
+    title: {type: "string"},
+    userData: {type: "object"},
+    userDefinedVarNames: {type: "array", items: {…}},
+    viewMode: {type: "string", enum: Array(2)},
+    }
+

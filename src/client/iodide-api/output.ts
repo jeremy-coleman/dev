@@ -3,6 +3,7 @@ import { store } from '../store';
 
 function sideEffectDiv(sideEffectClass, reportSideEffect) {
   // appends a side effect div to the side effect area
+  //@ts-ignore
   const cellId = store.getState().runningCellID
   const div = document.createElement('div')
   const printClass = (reportSideEffect === true) ? sideEffectClass : `${sideEffectClass} hide-side-effect`

@@ -5,12 +5,14 @@ import { connect } from 'react-redux';
 import tasks from '../../actions/task-definitions';
 import SidePane from './side-pane';
 
+type AppInfoPaneProps = {
+  appMessages: any[]
+}
 
-
-export class AppInfoPaneUnconnected extends React.Component<any, any> {
-  static propTypes = {
-    appMessages: PropTypes.array,
-  }
+export class AppInfoPaneUnconnected extends React.Component<AppInfoPaneProps, any> {
+  // static propTypes = {
+  //   appMessages: PropTypes.array,
+  // }
   render() {
     /* eslint-disable */
     const appMessages = this.props.appMessages.slice().reverse()

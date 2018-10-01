@@ -45,6 +45,7 @@ function loadFromEnvironment(varList) {
       throw new TypeError('environment.get only accepts one or more strings as parameters')
     }
   })
+  //@ts-ignore
   const env = store.getState().savedEnvironment
   //@ts-ignore
   const valsOut = varList.map(v => decodeEnvObj(...env[v]))
@@ -62,5 +63,6 @@ export const environment = {
 
   get: (...vars) => loadFromEnvironment(vars),
 
+//@ts-ignore
   list: () => Object.keys(store.getState().savedEnvironment),
 }

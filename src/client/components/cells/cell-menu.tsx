@@ -6,13 +6,19 @@ import { getCellById } from '../../tools/notebook-utils';
 import NotebookMenuDivider from '../menu/notebook-menu-divider';
 import NotebookMenuItem from '../menu/notebook-menu-item';
 
-
-export class CellMenuUnconnected extends React.Component<any, any> {
-  static propTypes = {
-    menuLabel: PropTypes.string.isRequired,
-    cellId: PropTypes.number.isRequired,
-    skipInRunAll: PropTypes.bool.isRequired,
+type CellMenuProps = {
+    menuLabel: string,
+    cellId: number,
+    skipInRunAll: boolean,
   }
+
+
+export class CellMenuUnconnected extends React.Component<CellMenuProps, any> {
+  // static propTypes = {
+  //   menuLabel: PropTypes.string.isRequired,
+  //   cellId: PropTypes.number.isRequired,
+  //   skipInRunAll: PropTypes.bool.isRequired,
+  // }
 
   render() {
     return (

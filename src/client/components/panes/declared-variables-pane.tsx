@@ -7,13 +7,16 @@ import { DeclaredVariable } from './declared-variable';
 import { FrozenVariable } from './frozen-variable';
 import SidePane from './side-pane';
 
+type DeclaredVariablesPaneProps = {
+  userDefinedVarNames?: string[],
+  environmentVariables?: any
+}
 
-
-export class DeclaredVariablesPaneUnconnected extends React.Component<any, any> {
-  static propTypes = {
-    userDefinedVarNames: PropTypes.arrayOf(PropTypes.string),
-    environmentVariables: PropTypes.object,
-  }
+export class DeclaredVariablesPaneUnconnected extends React.Component<DeclaredVariablesPaneProps, any> {
+  // static propTypes = {
+  //   userDefinedVarNames: PropTypes.arrayOf(PropTypes.string),
+  //   environmentVariables: PropTypes.object,
+  // }
 
   shouldComponentUpdate(nextProps) {
     return !deepEqual(this.props, nextProps)

@@ -9,6 +9,8 @@ const WebpackShellPlugin = require('./tools/webpack/plugins/shell-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 //const htmlTemplate = require('./src/client/html-template.js')
 
+const nodeExternals = require('webpack-node-externals')
+
 let BUILD_DIR
 let APP_PATH_STRING
 let CSS_PATH_STRING
@@ -34,6 +36,7 @@ module.exports = (env) => {
   
 
   return {
+    //externals: [nodeExternals()],
     target: 'electron-renderer',
     entry: `${APP_DIR}/index.tsx`,
     output: {

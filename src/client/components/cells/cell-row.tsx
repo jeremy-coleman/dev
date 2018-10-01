@@ -1,4 +1,5 @@
 import Tooltip from '@material-ui/core/Tooltip';
+//import TooltipProps from '@material-ui/core/Tooltip';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -7,19 +8,33 @@ import * as actions from '../../actions/actions';
 import { nextOverflow, rowOverflowEnum } from '../../state-prototypes';
 import { getCellById } from '../../tools/notebook-utils';
 
+type CellRowProps = {
+    executionString?: string,
+    viewMode?: 'editor' | 'presentation',
+    rowOverflow?: any,
+    rowType?: string,
+    collapseTooltipPlacement?: any,
+    actions: {
+      setCellRowCollapsedState: any
+    },
+    children?: React.ReactNode,
+    uncollapseOnUpdate?: any,
+    tooltipText: any,
+    classes?: any
+}
 
-export class CellRowUnconnected extends React.Component<any, any> {
-  static propTypes = {
-    executionString: PropTypes.string,
-    viewMode: PropTypes.oneOf(['editor', 'presentation']),
-    rowOverflow: PropTypes.oneOf(rowOverflowEnum.values()),
-    rowType: PropTypes.string,
-    collapseTooltipPlacement: PropTypes.string.isRequired,
-    actions: PropTypes.shape({
-      setCellRowCollapsedState: PropTypes.func.isRequired,
-    }).isRequired,
-    children: PropTypes.node,
-  }
+export class CellRowUnconnected extends React.Component<CellRowProps, any> {
+  // static propTypes = {
+  //   executionString: PropTypes.string,
+  //   viewMode: PropTypes.oneOf(['editor', 'presentation']),
+  //   rowOverflow: PropTypes.oneOf(rowOverflowEnum.values()),
+  //   rowType: PropTypes.string,
+  //   collapseTooltipPlacement: PropTypes.string.isRequired,
+  //   actions: PropTypes.shape({
+  //     setCellRowCollapsedState: PropTypes.func.isRequired,
+  //   }).isRequired,
+  //   children: PropTypes.node,
+  // }
 
   constructor(props) {
     super(props)
@@ -55,9 +70,11 @@ export class CellRowUnconnected extends React.Component<any, any> {
 
   render() {
     // console.log(`render cell-row: cellId:${this.props.cellId} ${this.props.rowType}`)
+    
     return (
       <div className={`cell-row ${this.props.rowType} ${this.props.rowOverflow}`}>
-        <Tooltip
+        <Tooltip 
+        //@ts-ignore 
           classes={{ root: 'collapse-button-tooltip-wrapper', tooltip: 'iodide-tooltip' }}
           placement={this.props.collapseTooltipPlacement}
           title={this.props.tooltipText}

@@ -6,11 +6,14 @@ import CellEditor from './cell-editor';
 import CellOutput from './cell-output';
 import CellRow from './cell-row';
 
+type CodeCellProps = {
+  cellId: number
+}
 
-export class CodeCellUnconnected extends React.Component<any, any> {
-  static propTypes = {
-    cellId: PropTypes.number.isRequired,
-  }
+export class CodeCellUnconnected extends React.Component<CodeCellProps, any> {
+  // static propTypes = {
+  //   cellId: PropTypes.number.isRequired,
+  // }
 
   render() {
     // console.log(`CodeCellUnconnected rendered: ${this.props.cellId}`)
