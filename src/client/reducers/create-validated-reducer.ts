@@ -9,7 +9,7 @@ class SchemaValidationError extends Error {
 }
 
 const createValidatedReducer =
-  (reducer, schema, options) => {
+  (reducer, schema, options?) => {
     const ajv = new Ajv(Object.assign({}, options, { verbose: true }))
     const validate = ajv.compile(schema)
     const validatedReducer = (state, action) => {
