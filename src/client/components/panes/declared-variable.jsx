@@ -19,3 +19,4 @@ export class DeclaredVariable extends React.Component {
       </div>)
   }
 }
+

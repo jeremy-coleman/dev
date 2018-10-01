@@ -23,6 +23,10 @@ let mainWindow: BrowserWindow;
 
 
 function createWindow() {
+
+    console.log('Current process url:', process.cwd());
+    console.log('Current appPath url:', app.getAppPath());
+
     mainWindow = new BrowserWindow({
         width: 960,
         height: 640,
@@ -66,6 +70,7 @@ function createWindow() {
 
 app.on("ready", async () => {
     createWindow();
+    
 });
 
 app.on("window-all-closed", () => {

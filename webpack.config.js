@@ -35,7 +35,7 @@ module.exports = (env) => {
 
   return {
     target: 'electron-renderer',
-    entry: `${APP_DIR}/index.jsx`,
+    entry: `${APP_DIR}/index.tsx`,
     output: {
       path: BUILD_DIR,
       filename: 'iodide.js',
@@ -59,7 +59,7 @@ module.exports = (env) => {
         //   },
         // },
         {
-          test: /\.jsx?/,
+          test: /\.[tj]sx?/,
           include: APP_DIR,
           use: [
             {loader: 'babel-loader'},
@@ -111,6 +111,7 @@ module.exports = (env) => {
       //   }),
       // }),
       new webpack.DefinePlugin({
+        EXAMPLE_DIRECTORY_BASE_URL: JSON.stringify(__dirname),
         IODIDE_VERSION: JSON.stringify(APP_VERSION_STRING),
         IODIDE_JS_PATH: JSON.stringify(APP_PATH_STRING),
         IODIDE_CSS_PATH: JSON.stringify(CSS_PATH_STRING),
