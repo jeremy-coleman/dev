@@ -17,10 +17,6 @@ const WebpackShellPlugin = require('./tools/plugins/shell-plugin');
 const WriteFilePlugin = require('write-file-webpack-plugin')
 
 
-const merge = require('webpack-merge');
-
-const mergeStrategy = merge.strategy({ entry: "prepend" });
-
 //const PurifyCSSPlugin = require("purifycss-webpack");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -81,8 +77,8 @@ let StartElectronPlugin = isProduction ?
     
 // nodeExternals fucks up hmr
 
-let CLIENT_PROD_CONFIG = {
-    //externals: [nodeExternals()],
+module.exports = {
+    externals: [nodeExternals()],
     
     target: 'electron-renderer',
     
@@ -116,7 +112,7 @@ let CLIENT_PROD_CONFIG = {
                 use: [{loader: 'ts-loader', options: {transpileOnly: true}}],
                 exclude: /node_modules/
             },
-            
+
             {
                 test: endsWithFilter('.css', '.scss', '.sass'),
                 use: [
@@ -126,23 +122,13 @@ let CLIENT_PROD_CONFIG = {
                 {loader: 'sass-loader'}
                 ]
             },
-
-            // {
-            //     test: endsWithFilter('.scss', '.sass'),
-            //     use: [
-            //     MiniCssExtractPlugin.loader,
-            //     {loader: 'css-loader'},
-            //     {loader: 'postcss-loader', options: {sourcemaps: true}},
-            //     {loader: 'sass-loader'}
-            //     ]
-            // },
             
-            //All images and fonts will be optimized and their paths will be solved
+            // All images and fonts will be optimized and their paths will be solved
             {
                 enforce: 'pre',
                 test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf|wav)(\?.*)?$/,
                 use: [ //'[name].[hash:10].[ext]'
-                {loader: 'url-loader', options: {name: '[name].[ext]',limit: 8192}}
+                {loader: 'url-loader', options: {name: '[name].[ext]',limit: 8192, outputPath: 'assets' } }
                ]
             },
             
@@ -162,42 +148,8 @@ let CLIENT_PROD_CONFIG = {
         new webpack.DefinePlugin({'process.env.APP_CONFIG': JSON.stringify(RUNTIME_APP_CONFIG)}),
         new HtmlWebpackPlugin(indexConfig),
         new FriendlyErrorsWebpackPlugin({ clearConsole: true }),
-        //ifDev(new webpack.EvalSourceMapDevToolPlugin({moduleFilenameTemplate: "[resource-path]",sourceRoot: "webpack:///"})),
         StartElectronPlugin,
-        new WriteFilePlugin(),
         new MiniCssExtractPlugin(),
+        new TerserPlugin()
     ])
 }
-
-
-let CLIENT_DEV_CONFIG = mergeStrategy(CLIENT_PROD_CONFIG, {
-    stats: 'minimal',
-    mode: 'development',
-    
-    entry: Object.keys(CLIENT_PROD_CONFIG.entry).reduce((o, k) => {
-        o[k] = ['react-hot-loader/patch'];
-        return o;
-    }, {}),
-
-    plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin()
-    ],
-    
-    devServer: {
-        contentBase: CLIENT_PROD_CONFIG.output.path,
-        publicPath: '/',
-        historyApiFallback: true,
-        hot: true,
-        stats: 'minimal'
-   
-    }
-});
-
-let clientConfig = isProduction ? 
-    CLIENT_PROD_CONFIG
-  : CLIENT_DEV_CONFIG
-
-module.exports = clientConfig
-
-

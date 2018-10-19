@@ -3,9 +3,10 @@ import * as ReactDOM from 'react-dom'
 import {MyAppBase} from './myapp'
 
 //@ts-ignore
-
 console.log(process.env.APP_CONFIG)
 
+import './styles/scrollbar.css'
+import './assets/minesweeper.css'
 import "../../node_modules/bootstrap/scss/bootstrap.scss"
 
 // const root = document.createElement('div')

@@ -33,7 +33,8 @@ let createMainWindow = async () => {
 			protocol: 'file:',
 			slashes: true
 		}));
-	} else {
+	} 
+	else {
 		mainWindow.loadURL(INDEX_URL);
 	}
 	
