@@ -172,6 +172,52 @@ export class StackModel extends ComponentModel {
         }
     }
 
+
+    @observable _component ;
+
+    @computed
+    get component() {
+        return this._component;
+    }
+
+    set component(value) {
+        this.setComponent(value);
+    }
+
+    @action
+    setComponent(component) {
+        if(component !== this._component) {
+            if(component && component.parent !== this) {
+                component.removeFromParent();
+            }
+            this._component = component;
+            if(this._component) {
+                this._component.parent = this as any;
+            }
+            this._setComponentViewport();
+        }
+    }
+
+    @computed
+    get componentConfig() {
+        return this._component ? this._component.config : undefined;
+    }
+
+    set componentConfig(config : any) {
+        this.setComponentConfig(config);
+    }
+
+    @action
+    setComponentConfig(config : any) {
+        if(config) {
+            const c = this.componentFactory(config.type);
+            this.setComponent(c);
+            c.setConfig(config);
+        } else {
+            this.setComponent(undefined);
+        }
+    }
+
     @computed
     get config() {
         return {
@@ -180,6 +226,7 @@ export class StackModel extends ComponentModel {
             windows: this.windows.filter(w => !w.transient).map(w => w.config),
             //configMap1: this.windows.map(w => w.setConfig({draggable: true})),
             closeDisabled: this.closeDisabled,
+            component: this.componentConfig
             //draggable: true,
             //resizable: true
         };
@@ -201,11 +248,13 @@ export class StackModel extends ComponentModel {
         }
         this.setActiveIndex(config && !isNaN(config.activeIndex) ? config.activeIndex : 0);
         this.setCloseDisabled(config ? config.closeDisabled : undefined);
-
-
-
     }
 
+    protected _setComponentViewport = () => {
+        if(this.portalManager && this._component) {
+            this._component.setViewport(0, 0, this.width, this.height);
+        }
+    }
 
     @action
     remove(node) {

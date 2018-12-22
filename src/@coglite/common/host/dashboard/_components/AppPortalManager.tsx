@@ -61,7 +61,10 @@ class AppPortal implements IPortal {
         this._appendedChildElement.addEventListener("transitionend", this._onTransitionEnd);
         this._window = window;
         this._onDestroy = onDestroy;
-        ReactDOM.render(<AppHostContainer host={this._window.appHost} />, this._appendedChildElement)
+        ReactDOM.render(
+            <Window window={this._window}>
+                <AppHostContainer host={this._window.appHost} />
+            </Window>, this._appendedChildElement);
     }
 
     get el() {

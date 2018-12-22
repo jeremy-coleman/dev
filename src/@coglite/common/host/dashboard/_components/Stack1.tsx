@@ -451,6 +451,7 @@ export { IStackProps, Stack }
 
 
 
+
 class StackViewFactory implements IViewFactory {
     className: string = undefined;
     createView(comp) : React.ReactNode {
@@ -476,8 +477,6 @@ import { AppPortalManager } from './AppPortalManager';
 import { ComponentRemoveDialog } from './ComponentRemoveDialog';
 import { ComponentView } from './Factory';
 import { DashboardModel } from '../models/Dashboard';
-import { observable, computed } from 'mobx';
-import { ComponentFactory } from '../models/ComponentFactory';
 
 
 // using typestyle causes the app tiles to not render on startup
@@ -555,6 +554,8 @@ class DashboardPortals extends React.Component<IDashboardProps, any> {
 class DashboardView extends React.Component<IDashboardProps, any> {
     ref = React.createRef<HTMLDivElement>()
     
+    //componentWillReact(){}
+
     private _resizeToViewport() {
         if(this.ref) {
             const bounds = this.ref.current.getBoundingClientRect();
@@ -562,8 +563,9 @@ class DashboardView extends React.Component<IDashboardProps, any> {
         }
     }
 
-    private _onHostResize = () => this._resizeToViewport();
-    
+    private _onHostResize = () => {
+        this._resizeToViewport();
+    }
 
     private _addHostListener(host : IEventTarget) {
         if(host) {
@@ -618,94 +620,3 @@ class DashboardView extends React.Component<IDashboardProps, any> {
 
 
 export { IDashboardProps, DashboardView }
-
-
-
-
-interface IDashboardWrapperProps {
-    className?: string;
-    config?: any;
-    addApp?: IRequest | ISupplierFunc<IRequest>;
-    loader?: () => Promise<any>;
-    saver?: (data : any) => Promise<any>;
-    saveDelay?: number;
-    host?: IEventEmitter;
-    router?: IRouter;
-    componentFactory?: IComponentFactory;
-    afterConfig?: (dashboard : DashboardModel) => void;
-    dashboard : DashboardModel;
-}
-
-
-
-
-class DashboardsApp extends React.Component<IDashboardWrapperProps, any> {
-    @observable.ref private _dashboard : DashboardModel = new DashboardModel();
-    
-    dashboardConfig = {
-            type: "window",
-            component: {
-                type: "stack",
-                closeDisabled: false,
-                windows: [
-                    {
-                        type: "window",
-                        path: "/home"
-                    }
-                ]
-            }
-    };
-
-
-
-    @computed
-    get dashboard() {
-        return this._dashboard;
-    }
-
-    constructor(props : IDashboardWrapperProps) {
-        super(props);
-        this._setFromProps(this.props);
-
-    }
-
-    private _setFromProps(props : IDashboardWrapperProps) {
-        this.dashboard.router = props.router;
-        this.dashboard.addApp = props.addApp;
-        this.dashboard.loader = props.loader;
-        this.dashboard.saver = props.saver;
-        this.dashboard.saveDelay = props.saveDelay;
-        this.dashboard.componentFactory = props.componentFactory || ComponentFactory;
-    }
-
-    private _load(props : IDashboardWrapperProps) {
-            this.dashboard.setConfig(props.config)
-    }
-    
-    componentWillReceiveProps(nextProps) {
-        this.dashboard.close();
-        this._setFromProps(nextProps);
-        this._load(nextProps);
-    }
-    componentWillMount() {
-        this._load(this.props);
-    }
-    componentWillUnmount() {
-        this.dashboard.close();
-    }
-    render() {
-        return (
-            <div/>
-            // <DashboardView 
-            //     className={this.props.className}
-            //     dashboard={this.dashboard}
-            //     host={this.props.host}
-            //     config={dashboardConfig} 
-            //     router={AppRouter} 
-            //     addApp={{ path: "/home" }}
-            // />
-        )
-    }
-}
-
-

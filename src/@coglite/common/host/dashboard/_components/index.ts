@@ -1,5 +1,6 @@
 export * from "./AppPortalManager";
 export * from "./ComponentRemoveDialog";
+export * from "./Dashboard";
 export * from "./Factory";
 export * from "./HSplit";
 export * from "./Stack";

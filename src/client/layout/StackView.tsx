@@ -127,12 +127,13 @@ class StackView extends React.Component<IStackProps, any> {
 
     render() {
         const { stack} = this.props;
+        const component = stack.component;
         return (
             <div id={this.props.stack.id} className={dashboardStyles.root} ref={this.ref}>
                 <ComponentRemoveDialog remove={ComponentRemoveStore} />
                 <div className={dashboardStyles.content}>
                     <StackPortals {...this.props} />
-                    <ComponentView component={stack} />
+                    <ComponentView component={component} />
                 </div>
             </div>
         );
@@ -146,6 +147,18 @@ class StackView extends React.Component<IStackProps, any> {
 }
 
 
-
+    // render() {
+    //     const { dashboard} = this.props;
+    //     const component = dashboard.component;
+    //     return (
+    //         <div id={this.props.dashboard.id} className={dashboardStyles.root} ref={this.ref}>
+    //             <ComponentRemoveDialog remove={ComponentRemoveStore} />
+    //             <div className={dashboardStyles.content}>
+    //                 <DashboardPortals {...this.props} />
+    //                 <ComponentView component={component} />
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
 export { IStackProps, StackView }

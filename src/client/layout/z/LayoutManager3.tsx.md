@@ -1,21 +1,3 @@
-// import { StackListAppView } from '@coglite/common/host/Stack';
-// import { WorkspaceStorage } from '../state';
-// import { observer } from 'mobx-react';
-// import * as React from 'react';
-
-
-
-
-
-
-// let StacksApp = observer((props:IAppProps) => 
-//     <StackListAppView StackList={WorkspaceStorage}  host={props.match.host}/>
-// );
-
-// export { StacksApp }
-// export default StacksApp
-
-
 import {AppRouter} from '../AppRouter'
 import { TransientStorageService, LoggingStorageService, WindowAppHost, WindowModel } from '@coglite/common/host';
 import { StackModel, ComponentFactory } from '@coglite/common/host';
@@ -33,14 +15,9 @@ const storageService = new LoggingStorageService({
 
 const Workspace = new StackModel();
 
-
-
 //Workspace.setRouter(PortalRouter);
 Workspace.setRouter(AppRouter);
 
-
-//Workspace.loader = () => storageService.getItem(storageKey);
-//Workspace.saver = (data) => storageService.setItem(storageKey, data);
 
 Workspace.addApp = { title: "Home", path: "/home" };
 
@@ -76,36 +53,10 @@ class StackWrapper extends React.Component<IStackWrapperProps, any>  {
     }
     constructor(props : IStackWrapperProps) {
         super(props);
-        this._setFromProps(this.props);
-    }
-
-    private _setFromProps(props : IStackWrapperProps) {
         this.stack.router = props.router;
         this.stack.addApp = props.addApp;
-        //this.stack.componentFactory = props.componentFactory || ComponentFactory;
-    }
-    
-    private _load(props : IStackWrapperProps) {
-        if(props.config) {
-            this.stack.setConfig(props.config);
-            if(props.afterConfig) {
-                props.afterConfig(this.stack);
-            }
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.stack.close();
-        this._setFromProps(nextProps);
-        this._load(nextProps);
-    }
-
-    componentWillMount() {
-        this._load(this.props);
-    }
-
-    componentWillUnmount() {
-        this.stack.close();
+        this.stack.componentFactory = props.componentFactory || ComponentFactory;
+        this.stack.setConfig(props.config);
     }
 
     render() {
@@ -121,12 +72,8 @@ class StackWrapper extends React.Component<IStackWrapperProps, any>  {
 
 
 
-
-
-
 @observer
 class DashboardsApp extends React.Component<any, any> {
-    //host = new WindowAppHost(new WindowModel())
     render() {
         const StackConfig = {
             type: "window",
