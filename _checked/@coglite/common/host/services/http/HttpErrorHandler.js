@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const handleAxiosError = (error) => {
+    if (error.response && error.response.status === 504) {
+        throw {
+            message: "Request Timed Out",
+            description: "The server is currently not responding. If the problem persists, please contact support@coglite.com with a description of the problem."
+        };
+    }
+    throw error;
+};
+exports.handleAxiosError = handleAxiosError;

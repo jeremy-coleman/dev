@@ -1,0 +1,1 @@
+export let rightNow = () => performance.now() || Date.now();

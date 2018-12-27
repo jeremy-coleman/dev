@@ -1,0 +1,54 @@
+import styled from '@emotion/styled';
+
+export const Wrapper: any = styled('div')({
+  padding: 40,
+  background: '#f7df1e',
+  textAlign: 'center'
+});
+
+
+export const FillFlex: any =  styled('div')({
+  display: 'flex',
+  flex: '1',
+  width: '100%',
+  height: '100%',
+});
+
+export const Row: any = styled('div')({
+  display: 'flex',
+  flex: '1 1 auto',
+  flexDirection: 'row',
+  justifyContent: 'stretch'
+});
+
+export const HorizontalStretch: any = styled('div')({
+  display: "flex",
+  flex: "auto",
+  flexDirection: "row",
+  justifyContent: "stretch",
+});
+
+
+export const VerticalStretch: any = styled('div')({
+  display: "flex",
+  flex: "1 1 auto",
+  height: "100%",
+  flexDirection: "column",
+  justifyContent: "stretch"
+});
+
+export const FillParent: any = styled('div')({
+    position: 'relative',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+});
+
+export const CardContainer: any = styled('div')({
+  position: 'relative',
+  display: "flex",
+  flex: '1 1 auto',
+  width: "100%",
+  margin: '0px'
+});

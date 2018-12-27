@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Material Icons'), local('Material-Icons'), url(fonts/Material-Icons/MaterialIcons-Regular.woff2) format('woff2');
+}
