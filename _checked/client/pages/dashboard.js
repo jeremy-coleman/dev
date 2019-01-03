@@ -1,4 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-exports.DashboardPage = () => React.createElement("div", null, "hi");
